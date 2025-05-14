@@ -78,6 +78,8 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
   // New Text Color Properties
   final Color secondaryTitleColor;
   final Color secondarySubTitleColor;
+  final Color primaryGradient;
+  final Color secondaryGradient;
 
   const AppThemeColor({
     // Existing required properties
@@ -156,6 +158,8 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     // New Text Color required properties
     required this.secondaryTitleColor,
     required this.secondarySubTitleColor,
+    required this.primaryGradient,
+    required this.secondaryGradient,
   });
 
   @override
@@ -236,6 +240,8 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     // New Text Color properties
     Color? secondaryTitleColor,
     Color? secondarySubTitleColor,
+    Color? primaryGradient,
+    Color? secondaryGradient,
   }) {
     return AppThemeColor(
       // Existing properties
@@ -316,6 +322,8 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
       secondaryTitleColor: secondaryTitleColor ?? this.secondaryTitleColor,
       secondarySubTitleColor:
           secondarySubTitleColor ?? this.secondarySubTitleColor,
+      primaryGradient: primaryGradient ?? this.primaryGradient,
+      secondaryGradient: secondaryGradient ?? this.secondaryGradient,
     );
   }
 
@@ -414,11 +422,14 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
           Color.lerp(primaryTextColor, other.primaryTextColor, t)!,
       secondaryTextColor:
           Color.lerp(secondaryTextColor, other.secondaryTextColor, t)!,
+      primaryGradient: Color.lerp(primaryGradient, other.primaryGradient, t)!,
+      secondaryGradient:
+          Color.lerp(secondaryGradient, other.secondaryGradient, t)!,
     );
   }
 
   // Light theme instance
-  static const light = AppThemeColor(
+  static var light = AppThemeColor(
     // Existing properties
     scaffoldBachgroundColor: AppColor.background,
     primaryColor: AppColor.primary,
@@ -442,6 +453,8 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     errorColor: AppColor.danger,
     primaryTextColor: AppColor.textPrimary,
     secondaryTextColor: AppColor.textSecondary,
+    primaryGradient: AppColor.presentPrimaryGradient,
+    secondaryGradient: AppColor.presentSecondaryGradient,
 
     // Primary color shades
     primaryColor950: AppColor.primary,
@@ -498,7 +511,7 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
   );
 
   // Passenger theme instance
-  static const passenger = AppThemeColor(
+  static var passenger = AppThemeColor(
     scaffoldBachgroundColor: AppColor.passengerSurfacePrimary,
     primaryColor: AppColor.passengerButtonPrimaryStart,
     whiteColor: AppColor.white,
@@ -521,6 +534,8 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     errorColor: AppColor.passengerCancel,
     primaryTextColor: AppColor.passengerTextPrimary,
     secondaryTextColor: AppColor.passengerTextSecondary,
+    primaryGradient: AppColor.presentPrimaryGradient,
+    secondaryGradient: AppColor.presentSecondaryGradient,
 
     // Primary color shades
     primaryColor950: AppColor.passengerButtonPrimaryEnd,
@@ -577,7 +592,7 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
   );
 
   // Driver theme instance
-  static const driver = AppThemeColor(
+  static var driver = AppThemeColor(
     scaffoldBachgroundColor: AppColor.driverSurfacePrimary,
     primaryColor: AppColor.driverButtonPrimaryStart,
     whiteColor: AppColor.white,
@@ -600,6 +615,8 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     errorColor: AppColor.driverCancel,
     primaryTextColor: AppColor.driverTextPrimary,
     secondaryTextColor: AppColor.driverTextSecondary,
+    primaryGradient: AppColor.driverPrimaryGradient,
+    secondaryGradient: AppColor.driverSecondaryGradient,
 
     // Primary color shades
     primaryColor950: AppColor.driverButtonPrimaryEnd,

@@ -73,4 +73,20 @@ class AppColor {
   static const Color driverSuccess = Color(0xFF299647);
   static const Color driverCancel = Color(0xFFFD003A);
   static const Color driverCartBg = Color(0xFFFFFFFF);
+
+  // app color
+
+  static const Color headerBackground = Color(0xFFFFD2A9);
+  static const Color black = Colors.black;
+  static const Color grey = Colors.grey;
+  static Color lightGrey = Colors.grey.withOpacity(0.3);
+  static Color textBlack87 = Colors.black87;
+  static Color textHint = Colors.grey;
+
+  static Color whiteColor = Colors.white;
+  static Color presentPrimaryGradient = Color(0xFFFFD2A9);
+  static Color presentSecondaryGradient = Color(0xFFFFB772);
+
+  static Color driverPrimaryGradient = Color(0xFFFFD2A9);
+  static Color driverSecondaryGradient = Color(0xFFFFB772);
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cabwire/presentation/common/widgets/custom_error_widget.dart';
+import 'package:cabwire/presentation/common/components/custom_error_widget.dart';
 
 class ErrorWidgetClass extends StatelessWidget {
   const ErrorWidgetClass({super.key, required this.errorDetails});

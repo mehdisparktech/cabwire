@@ -1,5 +1,6 @@
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/driver/auth/ui/auth_navigator.dart';
 import 'package:cabwire/presentation/passenger/onboarding/presenter/passenger_onboarding_ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,9 +37,8 @@ class PassengerOnboardingPresenter
   }
 
   void onGetStarted() {
-    // Navigate to passenger main page or login
-    // Get.offAll(() => PassengerMainPage());
-    Get.back(); // Temporary: just go back to welcome screen
+    // Navigate to AuthNavigator for login/signup
+    Get.to(() => const AuthNavigator());
   }
 
   @override
