@@ -2,7 +2,7 @@ import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/common/common_image.dart';
+import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/driver/onboarding/presenter/driver_onboarding_presenter.dart';
 import 'package:cabwire/presentation/driver/onboarding/widgets/custom_back_button_widget.dart';
 import 'package:cabwire/presentation/driver/onboarding/widgets/custom_button_widget.dart';
@@ -17,12 +17,12 @@ class DriverOnboardingScreen extends StatelessWidget {
   // Onboarding page data
   final List<Map<String, dynamic>> _onboardingPages = [
     {
-      'image': AppAssets.icDriver,
+      'image': AppAssets.icSplash1,
       'title': 'Welcome Driver',
       'subtitle': 'Start earning with our easy-to-use driver platform.',
     },
     {
-      'image': AppAssets.icSplash1,
+      'image': AppAssets.icSplash2,
       'title': 'Receive Ride Requests',
       'subtitle':
           'Get notified of nearby riders and choose which rides to accept.',

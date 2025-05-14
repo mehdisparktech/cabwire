@@ -3,7 +3,7 @@ import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/external_libs/flutter_animated_dialog/src/animated_dialog.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/common/custom_button.dart';
+import 'package:cabwire/presentation/common/components/custom_button.dart';
 
 class NotificationDeniedDialog extends StatelessWidget {
   const NotificationDeniedDialog({super.key, required this.onSubmit});

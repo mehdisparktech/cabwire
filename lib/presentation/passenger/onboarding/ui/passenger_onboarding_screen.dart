@@ -2,7 +2,7 @@ import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/common/common_image.dart';
+import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/passenger/onboarding/presenter/passenger_onboarding_presenter.dart';
 import 'package:cabwire/presentation/passenger/onboarding/widgets/custom_back_button_widget.dart';
 import 'package:cabwire/presentation/passenger/onboarding/widgets/custom_button_widget.dart';
