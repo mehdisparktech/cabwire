@@ -4,7 +4,6 @@ import 'package:cabwire/presentation/common/splash/presenter/welcome_presenter.d
 import 'package:cabwire/presentation/common/splash/presenter/welcome_ui_state.dart';
 import 'package:cabwire/presentation/common/splash/ui/welcome_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/route_manager.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/config/themes.dart';
@@ -27,25 +26,28 @@ class InitialApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ResponsiveSizer(
       builder: (context, orientation, deviceType) {
-        return Obx(
-          () => GetMaterialApp(
-            navigatorKey: navigatorKey,
-            builder: (context, child) {
-              return Overlay(
-                initialEntries: [OverlayEntry(builder: (context) => child!)],
-              );
-            },
-            onInit: () => AppScreen.setUp(context),
-            onReady: () => AppScreen.setUp(context),
-            debugShowCheckedModeBanner: false,
-            theme:
-                presenter.currentUiState.userType == UserType.passenger
-                    ? AppTheme.passengerTheme
-                    : AppTheme.driverTheme,
-            title: 'Cabwire',
-            // home: isFirstRun ? OnboardingPage() : MainPage(),
-            home: WelcomeScreen(),
-          ),
+        return PresentableWidgetBuilder(
+          presenter: presenter,
+          builder: () {
+            return GetMaterialApp(
+              navigatorKey: navigatorKey,
+              builder: (context, child) {
+                return Overlay(
+                  initialEntries: [OverlayEntry(builder: (context) => child!)],
+                );
+              },
+              onInit: () => AppScreen.setUp(context),
+              onReady: () => AppScreen.setUp(context),
+              debugShowCheckedModeBanner: false,
+              theme:
+                  presenter.currentUiState.userType == UserType.passenger
+                      ? AppTheme.passengerTheme
+                      : AppTheme.driverTheme,
+              title: 'Cabwire',
+              // home: isFirstRun ? OnboardingPage() : MainPage(),
+              home: WelcomeScreen(),
+            );
+          },
         );
       },
     );
