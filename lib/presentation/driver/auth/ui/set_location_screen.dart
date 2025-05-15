@@ -24,10 +24,11 @@ class _SetLocationScreenState extends State<SetLocationScreen> {
   }
 
   void _setLocation() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Set location logic
-      Get.to(() => LoginScreen(toggleView: () {}));
-    }
+    // if (_formKey.currentState?.validate() ?? false) {
+    //   // Set location logic
+
+    // }
+    Get.to(() => LoginScreen(toggleView: () {}));
   }
 
   @override
