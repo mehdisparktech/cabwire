@@ -1,4 +1,7 @@
+import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AuthHeader extends StatelessWidget {
   final String title;
@@ -15,20 +18,26 @@ class AuthHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 35),
+      padding: EdgeInsets.symmetric(
+        horizontal: twentyFourPx,
+        vertical: fiftyPx,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(color: color),
+            style: context.textTheme.displayMedium?.copyWith(
+              fontSize: thirtyEightPx,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
           ),
-          const SizedBox(height: 4),
+          gapH6,
           Text(
             subtitle,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: context.textTheme.titleSmall?.copyWith(
+              fontSize: fourteenPx,
               fontWeight: FontWeight.w700,
               color: color,
             ),

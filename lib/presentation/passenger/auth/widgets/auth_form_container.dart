@@ -30,7 +30,6 @@ class AuthFormContainer extends StatelessWidget {
             AppLogoDisplay(
               logoAssetPath: AppAssets.icPassengerLogo,
               logoAssetPath2: AppAssets.icCabwireLogo,
-              appName: 'cabwire',
             ),
             gapH30,
           ],

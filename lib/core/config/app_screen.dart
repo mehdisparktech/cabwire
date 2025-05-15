@@ -557,6 +557,13 @@ double get thirtySevenPx {
   return _thirtySevenPx!;
 }
 
+double? _thirtyEightPx;
+
+double get thirtyEightPx {
+  _thirtyEightPx ??= 38.px;
+  return _thirtyEightPx!;
+}
+
 double? _fortyTwoPx;
 
 double get fortyTwoPx {
