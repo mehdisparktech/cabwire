@@ -1,11 +1,12 @@
-import 'package:cabwire/presentation/driver/auth/ui/email_verify_screen.dart';
+import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/presentation/driver/auth/ui/driver_email_verify_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../widgets/custom_text_form_field.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/auth_screen_wrapper.dart';
-import '../widgets/auth_form_container.dart';
-import '../widgets/auth_validators.dart';
+import '../../../common/components/auth/custom_text_form_field.dart';
+import '../../../common/components/auth/custom_button.dart';
+import '../../../common/components/auth/auth_screen_wrapper.dart';
+import '../../../common/components/auth/auth_form_container.dart';
+import '../../../common/components/auth/auth_validators.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -44,7 +45,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return AuthScreenWrapper(
       title: "Forgot Password",
       subtitle: "Please enter your email to continue.",
+      textColor: Colors.black,
       child: AuthFormContainer(
+        logoAssetPath: AppAssets.icDriverLogo,
+        logoAssetPath2: AppAssets.icCabwireLogo,
         formKey: _formKey,
         formFields: [
           CustomTextFormField(

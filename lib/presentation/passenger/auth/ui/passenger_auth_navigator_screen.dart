@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
-import 'signup_screen.dart';
+import 'passenger_login_screen.dart';
+import 'passenger_signup_screen.dart';
 
 class AuthNavigationScreen extends StatefulWidget {
   const AuthNavigationScreen({super.key});

@@ -1,3 +1,4 @@
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
 
 class LoadingOverlay extends StatelessWidget {
@@ -19,7 +20,7 @@ class LoadingOverlay extends StatelessWidget {
         child,
         if (isLoading)
           Container(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withOpacityInt(0.5),
             child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,

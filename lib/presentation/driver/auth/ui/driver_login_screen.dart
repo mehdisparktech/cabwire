@@ -1,13 +1,14 @@
+import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
-import 'package:cabwire/presentation/passenger/auth/ui/forgot_password_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/driver_forgot_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../widgets/custom_text_form_field.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/toggle_auth_option.dart';
-import '../widgets/auth_screen_wrapper.dart';
-import '../widgets/auth_form_container.dart';
-import '../widgets/auth_validators.dart';
+import '../../../common/components/auth/custom_text_form_field.dart';
+import '../../../common/components/auth/custom_button.dart';
+import '../../../common/components/auth/toggle_auth_option.dart';
+import '../../../common/components/auth/auth_screen_wrapper.dart';
+import '../../../common/components/auth/auth_form_container.dart';
+import '../../../common/components/auth/auth_validators.dart';
 import '../../../../core/static/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -51,7 +52,10 @@ class _LoginScreenState extends State<LoginScreen> {
     return AuthScreenWrapper(
       title: "Sign In",
       subtitle: "Welcome Back To Cabwire.",
+      textColor: Colors.black,
       child: AuthFormContainer(
+        logoAssetPath: AppAssets.icDriverLogo,
+        logoAssetPath2: AppAssets.icCabwireLogo,
         formKey: _formKey,
         formFields: [
           CustomTextFormField(

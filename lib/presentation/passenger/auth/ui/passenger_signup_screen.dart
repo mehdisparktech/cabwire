@@ -1,13 +1,14 @@
+import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../widgets/custom_text_form_field.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/toggle_auth_option.dart';
-import '../widgets/auth_screen_wrapper.dart';
-import '../widgets/auth_form_container.dart';
-import '../widgets/auth_validators.dart';
-import 'email_verify_screen.dart';
+import 'package:cabwire/presentation/common/components/auth/custom_text_form_field.dart';
+import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
+import 'package:cabwire/presentation/common/components/auth/toggle_auth_option.dart';
+import 'package:cabwire/presentation/common/components/auth/auth_screen_wrapper.dart';
+import 'package:cabwire/presentation/common/components/auth/auth_form_container.dart';
+import 'package:cabwire/presentation/common/components/auth/auth_validators.dart';
+import 'passenger_email_verify_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   final VoidCallback toggleView;
@@ -72,7 +73,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return AuthScreenWrapper(
       title: "Sign Up",
       subtitle: "Please Register To Login.",
+      textColor: Colors.white,
       child: AuthFormContainer(
+        logoAssetPath: AppAssets.icPassengerLogo,
+        logoAssetPath2: AppAssets.icCabwireLogo,
         formKey: _formKey,
         formFields: [
           CustomTextFormField(

@@ -8,6 +8,7 @@ class AuthScreenWrapper extends StatelessWidget {
   final Widget child;
   final bool isScrollable;
   final EdgeInsets contentPadding;
+  final Color textColor;
 
   const AuthScreenWrapper({
     super.key,
@@ -16,6 +17,7 @@ class AuthScreenWrapper extends StatelessWidget {
     required this.child,
     this.isScrollable = true,
     this.contentPadding = const EdgeInsets.all(24),
+    required this.textColor,
   });
 
   @override
@@ -37,7 +39,7 @@ class AuthScreenWrapper extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              AuthHeader(title: title, subtitle: subtitle, color: Colors.black),
+              AuthHeader(title: title, subtitle: subtitle, color: textColor),
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(

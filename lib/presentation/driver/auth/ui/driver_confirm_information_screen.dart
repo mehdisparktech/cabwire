@@ -1,12 +1,13 @@
+import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/presentation/driver/auth/ui/driver_license_information.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../widgets/custom_text_form_field.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/auth_screen_wrapper.dart';
-import '../widgets/auth_form_container.dart';
-import '../widgets/auth_validators.dart';
+import '../../../common/components/auth/custom_text_form_field.dart';
+import '../../../common/components/auth/custom_button.dart';
+import '../../../common/components/auth/auth_screen_wrapper.dart';
+import '../../../common/components/auth/auth_form_container.dart';
+import '../../../common/components/auth/auth_validators.dart';
 
 class ConfirmInformationScreen extends StatefulWidget {
   const ConfirmInformationScreen({super.key});
@@ -61,6 +62,7 @@ class _ConfirmInformationScreenState extends State<ConfirmInformationScreen> {
     return AuthScreenWrapper(
       title: "Confirm Information",
       subtitle: "Please confirm your information to continue.",
+      textColor: Colors.black,
       child: Column(
         children: [
           // Profile Picture Upload
@@ -112,6 +114,8 @@ class _ConfirmInformationScreenState extends State<ConfirmInformationScreen> {
           // Form fields in AuthFormContainer
           AuthFormContainer(
             showLogo: false,
+            logoAssetPath: AppAssets.icDriverLogo,
+            logoAssetPath2: AppAssets.icCabwireLogo,
             formKey: _formKey,
             formFields: [
               CustomTextFormField(

@@ -1,14 +1,14 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/passenger/auth/ui/auth_navigator_screen.dart';
-import 'package:cabwire/presentation/passenger/auth/ui/confirm_information_screen.dart';
-import 'package:cabwire/presentation/passenger/auth/widgets/app_logo_display.dart';
+import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
+import 'package:cabwire/presentation/passenger/auth/ui/passenger_auth_navigator_screen.dart';
+import 'package:cabwire/presentation/passenger/auth/ui/passenger_confirm_information_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/auth_screen_wrapper.dart';
+import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
+import 'package:cabwire/presentation/common/components/auth/auth_screen_wrapper.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String email;
@@ -76,6 +76,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     return AuthScreenWrapper(
       title: "Verify Email",
       subtitle: "Please enter the code sent to your email",
+      textColor: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

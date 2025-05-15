@@ -1,14 +1,14 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
-import 'package:cabwire/presentation/driver/auth/ui/vehicles_information_screen.dart';
-import 'package:cabwire/presentation/driver/auth/widgets/app_logo_display.dart';
+import 'package:cabwire/presentation/driver/auth/ui/driver_vehicles_information_screen.dart';
+import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../widgets/custom_text_form_field.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/auth_screen_wrapper.dart';
-import '../widgets/auth_form_container.dart';
-import '../widgets/auth_validators.dart';
+import '../../../common/components/auth/custom_text_form_field.dart';
+import '../../../common/components/auth/custom_button.dart';
+import '../../../common/components/auth/auth_screen_wrapper.dart';
+import '../../../common/components/auth/auth_form_container.dart';
+import '../../../common/components/auth/auth_validators.dart';
 
 class DriverLicenseInformationScreen extends StatefulWidget {
   const DriverLicenseInformationScreen({super.key});
@@ -65,10 +65,13 @@ class _DriverLicenseInformationScreenState
     return AuthScreenWrapper(
       title: "Driver License Information",
       subtitle: "Please confirm your driver license information to continue.",
+      textColor: Colors.black,
       child:
       // Form fields in AuthFormContainer
       AuthFormContainer(
         showLogo: false,
+        logoAssetPath: AppAssets.icDriverLogo,
+        logoAssetPath2: AppAssets.icCabwireLogo,
         formKey: _formKey,
         formFields: [
           AppLogoDisplay(
