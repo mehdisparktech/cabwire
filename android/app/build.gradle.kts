@@ -26,10 +26,13 @@ android {
         applicationId = "com.example.cabwire"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 20 // Ensure minSdk is at least 20 for Google Maps
+        minSdk = 21 // Update to 21 as required by NDK
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Enable multidex
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -48,4 +51,5 @@ flutter {
 // Add desugaring dependency
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    implementation("androidx.multidex:multidex:2.0.1")
 }
