@@ -1,0 +1,124 @@
+import 'package:cabwire/core/static/ui_const.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../widgets/custom_text_form_field.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/toggle_auth_option.dart';
+import '../widgets/auth_screen_wrapper.dart';
+import '../widgets/auth_form_container.dart';
+import '../widgets/auth_validators.dart';
+import 'email_verify_screen.dart';
+
+class SignUpScreen extends StatefulWidget {
+  final VoidCallback toggleView;
+
+  const SignUpScreen({super.key, required this.toggleView});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscurePassword = !_obscurePassword;
+    });
+  }
+
+  void _toggleConfirmPasswordVisibility() {
+    setState(() {
+      _obscureConfirmPassword = !_obscureConfirmPassword;
+    });
+  }
+
+  void _signUp() {
+    print('Sign Up');
+    // if (_formKey.currentState?.validate() ?? false) {
+    //   // Sign up logic here
+    //   print('Name: ${_nameController.text}');
+    //   print('Email: ${_emailController.text}');
+    //   print('Password: ${_passwordController.text}');
+    // }
+    Get.to(
+      () => EmailVerificationScreen(
+        email: 'example@email.com',
+        onResendCode: () {},
+        onVerify: (code) {},
+        isSignUp: true,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AuthScreenWrapper(
+      title: "Sign Up",
+      subtitle: "Please Register To Login.",
+      child: AuthFormContainer(
+        formKey: _formKey,
+        formFields: [
+          CustomTextFormField(
+            controller: _nameController,
+            hintText: 'Enter Full Name Here',
+            validator: AuthValidators.validateName,
+          ),
+          gapH10,
+          CustomTextFormField(
+            controller: _emailController,
+            hintText: 'example@email.com',
+            keyboardType: TextInputType.emailAddress,
+            validator: AuthValidators.validateEmail,
+          ),
+          gapH10,
+          CustomTextFormField(
+            controller: _passwordController,
+            hintText: 'Password',
+            isPassword: true,
+            obscureTextValue: _obscurePassword,
+            onVisibilityToggle: _togglePasswordVisibility,
+            validator: AuthValidators.validatePassword,
+          ),
+          gapH10,
+          CustomTextFormField(
+            controller: _confirmPasswordController,
+            hintText: 'Confirm Password',
+            isPassword: true,
+            obscureTextValue: _obscureConfirmPassword,
+            onVisibilityToggle: _toggleConfirmPasswordVisibility,
+            validator:
+                (value) => AuthValidators.validateConfirmPassword(
+                  value,
+                  _passwordController.text,
+                ),
+          ),
+        ],
+        actionButton: CustomButton(text: "Sign Up", onPressed: _signUp),
+        bottomWidgets: [
+          ToggleAuthOption(
+            leadingText: "All Ready Sign Up?",
+            actionText: "Sign In",
+            onActionPressed: widget.toggleView,
+          ),
+        ],
+      ),
+    );
+  }
+}

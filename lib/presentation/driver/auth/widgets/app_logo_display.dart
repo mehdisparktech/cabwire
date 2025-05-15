@@ -1,7 +1,7 @@
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:flutter/material.dart';
-import '../../../../../core/static/app_colors.dart';
+import '../../../../core/static/app_colors.dart';
 
 class AppLogoDisplay extends StatelessWidget {
   final String logoAssetPath;
