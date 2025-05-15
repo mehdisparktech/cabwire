@@ -1,8 +1,8 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/passenger/auth/ui/confirm_information_screen.dart';
-import 'package:cabwire/presentation/passenger/auth/ui/login_screen.dart';
-import 'package:cabwire/presentation/passenger/auth/widgets/app_logo_display.dart';
+import 'package:cabwire/presentation/driver/auth/ui/confirm_information_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/login_screen.dart';
+import 'package:cabwire/presentation/driver/auth/widgets/app_logo_display.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -80,7 +80,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           AppLogoDisplay(
-            logoAssetPath: AppAssets.icPassengerLogo,
+            logoAssetPath: AppAssets.icDriverLogo,
             logoAssetPath2: AppAssets.icCabwireLogo,
           ),
           const SizedBox(height: 40),

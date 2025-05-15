@@ -1,4 +1,4 @@
-import 'package:cabwire/presentation/passenger/auth/ui/email_verify_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/email_verify_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../widgets/custom_text_form_field.dart';

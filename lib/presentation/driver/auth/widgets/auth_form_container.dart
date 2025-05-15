@@ -28,7 +28,7 @@ class AuthFormContainer extends StatelessWidget {
         children: [
           if (showLogo) ...[
             AppLogoDisplay(
-              logoAssetPath: AppAssets.icPassengerLogo,
+              logoAssetPath: AppAssets.icDriverLogo,
               logoAssetPath2: AppAssets.icCabwireLogo,
             ),
             gapH30,
