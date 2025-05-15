@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/static/app_colors.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/presentation/passenger/auth/ui/passenger_forgot_password_screen.dart';
 import 'package:cabwire/presentation/passenger/main/ui/main_screen.dart';
@@ -10,7 +11,6 @@ import 'package:cabwire/presentation/common/components/auth/toggle_auth_option.d
 import 'package:cabwire/presentation/common/components/auth/auth_screen_wrapper.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_form_container.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_validators.dart';
-import '../../../../core/static/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
   final VoidCallback toggleView;
@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     //   print('Email: ${_emailController.text}');
     //   print('Password: ${_passwordController.text}');
     // }
-    Get.to(() => MainPage());
+    Get.offAll(() => MainPage());
   }
 
   @override
