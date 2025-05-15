@@ -15,7 +15,7 @@ class CustomBackButtonWidget extends StatelessWidget {
           shape: BoxShape.circle,
           color: context.color.backgroundColor,
           border: Border.all(
-            color: context.color.primaryColor.withOpacity(0.2),
+            color: context.color.primaryColor.withOpacityInt(0.2),
           ),
         ),
         child: Icon(

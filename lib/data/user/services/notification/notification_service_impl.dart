@@ -94,7 +94,6 @@ class NotificationServiceImpl implements NotificationService {
 
   @override
   Future<void> onOpenedFromNotification() {
-    // TODO: implement onOpenedFromNotification
     return Future.value();
   }
 

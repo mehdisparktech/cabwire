@@ -60,7 +60,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: const CircleAvatar(
                       radius: 20,
-                      backgroundImage: AssetImage('assets/profile_pic.jpg'),
+                      backgroundColor: Colors.blue,
+                      child: Icon(Icons.person, color: Colors.white),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -142,7 +143,8 @@ class _HomePageState extends State<HomePage> {
                         ),
                         child: const CircleAvatar(
                           radius: 20,
-                          backgroundImage: AssetImage('assets/driver_pic.jpg'),
+                          backgroundColor: Colors.amber,
+                          child: Icon(Icons.person, color: Colors.white),
                         ),
                       ),
                       const SizedBox(width: 12),

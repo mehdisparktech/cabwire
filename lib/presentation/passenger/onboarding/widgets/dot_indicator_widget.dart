@@ -24,7 +24,7 @@ class DotIndicatorWidget extends StatelessWidget {
             isActive
                 ? activeColor ?? context.color.primaryColor
                 : inactiveColor ??
-                    context.color.secondaryTextColor.withOpacity(0.3),
+                    context.color.secondaryTextColor.withOpacityInt(0.3),
         borderRadius: BorderRadius.circular(4),
       ),
     );

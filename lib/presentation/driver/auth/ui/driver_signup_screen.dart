@@ -51,7 +51,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _signUp() {
-    print('Sign Up');
     // if (_formKey.currentState?.validate() ?? false) {
     //   // Sign up logic here
     //   print('Name: ${_nameController.text}');
