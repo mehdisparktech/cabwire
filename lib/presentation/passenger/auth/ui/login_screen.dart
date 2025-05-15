@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_color.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
@@ -51,22 +52,26 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: context.color.primaryGradient,
       body: SafeArea(
         child: Container(
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
             gradient: LinearGradient(
-              begin: Alignment(-0.00, 0.50),
+              begin: Alignment(0.00, 0.50),
               end: Alignment(1.00, 0.50),
               colors: [
-                context.color.primaryGradient,
-                context.color.secondaryGradient,
+                AppColor.passengerPrimaryGradient,
+                AppColor.passengerSecondaryGradient,
               ],
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
             ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const AuthHeader(
+              AuthHeader(
                 title: "Sign In",
                 subtitle: "Welcome Back To Cabwire.",
+                color: context.color.whiteColor,
               ),
               Expanded(
                 child: Container(
@@ -85,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           AppLogoDisplay(
-                            logoAssetPath: AppAssets.icDriverLogo,
+                            logoAssetPath: AppAssets.icPassengerLogo,
                             logoAssetPath2: AppAssets.icCabwireLogo,
                             appName: 'cabwire',
                             color: context.color.primaryBtn,

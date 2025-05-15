@@ -453,8 +453,8 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     errorColor: AppColor.danger,
     primaryTextColor: AppColor.textPrimary,
     secondaryTextColor: AppColor.textSecondary,
-    primaryGradient: AppColor.presentPrimaryGradient,
-    secondaryGradient: AppColor.presentSecondaryGradient,
+    primaryGradient: AppColor.passengerPrimaryGradient,
+    secondaryGradient: AppColor.passengerSecondaryGradient,
 
     // Primary color shades
     primaryColor950: AppColor.primary,
@@ -534,8 +534,8 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     errorColor: AppColor.passengerCancel,
     primaryTextColor: AppColor.passengerTextPrimary,
     secondaryTextColor: AppColor.passengerTextSecondary,
-    primaryGradient: AppColor.presentPrimaryGradient,
-    secondaryGradient: AppColor.presentSecondaryGradient,
+    primaryGradient: AppColor.passengerPrimaryGradient,
+    secondaryGradient: AppColor.passengerSecondaryGradient,
 
     // Primary color shades
     primaryColor950: AppColor.passengerButtonPrimaryEnd,

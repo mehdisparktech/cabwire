@@ -40,13 +40,17 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: CommonImage(AppAssets.icLogo, width: 80, height: 120),
+                child: CommonImage(
+                  AppAssets.icPassengerLogo,
+                  width: 80,
+                  height: 120,
+                ),
               ),
               gapH30,
               CustomText(
                 'Welcome To Cabwire',
-                fontSize: twentyFourPx,
-                fontWeight: FontWeight.bold,
+                fontSize: twentySixPx,
+                fontWeight: FontWeight.w700,
                 color: context.color.secondaryTextColor,
               ),
               gapH10,
@@ -61,16 +65,18 @@ class WelcomeScreen extends StatelessWidget {
                 context,
                 'Passenger',
                 AppAssets.icPassenger,
-                AppColor.passengerButtonPrimaryStart,
                 presenter.onPassengerButtonPressed,
+                AppColor.passengerButtonPrimaryGradient,
+                AppColor.passengerButtonSecondaryGradient,
               ),
               gapH20,
               _buildOptionButton(
                 context,
                 'Driver',
                 AppAssets.icDriver,
-                AppColor.driverButtonPrimaryStart,
                 presenter.onDriverButtonPressed,
+                AppColor.driverButtonPrimaryGradient,
+                AppColor.driverButtonSecondaryGradient,
               ),
             ],
           ),
@@ -83,23 +89,27 @@ class WelcomeScreen extends StatelessWidget {
     BuildContext context,
     String text,
     String icon,
-    Color? color,
     VoidCallback onPressed,
+    Color gradientStart,
+    Color gradientEnd,
   ) {
     return InkWell(
       onTap: onPressed,
       child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: color ?? context.color.primaryColor,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color ?? context.color.primaryColor),
+        width: MediaQuery.of(context).size.width * 0.8,
+        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 14),
+        decoration: ShapeDecoration(
+          gradient: LinearGradient(
+            begin: Alignment(0.00, 0.50),
+            end: Alignment(1.00, 0.50),
+            colors: [gradientStart, gradientEnd],
+          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CommonImage(icon, width: 20, height: 20),
+            CommonImage(icon, width: 18, height: 18),
             gapW12,
             CustomText(
               text,

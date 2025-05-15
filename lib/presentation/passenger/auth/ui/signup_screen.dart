@@ -7,27 +7,32 @@ import '../widgets/app_logo_display.dart';
 import '../widgets/custom_text_form_field.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/toggle_auth_option.dart';
-import '../../../../core/static/app_colors.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignUpScreen extends StatefulWidget {
   final VoidCallback toggleView;
 
-  const LoginScreen({super.key, required this.toggleView});
+  const SignUpScreen({super.key, required this.toggleView});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -37,9 +42,16 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void _signIn() {
+  void _toggleConfirmPasswordVisibility() {
+    setState(() {
+      _obscureConfirmPassword = !_obscureConfirmPassword;
+    });
+  }
+
+  void _signUp() {
     if (_formKey.currentState?.validate() ?? false) {
-      // Sign in logic here
+      // Sign up logic here
+      print('Name: ${_nameController.text}');
       print('Email: ${_emailController.text}');
       print('Password: ${_passwordController.text}');
     }
@@ -64,9 +76,10 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const AuthHeader(
-                title: "Sign In",
-                subtitle: "Welcome Back To Cabwire.",
+              AuthHeader(
+                title: "Sign Up",
+                subtitle: "Please Register To Login.",
+                color: context.color.whiteColor,
               ),
               Expanded(
                 child: Container(
@@ -84,13 +97,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          AppLogoDisplay(
+                          const AppLogoDisplay(
                             logoAssetPath: AppAssets.icDriverLogo,
                             logoAssetPath2: AppAssets.icCabwireLogo,
                             appName: 'cabwire',
-                            color: context.color.primaryBtn,
                           ),
                           gapH30,
+                          CustomTextFormField(
+                            controller: _nameController,
+                            hintText: 'Enter Full Name Here',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your full name';
+                              }
+                              return null;
+                            },
+                          ),
+                          gapH10,
                           CustomTextFormField(
                             controller: _emailController,
                             hintText: 'example@email.com',
@@ -107,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               return null;
                             },
                           ),
-                          gapH20,
+                          gapH10,
                           CustomTextFormField(
                             controller: _passwordController,
                             hintText: 'Password',
@@ -116,42 +139,38 @@ class _LoginScreenState extends State<LoginScreen> {
                             onVisibilityToggle: _togglePasswordVisibility,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
+                                return 'Please enter a password';
+                              }
+                              if (value.length < 6) {
+                                return 'Password must be at least 6 characters';
                               }
                               return null;
                             },
                           ),
                           gapH10,
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {
-                                // Forgot password logic
-                              },
-                              style: TextButton.styleFrom(
-                                // Overriding theme for this specific TextButton as per original
-                                minimumSize: Size.zero,
-                                padding: EdgeInsets.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              child: const Text(
-                                "Forgot Password",
-                                style: TextStyle(
-                                  color: AppColors.textBlack87,
-                                  fontSize: 14,
-                                  fontWeight:
-                                      FontWeight
-                                          .normal, // Original had default weight
-                                ),
-                              ),
-                            ),
+                          CustomTextFormField(
+                            controller: _confirmPasswordController,
+                            hintText: 'Confirm Password',
+                            isPassword: true,
+                            obscureTextValue: _obscureConfirmPassword,
+                            onVisibilityToggle:
+                                _toggleConfirmPasswordVisibility,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please confirm your password';
+                              }
+                              if (value != _passwordController.text) {
+                                return 'Passwords do not match';
+                              }
+                              return null;
+                            },
                           ),
-                          gapH20,
-                          CustomButton(text: "Sign In", onPressed: _signIn),
                           gapH30,
+                          CustomButton(text: "Sign Up", onPressed: _signUp),
+                          gapH20,
                           ToggleAuthOption(
-                            leadingText: "Don't Have an Account?",
-                            actionText: "Sign Up",
+                            leadingText: "All Ready Sign Up?",
+                            actionText: "Sign In",
                             onActionPressed: widget.toggleView,
                           ),
                         ],

@@ -90,12 +90,11 @@ class PassengerOnboardingScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(
-                  child: Center(child: CommonImage(image, fit: BoxFit.contain)),
-                ),
-                gapH20,
+                Center(child: CommonImage(image, fit: BoxFit.contain)),
+                gapH50,
                 Text(
                   title,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -103,13 +102,18 @@ class PassengerOnboardingScreen extends StatelessWidget {
                     color: context.color.secondaryTextColor,
                   ),
                 ),
-                gapH8,
+                gapH30,
                 Text(
                   subtitle,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: context.color.secondarySubTitleColor,
+                  style: TextStyle(
+                    color: context.color.secondaryTextColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    height: 1.50,
                   ),
+                  textAlign: TextAlign.center,
                 ),
+                gapH20,
               ],
             ),
           ),
