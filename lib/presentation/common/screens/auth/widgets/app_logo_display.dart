@@ -1,19 +1,17 @@
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/static/app_colors.dart';
+import '../../../../../core/static/app_colors.dart';
 
 class AppLogoDisplay extends StatelessWidget {
   final String logoAssetPath;
   final String logoAssetPath2;
-  final String appName;
   final Color? color;
 
   const AppLogoDisplay({
     super.key,
     required this.logoAssetPath,
     required this.logoAssetPath2,
-    required this.appName,
     this.color,
   });
 

@@ -1,5 +1,5 @@
 import 'package:cabwire/core/static/ui_const.dart';
-import 'package:cabwire/presentation/passenger/auth/ui/forgot_password_screen.dart';
+import 'package:cabwire/presentation/common/screens/auth/ui/forgot_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../widgets/custom_text_form_field.dart';
@@ -8,7 +8,7 @@ import '../widgets/toggle_auth_option.dart';
 import '../widgets/auth_screen_wrapper.dart';
 import '../widgets/auth_form_container.dart';
 import '../widgets/auth_validators.dart';
-import '../../../../core/static/app_colors.dart';
+import '../../../../../core/static/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
   final VoidCallback toggleView;

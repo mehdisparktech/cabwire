@@ -1,5 +1,5 @@
 import 'package:cabwire/core/static/ui_const.dart';
-import 'package:cabwire/presentation/passenger/auth/ui/set_location_screen.dart';
+import 'package:cabwire/presentation/common/screens/auth/ui/set_location_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../widgets/custom_text_form_field.dart';

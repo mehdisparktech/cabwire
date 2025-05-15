@@ -1,6 +1,6 @@
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/static/app_colors.dart';
+import '../../../../../core/static/app_colors.dart';
 
 class ToggleAuthOption extends StatelessWidget {
   final String leadingText;

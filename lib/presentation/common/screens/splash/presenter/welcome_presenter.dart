@@ -1,5 +1,5 @@
 import 'package:cabwire/core/base/base_presenter.dart';
-import 'package:cabwire/presentation/common/splash/presenter/welcome_ui_state.dart';
+import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_ui_state.dart';
 import 'package:cabwire/presentation/driver/onboarding/ui/driver_onboarding_screen.dart';
 import 'package:cabwire/presentation/passenger/onboarding/ui/passenger_onboarding_screen.dart';
 import 'package:get/get.dart';

@@ -5,7 +5,7 @@ import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
-import 'package:cabwire/presentation/common/splash/presenter/welcome_presenter.dart';
+import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_presenter.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:flutter/material.dart';
 

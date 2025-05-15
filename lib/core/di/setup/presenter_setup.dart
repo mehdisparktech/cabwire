@@ -1,4 +1,4 @@
-import 'package:cabwire/presentation/common/splash/presenter/welcome_presenter.dart';
+import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_presenter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/di/service_locator.dart';

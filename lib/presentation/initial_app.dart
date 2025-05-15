@@ -1,8 +1,8 @@
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
-import 'package:cabwire/presentation/common/splash/presenter/welcome_presenter.dart';
-import 'package:cabwire/presentation/common/splash/presenter/welcome_ui_state.dart';
-import 'package:cabwire/presentation/common/splash/ui/welcome_screen.dart';
+import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_presenter.dart';
+import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_ui_state.dart';
+import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:cabwire/core/config/app_screen.dart';
