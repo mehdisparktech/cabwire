@@ -48,6 +48,7 @@ class PassengerOnboardingScreen extends StatelessWidget {
           body: SafeArea(
             child: Column(
               children: [
+                CustomBackButtonWidget(presenter: _presenter),
                 Expanded(
                   child: PageView.builder(
                     controller: _presenter.pageController,
@@ -74,18 +75,12 @@ class PassengerOnboardingScreen extends StatelessWidget {
     BuildContext context,
     Map<String, dynamic> pageData,
   ) {
-    final bool showBackButton = pageData['showBackButton'] ?? false;
     final String image = pageData['image'];
     final String title = pageData['title'];
     final String subtitle = pageData['subtitle'];
 
     return Column(
       children: [
-        if (showBackButton)
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(children: [const CustomBackButtonWidget()]),
-          ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(20.0),

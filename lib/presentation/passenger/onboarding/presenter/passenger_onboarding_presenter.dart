@@ -33,6 +33,30 @@ class PassengerOnboardingPresenter
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+      if (currentUiState.currentPage == currentUiState.totalPages - 1) {
+        uiState.value = currentUiState.copyWith(showSkipButton: false);
+      }
+    }
+  }
+
+  void onSkip() {
+    if (currentUiState.currentPage < currentUiState.totalPages - 1) {
+      pageController.animateToPage(
+        currentUiState.totalPages,
+        duration: const Duration(milliseconds: 10),
+        curve: Curves.easeOut,
+      );
+      uiState.value = currentUiState.copyWith(showSkipButton: false);
+    }
+  }
+
+  void onBack() {
+    if (currentUiState.currentPage > 0) {
+      pageController.previousPage(
+        duration: const Duration(milliseconds: 10),
+        curve: Curves.easeOut,
+      );
+      uiState.value = currentUiState.copyWith(showSkipButton: true);
     }
   }
 
