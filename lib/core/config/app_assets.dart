@@ -16,4 +16,14 @@ class AppAssets {
   static const String icSplash3 = 'assets/images/svg/splash3.svg';
   static const String icArrowRight = 'assets/images/svg/back.svg';
   static const String icCabwireLogo = 'assets/images/svg/cabwire_logo.svg';
+  static const String icHome = 'assets/images/svg/ic_home.svg';
+  static const String icHistory = 'assets/images/svg/ic_history.svg';
+  static const String icProfile = 'assets/images/svg/ic_profile.svg';
+  static const String icEarning = 'assets/images/svg/ic_earning.svg';
+  static const String icHistoryOutline =
+      'assets/images/svg/ic_history_outline.svg';
+  static const String icProfileOutline =
+      'assets/images/svg/ic_profile_outline.svg';
+  static const String icEarningOutline =
+      'assets/images/svg/ic_earning_outline.svg';
 }

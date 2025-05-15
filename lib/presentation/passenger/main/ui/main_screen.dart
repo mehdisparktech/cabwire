@@ -36,7 +36,7 @@ class MainPage extends StatelessWidget {
             bottomNavigationBar: MainNavigationBar(
               selectedIndex: state.selectedBottomNavIndex,
               onDestinationSelected: (index) {
-                if (index == 3) {
+                if (index == 4) {
                   showMessage(message: 'Coming soon');
                   return;
                 }
