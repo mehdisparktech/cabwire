@@ -11,6 +11,8 @@ class CustomTextFormField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   const CustomTextFormField({
     super.key,
@@ -23,6 +25,8 @@ class CustomTextFormField extends StatelessWidget {
     this.validator,
     this.suffixIcon,
     this.prefixIcon,
+    this.readOnly = false,
+    this.onTap,
   });
 
   @override
@@ -32,6 +36,8 @@ class CustomTextFormField extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: isPassword ? obscureTextValue : false,
       validator: validator,
+      readOnly: readOnly,
+      onTap: onTap,
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: prefixIcon,

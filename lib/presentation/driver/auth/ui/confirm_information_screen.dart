@@ -20,11 +20,15 @@ class _ConfirmInformationScreenState extends State<ConfirmInformationScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _dateOfBirthController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
     _phoneNumberController.dispose();
+    _genderController.dispose();
+    _dateOfBirthController.dispose();
     super.dispose();
   }
 
@@ -37,32 +41,137 @@ class _ConfirmInformationScreenState extends State<ConfirmInformationScreen> {
     Get.to(() => SetLocationScreen());
   }
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _dateOfBirthController.text =
+            "${picked.day}/${picked.month}/${picked.year}";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AuthScreenWrapper(
       title: "Confirm Information",
       subtitle: "Please confirm your information to continue.",
-      child: AuthFormContainer(
-        formKey: _formKey,
-        formFields: [
-          CustomTextFormField(
-            controller: _nameController,
-            hintText: 'Enter Your Name',
-            keyboardType: TextInputType.name,
-            validator: AuthValidators.validateName,
+      child: Column(
+        children: [
+          // Profile Picture Upload
+          Center(
+            child: Stack(
+              children: [
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.person,
+                    size: 60,
+                    color: Colors.white,
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      size: 20,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          gapH20,
-          CustomTextFormField(
-            controller: _phoneNumberController,
-            hintText: 'Enter Your Phone Number',
-            keyboardType: TextInputType.phone,
-            validator: AuthValidators.validatePhoneNumber,
+
+          const SizedBox(height: 16),
+          const Text(
+            "Upload Your Profile Picture",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Form fields in AuthFormContainer
+          AuthFormContainer(
+            showLogo: false,
+            formKey: _formKey,
+            formFields: [
+              CustomTextFormField(
+                controller: _nameController,
+                hintText: 'Enter Your Name',
+                keyboardType: TextInputType.name,
+                validator: AuthValidators.validateName,
+              ),
+              gapH20,
+              CustomTextFormField(
+                controller: _phoneNumberController,
+                hintText: 'Enter Your Phone Number',
+                keyboardType: TextInputType.phone,
+                validator: AuthValidators.validatePhoneNumber,
+              ),
+              gapH20,
+              CustomTextFormField(
+                controller: _genderController,
+                hintText: 'Select Your Gender',
+                suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                readOnly: true,
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder:
+                        (context) => Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children:
+                              ['Male', 'Female', 'Other']
+                                  .map(
+                                    (gender) => ListTile(
+                                      title: Text(gender),
+                                      onTap: () {
+                                        setState(() {
+                                          _genderController.text = gender;
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
+                  );
+                },
+              ),
+              gapH20,
+              CustomTextFormField(
+                controller: _dateOfBirthController,
+                hintText: 'Date Of Birth',
+                suffixIcon: const Icon(Icons.calendar_today, size: 20),
+                readOnly: true,
+                onTap: () => _selectDate(context),
+              ),
+            ],
+            actionButton: CustomButton(
+              text: "Continue",
+              onPressed: _confirmInformation,
+            ),
           ),
         ],
-        actionButton: CustomButton(
-          text: "Continue",
-          onPressed: _confirmInformation,
-        ),
       ),
     );
   }

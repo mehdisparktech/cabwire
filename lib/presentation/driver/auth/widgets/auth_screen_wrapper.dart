@@ -37,11 +37,7 @@ class AuthScreenWrapper extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              AuthHeader(
-                title: title,
-                subtitle: subtitle,
-                color: context.color.whiteColor,
-              ),
+              AuthHeader(title: title, subtitle: subtitle, color: Colors.black),
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(

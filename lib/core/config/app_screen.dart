@@ -543,6 +543,13 @@ double get thirtyTwoPx {
   return _thirtyTwoPx!;
 }
 
+double? _thirtyFourPx;
+
+double get thirtyFourPx {
+  _thirtyFourPx ??= 34.px;
+  return _thirtyFourPx!;
+}
+
 double? _thirtyFivePx;
 
 double get thirtyFivePx {
