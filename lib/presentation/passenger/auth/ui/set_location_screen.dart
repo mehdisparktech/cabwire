@@ -1,4 +1,4 @@
-import 'package:cabwire/presentation/passenger/auth/ui/login_screen.dart';
+import 'package:cabwire/presentation/passenger/auth/ui/auth_navigator_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../widgets/custom_text_form_field.dart';
@@ -24,10 +24,11 @@ class _SetLocationScreenState extends State<SetLocationScreen> {
   }
 
   void _setLocation() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Set location logic
-      Get.to(() => LoginScreen(toggleView: () {}));
-    }
+    // if (_formKey.currentState?.validate() ?? false) {
+    //   // Set location logic
+    //   Get.to(() => LoginScreen(toggleView: () {}));
+    // }
+    Get.to(() => AuthNavigationScreen());
   }
 
   @override
