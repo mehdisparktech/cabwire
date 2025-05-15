@@ -15,7 +15,6 @@ class AuthService extends GetxService {
       isLoading.value = true;
       errorMessage.value = null;
 
-      // TODO: Implement actual registration logic
       await Future.delayed(const Duration(seconds: 2)); // Simulating API call
 
       return true;
@@ -33,7 +32,6 @@ class AuthService extends GetxService {
       isLoading.value = true;
       errorMessage.value = null;
 
-      // TODO: Implement actual login logic
       await Future.delayed(const Duration(seconds: 2)); // Simulating API call
 
       return true;
@@ -54,7 +52,6 @@ class AuthService extends GetxService {
       isLoading.value = true;
       errorMessage.value = null;
 
-      // TODO: Implement actual email verification logic
       await Future.delayed(const Duration(seconds: 2)); // Simulating API call
 
       return true;
@@ -72,7 +69,6 @@ class AuthService extends GetxService {
       isLoading.value = true;
       errorMessage.value = null;
 
-      // TODO: Implement actual password reset logic
       await Future.delayed(const Duration(seconds: 2)); // Simulating API call
 
       return true;
@@ -93,7 +89,6 @@ class AuthService extends GetxService {
       isLoading.value = true;
       errorMessage.value = null;
 
-      // TODO: Implement actual password setting logic
       await Future.delayed(const Duration(seconds: 2)); // Simulating API call
 
       return true;
@@ -110,7 +105,6 @@ class AuthService extends GetxService {
     try {
       isLoading.value = true;
 
-      // TODO: Implement actual logout logic
       await Future.delayed(const Duration(seconds: 1)); // Simulating API call
     } catch (e) {
       errorMessage.value = e.toString();
