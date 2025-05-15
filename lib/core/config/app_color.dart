@@ -88,13 +88,13 @@ class AppColor {
   static Color driverPrimaryGradient = Color(0xFFFFD2A9);
   static Color driverSecondaryGradient = Color(0xFFFFB772);
 
-  static Color driverButtonPrimaryGradient = Color(0xFFFD6D12);
-  static Color driverButtonSecondaryGradient = Color(0xFFEE5208);
+  static Color driverPrimaryButtonGradient = Color(0xFFFD6D12);
+  static Color driverSecondaryButtonGradient = Color(0xFFEE5208);
 
   static Color passengerPrimaryGradient = Color(0xFF021C4E);
   static Color passengerSecondaryGradient = Color(0xFF04193F);
   static Color passengerThirdGradient = Color(0xFF0D1211);
 
-  static Color passengerButtonPrimaryGradient = Color(0xFF01308D);
-  static Color passengerButtonSecondaryGradient = Color(0xFF04193F);
+  static Color passengerPrimaryButtonGradient = Color(0xFF01308D);
+  static Color passengerSecondaryButtonGradient = Color(0xFF04193F);
 }

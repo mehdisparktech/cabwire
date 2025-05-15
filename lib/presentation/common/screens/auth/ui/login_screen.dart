@@ -39,11 +39,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _signIn() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Sign in logic here
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
-    }
+    // if (_formKey.currentState?.validate() ?? false) {
+    //   // Sign in logic here
+    //   print('Email: ${_emailController.text}');
+    //   print('Password: ${_passwordController.text}');
+    // }
   }
 
   @override

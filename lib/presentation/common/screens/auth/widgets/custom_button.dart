@@ -1,3 +1,4 @@
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,13 +17,13 @@ class CustomButton extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment(0.00, 0.50),
           end: Alignment(1.00, 0.50),
-          colors: [const Color(0xFF01308D), const Color(0xFF04193F)],
+          colors: [
+            context.color.primaryButtonGradient,
+            context.color.secondaryButtonGradient,
+          ],
         ),
         shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: const Color(0xFF001C60) /* Stoke-Secoundary */,
-          ),
+          side: BorderSide(width: 1, color: context.color.primaryColor),
           borderRadius: BorderRadius.circular(200),
         ),
       ),
