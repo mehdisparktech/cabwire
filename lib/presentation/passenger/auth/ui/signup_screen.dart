@@ -2,11 +2,13 @@ import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../widgets/auth_header.dart';
 import '../widgets/app_logo_display.dart';
 import '../widgets/custom_text_form_field.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/toggle_auth_option.dart';
+import 'email_verify_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   final VoidCallback toggleView;
@@ -49,12 +51,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _signUp() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Sign up logic here
-      print('Name: ${_nameController.text}');
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
-    }
+    // if (_formKey.currentState?.validate() ?? false) {
+    //   // Sign up logic here
+    //   print('Name: ${_nameController.text}');
+    //   print('Email: ${_emailController.text}');
+    //   print('Password: ${_passwordController.text}');
+
+    // }
+    Get.to(
+      () => EmailVerificationScreen(
+        email: 'example@email.com',
+        onResendCode: () {},
+        onVerify: (code) {},
+        isSignUp: true,
+      ),
+    );
   }
 
   @override
@@ -98,7 +109,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const AppLogoDisplay(
-                            logoAssetPath: AppAssets.icDriverLogo,
+                            logoAssetPath: AppAssets.icPassengerLogo,
                             logoAssetPath2: AppAssets.icCabwireLogo,
                             appName: 'cabwire',
                           ),

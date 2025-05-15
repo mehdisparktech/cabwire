@@ -9,6 +9,8 @@ class CustomTextFormField extends StatelessWidget {
   final bool obscureTextValue;
   final VoidCallback? onVisibilityToggle;
   final FormFieldValidator<String>? validator;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
 
   const CustomTextFormField({
     super.key,
@@ -19,6 +21,8 @@ class CustomTextFormField extends StatelessWidget {
     this.obscureTextValue = false,
     this.onVisibilityToggle,
     this.validator,
+    this.suffixIcon,
+    this.prefixIcon,
   });
 
   @override
@@ -30,6 +34,7 @@ class CustomTextFormField extends StatelessWidget {
       validator: validator,
       decoration: InputDecoration(
         hintText: hintText,
+        prefixIcon: prefixIcon,
         // Border, contentPadding, hintStyle are now primarily handled by InputDecorationTheme
         suffixIcon:
             isPassword
@@ -40,7 +45,7 @@ class CustomTextFormField extends StatelessWidget {
                   ),
                   onPressed: onVisibilityToggle,
                 )
-                : null,
+                : suffixIcon,
       ),
     );
   }

@@ -144,7 +144,7 @@ class PassengerOnboardingScreen extends StatelessWidget {
                         _onboardingPages.length - 1
                     ? 'Get Started'
                     : 'Next',
-            width: 120,
+            width: 140,
             onPressed:
                 _presenter.currentUiState.currentPage ==
                         _onboardingPages.length - 1

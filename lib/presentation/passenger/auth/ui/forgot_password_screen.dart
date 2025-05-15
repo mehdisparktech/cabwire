@@ -2,30 +2,25 @@ import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_color.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/passenger/auth/ui/forgot_password_screen.dart';
+import 'package:cabwire/presentation/passenger/auth/ui/email_verify_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../widgets/auth_header.dart';
 import '../widgets/app_logo_display.dart';
 import '../widgets/custom_text_form_field.dart';
 import '../widgets/custom_button.dart';
-import '../widgets/toggle_auth_option.dart';
-import '../../../../core/static/app_colors.dart';
 
-class LoginScreen extends StatefulWidget {
-  final VoidCallback toggleView;
-
-  const LoginScreen({super.key, required this.toggleView});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -34,18 +29,20 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _togglePasswordVisibility() {
-    setState(() {
-      _obscurePassword = !_obscurePassword;
-    });
-  }
-
   void _signIn() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Sign in logic here
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
-    }
+    // if (_formKey.currentState?.validate() ?? false) {
+    //   // Sign in logic here
+    //   print('Email: ${_emailController.text}');
+    //   print('Password: ${_passwordController.text}');
+    // }
+    Get.to(
+      () => EmailVerificationScreen(
+        email: 'example@email.com',
+        onResendCode: () {},
+        onVerify: (code) {},
+        isSignUp: false,
+      ),
+    );
   }
 
   @override
@@ -69,11 +66,13 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              gapH30,
               AuthHeader(
-                title: "Sign In",
-                subtitle: "Welcome Back To Cabwire.",
+                title: "Forgot Password",
+                subtitle: "Please enter your email to continue.",
                 color: context.color.whiteColor,
               ),
+              gapH30,
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
@@ -99,11 +98,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           gapH30,
                           CustomTextFormField(
                             controller: _emailController,
-                            hintText: 'example@email.com',
+                            hintText: 'Enter Your Name',
                             keyboardType: TextInputType.emailAddress,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
+                                return 'Please enter your name';
                               }
                               if (!RegExp(
                                 r'^[^@]+@[^@]+\.[^@]+',
@@ -113,53 +112,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               return null;
                             },
                           ),
+
                           gapH20,
-                          CustomTextFormField(
-                            controller: _passwordController,
-                            hintText: 'Password',
-                            isPassword: true,
-                            obscureTextValue: _obscurePassword,
-                            onVisibilityToggle: _togglePasswordVisibility,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              return null;
-                            },
-                          ),
-                          gapH10,
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {
-                                // Forgot password logic
-                                Get.to(() => ForgotPasswordScreen());
-                              },
-                              style: TextButton.styleFrom(
-                                // Overriding theme for this specific TextButton as per original
-                                minimumSize: Size.zero,
-                                padding: EdgeInsets.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              child: const Text(
-                                "Forgot Password",
-                                style: TextStyle(
-                                  color: AppColors.textBlack87,
-                                  fontSize: 14,
-                                  fontWeight:
-                                      FontWeight
-                                          .normal, // Original had default weight
-                                ),
-                              ),
-                            ),
-                          ),
-                          gapH20,
-                          CustomButton(text: "Sign In", onPressed: _signIn),
-                          gapH30,
-                          ToggleAuthOption(
-                            leadingText: "Don't Have an Account?",
-                            actionText: "Sign Up",
-                            onActionPressed: widget.toggleView,
+                          CustomButton(
+                            text: "Get Verification Code",
+                            onPressed: _signIn,
                           ),
                         ],
                       ),

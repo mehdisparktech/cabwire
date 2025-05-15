@@ -2,26 +2,22 @@ import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_color.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/passenger/auth/ui/forgot_password_screen.dart';
+import 'package:cabwire/presentation/passenger/auth/ui/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../widgets/auth_header.dart';
 import '../widgets/app_logo_display.dart';
 import '../widgets/custom_text_form_field.dart';
 import '../widgets/custom_button.dart';
-import '../widgets/toggle_auth_option.dart';
-import '../../../../core/static/app_colors.dart';
 
-class LoginScreen extends StatefulWidget {
-  final VoidCallback toggleView;
-
-  const LoginScreen({super.key, required this.toggleView});
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -41,11 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _signIn() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Sign in logic here
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
-    }
+    // if (_formKey.currentState?.validate() ?? false) {
+    //   // Sign in logic here
+    //   print('Email: ${_emailController.text}');
+    //   print('Password: ${_passwordController.text}');
+    // }
+    Get.to(() => LoginScreen(toggleView: () {}));
   }
 
   @override
@@ -70,8 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AuthHeader(
-                title: "Sign In",
-                subtitle: "Welcome Back To Cabwire.",
+                title: "Reset Password",
+                subtitle: "Please enter your new password.",
                 color: context.color.whiteColor,
               ),
               Expanded(
@@ -98,23 +95,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           gapH30,
                           CustomTextFormField(
-                            controller: _emailController,
-                            hintText: 'example@email.com',
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              if (!RegExp(
-                                r'^[^@]+@[^@]+\.[^@]+',
-                              ).hasMatch(value)) {
-                                return 'Please enter a valid email address';
-                              }
-                              return null;
-                            },
-                          ),
-                          gapH20,
-                          CustomTextFormField(
                             controller: _passwordController,
                             hintText: 'Password',
                             isPassword: true,
@@ -127,39 +107,24 @@ class _LoginScreenState extends State<LoginScreen> {
                               return null;
                             },
                           ),
-                          gapH10,
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {
-                                // Forgot password logic
-                                Get.to(() => ForgotPasswordScreen());
-                              },
-                              style: TextButton.styleFrom(
-                                // Overriding theme for this specific TextButton as per original
-                                minimumSize: Size.zero,
-                                padding: EdgeInsets.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              child: const Text(
-                                "Forgot Password",
-                                style: TextStyle(
-                                  color: AppColors.textBlack87,
-                                  fontSize: 14,
-                                  fontWeight:
-                                      FontWeight
-                                          .normal, // Original had default weight
-                                ),
-                              ),
-                            ),
-                          ),
                           gapH20,
-                          CustomButton(text: "Sign In", onPressed: _signIn),
-                          gapH30,
-                          ToggleAuthOption(
-                            leadingText: "Don't Have an Account?",
-                            actionText: "Sign Up",
-                            onActionPressed: widget.toggleView,
+                          CustomTextFormField(
+                            controller: _passwordController,
+                            hintText: 'Confirm Password',
+                            isPassword: true,
+                            obscureTextValue: _obscurePassword,
+                            onVisibilityToggle: _togglePasswordVisibility,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              return null;
+                            },
+                          ),
+                          gapH10,
+                          CustomButton(
+                            text: "Reset Password",
+                            onPressed: _signIn,
                           ),
                         ],
                       ),
