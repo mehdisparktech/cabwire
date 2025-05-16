@@ -2,14 +2,14 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class DriverHomePage extends StatefulWidget {
+  const DriverHomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<DriverHomePage> createState() => _DriverHomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _DriverHomePageState extends State<DriverHomePage> {
   late GoogleMapController mapController;
 
   final LatLng _center = const LatLng(23.8103, 90.4125); // Dhaka coordinates

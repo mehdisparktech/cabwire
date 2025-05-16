@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
-import 'package:cabwire/presentation/passenger/home/presenter/home_presenter.dart';
+import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_presenter.dart';
 import 'package:cabwire/presentation/passenger/main/presenter/main_presenter.dart';
 import 'package:cabwire/presentation/passenger/onboarding/presenter/passenger_onboarding_presenter.dart';
 import 'package:cabwire/presentation/driver/onboarding/presenter/driver_onboarding_presenter.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/passenger/home/ui/home_screen.dart';
+import 'package:cabwire/presentation/passenger/home/ui/passenger_home_screen.dart';
 import 'package:cabwire/presentation/passenger/main/presenter/main_presenter.dart';
 import 'package:cabwire/presentation/passenger/main/presenter/main_ui_state.dart';
 import 'package:cabwire/presentation/passenger/main/widgets/double_tap_back_to_exit_app.dart';
@@ -13,11 +13,11 @@ class MainPage extends StatelessWidget {
   final MainPresenter _mainPresenter = locate<MainPresenter>();
 
   final List<Widget> _pages = <Widget>[
-    HomePage(),
-    HomePage(),
-    HomePage(),
-    HomePage(),
-    HomePage(),
+    PassengerHomeScreen(),
+    PassengerHomeScreen(),
+    PassengerHomeScreen(),
+    PassengerHomeScreen(),
+    PassengerHomeScreen(),
   ];
 
   @override

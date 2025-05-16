@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/passenger/main/widgets/nav_destination_item.dart';
+import 'package:cabwire/presentation/driver/main/widgets/nav_destination_item.dart';
 
 class MainNavigationBar extends StatelessWidget {
   const MainNavigationBar({
@@ -30,37 +30,30 @@ class MainNavigationBar extends StatelessWidget {
           NavDestinationItem(
             index: 0,
             selectedIndex: selectedIndex,
-            outlineIcon: AppAssets.icHomeOutline,
-            fillIcon: AppAssets.icHomeOutline,
+            outlineIcon: AppAssets.icHome,
+            fillIcon: AppAssets.icHome,
             label: 'Home',
           ),
           NavDestinationItem(
             index: 1,
             selectedIndex: selectedIndex,
-            outlineIcon: AppAssets.icHomeOutline,
-            fillIcon: AppAssets.icHomeOutline,
-            label: 'Tracker',
+            outlineIcon: AppAssets.icHistory,
+            fillIcon: AppAssets.icHistory,
+            label: 'History',
           ),
           NavDestinationItem(
             index: 2,
             selectedIndex: selectedIndex,
-            outlineIcon: AppAssets.icHomeOutline,
-            fillIcon: AppAssets.icHomeOutline,
-            label: 'Events',
+            outlineIcon: AppAssets.icEarning,
+            fillIcon: AppAssets.icEarning,
+            label: 'Earnings',
           ),
           NavDestinationItem(
             index: 3,
             selectedIndex: selectedIndex,
-            outlineIcon: AppAssets.icHomeOutline,
-            fillIcon: AppAssets.icHomeOutline,
-            label: 'Audio',
-          ),
-          NavDestinationItem(
-            index: 4,
-            selectedIndex: selectedIndex,
-            outlineIcon: AppAssets.icHomeOutline,
-            fillIcon: AppAssets.icHomeOutline,
-            label: 'Settings',
+            outlineIcon: AppAssets.icProfile,
+            fillIcon: AppAssets.icProfile,
+            label: 'Profile',
           ),
         ],
       ),
