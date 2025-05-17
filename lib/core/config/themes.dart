@@ -1,3 +1,4 @@
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/config/app_color.dart';
 import 'package:cabwire/core/config/app_theme_color.dart';
@@ -208,6 +209,18 @@ class AppTheme {
         padding: const EdgeInsets.only(left: 4), // As per original
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+        return states.contains(WidgetState.selected)
+            ? AppColor.white
+            : AppColor.driverButtonPrimaryStart;
+      }),
+      trackColor: WidgetStateProperty.resolveWith<Color>((states) {
+        return states.contains(WidgetState.selected)
+            ? AppColor.driverButtonPrimaryStart
+            : AppColor.driverButtonPrimaryStart.withOpacityInt(0.2);
+      }),
     ),
   );
 }

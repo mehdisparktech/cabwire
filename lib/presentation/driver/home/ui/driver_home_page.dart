@@ -16,6 +16,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
   late GoogleMapController mapController;
 
   final LatLng _center = const LatLng(23.8103, 90.4125);
+  bool isSwitched = false;
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -54,7 +55,19 @@ class _DriverHomePageState extends State<DriverHomePage> {
         ],
       ),
       actions: [
-        Switch(value: true, onChanged: (value) {}),
+        Transform.scale(
+          scale: 0.75, // adjust between 0.5 - 1.0 for desired size
+          child: Switch(
+            padding: EdgeInsets.zero,
+            value: isSwitched,
+            onChanged: (value) {
+              setState(() {
+                isSwitched = value;
+              });
+            },
+          ),
+        ),
+
         IconButton(
           icon: Icon(Icons.notifications_active),
           onPressed: () => Get.to(() => NotificationScreen()),
