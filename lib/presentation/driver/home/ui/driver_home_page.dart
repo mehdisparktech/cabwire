@@ -1,5 +1,7 @@
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
+import 'package:cabwire/presentation/driver/notification/ui/notification_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DriverHomePage extends StatefulWidget {
@@ -53,7 +55,10 @@ class _DriverHomePageState extends State<DriverHomePage> {
       ),
       actions: [
         Switch(value: true, onChanged: (value) {}),
-        IconButton(icon: Icon(Icons.notifications_active), onPressed: () {}),
+        IconButton(
+          icon: Icon(Icons.notifications_active),
+          onPressed: () => Get.to(() => NotificationScreen()),
+        ),
       ],
     );
   }
