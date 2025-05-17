@@ -1,4 +1,4 @@
-import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -12,7 +12,7 @@ class DriverHomePage extends StatefulWidget {
 class _DriverHomePageState extends State<DriverHomePage> {
   late GoogleMapController mapController;
 
-  final LatLng _center = const LatLng(23.8103, 90.4125); // Dhaka coordinates
+  final LatLng _center = const LatLng(23.8103, 90.4125);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -21,213 +21,165 @@ class _DriverHomePageState extends State<DriverHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacityInt(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Row(
+      appBar: _buildAppBar(),
+      body: Stack(children: [_buildMap(), _buildStackedCards()]),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      leading: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CircleAvatar(
+          backgroundColor: Colors.blue,
+          child: Icon(Icons.person, color: Colors.white),
+        ),
+      ),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                child: const CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.blue,
-                  child: Icon(Icons.person, color: Colors.white),
-                ),
+              Text(
+                'Hello Sabbir',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
+              SizedBox(width: 5),
+              Icon(Icons.circle, size: 8, color: Colors.green),
             ],
           ),
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Text(
-                  'Hello Sabbir',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ],
-            ),
-            const Text(
-              'You\'re Now Online',
-              style: TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-          ],
-        ),
-        actions: [
-          Switch(
-            value: true,
-            onChanged: (value) {},
-            activeColor: Colors.orange,
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.notifications_active_rounded),
-          ),
+          Text('You\'re Now Online', style: TextStyle(fontSize: 12)),
         ],
       ),
-      body: Stack(
-        children: [
-          // Full screen map
-          GoogleMap(
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: CameraPosition(target: _center, zoom: 14.0),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-            mapToolbarEnabled: false,
-          ),
+      actions: [
+        Switch(value: true, onChanged: (value) {}),
+        IconButton(icon: Icon(Icons.notifications_active), onPressed: () {}),
+      ],
+    );
+  }
 
-          // Bottom Sheet for Ride Request
-          Positioned(
-            bottom: 15,
-            left: 40,
-            right: 40,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+  Widget _buildMap() {
+    return GoogleMap(
+      onMapCreated: _onMapCreated,
+      initialCameraPosition: CameraPosition(target: _center, zoom: 14.0),
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+      zoomControlsEnabled: false,
+      mapToolbarEnabled: false,
+    );
+  }
+
+  Widget _buildStackedCards() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 80),
+        child: SizedBox(
+          height: 250,
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Positioned(
+                bottom: 40,
+                child: _rideCard(
+                  color: Colors.grey.shade100,
+                  name: 'Passenger 1',
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacityInt(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, -5),
-                  ),
-                ],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: const CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.amber,
-                          child: Icon(Icons.person, color: Colors.white),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Santiago Dalab',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
+              Positioned(
+                bottom: 20,
+                child: _rideCard(
+                  color: Colors.grey.shade100,
+                  name: 'Passenger 2',
+                ),
+              ),
+              _rideCard(color: Colors.white, name: 'Passenger 3'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-                              const Text('3.3 km'),
-                            ],
-                          ),
-                          const SizedBox(width: 12),
-                          Row(
-                            children: [
-                              Row(
-                                children: List.generate(
-                                  5,
-                                  (index) => const Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                    size: 14,
-                                  ),
-                                ),
-                              ),
-                              const Text(
-                                ' 5 (5)',
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'PICK UP',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                  const Text(
-                    'Block B, Banasree, Dhaka.',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {},
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text('Decline'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepOrange,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text('Accept'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+  Widget _rideCard({required Color color, required String name}) {
+    return Container(
+      width: 320,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4)),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: Colors.amber,
+                child: Icon(Icons.person, color: Colors.white),
               ),
-            ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          name,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text('3.3 km'),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Row(
+                          children: List.generate(
+                            5,
+                            (index) =>
+                                Icon(Icons.star, size: 14, color: Colors.amber),
+                          ),
+                        ),
+                        Text(' 5 (5)', style: TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Divider(color: Colors.grey.shade300),
+          Text('PICK UP', style: TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(
+            'Block B, Banasree, Dhaka.',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          ),
+          SizedBox(height: 8),
+          Divider(color: Colors.grey.shade300),
+          Row(
+            children: [
+              RideActionButton(
+                text: 'Decline',
+                onPressed: () {
+                  // decline action
+                },
+              ),
+              const SizedBox(width: 12),
+              RideActionButton(
+                text: 'Accept',
+                isPrimary: true,
+                onPressed: () {
+                  // accept action
+                },
+              ),
+            ],
           ),
         ],
       ),

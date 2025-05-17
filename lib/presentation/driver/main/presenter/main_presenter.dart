@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/domain/user/service/time_service.dart';
-import 'package:cabwire/presentation/passenger/main/presenter/main_ui_state.dart';
+import 'package:cabwire/presentation/driver/main/presenter/main_ui_state.dart';
 
 class MainPresenter extends BasePresenter<MainUiState> {
   final Obs<MainUiState> uiState = Obs(MainUiState.empty());
