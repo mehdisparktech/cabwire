@@ -1,16 +1,16 @@
 import 'package:cabwire/presentation/driver/home/ui/driver_home_page.dart';
+import 'package:cabwire/presentation/driver/main/presenter/driver_main_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/driver/main/presenter/main_presenter.dart';
-import 'package:cabwire/presentation/driver/main/presenter/main_ui_state.dart';
+import 'package:cabwire/presentation/driver/main/presenter/driver_main_ui_state.dart';
 import 'package:cabwire/presentation/driver/main/widgets/double_tap_back_to_exit_app.dart';
 import 'package:cabwire/presentation/driver/main/widgets/main_navigation_bar.dart';
 
-class MainPage extends StatelessWidget {
-  MainPage({super.key});
-  final MainPresenter _mainPresenter = locate<MainPresenter>();
+class DriverMainPage extends StatelessWidget {
+  DriverMainPage({super.key});
+  final DriverMainPresenter _mainPresenter = locate<DriverMainPresenter>();
 
   final List<Widget> _pages = <Widget>[
     DriverHomePage(),
@@ -26,7 +26,7 @@ class MainPage extends StatelessWidget {
       child: PresentableWidgetBuilder(
         presenter: _mainPresenter,
         builder: () {
-          final MainUiState state = _mainPresenter.currentUiState;
+          final DriverMainUiState state = _mainPresenter.currentUiState;
           return Scaffold(
             body:
                 state.selectedBottomNavIndex < _pages.length

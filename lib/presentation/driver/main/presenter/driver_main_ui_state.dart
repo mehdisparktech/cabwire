@@ -1,15 +1,15 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
 
-class MainUiState extends BaseUiState {
-  const MainUiState({
+class DriverMainUiState extends BaseUiState {
+  const DriverMainUiState({
     required super.isLoading,
     required super.userMessage,
     required this.selectedBottomNavIndex,
     this.lastBackPressTime,
   });
 
-  factory MainUiState.empty() {
-    return MainUiState(
+  factory DriverMainUiState.empty() {
+    return DriverMainUiState(
       isLoading: false,
       userMessage: '',
       selectedBottomNavIndex: 0,
@@ -28,13 +28,13 @@ class MainUiState extends BaseUiState {
     lastBackPressTime,
   ];
 
-  MainUiState copyWith({
+  DriverMainUiState copyWith({
     bool? isLoading,
     String? userMessage,
     int? selectedBottomNavIndex,
     DateTime? lastBackPressTime,
   }) {
-    return MainUiState(
+    return DriverMainUiState(
       isLoading: isLoading ?? this.isLoading,
       userMessage: userMessage ?? this.userMessage,
       selectedBottomNavIndex:

@@ -1,17 +1,20 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
 
-class HomeUiState extends BaseUiState {
-  const HomeUiState({required super.isLoading, required super.userMessage});
+class DriverHomeUiState extends BaseUiState {
+  const DriverHomeUiState({
+    required super.isLoading,
+    required super.userMessage,
+  });
 
-  factory HomeUiState.empty() {
-    return HomeUiState(isLoading: false, userMessage: '');
+  factory DriverHomeUiState.empty() {
+    return DriverHomeUiState(isLoading: false, userMessage: '');
   }
 
   @override
   List<Object?> get props => [isLoading, userMessage];
 
-  HomeUiState copyWith({bool? isLoading, String? userMessage}) {
-    return HomeUiState(
+  DriverHomeUiState copyWith({bool? isLoading, String? userMessage}) {
+    return DriverHomeUiState(
       isLoading: isLoading ?? this.isLoading,
       userMessage: userMessage ?? this.userMessage,
     );
