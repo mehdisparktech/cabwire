@@ -22,7 +22,7 @@ class AppColor {
 
   // Background Colors
   static const Color white = Colors.white;
-  static const Color background = Color(0xFFF8F9FA);
+  static const Color background = Color(0xFFFFFFFF);
   static const Color cardBackground = Colors.white;
 
   // Text Colors

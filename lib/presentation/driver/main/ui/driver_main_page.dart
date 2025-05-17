@@ -2,6 +2,7 @@ import 'package:cabwire/presentation/driver/earnings/ui/earning_page.dart';
 import 'package:cabwire/presentation/driver/home/ui/driver_home_page.dart';
 import 'package:cabwire/presentation/driver/main/presenter/driver_main_presenter.dart';
 import 'package:cabwire/presentation/driver/profile/ui/driver_profile_screen.dart';
+import 'package:cabwire/presentation/driver/ride_history/ui/ride_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
@@ -17,7 +18,7 @@ class DriverMainPage extends StatelessWidget {
   final List<Widget> _pages = <Widget>[
     DriverHomePage(),
     EarningsPage(),
-    DriverHomePage(),
+    RideHistoryPage(),
     DriverProfileScreen(),
   ];
 

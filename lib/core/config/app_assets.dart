@@ -39,4 +39,5 @@ class AppAssets {
 
   static const String icNoImage = 'assets/images/png/no_image.png';
   static const String icProfileImage = 'assets/images/png/profile_image.png';
+  static const String icCarImage = 'assets/images/png/car_image.png';
 }

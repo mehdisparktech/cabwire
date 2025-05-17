@@ -1,3 +1,4 @@
+import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:cabwire/presentation/driver/notification/ui/notification_page.dart';
 import 'package:flutter/material.dart';
@@ -33,8 +34,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
         child: CircleAvatar(
-          backgroundColor: Colors.blue,
-          child: Icon(Icons.person, color: Colors.white),
+          backgroundImage: AssetImage(AppAssets.icProfileImage),
         ),
       ),
       title: Column(
@@ -124,8 +124,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: Colors.amber,
-                child: Icon(Icons.person, color: Colors.white),
+                backgroundImage: AssetImage(AppAssets.icProfileImage),
               ),
               SizedBox(width: 12),
               Expanded(
