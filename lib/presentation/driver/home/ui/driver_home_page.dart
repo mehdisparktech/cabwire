@@ -73,7 +73,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 80),
+        padding: const EdgeInsets.only(bottom: 20),
         child: SizedBox(
           height: 250,
           child: Stack(
