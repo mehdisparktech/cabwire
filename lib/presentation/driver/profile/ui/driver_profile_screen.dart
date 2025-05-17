@@ -1,6 +1,12 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/driver/profile/ui/contact_us_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/edit_driving_info_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/edit_password_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/edit_profile_info_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/privacy_policy_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/terms_and_conditions_screen.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/common_text.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/item.dart';
@@ -68,7 +74,9 @@ class DriverProfileScreen extends StatelessWidget {
                       ),
 
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Get.to(() => EditProfileInfoScreen());
+                        },
                         child: Container(
                           width: 100,
                           height: 40,
@@ -112,35 +120,45 @@ class DriverProfileScreen extends StatelessWidget {
                     vertical: 18,
                     image: AppAssets.icPassword,
                     title: 'Password',
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => EditPasswordScreen());
+                    },
                   ),
 
                   Item(
                     vertical: 18,
                     image: AppAssets.icCar,
                     title: 'Edit Driving Information',
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => EditDrivingInfoScreen());
+                    },
                   ),
 
                   Item(
                     vertical: 18,
                     image: AppAssets.icTransitionHistory,
                     title: 'Terms & Conditions',
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => TermsAndConditionsScreen());
+                    },
                   ),
 
                   Item(
                     vertical: 18,
                     image: AppAssets.icTermsCondition,
                     title: 'Privacy Policy',
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => PrivacyPolicyScreen());
+                    },
                   ),
 
                   Item(
                     vertical: 18,
                     image: AppAssets.icContactUs,
                     title: 'Contact Us',
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => ContactUsScreen());
+                    },
                   ),
                   Item(
                     vertical: 18,

@@ -1,6 +1,6 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_login_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/driver_auth_navigator_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../common/components/auth/custom_text_form_field.dart';
@@ -44,10 +44,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   void _resetPassword() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Reset password logic
-      Get.to(() => LoginScreen(toggleView: () {}));
-    }
+    // if (_formKey.currentState?.validate() ?? false) {
+    //   // Reset password logic
+    // }
+    Get.to(() => AuthNavigator());
   }
 
   @override
@@ -63,7 +63,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         formFields: [
           CustomTextFormField(
             controller: _passwordController,
-            hintText: 'Password',
+            hintText: 'New Password',
             isPassword: true,
             obscureTextValue: _obscurePassword,
             onVisibilityToggle: _togglePasswordVisibility,
@@ -72,7 +72,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           gapH20,
           CustomTextFormField(
             controller: _confirmPasswordController,
-            hintText: 'Confirm Password',
+            hintText: 'Confirm New Password',
             isPassword: true,
             obscureTextValue: _obscureConfirmPassword,
             onVisibilityToggle: _toggleConfirmPasswordVisibility,

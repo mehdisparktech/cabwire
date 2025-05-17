@@ -1,7 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/driver_confirm_information_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/driver_reset_password_screen.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 
 import 'package:flutter/material.dart';
@@ -55,7 +55,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     if (widget.isSignUp) {
       Get.to(() => ConfirmInformationScreen());
     } else {
-      Get.to(() => AuthNavigator());
+      Get.to(() => ResetPasswordScreen());
     }
   }
 

@@ -6,12 +6,13 @@ class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final double? radius;
-
+  final double? widthPercentage;
   const CustomButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.radius,
+    this.widthPercentage,
   });
 
   @override
@@ -19,7 +20,7 @@ class CustomButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: context.width * 0.8,
+        width: context.width * (widthPercentage ?? 0.95),
         padding: const EdgeInsets.symmetric(vertical: 15),
         decoration: ShapeDecoration(
           gradient: LinearGradient(
