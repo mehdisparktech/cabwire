@@ -1,3 +1,4 @@
+import 'package:cabwire/presentation/driver/earnings/ui/earning_page.dart';
 import 'package:cabwire/presentation/driver/home/ui/driver_home_page.dart';
 import 'package:cabwire/presentation/driver/main/presenter/driver_main_presenter.dart';
 import 'package:cabwire/presentation/driver/profile/ui/driver_profile_screen.dart';
@@ -15,7 +16,7 @@ class DriverMainPage extends StatelessWidget {
 
   final List<Widget> _pages = <Widget>[
     DriverHomePage(),
-    DriverHomePage(),
+    EarningsPage(),
     DriverHomePage(),
     DriverProfileScreen(),
   ];

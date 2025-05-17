@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class EarningPage extends StatelessWidget {
-  const EarningPage({super.key});
+class RideHistoryPage extends StatelessWidget {
+  const RideHistoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Earning Page'),
+        title: const Text('RideHistory Page'),
       ),
       body: const Center(
-        child: Text('Welcome to Earning Page'),
+        child: Text('Welcome to RideHistory Page'),
       ),
     );
   }

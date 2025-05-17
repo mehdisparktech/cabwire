@@ -5,8 +5,14 @@ import 'package:get/get.dart';
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
+  final double? radius;
 
-  const CustomButton({super.key, required this.text, required this.onPressed});
+  const CustomButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.radius,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +32,7 @@ class CustomButton extends StatelessWidget {
           ),
           shape: RoundedRectangleBorder(
             side: BorderSide(width: 1, color: context.color.primaryColor),
-            borderRadius: BorderRadius.circular(200),
+            borderRadius: BorderRadius.circular(radius ?? 200),
           ),
         ),
         child: Row(
