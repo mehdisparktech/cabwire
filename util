@@ -1,0 +1,334 @@
+#!/bin/bash
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+MAGENTA='\033[0;35m'  # Added for spinner
+CHECKMARK='\033[32m✓\033[0m'  # Added for success checkmark
+CROSS='\033[31m𐄂\033[0m'  # Added for failure cross
+
+# Function: show_loading
+# Description: Displays a loading spinner with a custom message while a process is running
+# Parameters:
+#   $1: Description message to display
+#   $2: Process ID to monitor
+function show_loading() {
+  local description=$1
+  local process_id=$2
+  local spinner_index=0
+  local braille_spinner_list='⡿⣟⣯⣷⣾⣽⣻⢿'
+
+  echo -n "$description"
+
+  # Continue spinning while the process is running
+  while ps -p "$process_id" >/dev/null; do
+    printf "\b${MAGENTA}%s${NC}" "${braille_spinner_list:spinner_index:1}"
+    spinner_index=$(( (spinner_index + 1) % ${#braille_spinner_list} ))
+    sleep 0.025
+  done
+
+  # Display success or failure icon based on the process exit status
+  if wait $process_id; then
+    echo -e "\b${CHECKMARK} "
+  else
+    echo -e "\b${CROSS} "
+  fi
+}
+
+# Function to display APK size
+function display_apk_size() {
+  local apk_path="build/app/outputs/flutter-apk/app-release.apk"
+  
+  if [ -f "$apk_path" ]; then
+    local size_bytes=$(wc -c < "$apk_path")
+    local size_mb=$(echo "scale=2; $size_bytes / 1048576" | bc)
+    echo -e "${BLUE}APK Size: ${size_mb} MB${NC}"
+  else
+    echo -e "${RED}APK file not found at $apk_path${NC}"
+  fi
+}
+
+# Main script logic
+if [ "$1" == "page" ]; then
+  if [ "$2" == "driver" ]; then
+    if [ -z "$3" ]; then
+      echo -e "${RED}Error: Please provide a page name.${NC}"
+      echo -e "Usage: $0 page driver <name>"
+      exit 1
+    fi
+
+    # Set the page name and sub-directory from arguments
+    SUB_DIR="driver"
+    PAGE_NAME="$3"
+    
+    # Convert page_name to snake_case if it contains uppercase
+    SNAKE_CASE_NAME=$(echo "$PAGE_NAME" | sed 's/\([A-Z]\)/_\L\1/g' | sed 's/^_//')
+    
+    # Prepare directory names
+    BASE_DIR="lib/presentation/$SUB_DIR/$SNAKE_CASE_NAME"
+    UI_DIR="$BASE_DIR/ui"
+    PRESENTER_DIR="$BASE_DIR/presenter"
+    
+    echo -e "${YELLOW}Creating page structure for '$PAGE_NAME' in '$SUB_DIR'...${NC}\n"
+    
+    # Create directories
+    (mkdir -p "$UI_DIR" "$PRESENTER_DIR" >/dev/null 2>&1) &
+    PID=$!
+    show_loading "Creating directories...                               " $PID
+    
+    # Convert snake_case to CamelCase for class names
+    CAMEL_CASE_NAME=""
+    IFS='_' read -ra PARTS <<< "$SNAKE_CASE_NAME"
+    for PART in "${PARTS[@]}"; do
+      CAMEL_CASE_NAME="${CAMEL_CASE_NAME}$(tr '[:lower:]' '[:upper:]' <<< ${PART:0:1})${PART:1}"
+    done
+    
+    # Create UI file
+    UI_FILE="$UI_DIR/${SNAKE_CASE_NAME}_page.dart"
+    cat > "$UI_FILE" << EOF
+import 'package:flutter/material.dart';
+
+class ${CAMEL_CASE_NAME}Page extends StatelessWidget {
+  const ${CAMEL_CASE_NAME}Page({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('${CAMEL_CASE_NAME} Page'),
+      ),
+      body: const Center(
+        child: Text('Welcome to ${CAMEL_CASE_NAME} Page'),
+      ),
+    );
+  }
+}
+EOF
+
+    (echo "Created UI file" >/dev/null 2>&1) &
+    PID=$!
+    show_loading "Creating UI file...                                  " $PID
+    
+    # Create UI State file
+    UI_STATE_FILE="$PRESENTER_DIR/${SNAKE_CASE_NAME}_ui_state.dart"
+    cat > "$UI_STATE_FILE" << EOF
+import 'package:cabwire/core/base/base_ui_state.dart';
+
+class ${CAMEL_CASE_NAME}UiState extends BaseUiState {
+  const ${CAMEL_CASE_NAME}UiState({
+    required super.isLoading,
+    required super.userMessage,
+  });
+
+  factory ${CAMEL_CASE_NAME}UiState.empty() {
+    return const ${CAMEL_CASE_NAME}UiState(
+      userMessage: null,
+      isLoading: true,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        userMessage,
+        isLoading,
+      ];
+
+  ${CAMEL_CASE_NAME}UiState copyWith({
+    String? userMessage,
+    bool? isLoading,
+  }) {
+    return ${CAMEL_CASE_NAME}UiState(
+      isLoading: isLoading ?? this.isLoading,
+      userMessage: userMessage ?? this.userMessage,
+    );
+  }
+}
+EOF
+
+    (echo "Created UI State file" >/dev/null 2>&1) &
+    PID=$!
+    show_loading "Creating UI State file...                             " $PID
+    
+    # Create Presenter file
+    PRESENTER_FILE="$PRESENTER_DIR/${SNAKE_CASE_NAME}_presenter.dart"
+    cat > "$PRESENTER_FILE" << EOF
+import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/utility/utility.dart';
+import '${SNAKE_CASE_NAME}_ui_state.dart';
+
+class ${CAMEL_CASE_NAME}Presenter extends BasePresenter<${CAMEL_CASE_NAME}UiState> {
+  final Obs<${CAMEL_CASE_NAME}UiState> uiState = Obs<${CAMEL_CASE_NAME}UiState>(${CAMEL_CASE_NAME}UiState.empty());
+  ${CAMEL_CASE_NAME}UiState get currentUiState => uiState.value;
+
+  @override
+  Future<void> addUserMessage(String message) async {
+    uiState.value = currentUiState.copyWith(userMessage: message);
+    showMessage(message: currentUiState.userMessage);
+  }
+
+  @override
+  Future<void> toggleLoading({required bool loading}) async {
+    uiState.value = currentUiState.copyWith(isLoading: loading);
+  }
+}
+EOF
+
+    (echo "Created Presenter file" >/dev/null 2>&1) &
+    PID=$!
+    show_loading "Creating Presenter file...                            " $PID
+    
+    echo -e "\n${GREEN}✓ Page '${CAMEL_CASE_NAME}' created successfully!${NC}"
+    echo -e "  ${BLUE}Structure:${NC}"
+    echo -e "    └── ${BLUE}lib/presentation/${SUB_DIR}/${SNAKE_CASE_NAME}${NC}"
+    echo -e "        ├── ${BLUE}ui${NC}"
+    echo -e "        │   └── ${GREEN}${SNAKE_CASE_NAME}_page.dart${NC}"
+    echo -e "        └── ${BLUE}presenter${NC}"
+    echo -e "            ├── ${GREEN}${SNAKE_CASE_NAME}_ui_state.dart${NC}"
+    echo -e "            └── ${GREEN}${SNAKE_CASE_NAME}_presenter.dart${NC}"
+
+  else
+    if [ -z "$2" ]; then
+      echo -e "${RED}Error: Please provide a page name.${NC}"
+      echo -e "Usage: $0 page <name> or $0 page driver <name>"
+      exit 1
+    fi
+
+    # Original page creation logic for direct lib/presentation
+    PAGE_NAME="$2"
+    SNAKE_CASE_NAME=$(echo "$PAGE_NAME" | sed 's/\([A-Z]\)/_\L\1/g' | sed 's/^_//')
+    BASE_DIR="lib/presentation/$SNAKE_CASE_NAME"
+    UI_DIR="$BASE_DIR/ui"
+    PRESENTER_DIR="$BASE_DIR/presenter"
+    
+    echo -e "${YELLOW}Creating page structure for '$PAGE_NAME'...${NC}\n"
+    
+    (mkdir -p "$UI_DIR" "$PRESENTER_DIR" >/dev/null 2>&1) &
+    PID=$!
+    show_loading "Creating directories...                               " $PID
+    
+    CAMEL_CASE_NAME=""
+    IFS='_' read -ra PARTS <<< "$SNAKE_CASE_NAME"
+    for PART in "${PARTS[@]}"; do
+      CAMEL_CASE_NAME="${CAMEL_CASE_NAME}$(tr '[:lower:]' '[:upper:]' <<< ${PART:0:1})${PART:1}"
+    done
+    
+    UI_FILE="$UI_DIR/${SNAKE_CASE_NAME}_page.dart"
+    cat > "$UI_FILE" << EOF
+import 'package:flutter/material.dart';
+
+class ${CAMEL_CASE_NAME}Page extends StatelessWidget {
+  const ${CAMEL_CASE_NAME}Page({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('${CAMEL_CASE_NAME} Page'),
+      ),
+      body: const Center(
+        child: Text('Welcome to ${CAMEL_CASE_NAME} Page'),
+      ),
+    );
+  }
+}
+EOF
+
+    (echo "Created UI file" >/dev/null 2>&1) &
+    PID=$!
+    show_loading "Creating UI file...                                  " $PID
+    
+    UI_STATE_FILE="$PRESENTER_DIR/${SNAKE_CASE_NAME}_ui_state.dart"
+    cat > "$UI_STATE_FILE" << EOF
+import 'package:cabwire/core/base/base_ui_state.dart';
+
+class ${CAMEL_CASE_NAME}UiState extends BaseUiState {
+  const ${CAMEL_CASE_NAME}UiState({
+    required super.isLoading,
+    required super.userMessage,
+  });
+
+  factory ${CAMEL_CASE_NAME}UiState.empty() {
+    return const ${CAMEL_CASE_NAME}UiState(
+      userMessage: null,
+      isLoading: true,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        userMessage,
+        isLoading,
+      ];
+
+  ${CAMEL_CASE_NAME}UiState copyWith({
+    String? userMessage,
+    bool? isLoading,
+  }) {
+    return ${CAMEL_CASE_NAME}UiState(
+      isLoading: isLoading ?? this.isLoading,
+      userMessage: userMessage ?? this.userMessage,
+    );
+  }
+}
+EOF
+
+    (echo "Created UI State file" >/dev/null 2>&1) &
+    PID=$!
+    show_loading "Creating UI State file...                             " $PID
+    
+    PRESENTER_FILE="$PRESENTER_DIR/${SNAKE_CASE_NAME}_presenter.dart"
+    cat > "$PRESENTER_FILE" << EOF
+import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/utility/utility.dart';
+import '${SNAKE_CASE_NAME}_ui_state.dart';
+
+class ${CAMEL_CASE_NAME}Presenter extends BasePresenter<${CAMEL_CASE_NAME}UiState> {
+  final Obs<${CAMEL_CASE_NAME}UiState> uiState = Obs<${CAMEL_CASE_NAME}UiState>(${CAMEL_CASE_NAME}UiState.empty());
+  ${CAMEL_CASE_NAME}UiState get currentUiState => uiState.value;
+
+  @override
+  Future<void> addUserMessage(String message) async {
+    uiState.value = currentUiState.copyWith(userMessage: message);
+    showMessage(message: currentUiState.userMessage);
+  }
+
+  @override
+  Future<void> toggleLoading({required bool loading}) async {
+    uiState.value = currentUiState.copyWith(isLoading: loading);
+  }
+}
+EOF
+
+    (echo "Created Presenter file" >/dev/null 2>&1) &
+    PID=$!
+    show_loading "Creating Presenter file...                            " $secondary
+    PID=$!
+    show_loading "Creating Presenter file...                            " $PID
+    
+    echo -e "\n${GREEN}✓ Page '${CAMEL_CASE_NAME}' created successfully!${NC}"
+    echo -e "  ${BLUE}Structure:${NC}"
+    echo -e "    └── ${BLUE}lib/presentation/${SNAKE_CASE_NAME}${NC}"
+    echo -e "        ├── ${BLUE}ui${NC}"
+    echo -e "        │   └── ${GREEN}${SNAKE_CASE_NAME}_page.dart${NC}"
+    echo -e "        └── ${BLUE}presenter${NC}"
+    echo -e "            ├── ${GREEN}${SNAKE_CASE_NAME}_ui_state.dart${NC}"
+    echo -e "            └── ${GREEN}${SNAKE_CASE_NAME}_presenter.dart${NC}"
+  fi
+
+else
+  echo -e "${YELLOW}Usage: $0 [command]${NC}"
+  echo -e "\nAvailable commands:"
+  echo -e "  apk          Build release APK (Full Process)"
+  echo -e "  aab          Build release AAB"
+  echo -e "  lang         Generate localization files"
+  echo -e "  db           Run build_runner"
+  echo -e "  setup        Perform full project setup"
+  echo -e "  cache-repair Repair pub cache"
+  echo -e "  cleanup      Clean project and get dependencies"
+  echo -e "  release-run  Build & install release APK on connected device"
+  echo -e "  page         Create a new page structure (Usage: $0 page <name> or $0 page driver <name>)"
+  exit 1
+fi

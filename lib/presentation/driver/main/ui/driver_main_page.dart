@@ -1,5 +1,6 @@
 import 'package:cabwire/presentation/driver/home/ui/driver_home_page.dart';
 import 'package:cabwire/presentation/driver/main/presenter/driver_main_presenter.dart';
+import 'package:cabwire/presentation/driver/profile/ui/driver_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
@@ -16,7 +17,7 @@ class DriverMainPage extends StatelessWidget {
     DriverHomePage(),
     DriverHomePage(),
     DriverHomePage(),
-    DriverHomePage(),
+    DriverProfileScreen(),
   ];
 
   @override
@@ -35,7 +36,7 @@ class DriverMainPage extends StatelessWidget {
             bottomNavigationBar: MainNavigationBar(
               selectedIndex: state.selectedBottomNavIndex,
               onDestinationSelected: (index) {
-                if (index == 3) {
+                if (index == 4) {
                   showMessage(message: 'Coming soon');
                   return;
                 }

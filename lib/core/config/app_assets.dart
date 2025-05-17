@@ -26,4 +26,17 @@ class AppAssets {
       'assets/images/svg/ic_profile_outline.svg';
   static const String icEarningOutline =
       'assets/images/svg/ic_earning_outline.svg';
+  static const String icPassword = 'assets/images/svg/ic_password.svg';
+  static const String icTransitionHistory =
+      'assets/images/svg/ic_transition_history.svg';
+  static const String icTermsCondition =
+      'assets/images/svg/ic_terms_condition.svg';
+  static const String icCar = 'assets/images/svg/ic_car.svg';
+  static const String icContactUs = 'assets/images/svg/ic_contact_us.svg';
+  static const String icDeleteAccount =
+      'assets/images/svg/ic_delete_account.svg';
+  static const String icLogout = 'assets/images/svg/ic_logout.svg';
+
+  static const String icNoImage = 'assets/images/png/no_image.png';
+  static const String icProfileImage = 'assets/images/png/profile_image.png';
 }

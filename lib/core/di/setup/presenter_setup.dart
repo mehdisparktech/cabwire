@@ -1,5 +1,6 @@
 import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
+import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_presenter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/di/service_locator.dart';
@@ -25,6 +26,7 @@ class PresenterSetup implements SetupModule {
         () => loadPresenter(PassengerOnboardingPresenter()),
       )
       ..registerLazySingleton(() => loadPresenter(DriverOnboardingPresenter()))
-      ..registerLazySingleton(() => loadPresenter(WelcomePresenter()));
+      ..registerLazySingleton(() => loadPresenter(WelcomePresenter()))
+      ..registerLazySingleton(() => loadPresenter(DriverProfilePresenter()));
   }
 }
