@@ -1,6 +1,9 @@
+import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
 import 'package:cabwire/presentation/driver/earnings/widgets/daily_earnings_card.dart';
 import 'package:cabwire/presentation/driver/earnings/widgets/earnings_summary_card.dart';
+import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,7 +19,7 @@ class EarningsPage extends StatelessWidget {
     final double todayEarning = 2300.25;
     final double cashPayment = 1500.0;
     final double onlinePayment = 800.25;
-    final double walletAmount = -200.0;
+    final double walletAmount = 200.0;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -33,7 +36,37 @@ class EarningsPage extends StatelessWidget {
         ),
         elevation: 0,
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.sort_rounded)),
+          GestureDetector(
+            onTap: () {
+              showMenu(
+                context: context,
+                position: RelativeRect.fromLTRB(100, 80, 0, 0),
+                items: [
+                  PopupMenuItem(child: Text('Sort by date'), onTap: () {}),
+                  PopupMenuItem(child: Text('Sort by amount'), onTap: () {}),
+                ],
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 10),
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacityInt(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                  ),
+                ],
+              ),
+              child: CommonImage(
+                imageType: ImageType.svg,
+                imageSrc: AppAssets.icSort,
+              ),
+            ),
+          ),
         ],
       ),
       body: SafeArea(

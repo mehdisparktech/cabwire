@@ -20,7 +20,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
   late GoogleMapController mapController;
 
   final LatLng _center = const LatLng(23.8103, 90.4125);
-  bool isSwitched = false;
+  bool isSwitched = true;
   late bool isRiderOnline;
 
   @override
@@ -51,7 +51,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
     return AppBar(
       toolbarHeight: 80,
       leading: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: CircleAvatar(
           backgroundImage: AssetImage(AppAssets.icProfileImage),
         ),
@@ -66,7 +66,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(width: 5),
-              Icon(Icons.circle, size: 8, color: Colors.green),
+              Icon(Icons.circle, size: 10, color: Colors.green),
             ],
           ),
           Text('You\'re Now Online', style: TextStyle(fontSize: 12)),

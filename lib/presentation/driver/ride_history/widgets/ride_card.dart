@@ -204,7 +204,7 @@ class RideCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.orange.shade600,
+                            color: context.theme.colorScheme.primary,
                           ),
                         ),
                       ),
