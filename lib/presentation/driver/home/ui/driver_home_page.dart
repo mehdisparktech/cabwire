@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/presentation/driver/home/ui/driver_home_page_offline.dart';
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:cabwire/presentation/driver/notification/ui/notification_page.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,8 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DriverHomePage extends StatefulWidget {
-  const DriverHomePage({super.key});
+  final bool? isOnline;
+  const DriverHomePage({super.key, this.isOnline});
 
   @override
   State<DriverHomePage> createState() => _DriverHomePageState();
@@ -17,9 +19,22 @@ class _DriverHomePageState extends State<DriverHomePage> {
 
   final LatLng _center = const LatLng(23.8103, 90.4125);
   bool isSwitched = false;
+  late bool isRiderOnline;
+
+  @override
+  void initState() {
+    super.initState();
+    isRiderOnline = widget.isOnline ?? false;
+  }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+  }
+
+  void _goOnline() {
+    setState(() {
+      isRiderOnline = true;
+    });
   }
 
   @override
@@ -97,21 +112,30 @@ class _DriverHomePageState extends State<DriverHomePage> {
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              Positioned(
-                bottom: 40,
-                child: _rideCard(
-                  color: Colors.grey.shade100,
-                  name: 'Passenger 1',
+              if (isRiderOnline) ...[
+                Positioned(
+                  bottom: 40,
+                  child: _rideCard(
+                    color: Colors.grey.shade100,
+                    name: 'Passenger 1',
+                  ),
                 ),
-              ),
-              Positioned(
-                bottom: 20,
-                child: _rideCard(
-                  color: Colors.grey.shade100,
-                  name: 'Passenger 2',
+                Positioned(
+                  bottom: 20,
+                  child: _rideCard(
+                    color: Colors.grey.shade100,
+                    name: 'Passenger 2',
+                  ),
                 ),
-              ),
-              _rideCard(color: Colors.white, name: 'Passenger 3'),
+                Positioned(
+                  bottom: 0,
+                  child: _rideCard(
+                    color: Colors.grey.shade100,
+                    name: 'Passenger 3',
+                  ),
+                ),
+              ],
+              if (!isRiderOnline) ...[_rideOfflineCard()],
             ],
           ),
         ),
@@ -194,9 +218,60 @@ class _DriverHomePageState extends State<DriverHomePage> {
                 isPrimary: true,
                 onPressed: () {
                   // accept action
+                  Get.to(() => DriverHomePageOffline());
                 },
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _rideOfflineCard() {
+    return Container(
+      width: 400,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: context.theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4)),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Ready to drive?',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          ),
+          Text(
+            'Your status is offline. Please go online to get your next ride.',
+            style: TextStyle(fontWeight: FontWeight.w500),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: RideActionButton(
+              text: 'Go Online',
+              isPrimary: true,
+              onPressed: () {
+                _goOnline();
+              },
+            ),
+          ),
+          SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: RideActionButton(
+              text: 'Not Now',
+              onPressed: () {
+                // accept action
+              },
+            ),
           ),
         ],
       ),
