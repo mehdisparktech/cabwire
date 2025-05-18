@@ -1,5 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
-import 'package:cabwire/presentation/driver/home/ui/driver_home_page_offline.dart';
+import 'package:cabwire/presentation/driver/home/ui/rideshare_page.dart';
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:cabwire/presentation/driver/notification/ui/notification_page.dart';
 import 'package:flutter/material.dart';
@@ -206,20 +206,24 @@ class _DriverHomePageState extends State<DriverHomePage> {
           Divider(color: Colors.grey.shade300),
           Row(
             children: [
-              RideActionButton(
-                text: 'Decline',
-                onPressed: () {
-                  // decline action
-                },
+              Expanded(
+                child: RideActionButton(
+                  text: 'Decline',
+                  onPressed: () {
+                    // decline action
+                  },
+                ),
               ),
               const SizedBox(width: 12),
-              RideActionButton(
-                text: 'Accept',
-                isPrimary: true,
-                onPressed: () {
-                  // accept action
-                  Get.to(() => DriverHomePageOffline());
-                },
+              Expanded(
+                child: RideActionButton(
+                  text: 'Accept',
+                  isPrimary: true,
+                  onPressed: () {
+                    // accept action
+                    Get.to(() => RidesharePage());
+                  },
+                ),
               ),
             ],
           ),
@@ -253,15 +257,12 @@ class _DriverHomePageState extends State<DriverHomePage> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: RideActionButton(
-              text: 'Go Online',
-              isPrimary: true,
-              onPressed: () {
-                _goOnline();
-              },
-            ),
+          RideActionButton(
+            text: 'Go Online',
+            isPrimary: true,
+            onPressed: () {
+              _goOnline();
+            },
           ),
           SizedBox(height: 12),
           SizedBox(
