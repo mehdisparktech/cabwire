@@ -15,9 +15,10 @@ class ChatPage extends StatelessWidget {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
+      toolbarHeight: 80,
       backgroundColor: Colors.white,
       elevation: 1,
-      leadingWidth: 40,
+      leadingWidth: 45,
       titleSpacing: 5,
       leading: const Icon(
         Icons.arrow_back_ios_new_rounded,
@@ -28,6 +29,14 @@ class ChatPage extends StatelessWidget {
           const CircleAvatar(
             radius: 20,
             backgroundImage: AssetImage(AppAssets.icProfileImage),
+          ),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Mandy', style: context.theme.textTheme.bodyLarge),
+              Text('Online', style: context.theme.textTheme.bodySmall),
+            ],
           ),
         ],
       ),
