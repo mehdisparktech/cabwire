@@ -2,10 +2,10 @@
 
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/presentation/driver/auth/ui/driver_login_screen.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../common/components/auth/custom_text_form_field.dart';
 import '../../../common/components/auth/custom_button.dart';
 import '../../../common/components/auth/auth_screen_wrapper.dart';
@@ -53,7 +53,7 @@ class _VehiclesInformationScreenState extends State<VehiclesInformationScreen> {
     //   print('Email: ${_emailController.text}');
     //   print('Password: ${_passwordController.text}');
     // }
-    Get.to(() => LoginScreen(toggleView: () {}));
+    NavigationUtility.slideRight(context, LoginScreen(toggleView: () {}));
   }
 
   @override

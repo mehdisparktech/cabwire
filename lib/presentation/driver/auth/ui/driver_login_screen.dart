@@ -1,5 +1,6 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/presentation/driver/auth/ui/driver_forgot_password_screen.dart';
 import 'package:cabwire/presentation/driver/main/ui/driver_main_page.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
     //   print('Email: ${_emailController.text}');
     //   print('Password: ${_passwordController.text}');
     // }
-    Get.offAll(() => DriverMainPage());
+    NavigationUtility.fadeReplacement(context, DriverMainPage());
   }
 
   @override

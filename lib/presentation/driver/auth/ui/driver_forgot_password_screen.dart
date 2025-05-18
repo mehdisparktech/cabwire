@@ -1,7 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/presentation/driver/auth/ui/driver_email_verify_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../common/components/auth/custom_text_form_field.dart';
 import '../../../common/components/auth/custom_button.dart';
 import '../../../common/components/auth/auth_screen_wrapper.dart';
@@ -30,8 +30,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     //   // Sign in logic here
     //   print('Email: ${_emailController.text}');
     // }
-    Get.to(
-      () => EmailVerificationScreen(
+    NavigationUtility.slideRight(
+      context,
+      EmailVerificationScreen(
         email: 'example@email.com',
         onResendCode: () {},
         onVerify: (code) {},

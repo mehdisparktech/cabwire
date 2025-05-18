@@ -1,8 +1,8 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/presentation/driver/auth/ui/driver_auth_navigator_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../common/components/auth/custom_text_form_field.dart';
 import '../../../common/components/auth/custom_button.dart';
 import '../../../common/components/auth/auth_screen_wrapper.dart';
@@ -47,7 +47,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     // if (_formKey.currentState?.validate() ?? false) {
     //   // Reset password logic
     // }
-    Get.to(() => AuthNavigator());
+    NavigationUtility.slideRight(context, AuthNavigator());
   }
 
   @override

@@ -94,4 +94,22 @@ class NavigationUtility {
       ),
     );
   }
+
+  static void fadeReplacement(
+    BuildContext context,
+    Widget screen, {
+    Duration duration = const Duration(milliseconds: 300),
+  }) {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => screen,
+        transitionDuration: duration,
+        reverseTransitionDuration: duration,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+  }
 }

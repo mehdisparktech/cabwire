@@ -1,8 +1,8 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/presentation/driver/auth/ui/driver_license_information.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../common/components/auth/custom_text_form_field.dart';
 import '../../../common/components/auth/custom_button.dart';
 import '../../../common/components/auth/auth_screen_wrapper.dart';
@@ -39,7 +39,7 @@ class _ConfirmInformationScreenState extends State<ConfirmInformationScreen> {
     //   print('Email: ${_emailController.text}');
     //   print('Password: ${_passwordController.text}');
     // }
-    Get.to(() => DriverLicenseInformationScreen());
+    NavigationUtility.slideRight(context, DriverLicenseInformationScreen());
   }
 
   Future<void> _selectDate(BuildContext context) async {

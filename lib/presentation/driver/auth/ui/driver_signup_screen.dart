@@ -1,7 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../common/components/auth/custom_text_form_field.dart';
 import '../../../common/components/auth/custom_button.dart';
 import '../../../common/components/auth/toggle_auth_option.dart';
@@ -57,8 +57,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     //   print('Email: ${_emailController.text}');
     //   print('Password: ${_passwordController.text}');
     // }
-    Get.to(
-      () => EmailVerificationScreen(
+    NavigationUtility.slideRight(
+      context,
+      EmailVerificationScreen(
         email: 'example@email.com',
         onResendCode: () {},
         onVerify: (code) {},
