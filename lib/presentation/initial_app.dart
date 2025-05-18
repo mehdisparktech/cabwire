@@ -39,10 +39,7 @@ class InitialApp extends StatelessWidget {
               onInit: () => AppScreen.setUp(context),
               onReady: () => AppScreen.setUp(context),
               debugShowCheckedModeBanner: false,
-              theme:
-                  presenter.currentUiState.userType == UserType.passenger
-                      ? AppTheme.passengerTheme
-                      : AppTheme.driverTheme,
+              theme: presenter.themeChange(context),
               title: 'Cabwire',
               // home: isFirstRun ? OnboardingPage() : MainPage(),
               home: WelcomeScreen(),
