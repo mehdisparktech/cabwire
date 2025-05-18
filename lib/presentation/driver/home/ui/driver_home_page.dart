@@ -99,7 +99,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacityInt(0.5),
+                    color: Colors.grey.withOpacityInt(0.2),
                     spreadRadius: 2,
                     blurRadius: 5,
                   ),

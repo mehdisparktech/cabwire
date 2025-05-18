@@ -41,9 +41,39 @@ class EarningsPage extends StatelessWidget {
               showMenu(
                 context: context,
                 position: RelativeRect.fromLTRB(100, 80, 0, 0),
-                items: [
-                  PopupMenuItem(child: Text('Sort by date'), onTap: () {}),
-                  PopupMenuItem(child: Text('Sort by amount'), onTap: () {}),
+                items: <PopupMenuEntry<String>>[
+                  PopupMenuItem<String>(
+                    value: 'today',
+                    child: Text(
+                      'Today',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem<String>(
+                    value: 'week',
+                    child: Text(
+                      'This Week',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem<String>(
+                    value: 'month',
+                    child: Text(
+                      'This Month',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                  ),
                 ],
               );
             },

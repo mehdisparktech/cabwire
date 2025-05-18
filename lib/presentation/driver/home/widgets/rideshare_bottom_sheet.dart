@@ -1,4 +1,5 @@
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/driver/chat/ui/chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // For context.theme in RideshareBottomSheet itself
 
@@ -43,10 +44,7 @@ class RideshareBottomSheet extends StatelessWidget {
             // Use the new widget
             onTap: () {
               // You can define specific onTap behavior here if needed
-              Get.snackbar(
-                "Custom Action",
-                "Message button tapped from BottomSheet!",
-              );
+              Get.to(() => ChatPage());
             },
           ),
           const SizedBox(height: 16),
