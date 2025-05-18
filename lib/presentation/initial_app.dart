@@ -30,8 +30,14 @@ class InitialApp extends StatelessWidget {
             return GetMaterialApp(
               navigatorKey: navigatorKey,
               builder: (context, child) {
-                return Overlay(
-                  initialEntries: [OverlayEntry(builder: (context) => child!)],
+                return AnimatedTheme(
+                  data: presenter.uiState.value.theme,
+                  duration: const Duration(milliseconds: 300),
+                  child: Overlay(
+                    initialEntries: [
+                      OverlayEntry(builder: (context) => child!),
+                    ],
+                  ),
                 );
               },
               onInit: () => AppScreen.setUp(context),
