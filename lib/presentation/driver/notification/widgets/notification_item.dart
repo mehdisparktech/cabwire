@@ -1,5 +1,7 @@
+import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/common_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,9 +45,9 @@ class NotificationItem extends StatelessWidget {
                 ),
               ],
             ),
-            child: Icon(
-              Icons.notifications_active_outlined,
-              color: context.theme.colorScheme.primary,
+            child: CommonImage(
+              imageType: ImageType.svg,
+              imageSrc: AppAssets.icNotificationBing,
             ),
           ),
           gapW16,

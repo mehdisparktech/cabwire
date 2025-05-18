@@ -41,4 +41,9 @@ class AppAssets {
   static const String icProfileImage = 'assets/images/png/profile_image.png';
   static const String icCarImage = 'assets/images/png/car_image.png';
   static const String icNoDataFound = 'assets/images/svg/no_data_found.svg';
+  static const String icNotifcationActive =
+      'assets/images/svg/notification_active.svg';
+
+  static const String icNotificationBing =
+      'assets/images/svg/notification_bing.svg';
 }
