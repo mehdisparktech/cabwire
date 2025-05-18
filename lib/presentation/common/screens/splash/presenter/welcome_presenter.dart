@@ -14,6 +14,7 @@ class WelcomePresenter extends BasePresenter<WelcomeUiState> {
 
   void onPassengerButtonPressed(BuildContext context) {
     uiState.value = currentUiState.copyWith(userType: UserType.passenger);
+    uiState.value = currentUiState.copyWith(theme: AppTheme.passengerTheme);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => PassengerOnboardingScreen()),
@@ -22,19 +23,11 @@ class WelcomePresenter extends BasePresenter<WelcomeUiState> {
 
   void onDriverButtonPressed(BuildContext context) {
     uiState.value = currentUiState.copyWith(userType: UserType.driver);
-    themeChange(context);
+    uiState.value = currentUiState.copyWith(theme: AppTheme.driverTheme);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DriverOnboardingScreen()),
     );
-  }
-
-  ThemeData themeChange(BuildContext context) {
-    if (currentUiState.userType == UserType.passenger) {
-      return AppTheme.passengerTheme;
-    } else {
-      return AppTheme.driverTheme;
-    }
   }
 
   @override
