@@ -9,12 +9,25 @@ import 'package:cabwire/presentation/driver/profile/ui/privacy_policy_screen.dar
 import 'package:cabwire/presentation/driver/profile/ui/terms_and_conditions_screen.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/common_text.dart';
+import 'package:cabwire/presentation/driver/profile/widgets/delete_account_dialog.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/item.dart';
+import 'package:cabwire/presentation/driver/profile/widgets/logout_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DriverProfileScreen extends StatelessWidget {
   const DriverProfileScreen({super.key});
+
+  void showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const DeleteAccountDialog(),
+    );
+  }
+
+  void showLogoutDialog(BuildContext context) {
+    showDialog(context: context, builder: (context) => const LogoutDialog());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,13 +177,17 @@ class DriverProfileScreen extends StatelessWidget {
                     vertical: 18,
                     image: AppAssets.icDeleteAccount,
                     title: 'Delete Account',
-                    onTap: () {},
+                    onTap: () {
+                      showDeleteAccountDialog(context);
+                    },
                   ),
                   Item(
                     vertical: 18,
                     image: AppAssets.icLogout,
                     title: 'Log Out',
-                    onTap: () {},
+                    onTap: () {
+                      showLogoutDialog(context);
+                    },
                   ),
                 ],
               ),
