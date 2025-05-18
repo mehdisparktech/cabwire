@@ -95,15 +95,12 @@ class CustomToastState extends State<CustomToast>
           child: Material(
             color: Colors.transparent,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: twentyPx),
+              padding: EdgeInsets.symmetric(horizontal: px20),
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: twentyPx,
-                  vertical: tenPx,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: px20, vertical: px10),
                 decoration: BoxDecoration(
                   color: theme.primaryColor,
-                  borderRadius: BorderRadius.circular(twentyFourPx),
+                  borderRadius: BorderRadius.circular(px24),
                 ),
                 child: Text(
                   widget.message,

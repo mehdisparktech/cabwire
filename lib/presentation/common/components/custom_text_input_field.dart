@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:flutter/material.dart';
 
 class CustomTextInputField extends StatelessWidget {
   const CustomTextInputField({
@@ -28,7 +28,7 @@ class CustomTextInputField extends StatelessWidget {
           Text(
             title!,
             style: theme.textTheme.bodyMedium!.copyWith(
-              fontSize: fourteenPx,
+              fontSize: px14,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -39,7 +39,7 @@ class CustomTextInputField extends StatelessWidget {
           onChanged: onChanged,
           onTapUpOutside: (_) => FocusScope.of(context).unfocus(),
           style: theme.textTheme.bodyMedium!.copyWith(
-            fontSize: fourteenPx,
+            fontSize: px14,
             fontWeight: FontWeight.w400,
           ),
           decoration: InputDecoration(
@@ -47,7 +47,7 @@ class CustomTextInputField extends StatelessWidget {
             filled: true,
             fillColor: context.color.blackColor50,
             hintStyle: theme.textTheme.bodyMedium!.copyWith(
-              fontSize: fourteenPx,
+              fontSize: px14,
               fontWeight: FontWeight.w400,
             ),
             border: inputBorder(context),

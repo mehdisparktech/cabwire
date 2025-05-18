@@ -59,7 +59,7 @@ class CustomText extends StatelessWidget {
                 decorationThickness ?? style?.decorationThickness,
           ) ??
           defaultStyle.copyWith(
-            fontSize: fontSize ?? fourteenPx,
+            fontSize: fontSize ?? px14,
             fontWeight: fontWeight,
             color: color,
             letterSpacing: letterSpacing,
@@ -93,7 +93,7 @@ class TextStyles {
     return CustomText(
       text,
       key: key,
-      fontSize: fontSize ?? twentyFourPx,
+      fontSize: fontSize ?? px24,
       fontWeight: fontWeight,
       color: color,
       textAlign: textAlign,
@@ -115,7 +115,7 @@ class TextStyles {
     return CustomText(
       text,
       key: key,
-      fontSize: fontSize ?? twentyPx,
+      fontSize: fontSize ?? px20,
       fontWeight: fontWeight,
       color: color,
       textAlign: textAlign,
@@ -137,7 +137,7 @@ class TextStyles {
     return CustomText(
       text,
       key: key,
-      fontSize: fontSize ?? eighteenPx,
+      fontSize: fontSize ?? px18,
       fontWeight: fontWeight,
       color: color,
       textAlign: textAlign,
@@ -160,7 +160,7 @@ class TextStyles {
     return CustomText(
       text,
       key: key,
-      fontSize: fontSize ?? fourteenPx,
+      fontSize: fontSize ?? px14,
       fontWeight: fontWeight,
       color: color,
       textAlign: textAlign,
@@ -183,7 +183,7 @@ class TextStyles {
     return CustomText(
       text,
       key: key,
-      fontSize: fontSize ?? twelvePx,
+      fontSize: fontSize ?? px12,
       fontWeight: fontWeight,
       color: color,
       textAlign: textAlign,
@@ -204,7 +204,7 @@ class TextStyles {
     return CustomText(
       text,
       key: key,
-      fontSize: fontSize ?? fourteenPx,
+      fontSize: fontSize ?? px14,
       fontWeight: fontWeight,
       color: color,
       textAlign: textAlign,

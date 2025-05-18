@@ -19,16 +19,13 @@ class WelcomeScreen extends StatelessWidget {
       backgroundColor: context.color.backgroundColor,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: EdgeInsets.all(px20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 16,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: px12, vertical: px16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(32),
@@ -42,21 +39,21 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 child: CommonImage(
                   AppAssets.icPassengerLogo,
-                  width: 80,
-                  height: 120,
+                  width: px80,
+                  height: px120,
                 ),
               ),
               gapH30,
               CustomText(
                 'Welcome To Cabwire',
-                fontSize: twentySixPx,
+                fontSize: px26,
                 fontWeight: FontWeight.w700,
                 color: context.color.secondaryTextColor,
               ),
               gapH10,
               CustomText(
                 'Choose your journey',
-                fontSize: sixteenPx,
+                fontSize: px16,
                 fontWeight: FontWeight.w400,
                 color: context.color.secondaryTextColor,
               ),
@@ -97,7 +94,7 @@ class WelcomeScreen extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: px50, vertical: px14),
         decoration: ShapeDecoration(
           gradient: LinearGradient(
             begin: Alignment(0.00, 0.50),
@@ -109,19 +106,19 @@ class WelcomeScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CommonImage(icon, width: 18, height: 18),
+            CommonImage(icon, width: px18, height: px18),
             gapW12,
             CustomText(
               text,
-              fontSize: eighteenPx,
+              fontSize: px18,
               fontWeight: FontWeight.bold,
               color: AppColor.white,
             ),
             gapW12,
             CommonImage(
               AppAssets.icArrowRight,
-              width: 24,
-              height: 24,
+              width: px24,
+              height: px24,
               color: AppColor.white,
             ),
           ],

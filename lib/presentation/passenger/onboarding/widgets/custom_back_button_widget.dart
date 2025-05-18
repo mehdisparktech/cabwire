@@ -11,7 +11,7 @@ class CustomBackButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: fourteenPx),
+      padding: EdgeInsets.symmetric(vertical: px14),
       width: context.width * 0.9,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -21,7 +21,7 @@ class CustomBackButtonWidget extends StatelessWidget {
               presenter.onBack();
             },
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(px8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: context.color.backgroundColor,
@@ -32,7 +32,7 @@ class CustomBackButtonWidget extends StatelessWidget {
               child: Icon(
                 Icons.arrow_back_ios_new,
                 color: context.color.primaryColor,
-                size: 16,
+                size: px16,
               ),
             ),
           ),

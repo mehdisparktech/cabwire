@@ -28,11 +28,11 @@ class CustomButton extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding ?? twentyPx),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding ?? px20),
       child: GestureDetector(
         onTap: onPressed,
         child: Container(
-          height: fiftyPx,
+          height: px50,
           alignment: Alignment.center,
           width: width ?? double.infinity,
           decoration: BoxDecoration(
@@ -41,7 +41,7 @@ class CustomButton extends StatelessWidget {
                 isPrimary
                     ? null
                     : Border.all(color: context.color.primaryColor300),
-            borderRadius: BorderRadius.circular(twentySevenPx),
+            borderRadius: BorderRadius.circular(px27),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -51,7 +51,7 @@ class CustomButton extends StatelessWidget {
                 title,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
-                  fontSize: fourteenPx,
+                  fontSize: px14,
                   color:
                       isPrimary
                           ? context.color.buttonColor

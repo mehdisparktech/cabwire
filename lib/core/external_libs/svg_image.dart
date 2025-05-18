@@ -23,8 +23,8 @@ class SvgImage extends StatelessWidget {
     return SvgPicture.asset(
       assetName,
       fit: fit,
-      height: height ?? twentyTwoPx,
-      width: width ?? twentyTwoPx,
+      height: height ?? px22,
+      width: width ?? px22,
       colorFilter: color == null ? null : buildColorFilterToChangeColor(color),
     );
   }

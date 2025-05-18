@@ -18,17 +18,14 @@ class AuthHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: twentyFourPx,
-        vertical: fiftyPx,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: px24, vertical: px50),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
             style: context.textTheme.displayMedium?.copyWith(
-              fontSize: thirtyFourPx,
+              fontSize: px34,
               fontWeight: FontWeight.w700,
               color: color,
             ),
@@ -37,7 +34,7 @@ class AuthHeader extends StatelessWidget {
           Text(
             subtitle,
             style: context.textTheme.titleSmall?.copyWith(
-              fontSize: fourteenPx,
+              fontSize: px14,
               fontWeight: FontWeight.w700,
               color: color,
             ),

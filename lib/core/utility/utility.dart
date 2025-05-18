@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/config/app_theme_color.dart';
 import 'package:cabwire/core/external_libs/flutter_toast/toast_utility.dart';
 import 'package:cabwire/core/external_libs/throttle_service.dart';
@@ -18,6 +17,9 @@ import 'package:cabwire/core/utility/trial_utility.dart';
 import 'package:responsive_sizer/responsive_sizer.dart' as rs;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+// Import the DeviceExt extension directly to use it with extension override
+import 'package:cabwire/core/config/app_screen.dart' as app_screen;
 
 bool get isMobile => rs.Device.screenType == rs.ScreenType.mobile;
 const String _fileName = "utility.dart";
@@ -59,8 +61,8 @@ extension ContextExtensions on BuildContext {
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(twentyPx),
-          topRight: Radius.circular(twentyPx),
+          topLeft: Radius.circular(app_screen.DeviceExt(20).px),
+          topRight: Radius.circular(app_screen.DeviceExt(20).px),
         ),
       ),
     );
@@ -80,8 +82,8 @@ extension ContextExtensions on BuildContext {
       enableDrag: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(twentyPx),
-          topRight: Radius.circular(twentyPx),
+          topLeft: Radius.circular(app_screen.DeviceExt(20).px),
+          topRight: Radius.circular(app_screen.DeviceExt(20).px),
         ),
       ),
     );

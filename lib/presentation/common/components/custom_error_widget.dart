@@ -14,12 +14,12 @@ class CustomErrorWidget extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, color: theme.colorScheme.error, size: 40),
+          Icon(Icons.error_outline, color: theme.colorScheme.error, size: px40),
           gapH16,
           Text(
             'Whoops! We hit a snag',
             style: theme.textTheme.titleMedium!.copyWith(
-              fontSize: twentyFourPx,
+              fontSize: px24,
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.error,
             ),

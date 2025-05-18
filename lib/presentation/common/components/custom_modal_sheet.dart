@@ -27,8 +27,8 @@ class CustomModalSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.color.backgroundColor,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(twentyPx),
-          topRight: Radius.circular(twentyPx),
+          topLeft: Radius.circular(px20),
+          topRight: Radius.circular(px20),
         ),
       ),
       child: Wrap(
@@ -42,7 +42,7 @@ class CustomModalSheet extends StatelessWidget {
                   child: Text(
                     bottomSheetTitle!,
                     style: theme.textTheme.bodyMedium!.copyWith(
-                      fontSize: sixteenPx,
+                      fontSize: px16,
                       fontWeight: FontWeight.w600,
                       color: context.color.titleColor,
                     ),

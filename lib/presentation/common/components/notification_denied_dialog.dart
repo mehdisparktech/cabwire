@@ -27,7 +27,7 @@ class NotificationDeniedDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: twentyPx),
+      insetPadding: EdgeInsets.symmetric(horizontal: px20),
       elevation: 0,
       backgroundColor: isDarkMode(context) ? theme.cardColor : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: radius20),
@@ -59,7 +59,7 @@ class NotificationDeniedDialog extends StatelessWidget {
                   CustomButton(
                     title: 'Cancel',
                     onPressed: () => context.navigatorPop<void>(),
-                    width: 35.percentWidth,
+                    width: px35,
                     horizontalPadding: 0,
                     isPrimary: false,
                   ),
@@ -72,7 +72,7 @@ class NotificationDeniedDialog extends StatelessWidget {
 
                       await onSubmit();
                     },
-                    width: 35.percentWidth,
+                    width: px35,
                   ),
                 ],
               ),

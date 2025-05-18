@@ -31,13 +31,13 @@ class RemoveDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: twentyPx),
+      insetPadding: EdgeInsets.symmetric(horizontal: px20),
       elevation: 0,
       backgroundColor: isDarkMode(context) ? theme.cardColor : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: radius20),
       child: Container(
         decoration: BoxDecoration(borderRadius: radius10),
-        height: 80.percentWidth,
+        height: px80,
         child: ClipRRect(
           borderRadius: radius12,
           child: Stack(
@@ -47,7 +47,7 @@ class RemoveDialog extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 child: SizedBox(
                   width: double.infinity,
-                  height: 60.percentWidth,
+                  height: px60,
                   // child: SvgPicture.asset(
                   //   SvgPath.dicBG,
                   //   width: double.infinity,
@@ -58,7 +58,7 @@ class RemoveDialog extends StatelessWidget {
               Align(
                 alignment: Alignment.topCenter,
                 child: Padding(
-                  padding: EdgeInsets.only(top: twentyPx),
+                  padding: EdgeInsets.only(top: px20),
                   // child: SvgPicture.asset(
                   //   SvgPath.icDelete,
                   //   fit: BoxFit.cover,
@@ -97,7 +97,7 @@ class RemoveDialog extends StatelessWidget {
                         CustomButton(
                           title: 'Cancel',
                           onPressed: () => context.navigatorPop<void>(),
-                          width: 35.percentWidth,
+                          width: px35,
                           horizontalPadding: 0,
                           isPrimary: false,
                         ),
@@ -110,7 +110,7 @@ class RemoveDialog extends StatelessWidget {
 
                             await onRemove();
                           },
-                          width: 35.percentWidth,
+                          width: px35,
                         ),
                       ],
                     ),

@@ -17,7 +17,7 @@ class MainNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: sixteenPx),
+      padding: EdgeInsets.symmetric(horizontal: px16),
       decoration: BoxDecoration(
         color: context.color.backgroundColor,
         border: Border(top: BorderSide(color: context.color.blackColor200)),
