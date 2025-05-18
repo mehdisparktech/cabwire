@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/driver/chat/ui/audio_call_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -31,22 +32,25 @@ class ChatPage extends StatelessWidget {
         ],
       ),
       actions: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.only(right: 20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacityInt(0.2),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+        InkWell(
+          onTap: () => Get.to(() => const AudioCallScreen()),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            margin: const EdgeInsets.only(right: 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacityInt(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Icon(Icons.phone, color: context.theme.colorScheme.primary),
           ),
-          child: Icon(Icons.phone, color: context.theme.colorScheme.primary),
         ),
       ],
     );
