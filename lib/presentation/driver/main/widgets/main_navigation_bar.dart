@@ -31,14 +31,14 @@ class MainNavigationBar extends StatelessWidget {
             onTap: onDestinationSelected,
           ),
           NavDestinationItem(
-            index: 2,
+            index: 1,
             selectedIndex: selectedIndex,
             iconPath: AppAssets.icCar,
             label: 'Create Post',
             onTap: onDestinationSelected,
           ),
           NavDestinationItem(
-            index: 1,
+            index: 2,
             selectedIndex: selectedIndex,
             iconPath: AppAssets.icEarning,
             label: 'Earnings',
