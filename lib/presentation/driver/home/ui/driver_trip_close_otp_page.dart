@@ -3,9 +3,10 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
+import 'package:cabwire/presentation/driver/ride_history/ui/ride_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/utils.dart';
+import 'package:get/get.dart';
 
 class DriverTripCloseOtpPage extends StatelessWidget {
   const DriverTripCloseOtpPage({super.key});
@@ -84,7 +85,9 @@ class DriverTripCloseOtpPage extends StatelessWidget {
       bottomSheet: RideActionButton(
         isPrimary: true,
         text: 'Trip Closure',
-        onPressed: () {},
+        onPressed: () {
+          Get.to(RideDetailsScreen(isFeedBack: true));
+        },
       ),
     );
   }
