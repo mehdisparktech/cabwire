@@ -3,6 +3,11 @@ class AppAssets {
 
   /// png file
   static const String appLogo = 'assets/images/app_logo.png';
+  static const String icSuccessful = 'assets/images/png/successful.png';
+  static const String icCarCreatePost = 'assets/images/png/car_create_post.png';
+  static const String icNoImage = 'assets/images/png/no_image.png';
+  static const String icProfileImage = 'assets/images/png/profile_image.png';
+  static const String icCarImage = 'assets/images/png/car_image.png';
 
   ///svg file
   static const String icHomeOutline = 'assets/images/svg/ic_home_outline.svg';
@@ -36,16 +41,10 @@ class AppAssets {
   static const String icDeleteAccount =
       'assets/images/svg/ic_delete_account.svg';
   static const String icLogout = 'assets/images/svg/ic_logout.svg';
-
-  static const String icNoImage = 'assets/images/png/no_image.png';
-  static const String icProfileImage = 'assets/images/png/profile_image.png';
-  static const String icCarImage = 'assets/images/png/car_image.png';
   static const String icNoDataFound = 'assets/images/svg/no_data_found.svg';
   static const String icNotifcationActive =
       'assets/images/svg/notification_active.svg';
-
   static const String icNotificationBing =
       'assets/images/svg/notification_bing.svg';
   static const String icSort = 'assets/images/svg/sort.svg';
-  static const String icSuccessful = 'assets/images/png/successful.png';
 }
