@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/chat/ui/chat_page.dart';
-import 'package:cabwire/presentation/driver/home/ui/driver_trip_close_otp_page.dart';
+import 'package:cabwire/presentation/driver/create_post/ui/rideshare_trip_close_otp_page.dart';
 import 'package:cabwire/presentation/driver/home/widgets/message_button_widget.dart';
 import 'package:cabwire/presentation/driver/home/widgets/passenger_info_widget.dart';
 import 'package:cabwire/presentation/driver/home/widgets/payment_info_widget.dart';
@@ -90,7 +90,7 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
                 onPressed: () {
                   // You can define specific onTap behavior here if needed
                   if (isRideProcessing) {
-                    Get.to(() => DriverTripCloseOtpPage());
+                    Get.to(() => RideshareTripCloseOtpPage());
                   } else {
                     setState(() {
                       isRideProcessing = true;

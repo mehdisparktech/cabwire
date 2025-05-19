@@ -20,7 +20,7 @@ class TopNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         decoration: BoxDecoration(color: const Color(0xFFFFD5A9)),
         child: Row(
           children: [
