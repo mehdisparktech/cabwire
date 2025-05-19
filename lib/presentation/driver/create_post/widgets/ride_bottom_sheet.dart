@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/chat/ui/chat_page.dart';
+import 'package:cabwire/presentation/driver/chat/widgets/phone_button.dart';
 import 'package:cabwire/presentation/driver/create_post/ui/rideshare_trip_close_otp_page.dart';
 import 'package:cabwire/presentation/driver/home/widgets/message_button_widget.dart';
 import 'package:cabwire/presentation/driver/home/widgets/passenger_info_widget.dart';
@@ -73,12 +74,20 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
           const SizedBox(height: 16),
           const PassengerInfoWidget(), // Use the new widget
           const SizedBox(height: 16),
-          MessageButtonWidget(
-            // Use the new widget
-            onTap: () {
-              // You can define specific onTap behavior here if needed
-              Get.to(() => ChatPage());
-            },
+          Row(
+            children: [
+              Expanded(
+                flex: 5,
+                child: MessageButtonWidget(
+                  // Use the new widget
+                  onTap: () {
+                    // You can define specific onTap behavior here if needed
+                    Get.to(() => ChatPage());
+                  },
+                ),
+              ),
+              Expanded(flex: 1, child: PhoneButton()),
+            ],
           ),
           const SizedBox(height: 16),
           const TripStoppageInfoWidget(

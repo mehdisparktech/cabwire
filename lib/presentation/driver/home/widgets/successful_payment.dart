@@ -35,13 +35,16 @@ class SuccessfulPayment extends StatelessWidget {
           ],
         ),
       ),
-      bottomSheet: RideActionButton(
-        borderRadius: 0,
-        isPrimary: true,
-        text: 'Done',
-        onPressed: () {
-          Get.to(DriverMainPage());
-        },
+      bottomSheet: Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: RideActionButton(
+          borderRadius: 0,
+          isPrimary: true,
+          text: 'Done',
+          onPressed: () {
+            Get.to(DriverMainPage());
+          },
+        ),
       ),
     );
   }

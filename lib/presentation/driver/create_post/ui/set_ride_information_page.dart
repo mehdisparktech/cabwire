@@ -50,13 +50,16 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
     return Scaffold(
       backgroundColor: context.theme.colorScheme.surface,
       body: Stack(children: [_buildMap(), _buildDestinationContainer()]),
-      bottomSheet: RideActionButton(
-        borderRadius: 0,
-        isPrimary: true,
-        text: 'Continue',
-        onPressed: () {
-          Get.to(() => const RideOverviewScreen(isCreatePost: true));
-        },
+      bottomSheet: Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: RideActionButton(
+          borderRadius: 0,
+          isPrimary: true,
+          text: 'Continue',
+          onPressed: () {
+            Get.to(() => const RideOverviewScreen(isCreatePost: true));
+          },
+        ),
       ),
     );
   }

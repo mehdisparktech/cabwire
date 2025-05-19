@@ -179,11 +179,14 @@ class RideOverviewScreen extends StatelessWidget {
   Widget _buildBottomSheet() {
     if (!isCreatePost) return const SizedBox.shrink();
 
-    return RideActionButton(
-      borderRadius: 0,
-      isPrimary: true,
-      text: 'Create Post',
-      onPressed: () => Get.to(() => const CreatePostDetailsScreen()),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: RideActionButton(
+        borderRadius: 0,
+        isPrimary: true,
+        text: 'Create Post',
+        onPressed: () => Get.to(() => const CreatePostDetailsScreen()),
+      ),
     );
   }
 }

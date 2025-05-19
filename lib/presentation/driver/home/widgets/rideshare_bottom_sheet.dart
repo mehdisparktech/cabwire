@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/chat/ui/chat_page.dart';
+import 'package:cabwire/presentation/driver/chat/widgets/phone_button.dart';
 import 'package:cabwire/presentation/driver/home/ui/driver_trip_close_otp_page.dart';
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:flutter/material.dart';
@@ -75,12 +76,20 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
           const SizedBox(height: 16),
           const PassengerInfoWidget(), // Use the new widget
           const SizedBox(height: 16),
-          MessageButtonWidget(
-            // Use the new widget
-            onTap: () {
-              // You can define specific onTap behavior here if needed
-              Get.to(() => ChatPage());
-            },
+          Row(
+            children: [
+              Expanded(
+                flex: 5,
+                child: MessageButtonWidget(
+                  // Use the new widget
+                  onTap: () {
+                    // You can define specific onTap behavior here if needed
+                    Get.to(() => ChatPage());
+                  },
+                ),
+              ),
+              Expanded(flex: 1, child: PhoneButton()),
+            ],
           ),
           const SizedBox(height: 16),
           const TripStoppageInfoWidget(
@@ -88,19 +97,22 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
           ), // Use the new widget
           // Use the new widget
           isRideStart
-              ? RideActionButton(
-                isPrimary: true,
-                text: isRideProcessing ? 'Trip Closure' : 'Start Ride',
-                onPressed: () {
-                  // You can define specific onTap behavior here if needed
-                  if (isRideProcessing) {
-                    Get.to(() => DriverTripCloseOtpPage());
-                  } else {
-                    setState(() {
-                      isRideProcessing = true;
-                    });
-                  }
-                },
+              ? Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: RideActionButton(
+                  isPrimary: true,
+                  text: isRideProcessing ? 'Trip Closure' : 'Start Ride',
+                  onPressed: () {
+                    // You can define specific onTap behavior here if needed
+                    if (isRideProcessing) {
+                      Get.to(() => DriverTripCloseOtpPage());
+                    } else {
+                      setState(() {
+                        isRideProcessing = true;
+                      });
+                    }
+                  },
+                ),
               )
               : const PaymentInfoWidget(),
         ],

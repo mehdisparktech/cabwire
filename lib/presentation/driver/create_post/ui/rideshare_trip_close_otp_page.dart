@@ -46,13 +46,16 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomSheet: RideActionButton(
-        borderRadius: 0,
-        isPrimary: true,
-        text: 'Trip Closure',
-        onPressed: () {
-          Get.to(() => const SuccessfulPayment());
-        },
+      bottomSheet: Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: RideActionButton(
+          borderRadius: 0,
+          isPrimary: true,
+          text: 'Trip Closure',
+          onPressed: () {
+            Get.to(() => const SuccessfulPayment());
+          },
+        ),
       ),
     );
   }
@@ -89,8 +92,8 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
             ...List.generate(
               4,
               (index) => Container(
-                width: 50,
-                height: 60,
+                width: 60,
+                height: 70,
                 padding: const EdgeInsets.only(left: 10),
                 child: TextField(
                   keyboardType: TextInputType.number,

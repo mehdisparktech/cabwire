@@ -83,13 +83,16 @@ class DriverTripCloseOtpPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomSheet: RideActionButton(
-        borderRadius: 0,
-        isPrimary: true,
-        text: 'Trip Closure',
-        onPressed: () {
-          Get.to(RideDetailsScreen(isFeedBack: true));
-        },
+      bottomSheet: Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: RideActionButton(
+          borderRadius: 0,
+          isPrimary: true,
+          text: 'Trip Closure',
+          onPressed: () {
+            Get.to(RideDetailsScreen(isFeedBack: true));
+          },
+        ),
       ),
     );
   }

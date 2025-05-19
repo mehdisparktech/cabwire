@@ -150,34 +150,33 @@ class RideDetailsScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               // Feedback Section
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF001C60)),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF001C60)),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF001C60)),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  hintText: 'My valuable Feedback',
-                  hintStyle: TextStyle(color: Colors.black45),
-                ),
+              // TextField(
+              //   decoration: InputDecoration(
+              //     border: OutlineInputBorder(
+              //       borderSide: BorderSide(color: Color(0xFF001C60)),
+              //       borderRadius: BorderRadius.circular(8),
+              //     ),
+              //     enabledBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: Color(0xFF001C60)),
+              //       borderRadius: BorderRadius.circular(8),
+              //     ),
+              //     focusedBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: Color(0xFF001C60)),
+              //       borderRadius: BorderRadius.circular(8),
+              //     ),
+              //     hintText: 'My valuable Feedback',
+              //     hintStyle: TextStyle(color: Colors.black45),
+              //   ),
 
-                maxLines: 4,
-              ),
-
+              //   maxLines: 4,
+              // ),
               SizedBox(height: 40),
 
               // Buttons
               isFeedBack
                   ? RideActionButton(
                     isPrimary: true,
-                    text: 'Submit Feedback',
+                    text: 'Continue',
                     onPressed: () {
                       Get.to(SuccessfulPayment());
                     },

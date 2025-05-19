@@ -3,9 +3,11 @@ import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/data/driver/models/ride_data_model.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
+import 'package:cabwire/presentation/driver/chat/widgets/phone_button.dart';
 import 'package:cabwire/presentation/driver/create_post/ui/ride_start_page.dart';
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
+import 'package:cabwire/presentation/driver/ride_history/ui/ride_details_page.dart';
 import 'package:cabwire/presentation/driver/ride_history/widgets/driver_profile_widget.dart';
 import 'package:cabwire/presentation/driver/ride_history/widgets/route_information_widget.dart';
 import 'package:flutter/material.dart';
@@ -148,11 +150,18 @@ class CreatePostDetailsScreen extends StatelessWidget {
           children: [
             CustomText('2/3'),
             gapH10,
-            CustomText(
-              'View details',
-              color: Colors.black,
-              fontWeight: FontWeight.w500,
+            GestureDetector(
+              onTap: () {
+                Get.to(() => const RideDetailsScreen());
+              },
+              child: CustomText(
+                'View details',
+                color: Colors.black,
+                fontWeight: FontWeight.w500,
+              ),
             ),
+            gapH10,
+            PhoneButton(margin: 0),
           ],
         ),
       ],
