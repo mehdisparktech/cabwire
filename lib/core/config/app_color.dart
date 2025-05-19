@@ -74,6 +74,7 @@ class AppColor {
   static const Color driverSuccess = Color(0xFF299647);
   static const Color driverCancel = Color(0xFFFD003A);
   static const Color driverCartBg = Color(0xFFFFFFFF);
+  static const Color driverStrokePrimary = Color(0xFFC53C09);
 
   // app color
 

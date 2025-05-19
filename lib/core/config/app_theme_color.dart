@@ -83,6 +83,8 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
   final Color primaryButtonGradient;
   final Color secondaryButtonGradient;
 
+  final Color driverStrokePrimary;
+
   const AppThemeColor({
     // Existing required properties
     required this.scaffoldBachgroundColor,
@@ -164,6 +166,7 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     required this.secondaryGradient,
     required this.primaryButtonGradient,
     required this.secondaryButtonGradient,
+    required this.driverStrokePrimary,
   });
 
   @override
@@ -246,6 +249,7 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     Color? secondarySubTitleColor,
     Color? primaryGradient,
     Color? secondaryGradient,
+    Color? driverStrokePrimary,
   }) {
     return AppThemeColor(
       // Existing properties
@@ -330,6 +334,7 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
       secondaryGradient: secondaryGradient ?? this.secondaryGradient,
       primaryButtonGradient: primaryButtonGradient,
       secondaryButtonGradient: secondaryButtonGradient,
+      driverStrokePrimary: driverStrokePrimary ?? this.driverStrokePrimary,
     );
   }
 
@@ -439,6 +444,8 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
             other.secondaryButtonGradient,
             t,
           )!,
+      driverStrokePrimary:
+          Color.lerp(driverStrokePrimary, other.driverStrokePrimary, t)!,
     );
   }
 
@@ -524,6 +531,7 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     secondarySubTitleColor: AppColor.textSecondary,
     primaryButtonGradient: AppColor.driverPrimaryButtonGradient,
     secondaryButtonGradient: AppColor.driverSecondaryButtonGradient,
+    driverStrokePrimary: AppColor.driverStrokePrimary,
   );
 
   // Passenger theme instance
@@ -607,6 +615,7 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     secondarySubTitleColor: AppColor.passengerTextSecondary,
     primaryButtonGradient: AppColor.passengerPrimaryButtonGradient,
     secondaryButtonGradient: AppColor.passengerSecondaryButtonGradient,
+    driverStrokePrimary: AppColor.driverStrokePrimary,
   );
 
   // Driver theme instance
@@ -690,5 +699,6 @@ class AppThemeColor extends ThemeExtension<AppThemeColor> {
     secondarySubTitleColor: AppColor.driverTextSecondary,
     primaryButtonGradient: AppColor.driverPrimaryButtonGradient,
     secondaryButtonGradient: AppColor.driverSecondaryButtonGradient,
+    driverStrokePrimary: AppColor.driverStrokePrimary,
   );
 }
