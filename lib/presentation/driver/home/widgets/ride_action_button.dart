@@ -4,12 +4,14 @@ class RideActionButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final bool isPrimary;
+  final double? borderRadius;
 
   const RideActionButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.isPrimary = false,
+    this.borderRadius,
   });
 
   @override
@@ -22,7 +24,7 @@ class RideActionButton extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(borderRadius ?? 8),
           ),
           child: ElevatedButton(
             onPressed: onPressed,

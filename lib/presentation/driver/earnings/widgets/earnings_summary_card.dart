@@ -6,10 +6,10 @@ class EarningsSummaryCard extends StatelessWidget {
   final double availableEarnings;
 
   const EarningsSummaryCard({
-    Key? key,
+    super.key,
     required this.totalEarnings,
     required this.availableEarnings,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

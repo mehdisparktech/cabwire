@@ -7,8 +7,8 @@ import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SucessfullPayment extends StatelessWidget {
-  const SucessfullPayment({super.key});
+class SuccessfulPayment extends StatelessWidget {
+  const SuccessfulPayment({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +19,24 @@ class SucessfullPayment extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CommonImage(imageSrc: AppAssets.icCar, imageType: ImageType.svg),
+            CommonImage(
+              height: 280,
+              width: 320,
+              imageSrc: AppAssets.icSuccessful,
+              imageType: ImageType.png,
+            ),
             gapH20,
-            Text('Payment Received'),
-            gapH20,
+            Text(
+              'Payment Received',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            gapH14,
             Text('Payment received! Thank you for your transaction.'),
           ],
         ),
       ),
       bottomSheet: RideActionButton(
+        borderRadius: 0,
         isPrimary: true,
         text: 'Done',
         onPressed: () {

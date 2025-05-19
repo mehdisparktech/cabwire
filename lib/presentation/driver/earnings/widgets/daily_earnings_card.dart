@@ -9,13 +9,13 @@ class DailyEarningsCard extends StatelessWidget {
   final double walletAmount;
 
   const DailyEarningsCard({
-    Key? key,
+    super.key,
     required this.date,
     required this.todayEarning,
     required this.cashPayment,
     required this.onlinePayment,
     required this.walletAmount,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

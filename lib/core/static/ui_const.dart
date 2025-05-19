@@ -9,6 +9,7 @@ SizedBox gapH6 = SizedBox(height: px6);
 SizedBox gapH8 = SizedBox(height: px8);
 SizedBox gapH10 = SizedBox(height: px10);
 SizedBox gapH12 = SizedBox(height: px12);
+SizedBox gapH14 = SizedBox(height: px14);
 SizedBox gapH15 = SizedBox(height: px15);
 SizedBox gapH16 = SizedBox(height: px16);
 SizedBox gapH18 = SizedBox(height: px18);

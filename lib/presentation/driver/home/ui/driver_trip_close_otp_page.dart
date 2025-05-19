@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
@@ -14,7 +15,7 @@ class DriverTripCloseOtpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Trip Closure Otp'),
+      appBar: CustomAppBar(title: 'Trip Closure OTP'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
         child: Column(
@@ -25,7 +26,7 @@ class DriverTripCloseOtpPage extends StatelessWidget {
               'Enter OTP To Close This Trip',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
-            SizedBox(height: 20),
+            gapH20,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +72,7 @@ class DriverTripCloseOtpPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 80),
+            gapH80,
             Align(
               alignment: Alignment.center,
               child: AppLogoDisplay(
@@ -83,6 +84,7 @@ class DriverTripCloseOtpPage extends StatelessWidget {
         ),
       ),
       bottomSheet: RideActionButton(
+        borderRadius: 0,
         isPrimary: true,
         text: 'Trip Closure',
         onPressed: () {
