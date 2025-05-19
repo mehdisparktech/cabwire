@@ -12,6 +12,7 @@ import 'package:cabwire/presentation/driver/profile/widgets/common_text.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/delete_account_dialog.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/item.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/logout_dialog.dart';
+import 'package:cabwire/presentation/driver/ride_history/ui/ride_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -130,7 +131,7 @@ class DriverProfileScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Item(
-                    vertical: 18,
+                    vertical: 16,
                     image: AppAssets.icPassword,
                     title: 'Password',
                     onTap: () {
@@ -139,7 +140,7 @@ class DriverProfileScreen extends StatelessWidget {
                   ),
 
                   Item(
-                    vertical: 18,
+                    vertical: 16,
                     image: AppAssets.icCar,
                     title: 'Edit Driving Information',
                     onTap: () {
@@ -148,7 +149,16 @@ class DriverProfileScreen extends StatelessWidget {
                   ),
 
                   Item(
-                    vertical: 18,
+                    vertical: 16,
+                    image: AppAssets.icHistory,
+                    title: 'History',
+                    onTap: () {
+                      Get.to(() => RideHistoryPage());
+                    },
+                  ),
+
+                  Item(
+                    vertical: 16,
                     image: AppAssets.icTransitionHistory,
                     title: 'Terms & Conditions',
                     onTap: () {
@@ -157,7 +167,7 @@ class DriverProfileScreen extends StatelessWidget {
                   ),
 
                   Item(
-                    vertical: 18,
+                    vertical: 16,
                     image: AppAssets.icTermsCondition,
                     title: 'Privacy Policy',
                     onTap: () {
@@ -166,7 +176,7 @@ class DriverProfileScreen extends StatelessWidget {
                   ),
 
                   Item(
-                    vertical: 18,
+                    vertical: 16,
                     image: AppAssets.icContactUs,
                     title: 'Contact Us',
                     onTap: () {
@@ -174,7 +184,7 @@ class DriverProfileScreen extends StatelessWidget {
                     },
                   ),
                   Item(
-                    vertical: 18,
+                    vertical: 16,
                     image: AppAssets.icDeleteAccount,
                     title: 'Delete Account',
                     onTap: () {
@@ -182,7 +192,7 @@ class DriverProfileScreen extends StatelessWidget {
                     },
                   ),
                   Item(
-                    vertical: 18,
+                    vertical: 16,
                     image: AppAssets.icLogout,
                     title: 'Log Out',
                     onTap: () {
