@@ -1,9 +1,11 @@
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/driver/create_post/ui/set_ride_information_page.dart';
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:flutter/material.dart';
-import 'package:get/utils.dart';
+import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SearchDestinationScreen extends StatefulWidget {
   const SearchDestinationScreen({super.key});
@@ -16,6 +18,13 @@ class SearchDestinationScreen extends StatefulWidget {
 class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
   final TextEditingController _destinationController = TextEditingController();
   final TextEditingController _fromController = TextEditingController();
+  late GoogleMapController mapController;
+
+  final LatLng _center = const LatLng(23.8103, 90.4125);
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
 
   // Sample search history data
   final List<SearchHistoryItem> _searchHistory = [
@@ -43,21 +52,61 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.theme.colorScheme.surface,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            _buildSearchInputs(),
-            _buildAddButton(),
-            _buildSearchHistory(),
-          ],
-        ),
-      ),
+      body: Stack(children: [_buildMap(), _buildDestinationContainer()]),
       bottomSheet: RideActionButton(
         borderRadius: 0,
         isPrimary: true,
         text: 'Continue',
-        onPressed: () {},
+        onPressed: () {
+          Get.to(() => const SetRideInformationScreen());
+        },
+      ),
+    );
+  }
+
+  Widget _buildMap() {
+    return GoogleMap(
+      onMapCreated: _onMapCreated,
+      initialCameraPosition: CameraPosition(target: _center, zoom: 14.0),
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+      zoomControlsEnabled: false,
+      mapToolbarEnabled: false,
+      // Map interaction disable করা হয়েছে
+      scrollGesturesEnabled: false,
+      zoomGesturesEnabled: false,
+      tiltGesturesEnabled: false,
+      rotateGesturesEnabled: false,
+    );
+  }
+
+  Widget _buildDestinationContainer() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SizedBox(
+        height: context.height * 0.9,
+        child: Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(px32),
+                  topRight: Radius.circular(px32),
+                ),
+              ),
+              child: Column(
+                children: [
+                  _buildHeader(),
+                  _buildSearchInputs(),
+                  _buildAddButton(),
+                  _buildSearchHistory(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
