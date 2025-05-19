@@ -2,9 +2,10 @@ import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
+import 'package:cabwire/presentation/driver/create_post/ui/ride_overview_page.dart';
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:flutter/material.dart';
-import 'package:get/utils.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SetRideInformationScreen extends StatefulWidget {
@@ -53,7 +54,9 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
         borderRadius: 0,
         isPrimary: true,
         text: 'Continue',
-        onPressed: () {},
+        onPressed: () {
+          Get.to(() => const RideOverviewScreen(isCreatePost: true));
+        },
       ),
     );
   }

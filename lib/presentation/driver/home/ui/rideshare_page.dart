@@ -36,7 +36,12 @@ class _RidesharePageState extends State<RidesharePage> {
           ),
 
           // Top navigation bar (using the imported widget)
-          const TopNavigationBar(),
+          const TopNavigationBar(
+            title: 'Rideshare',
+            subtitle: 'Rideshare',
+            distance: '200 m',
+            address: 'Turn right at block b, road no 18',
+          ),
 
           // Bottom sheet (using the imported widget)
           Positioned(

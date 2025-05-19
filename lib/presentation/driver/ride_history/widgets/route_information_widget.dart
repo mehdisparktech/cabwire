@@ -4,11 +4,13 @@ import 'package:get/get.dart';
 class RouteInformationWidget extends StatelessWidget {
   final String pickupLocation;
   final String dropoffLocation;
+  final String? dropoffLocation2;
 
   const RouteInformationWidget({
     super.key,
     required this.pickupLocation,
     required this.dropoffLocation,
+    this.dropoffLocation2,
   });
 
   @override
@@ -25,6 +27,12 @@ class RouteInformationWidget extends StatelessWidget {
               size: 20,
               color: context.theme.colorScheme.primary,
             ),
+            if (dropoffLocation2 != null)
+              Icon(
+                Icons.location_on,
+                size: 20,
+                color: context.theme.colorScheme.primary,
+              ),
           ],
         ),
         const SizedBox(width: 16),
@@ -47,6 +55,14 @@ class RouteInformationWidget extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
+              if (dropoffLocation2 != null)
+                Text(
+                  dropoffLocation2!,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
             ],
           ),
         ),
