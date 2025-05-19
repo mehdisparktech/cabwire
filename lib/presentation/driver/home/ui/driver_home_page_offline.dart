@@ -1,4 +1,5 @@
 import 'package:cabwire/core/utility/navigation_utility.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:cabwire/presentation/driver/main/ui/driver_main_page.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,20 @@ class _DriverHomePageOfflineState extends State<DriverHomePageOffline> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Stack(children: [_buildMap(), _buildOfflineCard()]));
+    return Scaffold(
+      body: Stack(
+        children: [
+          _buildMap(),
+          // Full screen overlay shadow
+          Container(
+            color: Colors.black.withOpacityInt(0.3), // Dark overlay
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          _buildOfflineCard(),
+        ],
+      ),
+    );
   }
 
   Widget _buildMap() {
@@ -34,6 +48,11 @@ class _DriverHomePageOfflineState extends State<DriverHomePageOffline> {
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
+      // Map interaction disable করা হয়েছে
+      scrollGesturesEnabled: false,
+      zoomGesturesEnabled: false,
+      tiltGesturesEnabled: false,
+      rotateGesturesEnabled: false,
     );
   }
 
@@ -51,6 +70,14 @@ class _DriverHomePageOfflineState extends State<DriverHomePageOffline> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacityInt(0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, -2),
+                    spreadRadius: 2,
+                  ),
+                ],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -72,6 +99,7 @@ class _DriverHomePageOfflineState extends State<DriverHomePageOffline> {
                       text: 'Go Online',
                       isPrimary: true,
                       onPressed: () {
+                        // Online page এ navigation
                         NavigationUtility.fadeReplacement(
                           context,
                           DriverMainPage(),
