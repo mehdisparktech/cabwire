@@ -20,37 +20,39 @@ class _RidesharePageState extends State<RidesharePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Map
-          GoogleMap(
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: const CameraPosition(
-              target: _center,
-              zoom: 14.0,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Map
+            GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: const CameraPosition(
+                target: _center,
+                zoom: 14.0,
+              ),
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              mapToolbarEnabled: false,
             ),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-            mapToolbarEnabled: false,
-          ),
 
-          // Top navigation bar (using the imported widget)
-          const TopNavigationBar(
-            title: 'Rideshare',
-            subtitle: 'Rideshare',
-            distance: '200 m',
-            address: 'Turn right at block b, road no 18',
-          ),
+            // Top navigation bar (using the imported widget)
+            const TopNavigationBar(
+              title: 'Rideshare',
+              subtitle: 'Rideshare',
+              distance: '200 m',
+              address: 'Turn right at block b, road no 18',
+            ),
 
-          // Bottom sheet (using the imported widget)
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: RideshareBottomSheet(),
-          ),
-        ],
+            // Bottom sheet (using the imported widget)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: RideshareBottomSheet(),
+            ),
+          ],
+        ),
       ),
     );
   }

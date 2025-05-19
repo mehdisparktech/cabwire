@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // For context.theme
 
 class TripStoppageInfoWidget extends StatelessWidget {
-  const TripStoppageInfoWidget({super.key});
-  // If stoppageLocation was dynamic, you'd pass it here:
-  // final String stoppageLocation;
-  // const TripStoppageInfoWidget({super.key, required this.stoppageLocation});
+  final String stoppageLocation;
+  final String? stoppageLocation2;
+
+  const TripStoppageInfoWidget({
+    super.key,
+    required this.stoppageLocation,
+    this.stoppageLocation2,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +35,10 @@ class TripStoppageInfoWidget extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 8),
-                const Expanded(
+                Expanded(
                   // Use passed data if dynamic
                   child: Text(
-                    'Green Road, Dhanmondi, Dhaka.',
+                    stoppageLocation,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black87,

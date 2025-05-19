@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/home/ui/rideshare_page.dart';
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
@@ -143,24 +144,15 @@ class _DriverHomePageState extends State<DriverHomePage> {
               if (isRiderOnline) ...[
                 Positioned(
                   bottom: 40,
-                  child: _rideCard(
-                    color: Colors.grey.shade100,
-                    name: 'Passenger 1',
-                  ),
+                  child: _rideCard(color: Colors.white, name: 'Passenger 1'),
                 ),
                 Positioned(
                   bottom: 20,
-                  child: _rideCard(
-                    color: Colors.grey.shade100,
-                    name: 'Passenger 2',
-                  ),
+                  child: _rideCard(color: Colors.white, name: 'Passenger 2'),
                 ),
                 Positioned(
                   bottom: 0,
-                  child: _rideCard(
-                    color: Colors.grey.shade100,
-                    name: 'Passenger 3',
-                  ),
+                  child: _rideCard(color: Colors.white, name: 'Passenger 3'),
                 ),
               ],
               if (!isRiderOnline) ...[_rideOfflineCard()],
@@ -176,8 +168,8 @@ class _DriverHomePageState extends State<DriverHomePage> {
       width: 320,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4)),
         ],
@@ -186,6 +178,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          gapH10,
           Row(
             children: [
               CircleAvatar(

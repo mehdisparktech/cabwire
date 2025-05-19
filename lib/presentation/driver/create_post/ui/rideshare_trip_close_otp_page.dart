@@ -2,6 +2,7 @@ import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
+import 'package:cabwire/presentation/driver/home/widgets/successful_payment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -21,21 +22,25 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
               _buildOTPInputField(
                 context,
                 title: 'Green Road, Dhanmondi, Dhaka.',
+                otp: '1',
               ),
               gapH20,
               _buildOTPInputField(
                 context,
                 title: 'Green Road, Dhanmondi, Dhaka.',
+                otp: '2',
               ),
               gapH20,
               _buildOTPInputField(
                 context,
                 title: 'Green Road, Dhanmondi, Dhaka.',
+                otp: '3',
               ),
               gapH20,
               _buildOTPInputField(
                 context,
                 title: 'Green Road, Dhanmondi, Dhaka.',
+                otp: '4',
               ),
             ],
           ),
@@ -46,13 +51,17 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
         isPrimary: true,
         text: 'Trip Closure',
         onPressed: () {
-          Get.to(() => const RideshareTripCloseOtpPage());
+          Get.to(() => const SuccessfulPayment());
         },
       ),
     );
   }
 
-  Widget _buildOTPInputField(BuildContext context, {required String title}) {
+  Widget _buildOTPInputField(
+    BuildContext context, {
+    required String title,
+    required String otp,
+  }) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,12 +70,12 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
           children: [
             Expanded(
               child: RideActionButton(
-                isPrimary: false,
-                text: '1',
+                isPrimary: true,
+                text: otp,
                 onPressed: () {},
               ),
             ),
-            gapW20,
+            gapW10,
             Text(
               title,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),

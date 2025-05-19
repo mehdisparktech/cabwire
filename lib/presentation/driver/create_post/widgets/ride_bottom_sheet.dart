@@ -81,7 +81,9 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
             },
           ),
           const SizedBox(height: 16),
-          const TripStoppageInfoWidget(), // Use the new widget
+          const TripStoppageInfoWidget(
+            stoppageLocation: 'Green Road, Dhanmondi, Dhaka.',
+          ), // Use the new widget
           // Use the new widget
           isRideStart
               ? RideActionButton(
