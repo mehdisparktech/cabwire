@@ -21,7 +21,7 @@ class MessageButtonWidget extends StatelessWidget {
               onTap ??
               () {
                 // Default action if no onTap is provided
-                Get.snackbar("Message", "Send a free message tapped!");
+                Get.snackbar("Message", "Send a message tapped!");
               },
           borderRadius: BorderRadius.circular(22),
           child: Row(
@@ -34,7 +34,7 @@ class MessageButtonWidget extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'Send a free message',
+                'Send a message',
                 style: TextStyle(
                   color: context.theme.colorScheme.primary,
                   fontWeight: FontWeight.w500,

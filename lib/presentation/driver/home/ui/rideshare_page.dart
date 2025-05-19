@@ -13,7 +13,6 @@ class RidesharePage extends StatefulWidget {
 class _RidesharePageState extends State<RidesharePage> {
   static const LatLng _center = LatLng(23.8103, 90.4125);
   late GoogleMapController mapController;
-
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
@@ -40,7 +39,7 @@ class _RidesharePageState extends State<RidesharePage> {
           const TopNavigationBar(),
 
           // Bottom sheet (using the imported widget)
-          const Positioned(
+          Positioned(
             bottom: 0,
             left: 0,
             right: 0,

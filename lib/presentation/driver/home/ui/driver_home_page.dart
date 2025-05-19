@@ -81,6 +81,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
             onChanged: (value) {
               setState(() {
                 isSwitched = value;
+                isRiderOnline = value;
               });
             },
           ),
