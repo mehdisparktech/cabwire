@@ -1,31 +1,74 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
 
-class EarningUiState extends BaseUiState {
-  const EarningUiState({
+class EarningsData {
+  final double totalEarnings;
+  final double availableEarnings;
+  final DateTime currentDate;
+  final double todayEarning;
+  final double cashPayment;
+  final double onlinePayment;
+  final double walletAmount;
+
+  const EarningsData({
+    required this.totalEarnings,
+    required this.availableEarnings,
+    required this.currentDate,
+    required this.todayEarning,
+    required this.cashPayment,
+    required this.onlinePayment,
+    required this.walletAmount,
+  });
+}
+
+enum EarningsFilter { today, week, month }
+
+class EarningsUiState extends BaseUiState {
+  final EarningsData earningsData;
+  final EarningsFilter selectedFilter;
+
+  const EarningsUiState({
     required super.isLoading,
     required super.userMessage,
+    required this.earningsData,
+    required this.selectedFilter,
   });
 
-  factory EarningUiState.empty() {
-    return const EarningUiState(
-      userMessage: null,
-      isLoading: true,
+  factory EarningsUiState.initial() {
+    return EarningsUiState(
+      isLoading: false,
+      userMessage: '',
+      earningsData: EarningsData(
+        totalEarnings: 0,
+        availableEarnings: 0,
+        currentDate: DateTime.now(),
+        todayEarning: 0,
+        cashPayment: 0,
+        onlinePayment: 0,
+        walletAmount: 0,
+      ),
+      selectedFilter: EarningsFilter.today,
     );
   }
 
   @override
   List<Object?> get props => [
-        userMessage,
-        isLoading,
-      ];
+    isLoading,
+    userMessage,
+    earningsData,
+    selectedFilter,
+  ];
 
-  EarningUiState copyWith({
-    String? userMessage,
+  EarningsUiState copyWith({
     bool? isLoading,
+    String? userMessage,
+    EarningsData? earningsData,
+    EarningsFilter? selectedFilter,
   }) {
-    return EarningUiState(
+    return EarningsUiState(
       isLoading: isLoading ?? this.isLoading,
       userMessage: userMessage ?? this.userMessage,
+      earningsData: earningsData ?? this.earningsData,
+      selectedFilter: selectedFilter ?? this.selectedFilter,
     );
   }
 }
