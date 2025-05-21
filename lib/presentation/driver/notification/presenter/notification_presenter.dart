@@ -3,8 +3,12 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'notification_ui_state.dart';
 
 class NotificationPresenter extends BasePresenter<NotificationUiState> {
-  final Obs<NotificationUiState> uiState = Obs<NotificationUiState>(NotificationUiState.empty());
+  final Obs<NotificationUiState> uiState = Obs<NotificationUiState>(
+    NotificationUiState.empty(),
+  );
   NotificationUiState get currentUiState => uiState.value;
+
+  NotificationPresenter();
 
   @override
   Future<void> addUserMessage(String message) async {
