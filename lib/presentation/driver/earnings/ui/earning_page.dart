@@ -25,9 +25,9 @@ class EarningsPage extends StatelessWidget {
         builder: () {
           final uiState = presenter.currentUiState;
 
-          if (uiState.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          // if (uiState.isLoading) {
+          //   return const Center(child: CircularProgressIndicator());
+          // }
 
           if (uiState.userMessage != null && uiState.userMessage!.isNotEmpty) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
