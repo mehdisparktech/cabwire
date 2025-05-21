@@ -53,7 +53,7 @@ class _VehiclesInformationScreenState extends State<VehiclesInformationScreen> {
     //   print('Email: ${_emailController.text}');
     //   print('Password: ${_passwordController.text}');
     // }
-    NavigationUtility.slideRight(context, LoginScreen(toggleView: () {}));
+    NavigationUtility.slideRight(context, DriverLoginScreen(toggleView: () {}));
   }
 
   @override

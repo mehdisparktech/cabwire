@@ -21,9 +21,9 @@ class _AuthNavigatorState extends State<AuthNavigator> {
   @override
   Widget build(BuildContext context) {
     if (_showLogin) {
-      return LoginScreen(toggleView: _toggleView);
+      return DriverLoginScreen(toggleView: _toggleView);
     } else {
-      return SignUpScreen(toggleView: _toggleView);
+      return DriverSignUpScreen(toggleView: _toggleView);
     }
   }
 }
