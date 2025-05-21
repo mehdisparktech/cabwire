@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_ui_state.dart';
 import 'package:cabwire/presentation/driver/home/ui/rideshare_page.dart';
+import 'package:cabwire/presentation/driver/main/ui/driver_main_page.dart';
 import 'package:cabwire/presentation/driver/notification/ui/notification_page.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -70,8 +73,20 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
     print("Ride declined: $rideId (Presenter)");
   }
 
-  void handleNotNow() {
+  void handleNotNowPassenger(BuildContext context) {
     print("Not Now pressed while offline (Presenter)");
+    NavigationUtility.fadeReplacement(context, DriverMainPage());
+  }
+
+  void handleNotNow(BuildContext context) {
+    uiState.value = currentUiState.copyWith(isOnline: false);
+    print("Not Now pressed while offline (Presenter)");
+    NavigationUtility.fadeReplacement(context, DriverMainPage());
+  }
+
+  void setOnlineAndNavigate(BuildContext context) {
+    uiState.value = currentUiState.copyWith(isOnline: true);
+    NavigationUtility.fadeReplacement(context, DriverMainPage());
   }
 
   @override

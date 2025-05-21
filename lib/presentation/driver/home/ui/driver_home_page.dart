@@ -314,7 +314,7 @@ class DriverHomePage extends StatelessWidget {
             width: double.infinity,
             child: ActionButton(
               text: 'Not Now',
-              onPressed: presenter.handleNotNow,
+              onPressed: () => presenter.handleNotNowPassenger(context),
             ),
           ),
         ],

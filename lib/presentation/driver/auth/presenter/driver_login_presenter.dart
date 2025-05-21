@@ -28,10 +28,7 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
 
       await toggleLoading(loading: false);
       if (context.mounted) {
-        NavigationUtility.fadeReplacement(
-          context,
-          const DriverHomePageOffline(),
-        );
+        NavigationUtility.fadeReplacement(context, DriverHomePageOffline());
       }
     }
   }
