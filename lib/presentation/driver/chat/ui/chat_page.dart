@@ -1,20 +1,33 @@
 import 'package:cabwire/core/config/app_assets.dart';
-import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
-import 'package:cabwire/presentation/driver/chat/ui/audio_call_page.dart';
+import 'package:cabwire/presentation/driver/chat/presenter/chat_presenter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class ChatPage extends StatelessWidget {
-  const ChatPage({super.key});
+  final ChatPresenter presenter = locate<ChatPresenter>();
+
+  ChatPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: _buildAppBar(context), body: _buildBody(context));
+    return Scaffold(
+      appBar: _buildAppBar(context, presenter),
+      body: PresentableWidgetBuilder(
+        presenter: presenter,
+        builder: () {
+          // final uiState = presenter.currentUiState;
+          return _buildBody(context, presenter);
+        },
+      ),
+    );
   }
 
-  AppBar _buildAppBar(BuildContext context) {
+  AppBar _buildAppBar(BuildContext context, ChatPresenter presenter) {
+    final uiState = presenter.currentUiState;
     return AppBar(
       toolbarHeight: 80,
       backgroundColor: Colors.white,
@@ -22,117 +35,177 @@ class ChatPage extends StatelessWidget {
       leadingWidth: 45,
       titleSpacing: 5,
       leading: IconButton(
-        onPressed: () => Get.back(),
+        onPressed: presenter.goBack,
         icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black),
       ),
       title: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 20,
-            backgroundImage: AssetImage(AppAssets.icProfileImage),
+            backgroundImage: AssetImage(
+              AppAssets.icProfileImage,
+            ), // uiState.chatPartnerAvatarUrl
           ),
           const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Mandy', style: context.theme.textTheme.bodyLarge),
-              Text('Online', style: context.theme.textTheme.bodySmall),
+              Text(
+                uiState.chatPartnerName,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              Text(
+                uiState.chatPartnerStatus,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ],
           ),
         ],
       ),
       actions: [
-        CircularIconButton(
-          icon: Icons.phone,
-          onTap: () {
-            Get.to(() => const AudioCallScreen());
-          },
-        ),
+        CircularIconButton(icon: Icons.phone, onTap: presenter.startAudioCall),
       ],
     );
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody(BuildContext context, ChatPresenter presenter) {
     return Column(
       children: [
-        Expanded(child: _buildChatMessages()),
-        _buildMessageInput(context),
+        Expanded(child: _buildChatMessages(presenter)),
+        _buildMessageInput(context, presenter),
       ],
     );
   }
 
-  Widget _buildChatMessages() {
+  Widget _buildChatMessages(ChatPresenter presenter) {
+    final uiState = presenter.currentUiState;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: ListView(
-        children: [
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 20.0),
-              child: Text(
-                '09:41 AM',
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+      child: ListView.builder(
+        controller: presenter.scrollController,
+        itemCount:
+            uiState.messages.length +
+            (uiState.isTyping ? 1 : 0) +
+            1, // +1 date header
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Text(
+                  DateFormat('hh:mm a').format(
+                    uiState.messages.isNotEmpty
+                        ? uiState.messages.first.timestamp
+                        : DateTime.now(),
+                  ),
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
               ),
+            );
+          }
+
+          final messageIndex = index - 1;
+
+          if (uiState.isTyping && messageIndex == uiState.messages.length) {
+            return _buildTypingIndicator(
+              presenter.currentUiState.chatPartnerAvatarUrl,
+            );
+          }
+          if (messageIndex >= uiState.messages.length) {
+            return const SizedBox.shrink();
+          }
+
+          final message = uiState.messages[messageIndex];
+          if (message.isSender) {
+            return _buildSenderMessage(message.text, AppAssets.icProfileImage);
+          } else {
+            return _buildReceiverMessage(
+              message.text,
+              message.showAvatar,
+              AppAssets.icProfileImage,
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildReceiverMessage(
+    String message,
+    bool showAvatar,
+    String avatarAsset,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                ),
+              ),
+              child: Text(message, style: const TextStyle(color: Colors.white)),
             ),
           ),
-          _buildReceiverMessage("Hi, Mandy", true),
-          const SizedBox(height: 8),
-          _buildReceiverMessage("I've tried the app"),
-          const SizedBox(height: 8),
-          _buildSenderMessage("Really?"),
-          const SizedBox(height: 8),
-          _buildReceiverMessage("Yeah, it's really good!"),
-          const SizedBox(height: 8),
-          _buildTypingIndicator(),
-          const SizedBox(height: 16),
+          if (showAvatar) ...[
+            const SizedBox(width: 8),
+            CircleAvatar(radius: 12, backgroundImage: AssetImage(avatarAsset)),
+          ] else
+            const SizedBox(width: 24 + 8),
         ],
       ),
     );
   }
 
-  Widget _buildReceiverMessage(String message, [bool showAvatar = false]) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Flexible(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-                bottomLeft: Radius.circular(20),
-              ),
-            ),
-            child: Text(message, style: const TextStyle(color: Colors.white)),
-          ),
-        ),
-        if (showAvatar) ...[
+  Widget _buildSenderMessage(String message, String avatarAsset) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          CircleAvatar(radius: 12, backgroundImage: AssetImage(avatarAsset)),
           const SizedBox(width: 8),
-          const CircleAvatar(
-            radius: 12,
-            backgroundImage: AssetImage(AppAssets.icProfileImage),
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Text(message, style: const TextStyle(color: Colors.black)),
+            ),
           ),
-        ] else
-          const SizedBox(width: 24),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildSenderMessage(String message) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        const CircleAvatar(
-          radius: 12,
-          backgroundImage: AssetImage(AppAssets.icProfileImage),
-        ),
-        const SizedBox(width: 8),
-        Flexible(
-          child: Container(
+  Widget _buildTypingIndicator(String avatarAsset) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          CircleAvatar(
+            radius: 12,
+            backgroundImage: AssetImage(AppAssets.icProfileImage),
+          ),
+          const SizedBox(width: 8),
+          Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
               color: Colors.grey[200],
@@ -142,42 +215,19 @@ class ChatPage extends StatelessWidget {
                 bottomRight: Radius.circular(20),
               ),
             ),
-            child: Text(message, style: const TextStyle(color: Colors.black)),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTypingIndicator() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        const CircleAvatar(
-          radius: 12,
-          backgroundImage: AssetImage(AppAssets.icProfileImage),
-        ),
-        const SizedBox(width: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-              bottomRight: Radius.circular(20),
+            child: const Text(
+              'Typing...',
+              style: TextStyle(color: Colors.grey),
             ),
           ),
-          child: const Text('Typing...', style: TextStyle(color: Colors.grey)),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildMessageInput(BuildContext context) {
+  Widget _buildMessageInput(BuildContext context, ChatPresenter presenter) {
     return Container(
-      height: px100,
+      height: 100,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -194,13 +244,21 @@ class ChatPage extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
+              controller: presenter.messageController,
+              onChanged: presenter.onMessageTextChanged,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
-                  borderSide: BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
                 hintText: 'Type your message',
-                hintStyle: TextStyle(color: Colors.grey),
+                hintStyle: const TextStyle(color: Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
                   borderSide: BorderSide.none,
@@ -210,15 +268,22 @@ class ChatPage extends StatelessWidget {
                   vertical: 15,
                 ),
                 filled: false,
-                suffixIcon: Container(
-                  width: 20,
-                  height: 20,
-                  margin: const EdgeInsets.only(right: 10),
-                  decoration: BoxDecoration(
-                    color: context.theme.colorScheme.primary,
-                    shape: BoxShape.circle,
+                suffixIcon: GestureDetector(
+                  onTap: presenter.sendMessage,
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    margin: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.send,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                   ),
-                  child: const Icon(Icons.send, color: Colors.white, size: 20),
                 ),
               ),
             ),
