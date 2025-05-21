@@ -1,53 +1,43 @@
 import 'package:cabwire/core/config/app_assets.dart';
-import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
-import 'package:cabwire/presentation/driver/home/ui/rideshare_page.dart';
-import 'package:cabwire/presentation/driver/notification/ui/notification_page.dart';
+import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
+import 'package:cabwire/presentation/driver/home/presenter/driver_home_ui_state.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 
-class DriverHomePage extends StatefulWidget {
-  final bool? isOnline;
-  const DriverHomePage({super.key, this.isOnline});
+const Widget gapH10 = SizedBox(height: 10);
+const Widget gapW10 = SizedBox(width: 10);
 
-  @override
-  State<DriverHomePage> createState() => _DriverHomePageState();
-}
+class DriverHomePage extends StatelessWidget {
+  final DriverHomePresenter presenter = locate<DriverHomePresenter>();
 
-class _DriverHomePageState extends State<DriverHomePage> {
-  late GoogleMapController mapController;
-
-  final LatLng _center = const LatLng(23.8103, 90.4125);
-  bool isSwitched = true;
-  late bool isRiderOnline;
-
-  @override
-  void initState() {
-    super.initState();
-    isRiderOnline = widget.isOnline ?? false;
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
-
-  void _goOnline() {
-    setState(() {
-      isRiderOnline = true;
-    });
-  }
+  DriverHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: Stack(children: [_buildMap(), _buildStackedCards()]),
+    return PresentableWidgetBuilder(
+      presenter: presenter,
+      builder: () {
+        final uiState = presenter.currentUiState;
+        return Scaffold(
+          appBar: _buildAppBar(context, presenter),
+          body: Stack(
+            children: [
+              _buildMap(presenter, uiState),
+              _buildStackedCards(context, presenter, uiState),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  AppBar _buildAppBar() {
+  AppBar _buildAppBar(BuildContext context, DriverHomePresenter presenter) {
+    final uiState = presenter.currentUiState;
+
     return AppBar(
       toolbarHeight: 80,
       leading: Padding(
@@ -62,46 +52,51 @@ class _DriverHomePageState extends State<DriverHomePage> {
           Row(
             children: [
               Text(
-                'Hello Sabbir',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                'Hello ${uiState.userName}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(width: 5),
-              Icon(Icons.circle, size: 10, color: Colors.green),
+              const SizedBox(width: 5),
+              Icon(
+                Icons.circle,
+                size: 10,
+                color: uiState.isOnline ? Colors.green : Colors.grey,
+              ),
             ],
           ),
-          Text('You\'re Now Online', style: TextStyle(fontSize: 12)),
+          Text(
+            uiState.isOnline ? 'You\'re Now Online' : 'You\'re Offline',
+            style: const TextStyle(fontSize: 12),
+          ),
         ],
       ),
       actions: [
         Transform.scale(
-          scale: 0.75, // adjust between 0.5 - 1.0 for desired size
+          scale: 0.75,
           child: Switch(
             padding: EdgeInsets.zero,
-            value: isSwitched,
+            value: uiState.isOnline,
             onChanged: (value) {
-              setState(() {
-                isSwitched = value;
-                isRiderOnline = value;
-              });
+              presenter.toggleOnlineStatus(value);
             },
           ),
         ),
-
-        SizedBox(width: 10),
-
+        gapW10,
         CircularIconButton(
-          margin: 10,
+          margin: 10.0,
           imageSrc: AppAssets.icNotifcationActive,
-          onTap: () => Get.to(() => NotificationScreen()),
+          onTap: presenter.goToNotifications,
         ),
       ],
     );
   }
 
-  Widget _buildMap() {
+  Widget _buildMap(DriverHomePresenter presenter, DriverHomeUiState uiState) {
     return GoogleMap(
-      onMapCreated: _onMapCreated,
-      initialCameraPosition: CameraPosition(target: _center, zoom: 14.0),
+      onMapCreated: presenter.onMapCreated,
+      initialCameraPosition: CameraPosition(
+        target: uiState.centerMapCoordinates,
+        zoom: 14.0,
+      ),
       myLocationEnabled: true,
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
@@ -109,31 +104,64 @@ class _DriverHomePageState extends State<DriverHomePage> {
     );
   }
 
-  Widget _buildStackedCards() {
+  Widget _buildStackedCards(
+    BuildContext context,
+    DriverHomePresenter presenter,
+    DriverHomeUiState uiState,
+  ) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: SizedBox(
-          height: 250,
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              if (isRiderOnline) ...[
+              if (uiState.isOnline) ...[
                 Positioned(
                   bottom: 40,
-                  child: _rideCard(color: Colors.white, name: 'Passenger 1'),
+                  child: _rideCard(
+                    context: context,
+                    presenter: presenter,
+                    name: 'Passenger 1',
+                    rideId: 'ride1',
+                    distance: '3.3 km',
+                    pickupLocation: 'Block B, Banasree, Dhaka.',
+                    profileImageUrl: AppAssets.icProfileImage,
+                    rating: 5,
+                    ratingCount: 5,
+                  ),
                 ),
                 Positioned(
                   bottom: 20,
-                  child: _rideCard(color: Colors.white, name: 'Passenger 2'),
+                  child: _rideCard(
+                    context: context,
+                    presenter: presenter,
+                    name: 'Passenger 2',
+                    rideId: 'ride2',
+                    distance: '2.5 km',
+                    pickupLocation: 'Block C, Mirpur, Dhaka.',
+                    profileImageUrl: AppAssets.icProfileImage,
+                    rating: 4,
+                    ratingCount: 12,
+                  ),
                 ),
                 Positioned(
                   bottom: 0,
-                  child: _rideCard(color: Colors.white, name: 'Passenger 3'),
+                  child: _rideCard(
+                    context: context,
+                    presenter: presenter,
+                    name: 'Passenger 3',
+                    rideId: 'ride3',
+                    distance: '5.1 km',
+                    pickupLocation: 'Block D, Gulshan, Dhaka.',
+                    profileImageUrl: AppAssets.icProfileImage,
+                    rating: 5,
+                    ratingCount: 8,
+                  ),
                 ),
               ],
-              if (!isRiderOnline) ...[_rideOfflineCard()],
+              if (!uiState.isOnline) ...[_rideOfflineCard(context, presenter)],
             ],
           ),
         ),
@@ -141,14 +169,24 @@ class _DriverHomePageState extends State<DriverHomePage> {
     );
   }
 
-  Widget _rideCard({required Color color, required String name}) {
+  Widget _rideCard({
+    required BuildContext context,
+    required DriverHomePresenter presenter,
+    required String name,
+    required String rideId,
+    required String distance,
+    required String pickupLocation,
+    required String profileImageUrl,
+    required int rating,
+    required int ratingCount,
+  }) {
     return Container(
-      width: 320,
+      width: MediaQuery.of(context).size.width * 0.85,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4)),
         ],
       ),
@@ -159,10 +197,8 @@ class _DriverHomePageState extends State<DriverHomePage> {
           gapH10,
           Row(
             children: [
-              CircleAvatar(
-                backgroundImage: AssetImage(AppAssets.icProfileImage),
-              ),
-              SizedBox(width: 12),
+              CircleAvatar(backgroundImage: AssetImage(profileImageUrl)),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,9 +208,9 @@ class _DriverHomePageState extends State<DriverHomePage> {
                       children: [
                         Text(
                           name,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Text('3.3 km'),
+                        Text(distance),
                       ],
                     ),
                     Row(
@@ -182,11 +218,20 @@ class _DriverHomePageState extends State<DriverHomePage> {
                         Row(
                           children: List.generate(
                             5,
-                            (index) =>
-                                Icon(Icons.star, size: 14, color: Colors.amber),
+                            (index) => Icon(
+                              Icons.star,
+                              size: 14,
+                              color:
+                                  index < rating
+                                      ? Colors.amber
+                                      : Colors.grey.shade300,
+                            ),
                           ),
                         ),
-                        Text(' 5 (5)', style: TextStyle(fontSize: 12)),
+                        Text(
+                          ' $rating ($ratingCount)',
+                          style: const TextStyle(fontSize: 12),
+                        ),
                       ],
                     ),
                   ],
@@ -194,14 +239,17 @@ class _DriverHomePageState extends State<DriverHomePage> {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Divider(color: Colors.grey.shade300),
-          Text('PICK UP', style: TextStyle(fontSize: 12, color: Colors.grey)),
-          Text(
-            'Block B, Banasree, Dhaka.',
-            style: TextStyle(fontWeight: FontWeight.w500),
+          const Text(
+            'PICK UP',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
           ),
-          SizedBox(height: 8),
+          Text(
+            pickupLocation,
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
           Divider(color: Colors.grey.shade300),
           Row(
             children: [
@@ -209,7 +257,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                 child: ActionButton(
                   text: 'Decline',
                   onPressed: () {
-                    // decline action
+                    presenter.declineRide(rideId);
                   },
                 ),
               ),
@@ -219,8 +267,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                   text: 'Accept',
                   isPrimary: true,
                   onPressed: () {
-                    // accept action
-                    Get.to(() => RidesharePage());
+                    presenter.acceptRide(rideId);
                   },
                 ),
               ),
@@ -231,14 +278,14 @@ class _DriverHomePageState extends State<DriverHomePage> {
     );
   }
 
-  Widget _rideOfflineCard() {
+  Widget _rideOfflineCard(BuildContext context, DriverHomePresenter presenter) {
     return Container(
-      width: 400,
+      width: MediaQuery.of(context).size.width * 0.9,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: context.theme.colorScheme.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4)),
         ],
       ),
@@ -246,31 +293,28 @@ class _DriverHomePageState extends State<DriverHomePage> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
+          const Text(
             'Ready to drive?',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
           ),
-          Text(
+          gapH10,
+          const Text(
             'Your status is offline. Please go online to get your next ride.',
             style: TextStyle(fontWeight: FontWeight.w500),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           ActionButton(
             text: 'Go Online',
             isPrimary: true,
-            onPressed: () {
-              _goOnline();
-            },
+            onPressed: presenter.goOnline,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: ActionButton(
               text: 'Not Now',
-              onPressed: () {
-                // accept action
-              },
+              onPressed: presenter.handleNotNow,
             ),
           ),
         ],
