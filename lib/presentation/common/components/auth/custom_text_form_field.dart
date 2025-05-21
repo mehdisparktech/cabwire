@@ -13,6 +13,7 @@ class CustomTextFormField extends StatelessWidget {
   final Widget? prefixIcon;
   final bool readOnly;
   final VoidCallback? onTap;
+  final int? maxLines;
 
   const CustomTextFormField({
     super.key,
@@ -27,6 +28,7 @@ class CustomTextFormField extends StatelessWidget {
     this.prefixIcon,
     this.readOnly = false,
     this.onTap,
+    this.maxLines = 1,
   });
 
   @override
@@ -38,6 +40,7 @@ class CustomTextFormField extends StatelessWidget {
       validator: validator,
       readOnly: readOnly,
       onTap: onTap,
+      maxLines: maxLines,
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: prefixIcon,

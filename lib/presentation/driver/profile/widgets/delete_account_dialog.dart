@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DeleteAccountDialog extends StatefulWidget {
-  const DeleteAccountDialog({super.key});
+  final VoidCallback onConfirm;
+  const DeleteAccountDialog({super.key, required this.onConfirm});
 
   @override
   State<DeleteAccountDialog> createState() => _DeleteAccountDialogState();
@@ -114,6 +115,7 @@ class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
                     onPressed: () {
                       // No logic needed, just close the dialog
                       Navigator.of(context).pop();
+                      widget.onConfirm();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepOrange,

@@ -1,9 +1,8 @@
-import 'package:cabwire/core/utility/navigation_utility.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_auth_navigator_screen.dart';
 import 'package:flutter/material.dart';
 
 class LogoutDialog extends StatelessWidget {
-  const LogoutDialog({super.key});
+  final VoidCallback onConfirm;
+  const LogoutDialog({super.key, required this.onConfirm});
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +44,7 @@ class LogoutDialog extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      NavigationUtility.slideRightReplacement(
-                        context,
-                        const AuthNavigator(),
-                      );
+                      onConfirm();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepOrange,

@@ -1,23 +1,20 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
-import 'package:cabwire/core/utility/utility.dart';
+// import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_text_form_field.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
-import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/common/components/common_text.dart';
+import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_presenter.dart';
 import 'package:flutter/material.dart';
+// For File type
 
 class EditProfileInfoScreen extends StatelessWidget {
+  final DriverProfilePresenter presenter = locate<DriverProfilePresenter>();
+
   EditProfileInfoScreen({super.key});
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneNumberController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
-  final TextEditingController stateController = TextEditingController();
-  final TextEditingController zipCodeController = TextEditingController();
-  final TextEditingController genderController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,124 +23,172 @@ class EditProfileInfoScreen extends StatelessWidget {
         title: 'Change Profile Information',
         showBackButton: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    gapH20,
-                    Center(
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: 160,
-                            height: 160,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
-                              shape: BoxShape.circle,
-                            ),
-                            child: CommonImage(
-                              imageType: ImageType.png,
-                              imageSrc: AppAssets.icProfileImage,
-                              fill: BoxFit.cover,
-                              width: 160,
-                              height: 160,
-                              borderRadius: 100,
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.grey.shade300),
+      body: PresentableWidgetBuilder(
+        // Wrap with builder if any part of UI needs to react to state changes
+        presenter: presenter,
+        builder: () {
+          final uiState = presenter.currentUiState;
+          // For displaying user messages (e.g., validation errors)
+          if (uiState.userMessage!.isNotEmpty) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(uiState.userMessage!)));
+              presenter.addUserMessage(''); // Clear message after showing
+            });
+          }
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        gapH20,
+                        Center(
+                          child: Stack(
+                            children: [
+                              GestureDetector(
+                                // To allow image picking
+                                onTap: presenter.pickProfileImage,
+                                child: CircleAvatar(
+                                  // Use CircleAvatar for cleaner circular image
+                                  radius: 80,
+                                  backgroundColor: Colors.grey.shade300,
+                                  backgroundImage:
+                                      presenter.selectedProfileImageFile != null
+                                          ? FileImage(
+                                            presenter.selectedProfileImageFile!,
+                                          )
+                                          : (uiState
+                                                  .userProfile
+                                                  .avatarUrl
+                                                  .isNotEmpty &&
+                                              !uiState.userProfile.avatarUrl
+                                                  .startsWith('http'))
+                                          ? AssetImage(
+                                                uiState.userProfile.avatarUrl,
+                                              )
+                                              as ImageProvider
+                                          : (uiState
+                                              .userProfile
+                                              .avatarUrl
+                                              .isNotEmpty)
+                                          ? NetworkImage(
+                                            uiState.userProfile.avatarUrl,
+                                          )
+                                          : AssetImage(AppAssets.icProfileImage)
+                                              as ImageProvider,
+                                ),
                               ),
-                              child: const Icon(
-                                Icons.camera_alt,
-                                size: 20,
-                                color: Colors.grey,
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: InkWell(
+                                  // Make camera icon tappable too
+                                  onTap: presenter.pickProfileImage,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      size: 20,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                    gapH20,
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 14),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Colors.grey.withOpacityInt(0.2),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacityInt(0.2),
-                            spreadRadius: 2,
-                            blurRadius: 5,
+                        gapH20,
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 14),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Colors.grey.withOpacity(0.2),
+                            ), // Corrected
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                              ), // Corrected
+                            ],
                           ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CommonText(text: 'Name'),
-                          gapH10,
-                          CustomTextFormField(
-                            hintText: 'Enter Name',
-                            controller: nameController,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const CommonText(text: 'Name'),
+                              gapH10,
+                              CustomTextFormField(
+                                hintText: 'Enter Name',
+                                controller: presenter.editNameController,
+                              ),
+                              gapH10,
+                              const CommonText(text: 'Email'),
+                              gapH10,
+                              CustomTextFormField(
+                                hintText: 'Enter Email',
+                                controller: presenter.editEmailController,
+                                keyboardType: TextInputType.emailAddress,
+                              ),
+                              gapH10,
+                              const CommonText(text: 'Phone Number'),
+                              gapH10,
+                              CustomTextFormField(
+                                hintText: 'Enter Phone Number',
+                                controller: presenter.editPhoneNumberController,
+                                keyboardType: TextInputType.phone,
+                              ),
+                              gapH10,
+                              const CommonText(text: 'Date of Birth'),
+                              gapH10,
+                              CustomTextFormField(
+                                hintText: 'YYYY-MM-DD',
+                                controller:
+                                    presenter
+                                        .editDobController /* onTap: () => presenter.selectDateOfBirth(context) */,
+                              ),
+                              gapH10,
+                              const CommonText(text: 'Gender'),
+                              gapH10,
+                              CustomTextFormField(
+                                hintText: 'e.g., Male, Female, Other',
+                                controller: presenter.editGenderController,
+                              ),
+                            ],
                           ),
-                          gapH10,
-                          CommonText(text: 'Email'),
-                          gapH10,
-                          CustomTextFormField(
-                            hintText: 'Enter Email',
-                            controller: emailController,
-                          ),
-                          gapH10,
-                          CommonText(text: 'Phone Number'),
-                          gapH10,
-                          CustomTextFormField(
-                            hintText: 'Enter Phone Number',
-                            controller: phoneNumberController,
-                          ),
-                          gapH10,
-                          CommonText(text: 'Date of Birth'),
-                          gapH10,
-                          CustomTextFormField(
-                            hintText: 'Enter Date of Birth',
-                            controller: addressController,
-                          ),
-                          gapH10,
-                          CommonText(text: 'Gender'),
-                          gapH10,
-                          CustomTextFormField(
-                            hintText: 'Enter Gender',
-                            controller: genderController,
-                          ),
-                        ],
-                      ),
+                        ),
+                        gapH20,
+                      ],
                     ),
-                    gapH20,
-                  ],
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: CustomButton(
+                    text: 'Save Changes',
+                    onPressed: presenter.saveProfileInfo,
+                    radius: 10,
+                  ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: CustomButton(text: 'Save', onPressed: () {}, radius: 10),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
