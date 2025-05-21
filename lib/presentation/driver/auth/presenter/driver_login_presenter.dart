@@ -6,8 +6,8 @@ import 'package:cabwire/presentation/driver/auth/presenter/driver_login_ui_state
 
 class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
   final formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final emailController = TextEditingController()..text = 'mehdi@gmail.com';
+  final passwordController = TextEditingController()..text = '12345678';
 
   final Obs<DriverLoginUiState> uiState = Obs(DriverLoginUiState.empty());
 

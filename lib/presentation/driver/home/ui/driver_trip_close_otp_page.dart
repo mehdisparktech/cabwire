@@ -90,7 +90,7 @@ class DriverTripCloseOtpPage extends StatelessWidget {
           isPrimary: true,
           text: 'Trip Closure',
           onPressed: () {
-            Get.to(RideDetailsScreen(isFeedBack: true));
+            Get.to(RideDetailsScreen());
           },
         ),
       ),

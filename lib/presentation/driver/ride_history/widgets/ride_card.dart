@@ -10,7 +10,7 @@ class RideCard extends StatelessWidget {
   final String distance;
   final String duration;
   final bool isCarRide;
-  final Widget page;
+  final VoidCallback onTap;
 
   const RideCard({
     super.key,
@@ -21,7 +21,7 @@ class RideCard extends StatelessWidget {
     required this.distance,
     required this.duration,
     required this.isCarRide,
-    required this.page,
+    required this.onTap,
   });
 
   @override
@@ -193,12 +193,7 @@ class RideCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => page),
-                          );
-                        },
+                        onTap: onTap,
                         child: Text(
                           'See Details',
                           style: TextStyle(

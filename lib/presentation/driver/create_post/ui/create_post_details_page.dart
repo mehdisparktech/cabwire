@@ -163,7 +163,7 @@ class CreatePostDetailsScreen extends StatelessWidget {
             gapH10,
             GestureDetector(
               onTap: () {
-                Get.to(() => const RideDetailsScreen());
+                Get.to(() => RideDetailsScreen());
               },
               child: CustomText(
                 'View details',

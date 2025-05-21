@@ -7,6 +7,7 @@ import 'package:cabwire/presentation/driver/earnings/presenter/earning_presenter
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
 import 'package:cabwire/presentation/driver/notification/presenter/notification_presenter.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_presenter.dart';
+import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_presenter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/di/service_locator.dart';
@@ -39,6 +40,7 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(() => loadPresenter(NotificationPresenter()))
       ..registerLazySingleton(() => loadPresenter(CreatePostPresenter()))
       ..registerLazySingleton(() => loadPresenter(EarningsPresenter()))
-      ..registerLazySingleton(() => loadPresenter(ChatPresenter()));
+      ..registerLazySingleton(() => loadPresenter(ChatPresenter()))
+      ..registerLazySingleton(() => loadPresenter(RideHistoryPresenter()));
   }
 }
