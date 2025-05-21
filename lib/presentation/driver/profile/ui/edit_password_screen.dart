@@ -3,7 +3,7 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_text_form_field.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/common_text.dart';
+import 'package:cabwire/presentation/common/components/common_text.dart';
 import 'package:flutter/material.dart';
 
 class EditPasswordScreen extends StatelessWidget {

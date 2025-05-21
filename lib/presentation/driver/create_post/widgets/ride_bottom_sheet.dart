@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
+import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
+import 'package:cabwire/presentation/driver/chat/ui/audio_call_page.dart';
 import 'package:cabwire/presentation/driver/chat/ui/chat_page.dart';
-import 'package:cabwire/presentation/driver/chat/widgets/phone_button.dart';
 import 'package:cabwire/presentation/driver/create_post/ui/rideshare_trip_close_otp_page.dart';
 import 'package:cabwire/presentation/driver/home/widgets/message_button_widget.dart';
 import 'package:cabwire/presentation/driver/home/widgets/passenger_info_widget.dart';
@@ -86,7 +87,15 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
                   },
                 ),
               ),
-              Expanded(flex: 1, child: PhoneButton()),
+              Expanded(
+                flex: 1,
+                child: CircularIconButton(
+                  icon: Icons.phone,
+                  onTap: () {
+                    Get.to(() => const AudioCallScreen());
+                  },
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),

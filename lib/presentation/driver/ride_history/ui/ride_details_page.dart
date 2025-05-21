@@ -3,7 +3,7 @@ import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/driver/home/widgets/successful_payment.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
+import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/driver/ride_history/widgets/driver_profile_widget.dart';
 import 'package:cabwire/presentation/driver/ride_history/widgets/route_information_widget.dart';
 import 'package:flutter/material.dart';

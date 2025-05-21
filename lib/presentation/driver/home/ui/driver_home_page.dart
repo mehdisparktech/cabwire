@@ -1,10 +1,9 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
-import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
+import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/driver/home/ui/rideshare_page.dart';
 import 'package:cabwire/presentation/driver/notification/ui/notification_page.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -90,31 +89,10 @@ class _DriverHomePageState extends State<DriverHomePage> {
 
         SizedBox(width: 10),
 
-        GestureDetector(
+        CircularIconButton(
+          margin: 10,
+          imageSrc: AppAssets.icNotifcationActive,
           onTap: () => Get.to(() => NotificationScreen()),
-          child: Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacityInt(0.2),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: CommonImage(
-                  imageType: ImageType.svg,
-                  imageSrc: AppAssets.icNotifcationActive,
-                ),
-              ),
-            ),
-          ),
         ),
       ],
     );

@@ -1,8 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
-import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/common_text.dart';
+import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
+import 'package:cabwire/presentation/common/components/common_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -29,26 +28,11 @@ class NotificationItem extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 30),
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacityInt(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                ),
-              ],
-            ),
-            child: CommonImage(
-              imageType: ImageType.svg,
-              imageSrc: AppAssets.icNotificationBing,
-            ),
+          CircularIconButton(
+            imageSrc: AppAssets.icNotificationBing,
+            onTap: () {},
           ),
           gapW16,
 

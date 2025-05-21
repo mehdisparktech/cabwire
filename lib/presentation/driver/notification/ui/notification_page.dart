@@ -1,5 +1,5 @@
 import 'package:cabwire/presentation/driver/notification/widgets/notification_item.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/common_text.dart';
+import 'package:cabwire/presentation/common/components/common_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

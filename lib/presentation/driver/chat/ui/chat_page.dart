@@ -1,7 +1,8 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/driver/chat/widgets/phone_button.dart';
+import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
+import 'package:cabwire/presentation/driver/chat/ui/audio_call_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -40,7 +41,14 @@ class ChatPage extends StatelessWidget {
           ),
         ],
       ),
-      actions: [PhoneButton()],
+      actions: [
+        CircularIconButton(
+          icon: Icons.phone,
+          onTap: () {
+            Get.to(() => const AudioCallScreen());
+          },
+        ),
+      ],
     );
   }
 

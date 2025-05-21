@@ -7,8 +7,8 @@ import 'package:cabwire/presentation/driver/profile/ui/edit_password_screen.dart
 import 'package:cabwire/presentation/driver/profile/ui/edit_profile_info_screen.dart';
 import 'package:cabwire/presentation/driver/profile/ui/privacy_policy_screen.dart';
 import 'package:cabwire/presentation/driver/profile/ui/terms_and_conditions_screen.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/common_text.dart';
+import 'package:cabwire/presentation/common/components/common_image.dart';
+import 'package:cabwire/presentation/common/components/common_text.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/delete_account_dialog.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/item.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/logout_dialog.dart';

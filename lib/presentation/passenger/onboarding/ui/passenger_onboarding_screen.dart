@@ -88,7 +88,14 @@ class PassengerOnboardingScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Center(child: CommonImage(image, fit: BoxFit.contain)),
+                Center(
+                  child: CommonImage(
+                    imageSrc: image,
+                    fill: BoxFit.contain,
+                    height: 350,
+                    width: 350,
+                  ),
+                ),
                 gapH50,
                 Text(
                   title,

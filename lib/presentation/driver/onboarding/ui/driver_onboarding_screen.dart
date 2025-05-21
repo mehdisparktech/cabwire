@@ -91,7 +91,14 @@ class DriverOnboardingScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Center(child: CommonImage(image, fit: BoxFit.contain)),
+                Center(
+                  child: CommonImage(
+                    imageSrc: image,
+                    fill: BoxFit.contain,
+                    width: 350,
+                    height: 350,
+                  ),
+                ),
                 gapH50,
                 Text(
                   title,

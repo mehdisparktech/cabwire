@@ -2,11 +2,12 @@ import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/data/driver/models/ride_data_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
+import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
-import 'package:cabwire/presentation/driver/chat/widgets/phone_button.dart';
+import 'package:cabwire/presentation/driver/chat/ui/audio_call_page.dart';
 import 'package:cabwire/presentation/driver/create_post/ui/ride_start_page.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
+import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/driver/ride_history/ui/ride_details_page.dart';
 import 'package:cabwire/presentation/driver/ride_history/widgets/driver_profile_widget.dart';
 import 'package:cabwire/presentation/driver/ride_history/widgets/route_information_widget.dart';
@@ -161,7 +162,12 @@ class CreatePostDetailsScreen extends StatelessWidget {
               ),
             ),
             gapH10,
-            PhoneButton(margin: 0),
+            CircularIconButton(
+              icon: Icons.phone,
+              onTap: () {
+                Get.to(() => const AudioCallScreen());
+              },
+            ),
           ],
         ),
       ],

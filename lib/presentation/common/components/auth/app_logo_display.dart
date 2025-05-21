@@ -1,3 +1,5 @@
+import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +34,14 @@ class AppLogoDisplay extends StatelessWidget {
               ),
             ],
           ),
-          child: CommonImage(logoAssetPath, width: 80, height: 120),
+          child: CommonImage(
+            imageSrc: logoAssetPath,
+            width: px110,
+            height: px110,
+          ),
         ),
-        const SizedBox(height: 16),
-        CommonImage(logoAssetPath2, width: 200, height: 34),
+        gapH16,
+        CommonImage(imageSrc: logoAssetPath2, width: px200, height: px34),
       ],
     );
   }

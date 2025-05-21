@@ -47,7 +47,7 @@ class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'New password',
+                  'Password',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

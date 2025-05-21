@@ -38,9 +38,9 @@ class WelcomeScreen extends StatelessWidget {
                   ],
                 ),
                 child: CommonImage(
-                  AppAssets.icPassengerLogo,
-                  width: px80,
-                  height: px120,
+                  imageSrc: AppAssets.icPassengerLogo,
+                  width: px100,
+                  height: px100,
                 ),
               ),
               gapH30,
@@ -106,7 +106,7 @@ class WelcomeScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CommonImage(icon, width: px18, height: px18),
+            CommonImage(imageSrc: icon, width: px24, height: px14),
             gapW12,
             CustomText(
               text,
@@ -116,10 +116,10 @@ class WelcomeScreen extends StatelessWidget {
             ),
             gapW12,
             CommonImage(
-              AppAssets.icArrowRight,
+              imageSrc: AppAssets.icArrowRight,
               width: px24,
               height: px24,
-              color: AppColor.white,
+              imageColor: AppColor.white,
             ),
           ],
         ),

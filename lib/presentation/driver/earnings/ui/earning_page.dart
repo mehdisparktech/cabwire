@@ -3,7 +3,7 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
 import 'package:cabwire/presentation/driver/earnings/widgets/daily_earnings_card.dart';
 import 'package:cabwire/presentation/driver/earnings/widgets/earnings_summary_card.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
+import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
