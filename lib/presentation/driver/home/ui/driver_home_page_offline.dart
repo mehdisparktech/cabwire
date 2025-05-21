@@ -1,6 +1,6 @@
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
+import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/driver/main/ui/driver_main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -95,7 +95,7 @@ class _DriverHomePageOfflineState extends State<DriverHomePageOffline> {
                   SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
-                    child: RideActionButton(
+                    child: ActionButton(
                       text: 'Go Online',
                       isPrimary: true,
                       onPressed: () {
@@ -110,7 +110,7 @@ class _DriverHomePageOfflineState extends State<DriverHomePageOffline> {
                   SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
-                    child: RideActionButton(
+                    child: ActionButton(
                       text: 'Not Now',
                       onPressed: () {
                         NavigationUtility.fadeReplacement(

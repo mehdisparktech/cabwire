@@ -4,7 +4,7 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/chat/ui/chat_page.dart';
 import 'package:cabwire/presentation/driver/chat/widgets/phone_button.dart';
 import 'package:cabwire/presentation/driver/home/ui/driver_trip_close_otp_page.dart';
-import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
+import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // For context.theme in RideshareBottomSheet itself
 
@@ -99,7 +99,7 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
           isRideStart
               ? Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
-                child: RideActionButton(
+                child: ActionButton(
                   isPrimary: true,
                   text: isRideProcessing ? 'Trip Closure' : 'Start Ride',
                   onPressed: () {

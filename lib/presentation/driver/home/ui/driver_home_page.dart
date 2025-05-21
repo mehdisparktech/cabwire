@@ -1,8 +1,8 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/driver/home/ui/rideshare_page.dart';
-import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:cabwire/presentation/driver/notification/ui/notification_page.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
 import 'package:flutter/material.dart';
@@ -228,7 +228,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
           Row(
             children: [
               Expanded(
-                child: RideActionButton(
+                child: ActionButton(
                   text: 'Decline',
                   onPressed: () {
                     // decline action
@@ -237,7 +237,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: RideActionButton(
+                child: ActionButton(
                   text: 'Accept',
                   isPrimary: true,
                   onPressed: () {
@@ -278,7 +278,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 12),
-          RideActionButton(
+          ActionButton(
             text: 'Go Online',
             isPrimary: true,
             onPressed: () {
@@ -288,7 +288,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
           SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
-            child: RideActionButton(
+            child: ActionButton(
               text: 'Not Now',
               onPressed: () {
                 // accept action

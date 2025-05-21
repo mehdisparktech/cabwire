@@ -14,15 +14,18 @@ Future<void> main() async {
   }, (error, stackTrace) => (error, stackTrace, fatal: true));
 }
 
+/// Initialize the app
 Future<void> _initializeApp() async {
   //await loadEnv();
   await ServiceLocator.setUp();
 }
 
+/// Check if the app is first run
 Future<bool> _checkFirstRun() {
   return locate<DetermineFirstRunUseCase>().execute();
 }
 
+/// Register the device
 // ignore: unused_element
 Future<void> _registerDevice() async {
   final registerDeviceUsecase = locate<RegisterDeviceUsecase>();

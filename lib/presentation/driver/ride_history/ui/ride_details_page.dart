@@ -1,7 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
-import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:cabwire/presentation/driver/home/widgets/successful_payment.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
 import 'package:cabwire/presentation/driver/ride_history/widgets/driver_profile_widget.dart';
@@ -174,7 +174,7 @@ class RideDetailsScreen extends StatelessWidget {
 
               // Buttons
               isFeedBack
-                  ? RideActionButton(
+                  ? ActionButton(
                     isPrimary: true,
                     text: 'Continue',
                     onPressed: () {

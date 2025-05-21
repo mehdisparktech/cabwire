@@ -3,7 +3,7 @@ import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
-import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
+import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/driver/ride_history/ui/ride_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -85,7 +85,7 @@ class DriverTripCloseOtpPage extends StatelessWidget {
       ),
       bottomSheet: Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
-        child: RideActionButton(
+        child: ActionButton(
           borderRadius: 0,
           isPrimary: true,
           text: 'Trip Closure',

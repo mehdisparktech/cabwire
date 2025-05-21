@@ -3,7 +3,7 @@ import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/driver/create_post/ui/ride_overview_page.dart';
-import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
+import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -52,7 +52,7 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
       body: Stack(children: [_buildMap(), _buildDestinationContainer()]),
       bottomSheet: Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
-        child: RideActionButton(
+        child: ActionButton(
           borderRadius: 0,
           isPrimary: true,
           text: 'Continue',

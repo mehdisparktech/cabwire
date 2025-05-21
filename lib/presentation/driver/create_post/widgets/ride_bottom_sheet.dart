@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/driver/chat/ui/chat_page.dart';
 import 'package:cabwire/presentation/driver/chat/widgets/phone_button.dart';
 import 'package:cabwire/presentation/driver/create_post/ui/rideshare_trip_close_otp_page.dart';
@@ -8,7 +9,6 @@ import 'package:cabwire/presentation/driver/home/widgets/message_button_widget.d
 import 'package:cabwire/presentation/driver/home/widgets/passenger_info_widget.dart';
 import 'package:cabwire/presentation/driver/home/widgets/payment_info_widget.dart';
 import 'package:cabwire/presentation/driver/home/widgets/pickup_info_widget.dart';
-import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:cabwire/presentation/driver/home/widgets/trip_stoppage_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // For context.theme in RideshareBottomSheet itself
@@ -95,7 +95,7 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
           ), // Use the new widget
           // Use the new widget
           isRideStart
-              ? RideActionButton(
+              ? ActionButton(
                 isPrimary: true,
                 text: isRideProcessing ? 'Trip Closure' : 'Start Ride',
                 onPressed: () {

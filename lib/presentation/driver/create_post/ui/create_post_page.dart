@@ -1,9 +1,9 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/driver/create_post/ui/search_destination_page.dart';
-import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
 import 'package:cabwire/presentation/driver/profile/widgets/common_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -45,7 +45,7 @@ class CreatePostPage extends StatelessWidget {
           gapH60,
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: RideActionButton(
+            child: ActionButton(
               text: 'Create New Post',
               isPrimary: true,
               onPressed: () {

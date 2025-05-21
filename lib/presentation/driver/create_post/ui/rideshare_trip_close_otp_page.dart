@@ -1,7 +1,7 @@
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
-import 'package:cabwire/presentation/driver/home/widgets/ride_action_button.dart';
+import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/driver/home/widgets/successful_payment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,7 +48,7 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
       ),
       bottomSheet: Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
-        child: RideActionButton(
+        child: ActionButton(
           borderRadius: 0,
           isPrimary: true,
           text: 'Trip Closure',
@@ -72,11 +72,7 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: RideActionButton(
-                isPrimary: true,
-                text: otp,
-                onPressed: () {},
-              ),
+              child: ActionButton(isPrimary: true, text: otp, onPressed: () {}),
             ),
             gapW10,
             Text(
@@ -133,7 +129,7 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
             ),
             gapW20,
             Expanded(
-              child: RideActionButton(
+              child: ActionButton(
                 isPrimary: true,
                 text: 'Completed',
                 onPressed: () {},
