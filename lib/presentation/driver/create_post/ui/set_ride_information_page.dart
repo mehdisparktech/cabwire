@@ -57,7 +57,7 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
           isPrimary: true,
           text: 'Continue',
           onPressed: () {
-            Get.to(() => const RideOverviewScreen(isCreatePost: true));
+            Get.to(() => RideOverviewScreen(isCreatePost: true));
           },
         ),
       ),

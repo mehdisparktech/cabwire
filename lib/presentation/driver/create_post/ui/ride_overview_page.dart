@@ -1,9 +1,10 @@
 import 'package:cabwire/core/config/app_assets.dart';
-import 'package:cabwire/data/driver/models/ride_data_model.dart';
-import 'package:cabwire/data/driver/models/trip_statistic_model.dart';
+import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
+import 'package:cabwire/presentation/driver/create_post/presenter/create_post_presenter.dart';
 import 'package:cabwire/presentation/driver/create_post/ui/create_post_details_page.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/driver/ride_history/widgets/driver_profile_widget.dart';
@@ -14,24 +15,25 @@ import 'package:get/get.dart';
 class RideOverviewScreen extends StatelessWidget {
   final bool isCreatePost;
 
-  const RideOverviewScreen({super.key, this.isCreatePost = false});
+  RideOverviewScreen({super.key, this.isCreatePost = false});
+  final CreatePostPresenter _presenter = locate<CreatePostPresenter>();
 
   // Extract static data to avoid recreation on every build
-  static const RideData _rideData = RideData(
-    driverName: 'Santiago Dslab',
-    vehicleNumber: 'DHK METRO HA 64-8549',
-    vehicleModel: 'Volvo XC90',
-    pickupLocation: 'Block B, Banasree, Dhaka.',
-    dropoffLocation: 'Green Road, Dhanmondi, Dhaka.',
-    dropoffLocation2: 'Green Road, Dhanmondi, Dhaka.',
-    statistics: [
-      TripStatistic(title: 'Total Distance:', value: '20 km'),
-      TripStatistic(title: 'Per Km Rate:', value: '\$1'),
-      TripStatistic(title: 'Seat Available:', value: '2'),
-      TripStatistic(title: 'Last Booking Time:', value: '45 Minutes'),
-    ],
-    totalAmount: '\$100',
-  );
+  // static const RideData _rideData = RideData(
+  //   driverName: 'Santiago Dslab',
+  //   vehicleNumber: 'DHK METRO HA 64-8549',
+  //   vehicleModel: 'Volvo XC90',
+  //   pickupLocation: 'Block B, Banasree, Dhaka.',
+  //   dropoffLocation: 'Green Road, Dhanmondi, Dhaka.',
+  //   dropoffLocation2: 'Green Road, Dhanmondi, Dhaka.',
+  //   statistics: [
+  //     TripStatistic(title: 'Total Distance:', value: '20 km'),
+  //     TripStatistic(title: 'Per Km Rate:', value: '\$1'),
+  //     TripStatistic(title: 'Seat Available:', value: '2'),
+  //     TripStatistic(title: 'Last Booking Time:', value: '45 Minutes'),
+  //   ],
+  //   totalAmount: '\$100',
+  // );
 
   // Constants for better maintainability
   static const double _defaultSpacing = 16.0;
@@ -46,32 +48,38 @@ class RideOverviewScreen extends StatelessWidget {
         showBackButton: true,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(_defaultSpacing),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDriverSection(),
-            const SizedBox(height: _sectionSpacing),
-            _buildVehicleSection(),
-            const SizedBox(height: _sectionSpacing),
-            _buildTripSection(),
-            const SizedBox(height: _sectionSpacing),
-            _buildStatisticsSection(),
-            const SizedBox(height: 20),
-            _buildPaymentSection(),
-            const SizedBox(height: _sectionSpacing),
-          ],
-        ),
+      body: PresentableWidgetBuilder<CreatePostPresenter>(
+        presenter: _presenter,
+        builder: () {
+          final rideData = _presenter.currentUiState.rideData;
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(_defaultSpacing),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDriverSection(rideData),
+                const SizedBox(height: _sectionSpacing),
+                _buildVehicleSection(rideData),
+                const SizedBox(height: _sectionSpacing),
+                _buildTripSection(rideData),
+                const SizedBox(height: _sectionSpacing),
+                _buildStatisticsSection(rideData),
+                const SizedBox(height: 20),
+                _buildPaymentSection(rideData),
+                const SizedBox(height: _sectionSpacing),
+              ],
+            ),
+          );
+        },
       ),
       bottomSheet: _buildBottomSheet(),
     );
   }
 
   // Extracted widgets for better organization and reusability
-  Widget _buildDriverSection() {
+  Widget _buildDriverSection(dynamic rideData) {
     return DriverProfileWidget(
-      name: _rideData.driverName,
+      name: rideData?.driverName ?? '',
       textStyle: const TextStyle(
         fontSize: 16,
         color: Colors.black,
@@ -80,7 +88,7 @@ class RideOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVehicleSection() {
+  Widget _buildVehicleSection(dynamic rideData) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -89,7 +97,7 @@ class RideOverviewScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _rideData.vehicleNumber,
+                rideData?.vehicleNumber ?? '',
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -98,7 +106,7 @@ class RideOverviewScreen extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                _rideData.vehicleModel,
+                rideData?.vehicleModel ?? '',
                 style: const TextStyle(fontSize: 14, color: Colors.black87),
               ),
             ],
@@ -114,7 +122,7 @@ class RideOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTripSection() {
+  Widget _buildTripSection(dynamic rideData) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -124,18 +132,18 @@ class RideOverviewScreen extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         RouteInformationWidget(
-          pickupLocation: _rideData.pickupLocation,
-          dropoffLocation: _rideData.dropoffLocation,
-          dropoffLocation2: _rideData.dropoffLocation2,
+          pickupLocation: rideData?.pickupLocation ?? '',
+          dropoffLocation: rideData?.dropoffLocation ?? '',
+          dropoffLocation2: rideData?.dropoffLocation ?? '',
         ),
       ],
     );
   }
 
-  Widget _buildStatisticsSection() {
+  Widget _buildStatisticsSection(dynamic rideData) {
     return Column(
       children:
-          _rideData.statistics
+          rideData?.statistics
               ?.map(
                 (stat) => Padding(
                   padding: const EdgeInsets.only(bottom: _smallSpacing),
@@ -150,7 +158,7 @@ class RideOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPaymentSection() {
+  Widget _buildPaymentSection(dynamic rideData) {
     return Row(
       children: [
         Container(
@@ -169,7 +177,7 @@ class RideOverviewScreen extends StatelessWidget {
           ),
         ),
         CustomText(
-          _rideData.totalAmount,
+          rideData?.totalAmount ?? '',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ],
@@ -185,7 +193,7 @@ class RideOverviewScreen extends StatelessWidget {
         borderRadius: 0,
         isPrimary: true,
         text: 'Create Post',
-        onPressed: () => Get.to(() => const CreatePostDetailsScreen()),
+        onPressed: () => Get.to(() => CreatePostDetailsScreen()),
       ),
     );
   }
