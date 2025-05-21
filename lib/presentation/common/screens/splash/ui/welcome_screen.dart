@@ -28,7 +28,7 @@ class WelcomeScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: px12, vertical: px16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(32),
+                  borderRadius: BorderRadius.circular(px32),
                   boxShadow: [
                     BoxShadow(
                       color: AppColor.primary.withOpacityInt(0.2),

@@ -1482,6 +1482,12 @@ double get px200 {
   return _px200!;
 }
 
+double? _px300;
+double get px300 {
+  _px300 ??= 300.px;
+  return _px300!;
+}
+
 double? _heightPercent;
 double? _widthPercent;
 double? appScreenWidthQuarterPercentage;

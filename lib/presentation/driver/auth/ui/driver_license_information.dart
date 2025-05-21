@@ -1,6 +1,8 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/auth/ui/driver_vehicles_information_screen.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +67,7 @@ class _DriverLicenseInformationScreenState
     return AuthScreenWrapper(
       title: "Driver License Information",
       subtitle: "Please confirm your driver license information to continue.",
-      textColor: Colors.black,
+      textColor: context.color.blackColor100,
       child:
       // Form fields in AuthFormContainer
       AuthFormContainer(
@@ -89,7 +91,7 @@ class _DriverLicenseInformationScreenState
           CustomTextFormField(
             controller: _licenseExpiryDateController,
             hintText: 'License Expiry Date',
-            suffixIcon: const Icon(Icons.calendar_today, size: 20),
+            suffixIcon: Icon(Icons.calendar_today, size: px20),
             readOnly: true,
             onTap: () => _selectDate(context),
           ),
@@ -98,7 +100,7 @@ class _DriverLicenseInformationScreenState
             controller: _driverLicenseImageController,
             hintText: 'Upload Your Driver License',
             readOnly: true,
-            suffixIcon: const Icon(Icons.add_a_photo_outlined),
+            suffixIcon: Icon(Icons.add_a_photo_outlined, size: px20),
           ),
           gapH20,
         ],

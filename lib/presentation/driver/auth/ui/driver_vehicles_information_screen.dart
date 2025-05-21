@@ -3,6 +3,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/auth/ui/driver_login_screen.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,7 @@ class _VehiclesInformationScreenState extends State<VehiclesInformationScreen> {
     return AuthScreenWrapper(
       title: "Vehicles Information",
       subtitle: "Please confirm your vehicles information to continue.",
-      textColor: Colors.black,
+      textColor: context.color.blackColor100,
       child:
       // Form fields in AuthFormContainer
       AuthFormContainer(

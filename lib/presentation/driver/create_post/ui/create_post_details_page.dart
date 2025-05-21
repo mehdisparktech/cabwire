@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
@@ -35,7 +36,7 @@ class CreatePostDetailsScreen extends StatelessWidget {
   // );
 
   // Constants for better maintainability
-  static const double _sectionSpacing = 24.0;
+  //static const double _sectionSpacing = 24.0;
 
   @override
   Widget build(BuildContext context) {
@@ -50,17 +51,17 @@ class CreatePostDetailsScreen extends StatelessWidget {
         builder: () {
           final rideData = _presenter.currentUiState.rideData;
           return Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(px16),
+            margin: EdgeInsets.all(px16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(px16),
               border: Border.all(color: Colors.grey.shade200),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.shade200,
                   blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  offset: Offset(0, px4),
                 ),
               ],
             ),
@@ -69,15 +70,15 @@ class CreatePostDetailsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildDriverSection(rideData),
-                const SizedBox(height: _sectionSpacing),
+                gapH10,
                 _buildVehicleSection(rideData),
-                const SizedBox(height: _sectionSpacing),
+                gapH10,
                 _buildTripSection(rideData),
-                const SizedBox(height: _sectionSpacing),
+                gapH10,
                 _buildSeatBookingSection(context),
-                const SizedBox(height: _sectionSpacing),
+                gapH10,
                 _buildBottomSheet(),
-                const SizedBox(height: _sectionSpacing),
+                gapH10,
               ],
             ),
           );
@@ -90,8 +91,8 @@ class CreatePostDetailsScreen extends StatelessWidget {
   Widget _buildDriverSection(dynamic rideData) {
     return DriverProfileWidget(
       name: rideData?.driverName ?? '',
-      textStyle: const TextStyle(
-        fontSize: 16,
+      textStyle: TextStyle(
+        fontSize: px16,
         color: Colors.black,
         fontWeight: FontWeight.w400,
       ),
@@ -108,25 +109,25 @@ class CreatePostDetailsScreen extends StatelessWidget {
             children: [
               Text(
                 rideData?.vehicleNumber ?? '',
-                style: const TextStyle(
-                  fontSize: 14,
+                style: TextStyle(
+                  fontSize: px14,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
                 ),
               ),
-              const SizedBox(height: 4),
+              gapH4,
               Text(
                 rideData?.vehicleModel ?? '',
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                style: TextStyle(fontSize: px14, color: Colors.black87),
               ),
             ],
           ),
         ),
-        const CommonImage(
+        CommonImage(
           imageSrc: AppAssets.icCarImage,
           imageType: ImageType.png,
-          height: 40,
-          width: 100,
+          height: px40,
+          width: px100,
         ),
       ],
     );
@@ -136,11 +137,11 @@ class CreatePostDetailsScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'My Trip',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: px16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 10),
+        gapH10,
         RouteInformationWidget(
           pickupLocation: rideData?.pickupLocation ?? '',
           dropoffLocation: rideData?.dropoffLocation ?? '',

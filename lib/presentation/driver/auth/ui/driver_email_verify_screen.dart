@@ -1,4 +1,6 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/auth/ui/driver_confirm_information_screen.dart';
@@ -76,7 +78,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     return AuthScreenWrapper(
       title: "Verify Email",
       subtitle: "Please enter the code sent to your email",
-      textColor: Colors.black,
+      textColor: context.color.blackColor100,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -84,44 +86,45 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
             logoAssetPath: AppAssets.icDriverLogo,
             logoAssetPath2: AppAssets.icCabwireLogo,
           ),
-          const SizedBox(height: 40),
+          gapH40,
           Text(
             "We've Sent a Code to $maskedEmail",
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 16,
+            style: TextStyle(
+              color: context.color.blackColor800,
+              fontSize: px16,
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 30),
+          gapH30,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: List.generate(
               6,
               (index) => SizedBox(
-                width: 40,
-                height: 50,
+                width: px40,
+                height: px50,
                 child: TextField(
                   controller: _controllers[index],
                   focusNode: _focusNodes[index],
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: px22, fontWeight: FontWeight.bold),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(px8),
+                      borderSide: BorderSide(
+                        color: context.color.blackColor300,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(px8),
+                      borderSide: BorderSide(
+                        color: context.color.blackColor300,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(px8),
                       borderSide: BorderSide(
                         color: context.color.primaryBtn,
                         width: 2,
@@ -138,13 +141,16 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          gapH20,
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 "If you didn't receive a code: ",
-                style: TextStyle(color: Colors.black87, fontSize: 14),
+                style: TextStyle(
+                  color: context.color.blackColor800,
+                  fontSize: px14,
+                ),
               ),
               TextButton(
                 onPressed: widget.onResendCode,
@@ -157,14 +163,14 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   "Resend",
                   style: TextStyle(
                     color: context.color.primaryBtn,
-                    fontSize: 14,
+                    fontSize: px14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 30),
+          gapH30,
           CustomButton(text: "Verify", onPressed: _onCodeVerify),
         ],
       ),

@@ -1,5 +1,7 @@
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
 import '../../../common/components/auth/custom_text_form_field.dart';
 import '../../../common/components/auth/custom_button.dart';
@@ -26,7 +28,7 @@ class DriverSignUpScreen extends StatelessWidget {
         return AuthScreenWrapper(
           title: "Sign Up",
           subtitle: "Please Register To Login.",
-          textColor: Colors.black,
+          textColor: context.color.blackColor100,
           child: AuthFormContainer(
             logoAssetPath: AppAssets.icDriverLogo,
             logoAssetPath2: AppAssets.icCabwireLogo,
@@ -37,14 +39,14 @@ class DriverSignUpScreen extends StatelessWidget {
                 hintText: 'Enter Full Name Here',
                 validator: AuthValidators.validateName,
               ),
-              const SizedBox(height: 10),
+              gapH10,
               CustomTextFormField(
                 controller: presenter.emailController,
                 hintText: 'example@email.com',
                 keyboardType: TextInputType.emailAddress,
                 validator: AuthValidators.validateEmail,
               ),
-              const SizedBox(height: 10),
+              gapH10,
               CustomTextFormField(
                 controller: presenter.passwordController,
                 hintText: 'Password',
@@ -53,7 +55,7 @@ class DriverSignUpScreen extends StatelessWidget {
                 onVisibilityToggle: presenter.togglePasswordVisibility,
                 validator: AuthValidators.validatePassword,
               ),
-              const SizedBox(height: 10),
+              gapH10,
               CustomTextFormField(
                 controller: presenter.confirmPasswordController,
                 hintText: 'Confirm Password',

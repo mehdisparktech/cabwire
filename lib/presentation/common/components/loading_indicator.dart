@@ -1,3 +1,4 @@
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/external_libs/loading_animation/ink_drop_loading_animation.dart';
 
@@ -17,7 +18,7 @@ class LoadingIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: InkDropLoading(
-        size: 30,
+        size: px30,
         ringColor: ringColor,
         color: color ?? theme.primaryColor,
       ),

@@ -1,3 +1,4 @@
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +30,8 @@ class CircularIconButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(padding ?? 10),
-        margin: EdgeInsets.symmetric(horizontal: margin ?? 8),
+        padding: EdgeInsets.all(padding ?? px10),
+        margin: EdgeInsets.symmetric(horizontal: margin ?? px8),
         decoration: BoxDecoration(
           color: backgroundColor ?? Colors.white,
           shape: BoxShape.circle,

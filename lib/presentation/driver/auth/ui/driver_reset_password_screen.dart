@@ -1,8 +1,9 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/ui_const.dart';
-import 'package:cabwire/core/utility/navigation_utility.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_auth_navigator_screen.dart';
+import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/driver/auth/ui/driver_login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../common/components/auth/custom_text_form_field.dart';
 import '../../../common/components/auth/custom_button.dart';
 import '../../../common/components/auth/auth_screen_wrapper.dart';
@@ -17,10 +18,12 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+  // final _formKey = GlobalKey<FormState>(debugLabel: 'resetPasswordFormKey');
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordController =
+      TextEditingController()..text = '12345678';
   final TextEditingController _confirmPasswordController =
-      TextEditingController();
+      TextEditingController()..text = '12345678';
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
@@ -43,19 +46,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     });
   }
 
-  void _resetPassword() {
-    // if (_formKey.currentState?.validate() ?? false) {
-    //   // Reset password logic
-    // }
-    NavigationUtility.slideRight(context, AuthNavigator());
-  }
-
   @override
   Widget build(BuildContext context) {
     return AuthScreenWrapper(
+      key: UniqueKey(),
       title: "Reset Password",
       subtitle: "Please enter your new password.",
-      textColor: Colors.black,
+      textColor: context.color.blackColor100,
       child: AuthFormContainer(
         logoAssetPath: AppAssets.icDriverLogo,
         logoAssetPath2: AppAssets.icCabwireLogo,
@@ -85,7 +82,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         ],
         actionButton: CustomButton(
           text: "Reset Password",
-          onPressed: _resetPassword,
+          onPressed: () {
+            Get.off(() => DriverLoginScreen(toggleView: () {}));
+          },
         ),
       ),
     );

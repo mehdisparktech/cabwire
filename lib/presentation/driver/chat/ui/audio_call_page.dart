@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -50,8 +52,8 @@ class AudioCallScreen extends StatelessWidget {
 
   Widget _buildBackButton() {
     return Positioned(
-      top: 40,
-      left: 16,
+      top: px40,
+      left: px16,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.black.withOpacityInt(0.3),
@@ -72,29 +74,29 @@ class AudioCallScreen extends StatelessWidget {
 
   Widget _buildCallerProfile() {
     return Positioned(
-      top: 300,
+      top: px300,
       left: 0,
       right: 0,
       child: Column(
         children: [
           // Circular avatar
           Container(
-            width: 100,
-            height: 100,
+            width: px100,
+            height: px100,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
+              border: Border.all(color: Colors.white, width: px2),
             ),
             child: ClipOval(
               child: Image.asset(AppAssets.icProfileImage, fit: BoxFit.cover),
             ),
           ),
-          const SizedBox(height: 10),
+          gapH10,
           // Caller name
-          const Text(
+          Text(
             'John Doe',
             style: TextStyle(
-              fontSize: 24,
+              fontSize: px24,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -106,21 +108,21 @@ class AudioCallScreen extends StatelessWidget {
 
   Widget _buildCallDuration() {
     return Positioned(
-      bottom: 120,
+      bottom: px120,
       left: 0,
       right: 0,
       child: Center(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: EdgeInsets.symmetric(horizontal: px12, vertical: px6),
           decoration: BoxDecoration(
             color: Colors.black.withOpacityInt(0.5),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Text(
+          child: Text(
             '03:45',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 14,
+              fontSize: px14,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -131,16 +133,16 @@ class AudioCallScreen extends StatelessWidget {
 
   Widget _buildCallControls() {
     return Positioned(
-      bottom: 50,
+      bottom: px50,
       left: 0,
       right: 0,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildControlButton(Icons.mic, Colors.white.withOpacityInt(0.3)),
-          const SizedBox(width: 20),
+          gapW20,
           _buildEndCallButton(),
-          const SizedBox(width: 20),
+          gapW20,
           _buildControlButton(
             Icons.volume_up,
             Colors.white.withOpacityInt(0.3),
@@ -152,10 +154,10 @@ class AudioCallScreen extends StatelessWidget {
 
   Widget _buildControlButton(IconData icon, Color backgroundColor) {
     return Container(
-      width: 50,
-      height: 50,
+      width: px50,
+      height: px50,
       decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle),
-      child: Icon(icon, color: Colors.white, size: 24),
+      child: Icon(icon, color: Colors.white, size: px24),
     );
   }
 
@@ -163,13 +165,13 @@ class AudioCallScreen extends StatelessWidget {
     return InkWell(
       onTap: () => Get.back(),
       child: Container(
-        width: 60,
-        height: 60,
+        width: px60,
+        height: px60,
         decoration: const BoxDecoration(
           color: Colors.red,
           shape: BoxShape.circle,
         ),
-        child: const Icon(Icons.call_end, color: Colors.white, size: 30),
+        child: Icon(Icons.call_end, color: Colors.white, size: px30),
       ),
     );
   }

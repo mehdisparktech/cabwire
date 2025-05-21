@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
@@ -7,9 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
-
-const Widget gapH10 = SizedBox(height: 10);
-const Widget gapW10 = SizedBox(width: 10);
 
 class DriverHomePage extends StatelessWidget {
   final DriverHomePresenter presenter = locate<DriverHomePresenter>();

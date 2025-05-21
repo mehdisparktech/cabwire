@@ -1,3 +1,4 @@
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:flutter/material.dart';
 
 class ActionButton extends StatelessWidget {
@@ -24,7 +25,7 @@ class ActionButton extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(borderRadius ?? 8),
+            borderRadius: BorderRadius.circular(borderRadius ?? px8),
           ),
           child: ElevatedButton(
             onPressed: onPressed,
@@ -33,7 +34,7 @@ class ActionButton extends StatelessWidget {
               shadowColor: Colors.transparent,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(px8),
               ),
             ),
             child: Text(
@@ -48,9 +49,9 @@ class ActionButton extends StatelessWidget {
         : OutlinedButton(
           onPressed: onPressed,
           style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 14),
+            padding: EdgeInsets.symmetric(vertical: px14),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(px8),
             ),
             side: const BorderSide(color: Colors.deepOrange, width: 1.5),
             foregroundColor: Colors.black,

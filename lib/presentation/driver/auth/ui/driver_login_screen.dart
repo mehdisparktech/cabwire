@@ -1,7 +1,9 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_form_container.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_screen_wrapper.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_validators.dart';
@@ -12,7 +14,6 @@ import 'package:cabwire/presentation/driver/auth/presenter/driver_login_presente
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../driver/auth/ui/driver_forgot_password_screen.dart';
-import '../../../../core/static/app_colors.dart';
 
 class DriverLoginScreen extends StatelessWidget {
   final VoidCallback toggleView;
@@ -31,7 +32,7 @@ class DriverLoginScreen extends StatelessWidget {
         return AuthScreenWrapper(
           title: "Sign In",
           subtitle: "Welcome Back To Cabwire.",
-          textColor: Colors.black,
+          textColor: context.color.blackColor100,
           child: AuthFormContainer(
             logoAssetPath: AppAssets.icDriverLogo,
             logoAssetPath2: AppAssets.icCabwireLogo,
@@ -62,11 +63,11 @@ class DriverLoginScreen extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  child: const Text(
+                  child: Text(
                     "Forgot Password",
                     style: TextStyle(
-                      color: AppColors.textBlack87,
-                      fontSize: 14,
+                      color: context.color.blackColor800,
+                      fontSize: px14,
                       fontWeight: FontWeight.normal,
                     ),
                   ),

@@ -15,6 +15,7 @@ SizedBox gapH16 = SizedBox(height: px16);
 SizedBox gapH18 = SizedBox(height: px18);
 SizedBox gapH20 = SizedBox(height: px20);
 SizedBox gapH22 = SizedBox(height: px22);
+SizedBox gapH24 = SizedBox(height: px24);
 SizedBox gapH25 = SizedBox(height: px25);
 SizedBox gapH30 = SizedBox(height: px30);
 SizedBox gapH35 = SizedBox(height: px35);
@@ -84,6 +85,8 @@ BorderRadius radius14 = BorderRadius.circular(px14);
 BorderRadius radius15 = BorderRadius.circular(px15);
 BorderRadius radius18 = BorderRadius.circular(px18);
 BorderRadius radius20 = BorderRadius.circular(px20);
+BorderRadius radius25 = BorderRadius.circular(px25);
+BorderRadius radius30 = BorderRadius.circular(px30);
 BorderRadius radius50 = BorderRadius.circular(px50);
 
 BorderRadius radiusTop10 = BorderRadius.only(
