@@ -1,4 +1,3 @@
-import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
@@ -14,28 +13,6 @@ class DriverOnboardingScreen extends StatelessWidget {
 
   final DriverOnboardingPresenter _presenter = DriverOnboardingPresenter();
 
-  // Onboarding page data
-  final List<Map<String, dynamic>> _onboardingPages = [
-    {
-      'image': AppAssets.icSplash1,
-      'title': 'Welcome Driver',
-      'subtitle': 'Start earning with our easy-to-use driver platform.',
-    },
-    {
-      'image': AppAssets.icSplash2,
-      'title': 'Receive Ride Requests',
-      'subtitle':
-          'Get notified of nearby riders and choose which rides to accept.',
-    },
-    {
-      'image': AppAssets.icSplash3,
-      'title': 'Track Earnings',
-      'subtitle':
-          'Monitor your daily, weekly, and monthly income with detailed breakdowns.',
-      'showBackButton': true,
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
     return PresentableWidgetBuilder<DriverOnboardingPresenter>(
@@ -50,11 +27,11 @@ class DriverOnboardingScreen extends StatelessWidget {
                   child: PageView.builder(
                     controller: _presenter.pageController,
                     onPageChanged: _presenter.onPageChanged,
-                    itemCount: _onboardingPages.length,
+                    itemCount: _presenter.currentUiState.onboardingPages.length,
                     itemBuilder: (context, index) {
                       return _buildOnboardingPage(
                         context,
-                        _onboardingPages[index],
+                        _presenter.currentUiState.onboardingPages[index],
                       );
                     },
                   ),
@@ -136,7 +113,7 @@ class DriverOnboardingScreen extends StatelessWidget {
           // Dot indicators
           Row(
             children: List.generate(
-              _onboardingPages.length,
+              _presenter.currentUiState.onboardingPages.length,
               (index) => DotIndicatorWidget(
                 isActive: _presenter.currentUiState.currentPage == index,
               ),
@@ -146,13 +123,13 @@ class DriverOnboardingScreen extends StatelessWidget {
           CustomButtonWidget(
             text:
                 _presenter.currentUiState.currentPage ==
-                        _onboardingPages.length - 1
+                        _presenter.currentUiState.onboardingPages.length - 1
                     ? 'Get Started'
                     : 'Next',
             width: 140,
             onPressed:
                 _presenter.currentUiState.currentPage ==
-                        _onboardingPages.length - 1
+                        _presenter.currentUiState.onboardingPages.length - 1
                     ? _presenter.onGetStarted
                     : _presenter.onNextPage,
           ),
