@@ -7,10 +7,11 @@ import 'driver_sign_up_ui_state.dart';
 class DriverSignUpPresenter extends BasePresenter<SignUpUiState> {
   final formKey = GlobalKey<FormState>();
 
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+  final nameController = TextEditingController()..text = 'John Doe';
+  final emailController =
+      TextEditingController()..text = 'john.doe@example.com';
+  final passwordController = TextEditingController()..text = '12345678';
+  final confirmPasswordController = TextEditingController()..text = '12345678';
 
   final Obs<SignUpUiState> uiState = Obs(SignUpUiState.empty());
 

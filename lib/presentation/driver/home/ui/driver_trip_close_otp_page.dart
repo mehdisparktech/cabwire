@@ -1,16 +1,19 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
-import 'package:cabwire/presentation/driver/ride_history/ui/ride_details_page.dart';
+import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class DriverTripCloseOtpPage extends StatelessWidget {
-  const DriverTripCloseOtpPage({super.key});
+  DriverTripCloseOtpPage({super.key});
+
+  final RideHistoryPresenter presenter = locate<RideHistoryPresenter>();
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +93,7 @@ class DriverTripCloseOtpPage extends StatelessWidget {
           isPrimary: true,
           text: 'Trip Closure',
           onPressed: () {
-            Get.to(RideDetailsScreen());
+            presenter.selectRideAndShowDetails('ride1');
           },
         ),
       ),

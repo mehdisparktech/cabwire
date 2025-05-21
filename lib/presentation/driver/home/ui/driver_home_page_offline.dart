@@ -79,13 +79,14 @@ class DriverHomePageOffline extends StatelessWidget {
         child: Container(
           // Removed redundant Stack, Container is enough
           width: double.infinity,
-          margin: const EdgeInsets.all(
-            16,
-          ), // Added margin for better spacing from screen edges
+          // Added margin for better spacing from screen edges
           padding: const EdgeInsets.all(24), // Increased padding for content
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20), // Slightly more rounded
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ), // Slightly more rounded
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacityInt(
