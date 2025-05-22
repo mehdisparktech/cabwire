@@ -32,7 +32,7 @@ class InitialApp extends StatelessWidget {
               builder: (context, child) {
                 return AnimatedTheme(
                   data: presenter.uiState.value.theme,
-                  duration: const Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 100),
                   child: Overlay(
                     initialEntries: [
                       OverlayEntry(builder: (context) => child!),

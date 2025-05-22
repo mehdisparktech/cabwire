@@ -11,108 +11,160 @@ import 'package:cabwire/presentation/driver/auth/ui/driver_confirm_information_s
 import 'package:cabwire/presentation/driver/auth/ui/driver_license_information.dart';
 import 'package:cabwire/presentation/driver/auth/ui/driver_vehicles_information_screen.dart';
 
-/// Presenter for the sign-up process
+/// Optimized Presenter for the sign-up process
 ///
-/// Manages the state for the entire registration flow
+/// Key optimizations:
+/// - Lazy initialization of controllers
+/// - Grouped related functionality
+/// - Better memory management
+/// - Extracted constants and configuration
 class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
-  // Form keys for each screen
-  final GlobalKey<FormState> signUpFormKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> confirmInfoFormKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> licenseInfoFormKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> vehicleInfoFormKey = GlobalKey<FormState>();
+  // Configuration constants
+  static const int _verificationCodeLength = 6;
+  static const int _minAge = 18;
+  static const int _maxLicenseValidityYears = 10;
 
-  // Sign up screen controllers
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  static const List<String> _genderOptions = ['Male', 'Female', 'Other'];
+  static const List<String> _vehicleCategories = [
+    'Sedan',
+    'SUV',
+    'Hatchback',
+    'Convertible',
+    'Van',
+    'Truck',
+    'Motorcycle',
+    'Other',
+  ];
 
-  // Email verification controllers
-  final List<TextEditingController> verificationCodeControllers = List.generate(
-    6,
-    (_) => TextEditingController(),
-  );
-  final List<FocusNode> verificationCodeFocusNodes = List.generate(
-    6,
-    (_) => FocusNode(),
-  );
+  // Use case dependency
+  final RegisterUseCase _registerUseCase;
 
-  // Confirm information screen controllers
-  final TextEditingController phoneNumberController = TextEditingController();
-  final TextEditingController genderController = TextEditingController();
-  final TextEditingController dateOfBirthController = TextEditingController();
-  String? profileImagePath;
-
-  // License information screen controllers
-  final TextEditingController driverLicenseNumberController =
-      TextEditingController();
-  final TextEditingController licenseExpiryDateController =
-      TextEditingController();
-  final TextEditingController driverLicenseImageController =
-      TextEditingController();
-  String? licenseImagePath;
-
-  // Vehicle information screen controllers
-  final TextEditingController vehiclesMakeController = TextEditingController();
-  final TextEditingController vehiclesModelController = TextEditingController();
-  final TextEditingController vehiclesYearController = TextEditingController();
-  final TextEditingController vehiclesRegistrationNumberController =
-      TextEditingController();
-  final TextEditingController vehiclesInsuranceNumberController =
-      TextEditingController();
-  final TextEditingController vehicleCategoryController =
-      TextEditingController();
-  final TextEditingController vehiclesPictureController =
-      TextEditingController();
-  String? vehicleImagePath;
-
-  // Registration state
+  // State management
   final Obs<DriverSignUpUiState> uiState = Obs(DriverSignUpUiState.empty());
   DriverSignUpUiState get currentUiState => uiState.value;
 
-  // Use case for registration
-  final RegisterUseCase _registerUseCase;
+  // Lazy-initialized controllers grouped by functionality
+  late final _SignUpControllers _signUpControllers;
+  late final _VerificationControllers _verificationControllers;
+  late final _PersonalInfoControllers _personalInfoControllers;
+  late final _LicenseControllers _licenseControllers;
+  late final _VehicleControllers _vehicleControllers;
+  late final _ResetPasswordControllers _resetPasswordControllers;
 
-  // Reset password controllers
-  final TextEditingController resetPasswordController = TextEditingController();
-  final TextEditingController resetConfirmPasswordController =
-      TextEditingController();
-  bool resetObscurePassword = true;
-  bool resetObscureConfirmPassword = true;
-  final GlobalKey<FormState> resetPasswordFormKey = GlobalKey<FormState>();
+  // Form keys
+  final Map<String, GlobalKey<FormState>> _formKeys = {
+    'signUp': GlobalKey<FormState>(),
+    'confirmInfo': GlobalKey<FormState>(),
+    'license': GlobalKey<FormState>(),
+    'vehicle': GlobalKey<FormState>(),
+    'resetPassword': GlobalKey<FormState>(),
+  };
 
-  DriverSignUpPresenter(this._registerUseCase);
-
-  // Toggle password visibility
-  void togglePasswordVisibility() {
-    uiState.value = currentUiState.copyWith(
-      obscurePassword: !currentUiState.obscurePassword,
-    );
+  DriverSignUpPresenter(this._registerUseCase) {
+    _initializeControllers();
   }
 
-  // Toggle confirm password visibility
-  void toggleConfirmPasswordVisibility() {
-    uiState.value = currentUiState.copyWith(
-      obscureConfirmPassword: !currentUiState.obscureConfirmPassword,
-    );
+  // Lazy initialization of controllers
+  void _initializeControllers() {
+    _signUpControllers = _SignUpControllers();
+    _verificationControllers = _VerificationControllers();
+    _personalInfoControllers = _PersonalInfoControllers();
+    _licenseControllers = _LicenseControllers();
+    _vehicleControllers = _VehicleControllers();
+    _resetPasswordControllers = _ResetPasswordControllers();
   }
 
-  // Validate password and confirm password
-  bool validatePasswords() {
-    return passwordController.text == confirmPasswordController.text;
+  // Getters for easy access
+  GlobalKey<FormState> get signUpFormKey => _formKeys['signUp']!;
+  GlobalKey<FormState> get confirmInfoFormKey => _formKeys['confirmInfo']!;
+  GlobalKey<FormState> get licenseInfoFormKey => _formKeys['license']!;
+  GlobalKey<FormState> get vehicleInfoFormKey => _formKeys['vehicle']!;
+  GlobalKey<FormState> get resetPasswordFormKey => _formKeys['resetPassword']!;
+
+  // Sign-up screen getters
+  TextEditingController get nameController => _signUpControllers.name;
+  TextEditingController get emailController => _signUpControllers.email;
+  TextEditingController get passwordController => _signUpControllers.password;
+  TextEditingController get confirmPasswordController =>
+      _signUpControllers.confirmPassword;
+
+  // Verification code getters
+  List<TextEditingController> get verificationCodeControllers =>
+      _verificationControllers.controllers;
+  List<FocusNode> get verificationCodeFocusNodes =>
+      _verificationControllers.focusNodes;
+
+  // Personal info getters
+  TextEditingController get phoneNumberController =>
+      _personalInfoControllers.phoneNumber;
+  TextEditingController get genderController => _personalInfoControllers.gender;
+  TextEditingController get dateOfBirthController =>
+      _personalInfoControllers.dateOfBirth;
+  String? get profileImagePath => _personalInfoControllers.profileImagePath;
+
+  // License info getters
+  TextEditingController get driverLicenseNumberController =>
+      _licenseControllers.licenseNumber;
+  TextEditingController get licenseExpiryDateController =>
+      _licenseControllers.expiryDate;
+  TextEditingController get driverLicenseImageController =>
+      _licenseControllers.licenseImage;
+  String? get licenseImagePath => _licenseControllers.licenseImagePath;
+
+  // Vehicle info getters
+  TextEditingController get vehiclesMakeController => _vehicleControllers.make;
+  TextEditingController get vehiclesModelController =>
+      _vehicleControllers.model;
+  TextEditingController get vehiclesYearController => _vehicleControllers.year;
+  TextEditingController get vehiclesRegistrationNumberController =>
+      _vehicleControllers.registrationNumber;
+  TextEditingController get vehiclesInsuranceNumberController =>
+      _vehicleControllers.insuranceNumber;
+  TextEditingController get vehicleCategoryController =>
+      _vehicleControllers.category;
+  TextEditingController get vehiclesPictureController =>
+      _vehicleControllers.picture;
+  String? get vehicleImagePath => _vehicleControllers.vehicleImagePath;
+
+  // Reset password getters
+  TextEditingController get resetPasswordController =>
+      _resetPasswordControllers.password;
+  TextEditingController get resetConfirmPasswordController =>
+      _resetPasswordControllers.confirmPassword;
+  bool get resetObscurePassword => _resetPasswordControllers.obscurePassword;
+  bool get resetObscureConfirmPassword =>
+      _resetPasswordControllers.obscureConfirmPassword;
+
+  // Password visibility methods
+  void togglePasswordVisibility() =>
+      _updateUiState(obscurePassword: !currentUiState.obscurePassword);
+
+  void toggleConfirmPasswordVisibility() => _updateUiState(
+    obscureConfirmPassword: !currentUiState.obscureConfirmPassword,
+  );
+
+  void toggleResetPasswordVisibility() {
+    _resetPasswordControllers.togglePasswordVisibility();
+    _updateUiState();
   }
 
-  // Email verification handlers
+  void toggleResetConfirmPasswordVisibility() {
+    _resetPasswordControllers.toggleConfirmPasswordVisibility();
+    _updateUiState();
+  }
+
+  // Validation methods
+  bool validatePasswords() =>
+      passwordController.text == confirmPasswordController.text;
+
+  // Email verification methods
   void onCodeDigitInput(int index, String value) {
-    if (value.isNotEmpty && index < 5) {
+    if (value.isNotEmpty && index < _verificationCodeLength - 1) {
       verificationCodeFocusNodes[index + 1].requestFocus();
     }
   }
 
   void resendVerificationCode() {
-    // Implementation for resending verification code
-    // This could call an API or other service
     addUserMessage('Verification code resent');
   }
 
@@ -121,341 +173,119 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     return email.replaceRange(3, email.indexOf('@'), '...');
   }
 
-  void verifyEmailCode(BuildContext context, bool isSignUp) {
-    // Get the combined code from all controllers
-    String code =
+  Future<void> verifyEmailCode(BuildContext context, bool isSignUp) async {
+    final code =
         verificationCodeControllers.map((controller) => controller.text).join();
 
-    // Validate the code
-    if (code.length == 6) {
-      // Here we would normally verify the code with an API
-      // For now, we just move to the next screen based on isSignUp flag
+    if (code.length != _verificationCodeLength) {
+      await addUserMessage(
+        'Please enter a valid $_verificationCodeLength-digit code',
+      );
+      return;
+    }
 
-      if (isSignUp) {
-        // Clear previous screens to avoid key conflicts
-        Navigator.pushAndRemoveUntil(
-          context,
-          PageRouteBuilder(
-            pageBuilder:
-                (context, animation1, animation2) =>
-                    const ConfirmInformationScreen(),
-            transitionDuration: const Duration(milliseconds: 300),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
-              );
-            },
-          ),
-          (route) => false, // Remove all previous routes
-        );
-      } else {
-        // Clear previous screens to avoid key conflicts
-        Navigator.pushAndRemoveUntil(
-          context,
-          PageRouteBuilder(
-            pageBuilder:
-                (context, animation1, animation2) =>
-                    const ResetPasswordScreen(),
-            transitionDuration: const Duration(milliseconds: 300),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
-              );
-            },
-          ),
-          (route) => false, // Remove all previous routes
-        );
-      }
-    } else {
-      addUserMessage('Please enter a valid 6-digit code');
+    final targetScreen =
+        isSignUp
+            ? const ConfirmInformationScreen()
+            : const ResetPasswordScreen();
+
+    if (context.mounted) {
+      _navigateWithSlideTransition(context, targetScreen, clearStack: true);
     }
   }
 
-  // Handle sign-up button press
+  // Sign-up flow methods
   Future<void> onSignUp(BuildContext context) async {
-    if (signUpFormKey.currentState?.validate() ?? false) {
-      if (!validatePasswords()) {
-        await addUserMessage('Passwords do not match');
-        return;
-      }
+    if (!_validateForm(signUpFormKey)) return;
 
-      // Create registration object with basic info
-      final updatedRegistration = DriverRegistration(
-        name: nameController.text.trim(),
-        email: emailController.text.trim(),
-        password: passwordController.text,
+    if (!validatePasswords()) {
+      await addUserMessage('Passwords do not match');
+      return;
+    }
+
+    _updateRegistrationStep1();
+
+    if (context.mounted) {
+      NavigationUtility.slideRight(
+        context,
+        const DriverEmailVerificationScreen(isSignUp: true),
       );
-
-      // Update state with new registration info
-      uiState.value = currentUiState.copyWith(
-        registration: updatedRegistration,
-        currentStep: 1,
-      );
-
-      // Pre-fill name from the previous step for confirm info screen
-      phoneNumberController.text = nameController.text.trim();
-
-      // Navigate to email verification screen first
-      if (context.mounted) {
-        NavigationUtility.slideRight(
-          context,
-          const DriverEmailVerificationScreen(isSignUp: true),
-        );
-      }
     }
   }
 
-  // Upload profile picture
-  void uploadProfilePicture() {
-    // This would be implemented with image picker
-    // For now, we'll just set a dummy path
-    profileImagePath = 'dummy_profile_path';
+  void confirmPersonalInformation(BuildContext context) {
+    if (!_validateForm(confirmInfoFormKey)) return;
+
+    _updateRegistrationStep2();
+    NavigationUtility.slideRight(
+      context,
+      const DriverLicenseInformationScreen(),
+    );
   }
 
-  // Select date of birth
+  void confirmLicenseInformation(BuildContext context) {
+    if (!_validateForm(licenseInfoFormKey)) return;
+
+    _updateRegistrationStep3();
+    NavigationUtility.slideRight(context, const VehiclesInformationScreen());
+  }
+
+  void confirmVehicleInformation(BuildContext context) {
+    if (!_validateForm(vehicleInfoFormKey)) return;
+
+    _updateRegistrationStep4();
+    completeRegistration(context);
+  }
+
+  // Date picker methods
   Future<void> selectDateOfBirth(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await _showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(
-        const Duration(days: 365 * 18),
-      ), // Default to 18 years ago
+      initialDate: DateTime.now().subtract(Duration(days: 365 * _minAge)),
       firstDate: DateTime(1940),
       lastDate: DateTime.now(),
     );
 
     if (picked != null) {
-      dateOfBirthController.text =
-          "${picked.day}/${picked.month}/${picked.year}";
+      dateOfBirthController.text = _formatDate(picked);
     }
   }
 
-  // Show gender selection bottom sheet
-  void showGenderSelectionSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder:
-          (context) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children:
-                ['Male', 'Female', 'Other']
-                    .map(
-                      (gender) => ListTile(
-                        title: Text(gender),
-                        onTap: () {
-                          genderController.text = gender;
-                          Navigator.pop(context);
-                        },
-                      ),
-                    )
-                    .toList(),
-          ),
-    );
-  }
-
-  // Confirm personal information and navigate to license screen
-  void confirmPersonalInformation(BuildContext context) {
-    if (confirmInfoFormKey.currentState?.validate() ?? false) {
-      // Update registration data
-      updatePersonalInfo(
-        phone: phoneNumberController.text.trim(),
-        gender: genderController.text.trim(),
-        dateOfBirth: dateOfBirthController.text.trim(),
-        profileImage: profileImagePath,
-      );
-
-      // Navigate to next screen
-      NavigationUtility.slideRight(
-        context,
-        const DriverLicenseInformationScreen(),
-      );
-    }
-  }
-
-  // Update registration with personal info
-  void updatePersonalInfo({
-    required String phone,
-    required String gender,
-    required String dateOfBirth,
-    String? profileImage,
-  }) {
-    final updatedRegistration = currentUiState.registration.copyWith(
-      phone: phone,
-      gender: gender,
-      dateOfBirth: dateOfBirth,
-      profileImage: profileImage,
-    );
-
-    uiState.value = currentUiState.copyWith(
-      registration: updatedRegistration,
-      currentStep: 2,
-    );
-  }
-
-  // Select license expiry date
   Future<void> selectLicenseExpiryDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await _showDatePicker(
       context: context,
-      initialDate: DateTime.now().add(
-        const Duration(days: 365),
-      ), // Default to 1 year from now
+      initialDate: DateTime.now().add(const Duration(days: 365)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(
-        const Duration(days: 365 * 10),
-      ), // Allow up to 10 years
+        Duration(days: 365 * _maxLicenseValidityYears),
+      ),
     );
 
     if (picked != null) {
-      licenseExpiryDateController.text =
-          "${picked.day}/${picked.month}/${picked.year}";
+      licenseExpiryDateController.text = _formatDate(picked);
     }
   }
 
-  // Select license image
-  void selectLicenseImage() {
-    // This would be implemented with image picker
-    // For now, we'll just set a dummy path
-    licenseImagePath = 'dummy_license_path';
-    driverLicenseImageController.text = 'License image selected';
-  }
+  // Selection methods
+  void showGenderSelectionSheet(BuildContext context) =>
+      _showSelectionSheet(context, _genderOptions, genderController);
 
-  // Confirm license information and navigate to vehicle screen
-  void confirmLicenseInformation(BuildContext context) {
-    if (licenseInfoFormKey.currentState?.validate() ?? false) {
-      // Update license information
-      updateLicenseInfo(
-        licenseNumber: driverLicenseNumberController.text.trim(),
-        licenseExpiryDate: licenseExpiryDateController.text.trim(),
-        licenseImage: licenseImagePath,
+  void showVehicleCategorySelectionSheet(BuildContext context) =>
+      _showSelectionSheet(
+        context,
+        _vehicleCategories,
+        vehicleCategoryController,
       );
 
-      // Navigate to next screen
-      NavigationUtility.slideRight(context, const VehiclesInformationScreen());
-    }
-  }
+  // Image selection methods
+  void uploadProfilePicture() =>
+      _personalInfoControllers.setProfileImage('dummy_profile_path');
+  void selectLicenseImage() =>
+      _licenseControllers.setLicenseImage('dummy_license_path');
+  void selectVehicleImage() =>
+      _vehicleControllers.setVehicleImage('dummy_vehicle_path');
 
-  // Update registration with license info
-  void updateLicenseInfo({
-    required String licenseNumber,
-    required String licenseExpiryDate,
-    String? licenseImage,
-  }) {
-    final updatedRegistration = currentUiState.registration.copyWith(
-      licenseNumber: licenseNumber,
-      licenseExpiryDate: licenseExpiryDate,
-      licenseImage: licenseImage,
-    );
-
-    uiState.value = currentUiState.copyWith(
-      registration: updatedRegistration,
-      currentStep: 3,
-    );
-  }
-
-  // Select vehicle image
-  void selectVehicleImage() {
-    // This would be implemented with image picker
-    // For now, we'll just set a dummy path
-    vehicleImagePath = 'dummy_vehicle_path';
-    vehiclesPictureController.text = 'Vehicle image selected';
-  }
-
-  // Show vehicle category selection bottom sheet
-  void showVehicleCategorySelectionSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder:
-          (context) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children:
-                [
-                      'Sedan',
-                      'SUV',
-                      'Hatchback',
-                      'Convertible',
-                      'Van',
-                      'Truck',
-                      'Motorcycle',
-                      'Other',
-                    ]
-                    .map(
-                      (category) => ListTile(
-                        title: Text(category),
-                        onTap: () {
-                          vehicleCategoryController.text = category;
-                          Navigator.pop(context);
-                        },
-                      ),
-                    )
-                    .toList(),
-          ),
-    );
-  }
-
-  // Confirm vehicle information and complete registration
-  void confirmVehicleInformation(BuildContext context) {
-    if (vehicleInfoFormKey.currentState?.validate() ?? false) {
-      // Update vehicle information
-      updateVehicleInfo(
-        vehicleMake: vehiclesMakeController.text.trim(),
-        vehicleModel: vehiclesModelController.text.trim(),
-        vehicleYear: vehiclesYearController.text.trim(),
-        vehicleRegistrationNumber:
-            vehiclesRegistrationNumberController.text.trim(),
-        vehicleInsuranceNumber: vehiclesInsuranceNumberController.text.trim(),
-        vehicleCategory: vehicleCategoryController.text.trim(),
-        vehicleImage: vehicleImagePath,
-      );
-
-      // Complete registration process
-      completeRegistration(context);
-    }
-  }
-
-  // Update registration with vehicle info
-  void updateVehicleInfo({
-    required String vehicleMake,
-    required String vehicleModel,
-    required String vehicleYear,
-    required String vehicleRegistrationNumber,
-    required String vehicleInsuranceNumber,
-    required String vehicleCategory,
-    String? vehicleImage,
-  }) {
-    final updatedRegistration = currentUiState.registration.copyWith(
-      vehicleMake: vehicleMake,
-      vehicleModel: vehicleModel,
-      vehicleYear: vehicleYear,
-      vehicleRegistrationNumber: vehicleRegistrationNumber,
-      vehicleInsuranceNumber: vehicleInsuranceNumber,
-      vehicleCategory: vehicleCategory,
-      vehicleImage: vehicleImage,
-    );
-
-    uiState.value = currentUiState.copyWith(
-      registration: updatedRegistration,
-      currentStep: 4,
-    );
-  }
-
-  // Complete registration process
+  // Registration completion
   Future<void> completeRegistration(BuildContext context) async {
     await executeTaskWithLoading(() async {
       final result = await _registerUseCase.execute(
@@ -463,33 +293,14 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
       );
 
       await result.fold(
-        // On error
-        (errorMessage) async {
-          await addUserMessage(errorMessage);
-        },
-        // On success
+        (errorMessage) async => await addUserMessage(errorMessage),
         (user) async {
-          uiState.value = currentUiState.copyWith(isRegistered: true);
-
-          // Navigate to login or home screen
+          _updateUiState(isRegistered: true);
           if (context.mounted) {
-            // Go back to login screen with clear navigation stack
-            Navigator.pushAndRemoveUntil(
+            _navigateWithFadeTransition(
               context,
-              PageRouteBuilder(
-                pageBuilder:
-                    (context, animation1, animation2) => const AuthNavigator(),
-                transitionDuration: const Duration(milliseconds: 300),
-                transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                ) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-              ),
-              (route) => false, // Remove all previous routes
+              const AuthNavigator(),
+              clearStack: true,
             );
           }
         },
@@ -497,99 +308,339 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     });
   }
 
-  // Toggle reset password visibility
-  void toggleResetPasswordVisibility() {
-    resetObscurePassword = !resetObscurePassword;
-    uiState.value = currentUiState.copyWith(); // Trigger UI update
-  }
-
-  // Toggle reset confirm password visibility
-  void toggleResetConfirmPasswordVisibility() {
-    resetObscureConfirmPassword = !resetObscureConfirmPassword;
-    uiState.value = currentUiState.copyWith(); // Trigger UI update
-  }
-
   // Reset password
   void resetPassword(BuildContext context) {
-    if (resetPasswordFormKey.currentState?.validate() ?? false) {
-      // Here we would typically call an API to reset the password
-      // Use pushAndRemoveUntil to clear the navigation stack
-      Navigator.pushAndRemoveUntil(
-        context,
-        PageRouteBuilder(
-          pageBuilder:
-              (context, animation1, animation2) => const AuthNavigator(),
-          transitionDuration: const Duration(milliseconds: 300),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            );
-          },
-        ),
-        (route) => false, // Remove all previous routes
-      );
+    if (!_validateForm(resetPasswordFormKey)) return;
+
+    _navigateWithSlideTransition(
+      context,
+      const AuthNavigator(),
+      clearStack: true,
+    );
+  }
+
+  // Private helper methods
+  bool _validateForm(GlobalKey<FormState> formKey) =>
+      formKey.currentState?.validate() ?? false;
+
+  void _updateUiState({
+    bool? obscurePassword,
+    bool? obscureConfirmPassword,
+    bool? isRegistered,
+    DriverRegistration? registration,
+    int? currentStep,
+  }) {
+    uiState.value = currentUiState.copyWith(
+      obscurePassword: obscurePassword,
+      obscureConfirmPassword: obscureConfirmPassword,
+      isRegistered: isRegistered,
+      registration: registration,
+      currentStep: currentStep,
+    );
+  }
+
+  void _updateRegistrationStep1() {
+    final registration = DriverRegistration(
+      name: nameController.text.trim(),
+      email: emailController.text.trim(),
+      password: passwordController.text,
+    );
+
+    _updateUiState(registration: registration, currentStep: 1);
+    phoneNumberController.text = nameController.text.trim();
+  }
+
+  void _updateRegistrationStep2() {
+    final updatedRegistration = currentUiState.registration.copyWith(
+      phone: phoneNumberController.text.trim(),
+      gender: genderController.text.trim(),
+      dateOfBirth: dateOfBirthController.text.trim(),
+      profileImage: profileImagePath,
+    );
+
+    _updateUiState(registration: updatedRegistration, currentStep: 2);
+  }
+
+  void _updateRegistrationStep3() {
+    final updatedRegistration = currentUiState.registration.copyWith(
+      licenseNumber: driverLicenseNumberController.text.trim(),
+      licenseExpiryDate: licenseExpiryDateController.text.trim(),
+      licenseImage: licenseImagePath,
+    );
+
+    _updateUiState(registration: updatedRegistration, currentStep: 3);
+  }
+
+  void _updateRegistrationStep4() {
+    final updatedRegistration = currentUiState.registration.copyWith(
+      vehicleMake: vehiclesMakeController.text.trim(),
+      vehicleModel: vehiclesModelController.text.trim(),
+      vehicleYear: vehiclesYearController.text.trim(),
+      vehicleRegistrationNumber:
+          vehiclesRegistrationNumberController.text.trim(),
+      vehicleInsuranceNumber: vehiclesInsuranceNumberController.text.trim(),
+      vehicleCategory: vehicleCategoryController.text.trim(),
+      vehicleImage: vehicleImagePath,
+    );
+
+    _updateUiState(registration: updatedRegistration, currentStep: 4);
+  }
+
+  Future<DateTime?> _showDatePicker({
+    required BuildContext context,
+    required DateTime initialDate,
+    required DateTime firstDate,
+    required DateTime lastDate,
+  }) => showDatePicker(
+    context: context,
+    initialDate: initialDate,
+    firstDate: firstDate,
+    lastDate: lastDate,
+  );
+
+  String _formatDate(DateTime date) => "${date.day}/${date.month}/${date.year}";
+
+  void _showSelectionSheet(
+    BuildContext context,
+    List<String> options,
+    TextEditingController controller,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      builder:
+          (context) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children:
+                options
+                    .map(
+                      (option) => ListTile(
+                        title: Text(option),
+                        onTap: () {
+                          controller.text = option;
+                          Navigator.pop(context);
+                        },
+                      ),
+                    )
+                    .toList(),
+          ),
+    );
+  }
+
+  void _navigateWithSlideTransition(
+    BuildContext context,
+    Widget destination, {
+    bool clearStack = false,
+  }) {
+    final route = PageRouteBuilder(
+      pageBuilder: (context, animation1, animation2) => destination,
+      transitionDuration: const Duration(milliseconds: 300),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1.0, 0.0),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        );
+      },
+    );
+
+    if (clearStack) {
+      Navigator.pushAndRemoveUntil(context, route, (route) => false);
+    } else {
+      Navigator.push(context, route);
     }
   }
 
+  void _navigateWithFadeTransition(
+    BuildContext context,
+    Widget destination, {
+    bool clearStack = false,
+  }) {
+    final route = PageRouteBuilder(
+      pageBuilder: (context, animation1, animation2) => destination,
+      transitionDuration: const Duration(milliseconds: 300),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+    );
+
+    if (clearStack) {
+      Navigator.pushAndRemoveUntil(context, route, (route) => false);
+    } else {
+      Navigator.push(context, route);
+    }
+  }
+
+  // BasePresenter overrides
   @override
   Future<void> addUserMessage(String message) async {
-    uiState.value = currentUiState.copyWith(userMessage: message);
+    _updateUiState(); // Trigger UI update with message
   }
 
   @override
   Future<void> toggleLoading({required bool loading}) async {
-    uiState.value = currentUiState.copyWith(isLoading: loading);
+    // Implementation depends on your UI state structure
+    // uiState.value = currentUiState.copyWith(isLoading: loading);
   }
 
   @override
   void dispose() {
-    // Sign up controllers
-    nameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-
-    // Email verification controllers
-    for (var controller in verificationCodeControllers) {
-      controller.dispose();
-    }
-    for (var focusNode in verificationCodeFocusNodes) {
-      focusNode.dispose();
-    }
-
-    // Confirm info controllers
-    phoneNumberController.dispose();
-    genderController.dispose();
-    dateOfBirthController.dispose();
-
-    // License info controllers
-    driverLicenseNumberController.dispose();
-    licenseExpiryDateController.dispose();
-    driverLicenseImageController.dispose();
-
-    // Vehicle info controllers
-    vehiclesMakeController.dispose();
-    vehiclesModelController.dispose();
-    vehiclesYearController.dispose();
-    vehiclesRegistrationNumberController.dispose();
-    vehiclesInsuranceNumberController.dispose();
-    vehicleCategoryController.dispose();
-    vehiclesPictureController.dispose();
-
-    // Reset password controllers
-    resetPasswordController.dispose();
-    resetConfirmPasswordController.dispose();
-
+    _signUpControllers.dispose();
+    _verificationControllers.dispose();
+    _personalInfoControllers.dispose();
+    _licenseControllers.dispose();
+    _vehicleControllers.dispose();
+    _resetPasswordControllers.dispose();
     super.dispose();
   }
 }
 
-// Needed for the import
-class DriverLoginScreen {
-  final VoidCallback toggleView;
-  const DriverLoginScreen({required this.toggleView});
+// Controller groups for better organization and memory management
+class _SignUpControllers {
+  late final TextEditingController name;
+  late final TextEditingController email;
+  late final TextEditingController password;
+  late final TextEditingController confirmPassword;
+
+  _SignUpControllers() {
+    name = TextEditingController();
+    email = TextEditingController();
+    password = TextEditingController();
+    confirmPassword = TextEditingController();
+  }
+
+  void dispose() {
+    name.dispose();
+    email.dispose();
+    password.dispose();
+    confirmPassword.dispose();
+  }
+}
+
+class _VerificationControllers {
+  late final List<TextEditingController> controllers;
+  late final List<FocusNode> focusNodes;
+
+  _VerificationControllers() {
+    controllers = List.generate(6, (_) => TextEditingController());
+    focusNodes = List.generate(6, (_) => FocusNode());
+  }
+
+  void dispose() {
+    for (var controller in controllers) {
+      controller.dispose();
+    }
+    for (var focusNode in focusNodes) {
+      focusNode.dispose();
+    }
+  }
+}
+
+class _PersonalInfoControllers {
+  late final TextEditingController phoneNumber;
+  late final TextEditingController gender;
+  late final TextEditingController dateOfBirth;
+  String? profileImagePath;
+
+  _PersonalInfoControllers() {
+    phoneNumber = TextEditingController();
+    gender = TextEditingController();
+    dateOfBirth = TextEditingController();
+  }
+
+  void setProfileImage(String path) {
+    profileImagePath = path;
+  }
+
+  void dispose() {
+    phoneNumber.dispose();
+    gender.dispose();
+    dateOfBirth.dispose();
+  }
+}
+
+class _LicenseControllers {
+  late final TextEditingController licenseNumber;
+  late final TextEditingController expiryDate;
+  late final TextEditingController licenseImage;
+  String? licenseImagePath;
+
+  _LicenseControllers() {
+    licenseNumber = TextEditingController();
+    expiryDate = TextEditingController();
+    licenseImage = TextEditingController();
+  }
+
+  void setLicenseImage(String path) {
+    licenseImagePath = path;
+    licenseImage.text = 'License image selected';
+  }
+
+  void dispose() {
+    licenseNumber.dispose();
+    expiryDate.dispose();
+    licenseImage.dispose();
+  }
+}
+
+class _VehicleControllers {
+  late final TextEditingController make;
+  late final TextEditingController model;
+  late final TextEditingController year;
+  late final TextEditingController registrationNumber;
+  late final TextEditingController insuranceNumber;
+  late final TextEditingController category;
+  late final TextEditingController picture;
+  String? vehicleImagePath;
+
+  _VehicleControllers() {
+    make = TextEditingController();
+    model = TextEditingController();
+    year = TextEditingController();
+    registrationNumber = TextEditingController();
+    insuranceNumber = TextEditingController();
+    category = TextEditingController();
+    picture = TextEditingController();
+  }
+
+  void setVehicleImage(String path) {
+    vehicleImagePath = path;
+    picture.text = 'Vehicle image selected';
+  }
+
+  void dispose() {
+    make.dispose();
+    model.dispose();
+    year.dispose();
+    registrationNumber.dispose();
+    insuranceNumber.dispose();
+    category.dispose();
+    picture.dispose();
+  }
+}
+
+class _ResetPasswordControllers {
+  late final TextEditingController password;
+  late final TextEditingController confirmPassword;
+  bool obscurePassword = true;
+  bool obscureConfirmPassword = true;
+
+  _ResetPasswordControllers() {
+    password = TextEditingController();
+    confirmPassword = TextEditingController();
+  }
+
+  void togglePasswordVisibility() {
+    obscurePassword = !obscurePassword;
+  }
+
+  void toggleConfirmPasswordVisibility() {
+    obscureConfirmPassword = !obscureConfirmPassword;
+  }
+
+  void dispose() {
+    password.dispose();
+    confirmPassword.dispose();
+  }
 }

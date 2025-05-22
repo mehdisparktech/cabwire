@@ -62,7 +62,7 @@ class NavigationUtility {
   static void fadePush(
     BuildContext context,
     Widget screen, {
-    Duration duration = const Duration(milliseconds: 300),
+    Duration duration = const Duration(milliseconds: 50),
   }) {
     Navigator.push(
       context,
@@ -80,7 +80,7 @@ class NavigationUtility {
   static void fadeReplacement(
     BuildContext context,
     Widget screen, {
-    Duration duration = const Duration(milliseconds: 300),
+    Duration duration = const Duration(milliseconds: 50),
   }) {
     Navigator.pushReplacement(
       context,
