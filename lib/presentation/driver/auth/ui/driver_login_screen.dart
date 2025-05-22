@@ -15,15 +15,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../driver/auth/ui/driver_forgot_password_screen.dart';
 
+/// Screen that handles driver login
+///
+/// Presents login form with email and password inputs
+/// Redirects to home page on successful login
 class DriverLoginScreen extends StatelessWidget {
   final VoidCallback toggleView;
 
-  DriverLoginScreen({super.key, required this.toggleView});
-
-  final DriverLoginPresenter presenter = locate<DriverLoginPresenter>();
+  const DriverLoginScreen({super.key, required this.toggleView});
 
   @override
   Widget build(BuildContext context) {
+    // Locate the presenter using the service locator
+    final presenter = locate<DriverLoginPresenter>();
+
     return PresentableWidgetBuilder(
       presenter: presenter,
       builder: () {
@@ -37,57 +42,79 @@ class DriverLoginScreen extends StatelessWidget {
             logoAssetPath: AppAssets.icDriverLogo,
             logoAssetPath2: AppAssets.icCabwireLogo,
             formKey: presenter.formKey,
-            formFields: [
-              CustomTextFormField(
-                controller: presenter.emailController,
-                hintText: 'example@email.com',
-                keyboardType: TextInputType.emailAddress,
-                validator: AuthValidators.validateEmail,
-              ),
-              gapH20,
-              CustomTextFormField(
-                controller: presenter.passwordController,
-                hintText: 'Password',
-                isPassword: true,
-                obscureTextValue: ui.obscurePassword,
-                onVisibilityToggle: presenter.togglePasswordVisibility,
-                validator: AuthValidators.validatePassword,
-              ),
-              gapH10,
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => Get.to(() => ForgotPasswordScreen()),
-                  style: TextButton.styleFrom(
-                    minimumSize: Size.zero,
-                    padding: EdgeInsets.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: Text(
-                    "Forgot Password",
-                    style: TextStyle(
-                      color: context.color.blackColor800,
-                      fontSize: px14,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-            actionButton: CustomButton(
-              text: "Sign In",
-              onPressed: () => presenter.onSignIn(context),
-            ),
-            bottomWidgets: [
-              ToggleAuthOption(
-                leadingText: "Don't Have an Account?",
-                actionText: "Sign Up",
-                onActionPressed: toggleView,
-              ),
-            ],
+            formFields: _buildFormFields(context, presenter, ui),
+            actionButton: _buildLoginButton(context, presenter),
+            bottomWidgets: _buildSignUpOption(),
           ),
         );
       },
     );
+  }
+
+  /// Builds the form fields for email and password
+  List<Widget> _buildFormFields(
+    BuildContext context,
+    DriverLoginPresenter presenter,
+    dynamic ui,
+  ) {
+    return [
+      CustomTextFormField(
+        controller: presenter.emailController,
+        hintText: 'example@email.com',
+        keyboardType: TextInputType.emailAddress,
+        validator: AuthValidators.validateEmail,
+      ),
+      gapH20,
+      CustomTextFormField(
+        controller: presenter.passwordController,
+        hintText: 'Password',
+        isPassword: true,
+        obscureTextValue: ui.obscurePassword,
+        onVisibilityToggle: presenter.togglePasswordVisibility,
+        validator: AuthValidators.validatePassword,
+      ),
+      gapH10,
+      Align(
+        alignment: Alignment.centerRight,
+        child: TextButton(
+          onPressed: () => Get.to(() => ForgotPasswordScreen()),
+          style: TextButton.styleFrom(
+            minimumSize: Size.zero,
+            padding: EdgeInsets.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: Text(
+            "Forgot Password",
+            style: TextStyle(
+              color: context.color.blackColor800,
+              fontSize: px14,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    ];
+  }
+
+  /// Builds the login button
+  Widget _buildLoginButton(
+    BuildContext context,
+    DriverLoginPresenter presenter,
+  ) {
+    return CustomButton(
+      text: "Sign In",
+      onPressed: () => presenter.onSignIn(context),
+    );
+  }
+
+  /// Builds the sign up option at the bottom
+  List<Widget> _buildSignUpOption() {
+    return [
+      ToggleAuthOption(
+        leadingText: "Don't Have an Account?",
+        actionText: "Sign Up",
+        onActionPressed: toggleView,
+      ),
+    ];
   }
 }

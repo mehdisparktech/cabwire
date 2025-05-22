@@ -7,6 +7,8 @@ import 'package:cabwire/data/driver/repositories/user_data_repository_impl.dart'
 import 'package:cabwire/domain/user/repositories/device_info_repository.dart';
 import 'package:cabwire/domain/user/repositories/payment_repository.dart';
 import 'package:cabwire/domain/user/repositories/user_data_repository.dart';
+import 'package:cabwire/domain/driver/auth/repositories/auth_repository.dart';
+import 'package:cabwire/data/driver/auth/repositories/auth_repository_impl.dart';
 
 class RepositorySetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -23,6 +25,9 @@ class RepositorySetup implements SetupModule {
       )
       ..registerLazySingleton<DeviceInfoRepository>(
         () => DeviceInfoRepositoryImpl(locate(), locate(), locate()),
+      )
+      ..registerLazySingleton<DriverAuthRepository>(
+        () => DriverAuthRepositoryImpl(),
       );
   }
 }

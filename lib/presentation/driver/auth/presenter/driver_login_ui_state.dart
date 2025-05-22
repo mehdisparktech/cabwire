@@ -1,14 +1,17 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
+import 'package:cabwire/domain/driver/auth/models/auth_user.dart';
 
 class DriverLoginUiState extends BaseUiState {
   final bool obscurePassword;
-  final bool obscureConfirmPassword;
+  final AuthUser? user;
+  final bool isAuthenticated;
 
   const DriverLoginUiState({
     required super.isLoading,
     required super.userMessage,
     this.obscurePassword = true,
-    this.obscureConfirmPassword = true,
+    this.user,
+    this.isAuthenticated = false,
   });
 
   factory DriverLoginUiState.empty() {
@@ -16,7 +19,8 @@ class DriverLoginUiState extends BaseUiState {
       isLoading: false,
       userMessage: null,
       obscurePassword: true,
-      obscureConfirmPassword: true,
+      user: null,
+      isAuthenticated: false,
     );
   }
 
@@ -25,21 +29,23 @@ class DriverLoginUiState extends BaseUiState {
     isLoading,
     userMessage,
     obscurePassword,
-    obscureConfirmPassword,
+    user,
+    isAuthenticated,
   ];
 
   DriverLoginUiState copyWith({
     bool? isLoading,
     String? userMessage,
     bool? obscurePassword,
-    bool? obscureConfirmPassword,
+    AuthUser? user,
+    bool? isAuthenticated,
   }) {
     return DriverLoginUiState(
       isLoading: isLoading ?? this.isLoading,
       userMessage: userMessage ?? this.userMessage,
       obscurePassword: obscurePassword ?? this.obscurePassword,
-      obscureConfirmPassword:
-          obscureConfirmPassword ?? this.obscureConfirmPassword,
+      user: user ?? this.user,
+      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
     );
   }
 }
