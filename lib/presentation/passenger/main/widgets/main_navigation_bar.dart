@@ -1,59 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/config/app_assets.dart';
-import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/passenger/main/widgets/nav_destination_item.dart';
 
 class MainNavigationBar extends StatelessWidget {
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
+
   const MainNavigationBar({
     super.key,
     required this.selectedIndex,
     required this.onDestinationSelected,
   });
 
-  final int selectedIndex;
-  final ValueChanged<int> onDestinationSelected;
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: px16),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
-        color: context.color.backgroundColor,
-        border: Border(top: BorderSide(color: context.color.blackColor200)),
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade300)),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
       ),
-      child: NavigationBar(
-        backgroundColor: context.color.backgroundColor,
-        selectedIndex: selectedIndex,
-        onDestinationSelected: onDestinationSelected,
-        destinations: [
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
           NavDestinationItem(
             index: 0,
             selectedIndex: selectedIndex,
-            outlineIcon: AppAssets.icHome,
-            fillIcon: AppAssets.icHome,
+            iconPath: AppAssets.icHome,
             label: 'Home',
+            onTap: onDestinationSelected,
           ),
           NavDestinationItem(
             index: 1,
             selectedIndex: selectedIndex,
-            outlineIcon: AppAssets.icHistory,
-            fillIcon: AppAssets.icHistory,
-            label: 'History',
+            iconPath: AppAssets.icCar,
+            label: 'Services',
+            onTap: onDestinationSelected,
           ),
           NavDestinationItem(
             index: 2,
             selectedIndex: selectedIndex,
-            outlineIcon: AppAssets.icEarning,
-            fillIcon: AppAssets.icEarning,
+            iconPath: AppAssets.icEarning,
             label: 'Earnings',
+            onTap: onDestinationSelected,
           ),
+
           NavDestinationItem(
             index: 3,
             selectedIndex: selectedIndex,
-            outlineIcon: AppAssets.icProfile,
-            fillIcon: AppAssets.icProfile,
+            iconPath: AppAssets.icProfile,
             label: 'Profile',
+            onTap: onDestinationSelected,
           ),
         ],
       ),

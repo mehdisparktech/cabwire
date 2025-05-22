@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cabwire/presentation/passenger/main/presenter/main_presenter.dart';
+import 'package:cabwire/presentation/passenger/main/presenter/passenger_main_presenter.dart';
 
 class DoubleTapBackToExitApp extends StatelessWidget {
   const DoubleTapBackToExitApp({
@@ -9,7 +9,7 @@ class DoubleTapBackToExitApp extends StatelessWidget {
   });
 
   final Widget child;
-  final MainPresenter mainPresenter;
+  final PassengerMainPresenter mainPresenter;
 
   @override
   Widget build(BuildContext context) {

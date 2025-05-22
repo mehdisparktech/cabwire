@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 class PassengerHomeScreen extends StatelessWidget {
   PassengerHomeScreen({super.key});
-  final HomePresenter presenter = locate<HomePresenter>();
+  final PassengerHomePresenter presenter = locate<PassengerHomePresenter>();
 
   @override
   Widget build(BuildContext context) {

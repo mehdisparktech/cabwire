@@ -2,7 +2,7 @@ import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/app_colors.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/presentation/passenger/auth/ui/passenger_forgot_password_screen.dart';
-import 'package:cabwire/presentation/passenger/main/ui/main_screen.dart';
+import 'package:cabwire/presentation/passenger/main/ui/passenger_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_text_form_field.dart';
@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     //   print('Email: ${_emailController.text}');
     //   print('Password: ${_passwordController.text}');
     // }
-    Get.offAll(() => MainPage());
+    Get.offAll(() => PassengerMainPage());
   }
 
   @override
