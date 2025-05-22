@@ -4,6 +4,7 @@ import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_form_container.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_screen_wrapper.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_validators.dart';
@@ -12,7 +13,6 @@ import 'package:cabwire/presentation/common/components/auth/custom_text_form_fie
 import 'package:cabwire/presentation/common/components/auth/toggle_auth_option.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_login_presenter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../driver/auth/ui/driver_forgot_password_screen.dart';
 
 /// Screen that handles driver login
@@ -77,7 +77,11 @@ class DriverLoginScreen extends StatelessWidget {
       Align(
         alignment: Alignment.centerRight,
         child: TextButton(
-          onPressed: () => Get.to(() => ForgotPasswordScreen()),
+          onPressed:
+              () => NavigationUtility.slideRight(
+                context,
+                const ForgotPasswordScreen(),
+              ),
           style: TextButton.styleFrom(
             minimumSize: Size.zero,
             padding: EdgeInsets.zero,

@@ -74,6 +74,14 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // Use case for registration
   final RegisterUseCase _registerUseCase;
 
+  // Reset password controllers
+  final TextEditingController resetPasswordController = TextEditingController();
+  final TextEditingController resetConfirmPasswordController =
+      TextEditingController();
+  bool resetObscurePassword = true;
+  bool resetObscureConfirmPassword = true;
+  final GlobalKey<FormState> resetPasswordFormKey = GlobalKey<FormState>();
+
   DriverSignUpPresenter(this._registerUseCase);
 
   // Toggle password visibility
@@ -124,9 +132,57 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
       // For now, we just move to the next screen based on isSignUp flag
 
       if (isSignUp) {
-        NavigationUtility.slideRight(context, const ConfirmInformationScreen());
+        // Clear previous screens to avoid key conflicts
+        Navigator.pushAndRemoveUntil(
+          context,
+          PageRouteBuilder(
+            pageBuilder:
+                (context, animation1, animation2) =>
+                    const ConfirmInformationScreen(),
+            transitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              );
+            },
+          ),
+          (route) => false, // Remove all previous routes
+        );
       } else {
-        NavigationUtility.slideRight(context, const ResetPasswordScreen());
+        // Clear previous screens to avoid key conflicts
+        Navigator.pushAndRemoveUntil(
+          context,
+          PageRouteBuilder(
+            pageBuilder:
+                (context, animation1, animation2) =>
+                    const ResetPasswordScreen(),
+            transitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              );
+            },
+          ),
+          (route) => false, // Remove all previous routes
+        );
       }
     } else {
       addUserMessage('Please enter a valid 6-digit code');
@@ -417,12 +473,66 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
 
           // Navigate to login or home screen
           if (context.mounted) {
-            // Go back to login screen
-            NavigationUtility.fadeReplacement(context, const AuthNavigator());
+            // Go back to login screen with clear navigation stack
+            Navigator.pushAndRemoveUntil(
+              context,
+              PageRouteBuilder(
+                pageBuilder:
+                    (context, animation1, animation2) => const AuthNavigator(),
+                transitionDuration: const Duration(milliseconds: 300),
+                transitionsBuilder: (
+                  context,
+                  animation,
+                  secondaryAnimation,
+                  child,
+                ) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+              ),
+              (route) => false, // Remove all previous routes
+            );
           }
         },
       );
     });
+  }
+
+  // Toggle reset password visibility
+  void toggleResetPasswordVisibility() {
+    resetObscurePassword = !resetObscurePassword;
+    uiState.value = currentUiState.copyWith(); // Trigger UI update
+  }
+
+  // Toggle reset confirm password visibility
+  void toggleResetConfirmPasswordVisibility() {
+    resetObscureConfirmPassword = !resetObscureConfirmPassword;
+    uiState.value = currentUiState.copyWith(); // Trigger UI update
+  }
+
+  // Reset password
+  void resetPassword(BuildContext context) {
+    if (resetPasswordFormKey.currentState?.validate() ?? false) {
+      // Here we would typically call an API to reset the password
+      // Use pushAndRemoveUntil to clear the navigation stack
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageRouteBuilder(
+          pageBuilder:
+              (context, animation1, animation2) => const AuthNavigator(),
+          transitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            );
+          },
+        ),
+        (route) => false, // Remove all previous routes
+      );
+    }
   }
 
   @override
@@ -469,6 +579,10 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     vehiclesInsuranceNumberController.dispose();
     vehicleCategoryController.dispose();
     vehiclesPictureController.dispose();
+
+    // Reset password controllers
+    resetPasswordController.dispose();
+    resetConfirmPasswordController.dispose();
 
     super.dispose();
   }

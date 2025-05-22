@@ -1,90 +1,61 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_login_screen.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../common/components/auth/custom_text_form_field.dart';
 import '../../../common/components/auth/custom_button.dart';
 import '../../../common/components/auth/auth_screen_wrapper.dart';
 import '../../../common/components/auth/auth_form_container.dart';
 import '../../../common/components/auth/auth_validators.dart';
 
-class ResetPasswordScreen extends StatefulWidget {
+/// Reset password screen for drivers
+///
+/// Used after email verification in the forgot password flow
+class ResetPasswordScreen extends StatelessWidget {
   const ResetPasswordScreen({super.key});
 
   @override
-  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
-}
-
-class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
-  // final _formKey = GlobalKey<FormState>(debugLabel: 'resetPasswordFormKey');
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _passwordController =
-      TextEditingController()..text = '12345678';
-  final TextEditingController _confirmPasswordController =
-      TextEditingController()..text = '12345678';
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
-
-  @override
-  void dispose() {
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  void _togglePasswordVisibility() {
-    setState(() {
-      _obscurePassword = !_obscurePassword;
-    });
-  }
-
-  void _toggleConfirmPasswordVisibility() {
-    setState(() {
-      _obscureConfirmPassword = !_obscureConfirmPassword;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Get presenter from service locator
+    final presenter = locate<DriverSignUpPresenter>();
+
     return AuthScreenWrapper(
-      key: UniqueKey(),
       title: "Reset Password",
       subtitle: "Please enter your new password.",
       textColor: context.color.blackColor100,
       child: AuthFormContainer(
         logoAssetPath: AppAssets.icDriverLogo,
         logoAssetPath2: AppAssets.icCabwireLogo,
-        formKey: _formKey,
+        formKey: presenter.resetPasswordFormKey,
         formFields: [
           CustomTextFormField(
-            controller: _passwordController,
+            controller: presenter.resetPasswordController,
             hintText: 'New Password',
             isPassword: true,
-            obscureTextValue: _obscurePassword,
-            onVisibilityToggle: _togglePasswordVisibility,
+            obscureTextValue: presenter.resetObscurePassword,
+            onVisibilityToggle: () => presenter.toggleResetPasswordVisibility(),
             validator: AuthValidators.validatePassword,
           ),
           gapH20,
           CustomTextFormField(
-            controller: _confirmPasswordController,
+            controller: presenter.resetConfirmPasswordController,
             hintText: 'Confirm New Password',
             isPassword: true,
-            obscureTextValue: _obscureConfirmPassword,
-            onVisibilityToggle: _toggleConfirmPasswordVisibility,
+            obscureTextValue: presenter.resetObscureConfirmPassword,
+            onVisibilityToggle:
+                () => presenter.toggleResetConfirmPasswordVisibility(),
             validator:
                 (value) => AuthValidators.validateConfirmPassword(
                   value,
-                  _passwordController.text,
+                  presenter.resetPasswordController.text,
                 ),
           ),
         ],
         actionButton: CustomButton(
           text: "Reset Password",
-          onPressed: () {
-            Get.off(() => DriverLoginScreen(toggleView: () {}));
-          },
+          onPressed: () => presenter.resetPassword(context),
         ),
       ),
     );
