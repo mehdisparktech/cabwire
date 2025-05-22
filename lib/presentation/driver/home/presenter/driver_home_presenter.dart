@@ -13,8 +13,8 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   final Obs<DriverHomeUiState> uiState = Obs<DriverHomeUiState>(
     DriverHomeUiState.initial(),
   );
-  DriverHomeUiState get currentUiState => uiState.value;
 
+  DriverHomeUiState get currentUiState => uiState.value;
   GoogleMapController? _mapController;
 
   DriverHomePresenter() {
@@ -22,11 +22,12 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   }
 
   void _initializeFromArguments() {
-    dynamic arguments = Get.arguments;
-    bool initialOnlineStatus = false;
-    if (arguments is Map && arguments.containsKey('isOnline')) {
-      initialOnlineStatus = arguments['isOnline'] as bool? ?? false;
-    }
+    final dynamic arguments = Get.arguments;
+    final bool initialOnlineStatus =
+        arguments is Map && arguments.containsKey('isOnline')
+            ? arguments['isOnline'] as bool? ?? false
+            : false;
+
     uiState.value = currentUiState.copyWith(isOnline: initialOnlineStatus);
   }
 
@@ -42,22 +43,14 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
 
   void onMapCreated(GoogleMapController controller) {
     _mapController = controller;
-
-    // _mapController?.animateCamera(...);
   }
 
   void toggleOnlineStatus(bool value) {
     uiState.value = currentUiState.copyWith(isOnline: value);
-    if (value) {
-      print("Driver is now Online (Presenter)");
-    } else {
-      print("Driver is now Offline (Presenter)");
-    }
   }
 
   void goOnline() {
     uiState.value = currentUiState.copyWith(isOnline: true);
-    print("Driver manually set to Online (Presenter)");
   }
 
   void goToNotifications() {
@@ -65,22 +58,19 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   }
 
   void acceptRide(String rideId) {
-    print("Ride accepted: $rideId (Presenter)");
     Get.to(() => RidesharePage());
   }
 
   void declineRide(String rideId) {
-    print("Ride declined: $rideId (Presenter)");
+    // Implementation for declining ride
   }
 
   void handleNotNowPassenger(BuildContext context) {
-    print("Not Now pressed while offline (Presenter)");
     NavigationUtility.fadeReplacement(context, DriverMainPage());
   }
 
   void handleNotNow(BuildContext context) {
     uiState.value = currentUiState.copyWith(isOnline: false);
-    print("Not Now pressed while offline (Presenter)");
     NavigationUtility.fadeReplacement(context, DriverMainPage());
   }
 
@@ -91,7 +81,7 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
 
   @override
   void dispose() {
-    super.dispose();
     _mapController?.dispose();
+    super.dispose();
   }
 }

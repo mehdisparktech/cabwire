@@ -5,13 +5,22 @@ import 'package:cabwire/presentation/driver/home/ui/driver_home_page_offline.dar
 import 'package:cabwire/presentation/driver/auth/presenter/driver_login_ui_state.dart';
 
 class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
-  final formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController()..text = 'mehdi@gmail.com';
-  final passwordController = TextEditingController()..text = '12345678';
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   final Obs<DriverLoginUiState> uiState = Obs(DriverLoginUiState.empty());
-
   DriverLoginUiState get currentUiState => uiState.value;
+
+  DriverLoginPresenter() {
+    // For development purposes only - should be removed in production
+    _initDevelopmentCredentials();
+  }
+
+  void _initDevelopmentCredentials() {
+    emailController.text = 'mehdi@gmail.com';
+    passwordController.text = '12345678';
+  }
 
   void togglePasswordVisibility() {
     uiState.value = currentUiState.copyWith(
@@ -23,12 +32,15 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
     if (formKey.currentState?.validate() ?? false) {
       await toggleLoading(loading: true);
 
-      // Simulate login logic
-      await Future.delayed(const Duration(seconds: 1));
+      try {
+        // Simulate login logic - this should be replaced with real authentication
+        await Future.delayed(const Duration(seconds: 1));
 
-      await toggleLoading(loading: false);
-      if (context.mounted) {
-        NavigationUtility.fadeReplacement(context, DriverHomePageOffline());
+        if (context.mounted) {
+          NavigationUtility.fadeReplacement(context, DriverHomePageOffline());
+        }
+      } finally {
+        await toggleLoading(loading: false);
       }
     }
   }
@@ -45,8 +57,8 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
 
   @override
   void dispose() {
-    super.dispose();
     emailController.dispose();
     passwordController.dispose();
+    super.dispose();
   }
 }

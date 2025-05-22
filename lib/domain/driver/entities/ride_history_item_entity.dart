@@ -3,25 +3,24 @@ import 'package:cabwire/core/base/base_entity.dart';
 class RideHistoryItem extends BaseEntity {
   final String id;
   final String driverName;
-  final String driverLocation; // This could be date/time for the list item
+  final String driverLocation;
   final String pickupLocation;
   final String dropoffLocation;
   final String distance;
   final String duration;
   final bool isCarRide;
 
-  // Detailed information - populated when details are fetched or available
+  // Detailed information - populated when details are fetched
   final String? vehicleNumber;
   final String? vehicleModel;
   final String? vehicleImageUrl;
   final String? paymentMethod;
   final String? existingFeedback;
-  // Add any other detail-specific fields here, e.g., exact fare, map polyline data
 
   const RideHistoryItem({
     required this.id,
     required this.driverName,
-    required this.driverLocation, // For list view, might show date/time
+    required this.driverLocation,
     required this.pickupLocation,
     required this.dropoffLocation,
     required this.distance,
@@ -34,7 +33,6 @@ class RideHistoryItem extends BaseEntity {
     this.existingFeedback,
   });
 
-  // copyWith is essential for updating the item with details
   RideHistoryItem copyWith({
     String? id,
     String? driverName,
@@ -81,5 +79,11 @@ class RideHistoryItem extends BaseEntity {
     dropoffLocation,
     distance,
     duration,
+    isCarRide,
+    vehicleNumber,
+    vehicleModel,
+    vehicleImageUrl,
+    paymentMethod,
+    existingFeedback,
   ];
 }

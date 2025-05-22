@@ -17,7 +17,15 @@ class RideHistoryPresenter extends BasePresenter<RideHistoryUiState> {
   final TextEditingController feedbackController = TextEditingController();
 
   RideHistoryPresenter() {
+    _initialize();
+  }
+
+  void _initialize() {
     fetchRideHistory();
+    _setupFeedbackListener();
+  }
+
+  void _setupFeedbackListener() {
     feedbackController.addListener(() {
       if (currentUiState.viewMode == RideViewMode.feedback) {
         uiState.value = currentUiState.copyWith(
@@ -38,47 +46,63 @@ class RideHistoryPresenter extends BasePresenter<RideHistoryUiState> {
   }
 
   Future<void> fetchRideHistory() async {
-    toggleLoading(loading: true);
-    await Future.delayed(const Duration(seconds: 1));
+    await toggleLoading(loading: true);
 
-    // Sample data - in a real app, this might just be summary data
-    final sampleRides = [
-      const RideHistoryItem(
-        id: 'ride1',
-        driverName: 'Santiago Dslab',
-        driverLocation: 'Block B, Banasree | Oct 26, 2023',
-        pickupLocation: 'Block B, Banasree, Dhaka.',
-        dropoffLocation: 'Green Road, Dhanmondi, Dhaka.',
-        distance: '10.5 km',
-        duration: '45 Minutes',
-        isCarRide: false,
-        // Details might be null initially
-      ),
-      const RideHistoryItem(
-        id: 'ride2',
-        driverName: 'Another Driver',
-        driverLocation: 'Mirpur | Oct 25, 2023',
-        pickupLocation: 'Mirpur DOHS',
-        dropoffLocation: 'Uttara Sector 10',
-        distance: '15.2 km',
-        duration: '1 Hour 5 Minutes',
-        isCarRide: true,
-        // Details might be null initially
-      ),
-    ];
-    uiState.value = currentUiState.copyWith(
-      rides: sampleRides,
-      isLoading: false,
-      viewMode: RideViewMode.list,
-    );
+    try {
+      // Simulate API call
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Sample data - in a real app, this would come from a repository
+      final sampleRides = [
+        const RideHistoryItem(
+          id: 'ride1',
+          driverName: 'Santiago Dslab',
+          driverLocation: 'Block B, Banasree | Oct 26, 2023',
+          pickupLocation: 'Block B, Banasree, Dhaka.',
+          dropoffLocation: 'Green Road, Dhanmondi, Dhaka.',
+          distance: '10.5 km',
+          duration: '45 Minutes',
+          isCarRide: false,
+        ),
+        const RideHistoryItem(
+          id: 'ride2',
+          driverName: 'Another Driver',
+          driverLocation: 'Mirpur | Oct 25, 2023',
+          pickupLocation: 'Mirpur DOHS',
+          dropoffLocation: 'Uttara Sector 10',
+          distance: '15.2 km',
+          duration: '1 Hour 5 Minutes',
+          isCarRide: true,
+        ),
+      ];
+
+      uiState.value = currentUiState.copyWith(
+        rides: sampleRides,
+        viewMode: RideViewMode.list,
+      );
+    } finally {
+      await toggleLoading(loading: false);
+    }
   }
 
   Future<void> selectRideAndShowDetails(
     String rideId, {
     bool showFeedbackForm = false,
   }) async {
-    RideHistoryItem? ride = currentUiState.rides.firstWhere(
-      (r) => r.id == rideId,
+    final RideHistoryItem ride = _findRideById(rideId);
+    final bool detailsAlreadyLoaded = ride.vehicleNumber != null;
+
+    if (detailsAlreadyLoaded) {
+      _handleExistingRideDetails(rideId, showFeedbackForm);
+      return;
+    }
+
+    await _loadRideDetails(rideId, showFeedbackForm);
+  }
+
+  RideHistoryItem _findRideById(String rideId) {
+    return currentUiState.rides.firstWhere(
+      (ride) => ride.id == rideId,
       orElse:
           () => RideHistoryItem(
             id: '',
@@ -91,136 +115,132 @@ class RideHistoryPresenter extends BasePresenter<RideHistoryUiState> {
             isCarRide: false,
           ),
     );
+  }
 
-    // Check if details for this ride are already "fetched" (i.e., vehicleNumber is not null)
-    // This is a simple check; you might have a more robust way to know if details are loaded.
-    bool detailsAlreadyLoaded = ride.vehicleNumber != null;
-
-    if (detailsAlreadyLoaded && !showFeedbackForm) {
-      // Details are already loaded, just switch view
-      feedbackController.text = ride.existingFeedback ?? '';
-      uiState.value = currentUiState.copyWith(
-        selectedRideId: rideId,
-        viewMode: RideViewMode.details,
-        currentFeedbackText: feedbackController.text,
-      );
-      Get.to(() => RideDetailsScreen());
-      return;
-    }
-
-    if (detailsAlreadyLoaded && showFeedbackForm) {
+  void _handleExistingRideDetails(String rideId, bool showFeedbackForm) {
+    if (showFeedbackForm) {
       feedbackController.clear();
       uiState.value = currentUiState.copyWith(
         selectedRideId: rideId,
         viewMode: RideViewMode.feedback,
         currentFeedbackText: '',
       );
-      Get.to(() => RideDetailsScreen());
-      return;
+    } else {
+      final ride = _findRideById(rideId);
+      feedbackController.text = ride.existingFeedback ?? '';
+      uiState.value = currentUiState.copyWith(
+        selectedRideId: rideId,
+        viewMode: RideViewMode.details,
+        currentFeedbackText: feedbackController.text,
+      );
     }
 
-    // If details are not loaded, or we need to show feedback form (which might clear existing feedback text)
-    toggleLoading(loading: true);
-    await Future.delayed(
-      const Duration(milliseconds: 500),
-    ); // Simulate API call for details
-
-    // Simulate fetching details (in a real app, this would be an API call)
-    final RideHistoryItem detailedRide = ride.copyWith(
-      // Use copyWith to update the existing item
-      vehicleNumber: 'DHK METRO HA 64-8549',
-      vehicleModel: 'Volvo XC90',
-      vehicleImageUrl: AppAssets.icCarImage,
-      paymentMethod: 'Cash Payment Received',
-      existingFeedback:
-          showFeedbackForm
-              ? null
-              : (ride.id == 'ride1'
-                  ? "Good service!"
-                  : ride
-                      .existingFeedback), // Keep existing if not showing feedback form
-    );
-
-    final updatedRides =
-        currentUiState.rides.map((r) {
-          return r.id == rideId ? detailedRide : r;
-        }).toList();
-
-    feedbackController.text =
-        (showFeedbackForm ? '' : detailedRide.existingFeedback) ?? '';
-
-    uiState.value = currentUiState.copyWith(
-      rides: updatedRides,
-      selectedRideId: rideId,
-      viewMode: showFeedbackForm ? RideViewMode.feedback : RideViewMode.details,
-      isLoading: false,
-      currentFeedbackText: feedbackController.text,
-    );
     Get.to(() => RideDetailsScreen());
+  }
+
+  Future<void> _loadRideDetails(String rideId, bool showFeedbackForm) async {
+    await toggleLoading(loading: true);
+
+    try {
+      // Simulate API call for details
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      final ride = _findRideById(rideId);
+      final RideHistoryItem detailedRide = ride.copyWith(
+        vehicleNumber: 'DHK METRO HA 64-8549',
+        vehicleModel: 'Volvo XC90',
+        vehicleImageUrl: AppAssets.icCarImage,
+        paymentMethod: 'Cash Payment Received',
+        existingFeedback:
+            showFeedbackForm
+                ? null
+                : (rideId == 'ride1' ? "Good service!" : ride.existingFeedback),
+      );
+
+      final updatedRides =
+          currentUiState.rides
+              .map((r) => r.id == rideId ? detailedRide : r)
+              .toList();
+
+      feedbackController.text =
+          (showFeedbackForm ? '' : detailedRide.existingFeedback) ?? '';
+
+      uiState.value = currentUiState.copyWith(
+        rides: updatedRides,
+        selectedRideId: rideId,
+        viewMode:
+            showFeedbackForm ? RideViewMode.feedback : RideViewMode.details,
+        currentFeedbackText: feedbackController.text,
+      );
+
+      Get.to(() => RideDetailsScreen());
+    } finally {
+      await toggleLoading(loading: false);
+    }
   }
 
   void showFeedbackFormForSelectedRide() {
     if (currentUiState.selectedRideId != null) {
-      RideHistoryItem? ride = currentUiState.selectedRideDetails;
+      final ride = currentUiState.selectedRideDetails;
       if (ride != null) {
-        // If details are not fully loaded yet for feedback, we might need to fetch them.
-        // For simplicity, assuming selectRideAndShowDetails(ride.id, showFeedbackForm: true) handles it.
-        // Or, just update the view mode.
         feedbackController.clear();
         uiState.value = currentUiState.copyWith(
           viewMode: RideViewMode.feedback,
           currentFeedbackText: '',
         );
-        // The UI (RideDetailsScreen) will re-render based on the new viewMode.
       }
     }
   }
 
-  void submitFeedback() {
+  Future<void> submitFeedback() async {
     if (currentUiState.selectedRideId == null) {
-      addUserMessage("No ride selected to submit feedback.");
+      await addUserMessage("No ride selected to submit feedback.");
       return;
     }
+
     if (currentUiState.currentFeedbackText.isEmpty) {
-      addUserMessage("Please enter your feedback.");
+      await addUserMessage("Please enter your feedback.");
       return;
     }
 
-    toggleLoading(loading: true);
-    print(
-      "Submitting feedback: ${currentUiState.currentFeedbackText} for ride ${currentUiState.selectedRideId}",
-    );
+    await toggleLoading(loading: true);
 
-    Future.delayed(const Duration(seconds: 1), () {
+    try {
+      // Simulate API call
+      await Future.delayed(const Duration(seconds: 1));
+
       final updatedRides =
-          currentUiState.rides.map((r) {
-            if (r.id == currentUiState.selectedRideId) {
-              return r.copyWith(
-                existingFeedback: currentUiState.currentFeedbackText,
-              );
-            }
-            return r;
-          }).toList();
+          currentUiState.rides
+              .map(
+                (r) =>
+                    r.id == currentUiState.selectedRideId
+                        ? r.copyWith(
+                          existingFeedback: currentUiState.currentFeedbackText,
+                        )
+                        : r,
+              )
+              .toList();
 
       uiState.value = currentUiState.copyWith(
-        isLoading: false,
         rides: updatedRides,
         viewMode: RideViewMode.details,
       );
-      addUserMessage("Feedback submitted successfully!");
+
+      await addUserMessage("Feedback submitted successfully!");
       Get.off(() => SuccessfulPayment());
-    });
+    } finally {
+      await toggleLoading(loading: false);
+    }
   }
 
   void goBackFromDetails() {
-    // Important: When going back from details, reset selectedRideId and viewMode
     feedbackController.clear();
     uiState.value = currentUiState.copyWith(
-      clearSelectedRideId: true, // Explicitly set selectedRideId to null
+      clearSelectedRideId: true,
       viewMode: RideViewMode.list,
       currentFeedbackText: '',
     );
-    Get.back(); // This pops RideDetailsScreen
+    Get.back();
   }
 
   void goBackFromHistoryList() {

@@ -5,7 +5,8 @@ class DriverHomeUiState extends BaseUiState {
   final bool isOnline;
   final String userName;
   final LatLng centerMapCoordinates;
-  // final List<YourRideModel> rideRequests;
+  // Uncomment when ride model is implemented
+  // final List<RideRequest> rideRequests;
 
   const DriverHomeUiState({
     required super.isLoading,
@@ -44,7 +45,7 @@ class DriverHomeUiState extends BaseUiState {
     bool? isOnline,
     String? userName,
     LatLng? centerMapCoordinates,
-    // List<YourRideModel>? rideRequests,
+    // List<RideRequest>? rideRequests,
   }) {
     return DriverHomeUiState(
       isLoading: isLoading ?? this.isLoading,
