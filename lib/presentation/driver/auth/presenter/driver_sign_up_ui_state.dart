@@ -1,45 +1,65 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
+import 'package:cabwire/domain/driver/auth/models/driver_registration.dart';
 
-class SignUpUiState extends BaseUiState {
+/// Shared state for the entire driver registration process
+class DriverSignUpUiState extends BaseUiState {
+  final DriverRegistration registration;
   final bool obscurePassword;
   final bool obscureConfirmPassword;
+  final int currentStep;
+  final bool isRegistered;
 
-  const SignUpUiState({
-    required super.userMessage,
+  const DriverSignUpUiState({
     required super.isLoading,
-    required this.obscurePassword,
-    required this.obscureConfirmPassword,
+    required super.userMessage,
+    required this.registration,
+    this.obscurePassword = true,
+    this.obscureConfirmPassword = true,
+    this.currentStep = 0,
+    this.isRegistered = false,
   });
 
-  factory SignUpUiState.empty() {
-    return const SignUpUiState(
-      userMessage: null,
+  factory DriverSignUpUiState.empty() {
+    return DriverSignUpUiState(
       isLoading: false,
+      userMessage: null,
+      registration: DriverRegistration.empty(),
       obscurePassword: true,
       obscureConfirmPassword: true,
+      currentStep: 0,
+      isRegistered: false,
     );
   }
 
   @override
   List<Object?> get props => [
-    userMessage,
     isLoading,
+    userMessage,
+    registration,
     obscurePassword,
     obscureConfirmPassword,
+    currentStep,
+    isRegistered,
   ];
 
-  SignUpUiState copyWith({
-    String? userMessage,
+  DriverSignUpUiState copyWith({
     bool? isLoading,
+    String? userMessage,
+    DriverRegistration? registration,
     bool? obscurePassword,
     bool? obscureConfirmPassword,
+    int? currentStep,
+    bool? isRegistered,
   }) {
-    return SignUpUiState(
-      userMessage: userMessage ?? this.userMessage,
+    return DriverSignUpUiState(
       isLoading: isLoading ?? this.isLoading,
+      userMessage: userMessage ?? this.userMessage,
+      registration: registration ?? this.registration,
       obscurePassword: obscurePassword ?? this.obscurePassword,
       obscureConfirmPassword:
           obscureConfirmPassword ?? this.obscureConfirmPassword,
+      currentStep: currentStep ?? this.currentStep,
+      isRegistered: isRegistered ?? this.isRegistered,
     );
   }
 }

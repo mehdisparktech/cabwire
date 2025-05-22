@@ -12,6 +12,7 @@ import 'package:cabwire/domain/user/usecases/register_device_usecase.dart';
 import 'package:cabwire/domain/user/usecases/request_notification_permission_usecase.dart';
 import 'package:cabwire/domain/user/usecases/save_first_time_use_case.dart';
 import 'package:cabwire/domain/driver/auth/usecases/login_usecase.dart';
+import 'package:cabwire/domain/driver/auth/usecases/register_usecase.dart';
 
 class UsecaseSetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -37,6 +38,7 @@ class UsecaseSetup implements SetupModule {
       ..registerLazySingleton(
         () => RequestNotificationPermissionUsecase(locate(), locate()),
       )
-      ..registerFactory(() => LoginUseCase(locate()));
+      ..registerFactory(() => LoginUseCase(locate()))
+      ..registerFactory(() => RegisterUseCase(locate()));
   }
 }
