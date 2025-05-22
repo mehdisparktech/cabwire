@@ -32,12 +32,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     // }
     NavigationUtility.slideRight(
       context,
-      EmailVerificationScreen(
-        email: 'example@email.com',
-        onResendCode: () {},
-        onVerify: (code) {},
-        isSignUp: false,
-      ),
+      DriverEmailVerificationScreen(isSignUp: false),
     );
   }
 

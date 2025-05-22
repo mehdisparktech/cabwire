@@ -37,7 +37,7 @@ class DriverSignUpScreen extends StatelessWidget {
           child: AuthFormContainer(
             logoAssetPath: AppAssets.icDriverLogo,
             logoAssetPath2: AppAssets.icCabwireLogo,
-            formKey: presenter.formKey,
+            formKey: presenter.signUpFormKey,
             formFields: _buildFormFields(context, presenter, currentUiState),
             actionButton: _buildSignUpButton(context, presenter),
             bottomWidgets: _buildAlreadyHaveAccountOption(),

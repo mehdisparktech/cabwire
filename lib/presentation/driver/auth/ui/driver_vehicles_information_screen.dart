@@ -18,81 +18,14 @@ import '../../../common/components/auth/auth_validators.dart';
 /// Screen for vehicle information
 ///
 /// Fourth and final step in the registration flow
-class VehiclesInformationScreen extends StatefulWidget {
+class VehiclesInformationScreen extends StatelessWidget {
   const VehiclesInformationScreen({super.key});
 
   @override
-  State<VehiclesInformationScreen> createState() =>
-      _VehiclesInformationScreenState();
-}
-
-class _VehiclesInformationScreenState extends State<VehiclesInformationScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _vehiclesMakeController = TextEditingController();
-  final TextEditingController _vehiclesModelController =
-      TextEditingController();
-  final TextEditingController _vehiclesYearController = TextEditingController();
-  final TextEditingController _vehiclesRegistrationNumberController =
-      TextEditingController();
-  final TextEditingController _vehiclesInsuranceNumberController =
-      TextEditingController();
-  final TextEditingController _vehicleCategoryController =
-      TextEditingController();
-  final TextEditingController _vehiclesPictureController =
-      TextEditingController();
-  String? _vehicleImagePath;
-
-  // Get presenter from service locator
-  late final DriverSignUpPresenter _presenter;
-
-  @override
-  void initState() {
-    super.initState();
-    _presenter = locate<DriverSignUpPresenter>();
-  }
-
-  @override
-  void dispose() {
-    _vehiclesMakeController.dispose();
-    _vehiclesModelController.dispose();
-    _vehiclesYearController.dispose();
-    _vehiclesRegistrationNumberController.dispose();
-    _vehiclesInsuranceNumberController.dispose();
-    _vehicleCategoryController.dispose();
-    _vehiclesPictureController.dispose();
-    super.dispose();
-  }
-
-  void _confirmInformation() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Update vehicle information in presenter
-      _presenter.updateVehicleInfo(
-        vehicleMake: _vehiclesMakeController.text.trim(),
-        vehicleModel: _vehiclesModelController.text.trim(),
-        vehicleYear: _vehiclesYearController.text.trim(),
-        vehicleRegistrationNumber:
-            _vehiclesRegistrationNumberController.text.trim(),
-        vehicleInsuranceNumber: _vehiclesInsuranceNumberController.text.trim(),
-        vehicleCategory: _vehicleCategoryController.text.trim(),
-        vehicleImage: _vehicleImagePath,
-      );
-
-      // Complete registration process
-      _presenter.completeRegistration(context);
-    }
-  }
-
-  void _selectVehicleImage() {
-    // This would be implemented with image picker
-    // For now, we'll just set a dummy path
-    setState(() {
-      _vehicleImagePath = 'dummy_vehicle_path';
-      _vehiclesPictureController.text = 'Vehicle image selected';
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Get presenter from service locator
+    final presenter = locate<DriverSignUpPresenter>();
+
     return AuthScreenWrapper(
       title: "Vehicles Information",
       subtitle: "Please confirm your vehicles information to continue.",
@@ -101,20 +34,23 @@ class _VehiclesInformationScreenState extends State<VehiclesInformationScreen> {
         showLogo: false,
         logoAssetPath: AppAssets.icDriverLogo,
         logoAssetPath2: AppAssets.icCabwireLogo,
-        formKey: _formKey,
-        formFields: _buildFormFields(),
+        formKey: presenter.vehicleInfoFormKey,
+        formFields: _buildFormFields(context, presenter),
         actionButton: CustomButton(
           text: "Complete Registration",
-          onPressed: _confirmInformation,
+          onPressed: () => presenter.confirmVehicleInformation(context),
         ),
       ),
     );
   }
 
-  List<Widget> _buildFormFields() {
+  List<Widget> _buildFormFields(
+    BuildContext context,
+    DriverSignUpPresenter presenter,
+  ) {
     return [
       CustomTextFormField(
-        controller: _vehiclesMakeController,
+        controller: presenter.vehiclesMakeController,
         hintText: 'Enter Vehicles Make',
         keyboardType: TextInputType.text,
         validator:
@@ -125,7 +61,7 @@ class _VehiclesInformationScreenState extends State<VehiclesInformationScreen> {
       ),
       gapH20,
       CustomTextFormField(
-        controller: _vehiclesModelController,
+        controller: presenter.vehiclesModelController,
         hintText: 'Enter Vehicles Model',
         keyboardType: TextInputType.text,
         validator:
@@ -136,7 +72,7 @@ class _VehiclesInformationScreenState extends State<VehiclesInformationScreen> {
       ),
       gapH20,
       CustomTextFormField(
-        controller: _vehiclesYearController,
+        controller: presenter.vehiclesYearController,
         hintText: 'Enter Vehicles Year',
         keyboardType: TextInputType.number,
         validator:
@@ -147,7 +83,7 @@ class _VehiclesInformationScreenState extends State<VehiclesInformationScreen> {
       ),
       gapH20,
       CustomTextFormField(
-        controller: _vehiclesRegistrationNumberController,
+        controller: presenter.vehiclesRegistrationNumberController,
         hintText: 'Enter Vehicles Registration Number',
         keyboardType: TextInputType.text,
         validator:
@@ -158,7 +94,7 @@ class _VehiclesInformationScreenState extends State<VehiclesInformationScreen> {
       ),
       gapH20,
       CustomTextFormField(
-        controller: _vehiclesInsuranceNumberController,
+        controller: presenter.vehiclesInsuranceNumberController,
         hintText: 'Enter Vehicles Insurance Number',
         keyboardType: TextInputType.text,
         validator:
@@ -169,15 +105,15 @@ class _VehiclesInformationScreenState extends State<VehiclesInformationScreen> {
       ),
       gapH20,
       CustomTextFormField(
-        controller: _vehiclesPictureController,
+        controller: presenter.vehiclesPictureController,
         hintText: 'Upload Your Vehicles Picture',
         readOnly: true,
         suffixIcon: const Icon(Icons.add_a_photo_outlined),
-        onTap: _selectVehicleImage,
+        onTap: () => presenter.selectVehicleImage(),
       ),
       gapH20,
       CustomTextFormField(
-        controller: _vehicleCategoryController,
+        controller: presenter.vehicleCategoryController,
         hintText: 'Select Your Vehicle Category',
         suffixIcon: const Icon(Icons.keyboard_arrow_down),
         readOnly: true,
@@ -186,38 +122,7 @@ class _VehiclesInformationScreenState extends State<VehiclesInformationScreen> {
                 value != null && value.isNotEmpty
                     ? null
                     : 'Please select a category',
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            builder:
-                (context) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children:
-                      [
-                            'Sedan',
-                            'SUV',
-                            'Hatchback',
-                            'Convertible',
-                            'Van',
-                            'Truck',
-                            'Motorcycle',
-                            'Other',
-                          ]
-                          .map(
-                            (category) => ListTile(
-                              title: Text(category),
-                              onTap: () {
-                                setState(() {
-                                  _vehicleCategoryController.text = category;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                          )
-                          .toList(),
-                ),
-          );
-        },
+        onTap: () => presenter.showVehicleCategorySelectionSheet(context),
       ),
     ];
   }

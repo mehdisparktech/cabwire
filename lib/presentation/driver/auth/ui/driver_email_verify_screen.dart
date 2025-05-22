@@ -1,79 +1,33 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/static/ui_const.dart';
-import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_confirm_information_screen.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_reset_password_screen.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../common/components/auth/custom_button.dart';
 import '../../../common/components/auth/auth_screen_wrapper.dart';
 
-class EmailVerificationScreen extends StatefulWidget {
-  final String email;
-  final VoidCallback onResendCode;
-  final Function(String) onVerify;
+/// Email verification screen for driver
+///
+/// Used for both sign up and forgot password flows
+class DriverEmailVerificationScreen extends StatelessWidget {
   final bool isSignUp;
 
-  const EmailVerificationScreen({
-    super.key,
-    required this.email,
-    required this.onResendCode,
-    required this.onVerify,
-    required this.isSignUp,
-  });
-
-  @override
-  State<EmailVerificationScreen> createState() =>
-      _EmailVerificationScreenState();
-}
-
-class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
-  final List<TextEditingController> _controllers = List.generate(
-    6,
-    (_) => TextEditingController(),
-  );
-  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
-
-  @override
-  void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var focusNode in _focusNodes) {
-      focusNode.dispose();
-    }
-    super.dispose();
-  }
-
-  void _onCodeVerify() {
-    // String code = _controllers.map((controller) => controller.text).join();
-    // if (code.length == 6) {
-    //   widget.onVerify(code);
-    // }
-    if (widget.isSignUp) {
-      NavigationUtility.slideRight(context, ConfirmInformationScreen());
-    } else {
-      NavigationUtility.slideRight(context, ResetPasswordScreen());
-    }
-  }
-
-  void _onCodeDigitInput(int index, String value) {
-    if (value.isNotEmpty && index < 5) {
-      _focusNodes[index + 1].requestFocus();
-    }
-  }
+  const DriverEmailVerificationScreen({super.key, required this.isSignUp});
 
   @override
   Widget build(BuildContext context) {
-    String maskedEmail = widget.email.replaceRange(
-      3,
-      widget.email.indexOf('@'),
-      '...',
-    );
+    // Get presenter from service locator
+    final presenter = locate<DriverSignUpPresenter>();
+
+    // Get the email from the presenter
+    final email = presenter.emailController.text;
+
+    // Get masked email for display
+    final maskedEmail = presenter.getMaskedEmail(email);
 
     return AuthScreenWrapper(
       title: "Verify Email",
@@ -105,8 +59,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 width: px40,
                 height: px50,
                 child: TextField(
-                  controller: _controllers[index],
-                  focusNode: _focusNodes[index],
+                  controller: presenter.verificationCodeControllers[index],
+                  focusNode: presenter.verificationCodeFocusNodes[index],
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: px22, fontWeight: FontWeight.bold),
@@ -136,7 +90,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     LengthLimitingTextInputFormatter(1),
                     FilteringTextInputFormatter.digitsOnly,
                   ],
-                  onChanged: (value) => _onCodeDigitInput(index, value),
+                  onChanged:
+                      (value) => presenter.onCodeDigitInput(index, value),
                 ),
               ),
             ),
@@ -153,7 +108,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 ),
               ),
               TextButton(
-                onPressed: widget.onResendCode,
+                onPressed: () => presenter.resendVerificationCode(),
                 style: TextButton.styleFrom(
                   minimumSize: Size.zero,
                   padding: EdgeInsets.zero,
@@ -171,7 +126,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
             ],
           ),
           gapH30,
-          CustomButton(text: "Verify", onPressed: _onCodeVerify),
+          CustomButton(
+            text: "Verify",
+            onPressed: () => presenter.verifyEmailCode(context, isSignUp),
+          ),
         ],
       ),
     );
