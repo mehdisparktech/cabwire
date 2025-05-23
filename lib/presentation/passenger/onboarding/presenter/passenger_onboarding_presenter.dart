@@ -62,7 +62,7 @@ class PassengerOnboardingPresenter
 
   void onGetStarted() {
     // Navigate to AuthNavigator for login/signup
-    Get.to(() => const AuthNavigationScreen());
+    Get.to(() => const PassengerAuthNavigationScreen());
   }
 
   @override

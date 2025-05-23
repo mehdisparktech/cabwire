@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'passenger_login_screen.dart';
 import 'passenger_signup_screen.dart';
 
-class AuthNavigationScreen extends StatefulWidget {
-  const AuthNavigationScreen({super.key});
+class PassengerAuthNavigationScreen extends StatefulWidget {
+  const PassengerAuthNavigationScreen({super.key});
 
   @override
-  State<AuthNavigationScreen> createState() => _AuthNavigationScreenState();
+  State<PassengerAuthNavigationScreen> createState() =>
+      _PassengerAuthNavigationScreenState();
 }
 
-class _AuthNavigationScreenState extends State<AuthNavigationScreen> {
+class _PassengerAuthNavigationScreenState
+    extends State<PassengerAuthNavigationScreen> {
   bool _showLogin = true;
 
   void _toggleView() {

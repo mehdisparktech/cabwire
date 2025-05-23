@@ -6,6 +6,8 @@ class AppAssets {
   static const String icSuccessful = 'assets/images/png/successful.png';
   static const String icCarCreatePost = 'assets/images/png/car_create_post.png';
   static const String icNoImage = 'assets/images/png/no_image.png';
+  static const String icPassengerNoDataFound =
+      'assets/images/png/pass_no_data_found.png';
   static const String icProfileImage = 'assets/images/png/profile_image.png';
   static const String icCarImage = 'assets/images/png/car_image.png';
   static const String icSplashScreenLogo =

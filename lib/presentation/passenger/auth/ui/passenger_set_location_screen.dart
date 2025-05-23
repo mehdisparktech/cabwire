@@ -29,7 +29,7 @@ class _SetLocationScreenState extends State<SetLocationScreen> {
     //   // Set location logic
     //   Get.to(() => LoginScreen(toggleView: () {}));
     // }
-    Get.to(() => AuthNavigationScreen());
+    Get.to(() => PassengerAuthNavigationScreen());
   }
 
   @override

@@ -55,7 +55,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     if (widget.isSignUp) {
       Get.to(() => ConfirmInformationScreen());
     } else {
-      Get.to(() => AuthNavigationScreen());
+      Get.to(() => PassengerAuthNavigationScreen());
     }
   }
 

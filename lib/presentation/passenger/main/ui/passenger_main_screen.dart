@@ -20,7 +20,7 @@ class PassengerMainPage extends StatelessWidget {
     PassengerHomeScreen(),
     PassengerServicesPage(),
     PassengerHistoryPage(),
-    PassengerProfilePage(),
+    PassengerProfileScreen(),
   ];
 
   @override
