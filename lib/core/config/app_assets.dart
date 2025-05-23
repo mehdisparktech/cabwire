@@ -51,4 +51,5 @@ class AppAssets {
   static const String icNotificationBing =
       'assets/images/svg/notification_bing.svg';
   static const String icSort = 'assets/images/svg/sort.svg';
+  static const String icLocation = 'assets/images/svg/location.svg';
 }

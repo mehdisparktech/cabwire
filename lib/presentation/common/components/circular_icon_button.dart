@@ -8,7 +8,8 @@ class CircularIconButton extends StatelessWidget {
   final Color? iconColor;
   final Color? backgroundColor;
   final double? padding;
-  final double? margin;
+  final double? hMargin;
+  final double? vMargin;
   final VoidCallback onTap;
   final String? imageSrc;
   final ImageType? imageType;
@@ -21,7 +22,8 @@ class CircularIconButton extends StatelessWidget {
     this.iconColor,
     this.backgroundColor,
     this.padding,
-    this.margin,
+    this.hMargin,
+    this.vMargin,
     this.imageType,
   });
 
@@ -31,7 +33,10 @@ class CircularIconButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(padding ?? px10),
-        margin: EdgeInsets.symmetric(horizontal: margin ?? px8),
+        margin: EdgeInsets.symmetric(
+          horizontal: hMargin ?? px8,
+          vertical: vMargin ?? px8,
+        ),
         decoration: BoxDecoration(
           color: backgroundColor ?? Colors.white,
           shape: BoxShape.circle,

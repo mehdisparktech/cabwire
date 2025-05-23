@@ -14,8 +14,7 @@ class Service {
   });
 }
 
-class ServicesWidget extends StatelessWidget {
-  static final double _containerWidth = 357.px;
+class CustomServicesCard extends StatelessWidget {
   static final double _serviceCardWidth = 160.px;
   static final double _serviceCardHeight = 122.px;
   static final double _imageHeight = 60.px;
@@ -26,12 +25,12 @@ class ServicesWidget extends StatelessWidget {
 
   final List<Service> services;
 
-  const ServicesWidget({super.key, required this.services});
+  const CustomServicesCard({super.key, required this.services});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: _containerWidth,
+      width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 13.px, vertical: 20.px),
       decoration: _buildMainContainerDecoration(),
       child: Column(
@@ -64,8 +63,7 @@ class ServicesWidget extends StatelessWidget {
         _buildHeader(),
         SizedBox(height: 10.px),
         SizedBox(
-          height:
-              _serviceCardHeight * 2 + 13, // Enough height for 2 rows + spacing
+          height: _serviceCardHeight * (services.length / 2).ceil() + 13,
           child: GridView.builder(
             physics:
                 const NeverScrollableScrollPhysics(), // Disable inner scroll

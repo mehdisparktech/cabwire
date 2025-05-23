@@ -1,9 +1,12 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
-import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
+import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/common/components/custom_services_card.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_presenter.dart';
+import 'package:cabwire/presentation/passenger/home/widgets/ride_booking_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PassengerHomeScreen extends StatelessWidget {
   PassengerHomeScreen({super.key});
@@ -12,39 +15,119 @@ class PassengerHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Passenger Home',
-        showBackButton: true,
-        elevation: 0,
+      appBar: _buildAppBar(context),
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
+            child: RideBookingWidget(),
+          ),
+          Expanded(
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 200.px, // Adjust based on services widget height
+                  bottom: 0.px, // 10px from bottom for overlap effect
+                  left: 0.px,
+                  right: 0.px,
+                  child: _buildMap(context),
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: _buildServicesWidget(),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      toolbarHeight: 80,
+      leading: Padding(
+        padding: EdgeInsets.all(4.px),
+        child: CircleAvatar(
+          backgroundImage: AssetImage(AppAssets.icProfileImage),
         ),
-        child: ServicesWidget(
-          services: [
-            Service(
-              title: 'Car',
-              imageUrl: AppAssets.icServiceCar,
-              fontWeight: FontWeight.w600,
-            ),
-            Service(
-              title: 'Emergency Car',
-              imageUrl: AppAssets.icServiceCar,
-              fontWeight: FontWeight.w400,
-            ),
-            Service(
-              title: 'Bike',
-              imageUrl: AppAssets.icServiceCar,
-              fontWeight: FontWeight.w500,
-            ),
-            Service(
-              title: 'Truck',
-              imageUrl: AppAssets.icServiceCar,
-              fontWeight: FontWeight.w600,
-            ),
-          ],
+      ),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Hello Sabbir,',
+            style: TextStyle(fontSize: 16.px, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            '36 East 8th Street, New York, NY 10003, United States.',
+            style: TextStyle(fontSize: 12.px),
+            maxLines: 2,
+          ),
+        ],
+      ),
+      actions: [
+        CircularIconButton(
+          hMargin: 20.px,
+          imageSrc: AppAssets.icNotifcationActive,
+          onTap: () {},
+        ),
+      ],
+    );
+  }
+
+  Widget _buildServicesWidget() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.px),
+      child: CustomServicesCard(
+        services: [
+          Service(
+            title: 'Car',
+            imageUrl: AppAssets.icServiceCar,
+            fontWeight: FontWeight.w600,
+          ),
+          Service(
+            title: 'Emergency Car',
+            imageUrl: AppAssets.icServiceCar,
+            fontWeight: FontWeight.w400,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMap(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24.px),
+          topRight: Radius.circular(24.px),
+        ),
+        color: Colors.grey.shade200,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24.px),
+          topRight: Radius.circular(24.px),
+        ),
+        child: GoogleMap(
+          onMapCreated: (controller) {}, // Use presenter's method
+          initialCameraPosition: CameraPosition(
+            target: LatLng(23.8103, 90.4125),
+            zoom: 14.0,
+          ),
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: false,
+          mapToolbarEnabled: false,
+          scrollGesturesEnabled: true,
+          zoomGesturesEnabled: true,
+          tiltGesturesEnabled: true,
+          rotateGesturesEnabled: true,
         ),
       ),
     );

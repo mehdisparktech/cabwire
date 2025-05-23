@@ -44,8 +44,8 @@ class MainNavigationBar extends StatelessWidget {
           NavDestinationItem(
             index: 2,
             selectedIndex: selectedIndex,
-            iconPath: AppAssets.icEarning,
-            label: 'Earnings',
+            iconPath: AppAssets.icHistory,
+            label: 'History',
             onTap: onDestinationSelected,
           ),
 

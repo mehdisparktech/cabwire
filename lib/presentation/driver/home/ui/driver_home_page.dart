@@ -80,7 +80,7 @@ class DriverHomePage extends StatelessWidget {
         ),
         gapW10,
         CircularIconButton(
-          margin: 10.0,
+          hMargin: 10.0,
           imageSrc: AppAssets.icNotifcationActive,
           onTap: presenter.goToNotifications,
         ),
