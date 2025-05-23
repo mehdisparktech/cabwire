@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
+import 'package:cabwire/presentation/passenger/home/ui/passenger_pickup_location_screen.dart';
 import 'package:flutter/material.dart';
 
 class RideBookingWidget extends StatefulWidget {
@@ -209,25 +210,29 @@ class _RideBookingWidgetState extends State<RideBookingWidget> {
 
   void _handleLocationSelection(bool isPickup) {
     // Show location picker dialog or navigate to map
-    showDialog(
-      context: context,
-      builder:
-          (context) => LocationPickerDialog(
-            title:
-                isPickup
-                    ? 'Select Pickup Location'
-                    : 'Select Drop-off Location',
-            onLocationSelected: (location) {
-              setState(() {
-                if (isPickup) {
-                  _pickupLocation = location;
-                } else {
-                  _dropoffLocation = location;
-                }
-              });
-              _notifyLocationChange();
-            },
-          ),
+    // showDialog(
+    //   context: context,
+    //   builder:
+    //       (context) => LocationPickerDialog(
+    //         title:
+    //             isPickup
+    //                 ? 'Select Pickup Location'
+    //                 : 'Select Drop-off Location',
+    //         onLocationSelected: (location) {
+    //           setState(() {
+    //             if (isPickup) {
+    //               _pickupLocation = location;
+    //             } else {
+    //               _dropoffLocation = location;
+    //             }
+    //           });
+    //           _notifyLocationChange();
+    //         },
+    //       ),
+    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PassengerPickupLocationScreen()),
     );
   }
 

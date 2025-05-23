@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
 
 class ActionButton extends StatelessWidget {
@@ -20,8 +21,12 @@ class ActionButton extends StatelessWidget {
     return isPrimary
         ? Container(
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFFFF6600), Color(0xFFFF8800)],
+            gradient: LinearGradient(
+              //colors: [Color(0xFFFF6600), Color(0xFFFF8800)],
+              colors: [
+                context.color.primaryButtonGradient,
+                context.color.secondaryButtonGradient,
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -53,7 +58,10 @@ class ActionButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(px8),
             ),
-            side: const BorderSide(color: Colors.deepOrange, width: 1.5),
+            side: BorderSide(
+              color: context.color.primaryButtonGradient,
+              width: 1.5,
+            ),
             foregroundColor: Colors.black,
           ),
           child: Text(
