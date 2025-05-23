@@ -8,6 +8,9 @@ import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter
 import 'package:cabwire/presentation/driver/notification/presenter/notification_presenter.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_presenter.dart';
 import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_presenter.dart';
+import 'package:cabwire/presentation/passenger/passenger_history/presenter/passenger_history_presenter.dart';
+import 'package:cabwire/presentation/passenger/passenger_profile/presenter/passenger_profile_presenter.dart';
+import 'package:cabwire/presentation/passenger/passenger_services/presenter/passenger_services_presenter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/di/service_locator.dart';
@@ -25,13 +28,9 @@ class PresenterSetup implements SetupModule {
   @override
   Future<void> setup() async {
     _serviceLocator
-      ..registerFactory(() => loadPresenter(PassengerMainPresenter(locate())))
-      ..registerLazySingleton(() => loadPresenter(PassengerHomePresenter()))
+      // Driver Presenters
       ..registerFactory(() => loadPresenter(DriverMainPresenter(locate())))
       ..registerLazySingleton(() => loadPresenter(DriverHomePresenter()))
-      ..registerLazySingleton(
-        () => loadPresenter(PassengerOnboardingPresenter()),
-      )
       ..registerLazySingleton(() => loadPresenter(DriverOnboardingPresenter()))
       ..registerLazySingleton(() => loadPresenter(WelcomePresenter()))
       ..registerLazySingleton(() => loadPresenter(DriverProfilePresenter()))
@@ -45,6 +44,17 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(() => loadPresenter(CreatePostPresenter()))
       ..registerLazySingleton(() => loadPresenter(EarningsPresenter()))
       ..registerLazySingleton(() => loadPresenter(ChatPresenter()))
-      ..registerLazySingleton(() => loadPresenter(RideHistoryPresenter()));
+      ..registerLazySingleton(() => loadPresenter(RideHistoryPresenter()))
+      // Passenger Presenters
+      ..registerLazySingleton(() => loadPresenter(PassengerHistoryPresenter()))
+      ..registerLazySingleton(() => loadPresenter(PassengerServicesPresenter()))
+      ..registerLazySingleton(() => loadPresenter(PassengerProfilePresenter()))
+      ..registerLazySingleton(
+        () => loadPresenter(PassengerOnboardingPresenter()),
+      )
+      ..registerLazySingleton(
+        () => loadPresenter(PassengerMainPresenter(locate())),
+      )
+      ..registerLazySingleton(() => loadPresenter(PassengerHomePresenter()));
   }
 }

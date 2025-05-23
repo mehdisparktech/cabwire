@@ -53,15 +53,15 @@ function display_apk_size() {
 
 # Main script logic
 if [ "$1" == "page" ]; then
-  if [ "$2" == "driver" ]; then
+  if [ "$2" == "passenger" ]; then
     if [ -z "$3" ]; then
       echo -e "${RED}Error: Please provide a page name.${NC}"
-      echo -e "Usage: $0 page driver <name>"
+      echo -e "Usage: $0 page passenger <name>"
       exit 1
     fi
 
     # Set the page name and sub-directory from arguments
-    SUB_DIR="driver"
+    SUB_DIR="passenger"
     PAGE_NAME="$3"
     
     # Convert page_name to snake_case if it contains uppercase
@@ -192,7 +192,7 @@ EOF
   else
     if [ -z "$2" ]; then
       echo -e "${RED}Error: Please provide a page name.${NC}"
-      echo -e "Usage: $0 page <name> or $0 page driver <name>"
+      echo -e "Usage: $0 page <name> or $0 page passenger <name>"
       exit 1
     fi
 
@@ -329,6 +329,6 @@ else
   echo -e "  cache-repair Repair pub cache"
   echo -e "  cleanup      Clean project and get dependencies"
   echo -e "  release-run  Build & install release APK on connected device"
-  echo -e "  page         Create a new page structure (Usage: $0 page <name> or $0 page driver <name>)"
+  echo -e "  page         Create a new page structure (Usage: $0 page <name> or $0 page passenger <name>)"
   exit 1
 fi

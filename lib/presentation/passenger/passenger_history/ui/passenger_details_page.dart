@@ -9,16 +9,17 @@ import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
-import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_ui_state.dart';
-import 'package:cabwire/presentation/driver/ride_history/widgets/driver_profile_widget.dart';
-import 'package:cabwire/presentation/driver/ride_history/widgets/route_information_widget.dart';
-import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_presenter.dart';
+import 'package:cabwire/presentation/passenger/passenger_history/presenter/passenger_history_ui_state.dart';
+import 'package:cabwire/presentation/passenger/passenger_history/widgets/passenger_profile_widget.dart';
+import 'package:cabwire/presentation/passenger/passenger_history/widgets/passenger_route_information_widget.dart';
+import 'package:cabwire/presentation/passenger/passenger_history/presenter/passenger_history_presenter.dart';
 import 'package:flutter/material.dart';
 
-class RideDetailsScreen extends StatelessWidget {
-  final RideHistoryPresenter presenter = locate<RideHistoryPresenter>();
+class PassengerRideDetailsScreen extends StatelessWidget {
+  final PassengerHistoryPresenter presenter =
+      locate<PassengerHistoryPresenter>();
 
-  RideDetailsScreen({super.key});
+  PassengerRideDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +60,7 @@ class RideDetailsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DriverProfileWidget(
+                    PassengerProfileWidget(
                       name: details.driverName,
                       address: details.driverLocation,
                     ),
@@ -118,7 +119,7 @@ class RideDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        RouteInformationWidget(
+                        PassengerRouteInformationWidget(
                           pickupLocation: details.pickupLocation,
                           dropoffLocation: details.dropoffLocation,
                         ),
@@ -196,14 +197,15 @@ class RideDetailsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
 
-                    if (uiState.viewMode == RideViewMode.feedback ||
-                        (uiState.viewMode == RideViewMode.details &&
+                    if (uiState.viewMode == PassengerHistoryViewMode.feedback ||
+                        (uiState.viewMode == PassengerHistoryViewMode.details &&
                             details.existingFeedback != null &&
                             details.existingFeedback!.isNotEmpty))
                       TextField(
                         controller: presenter.feedbackController,
                         readOnly:
-                            uiState.viewMode == RideViewMode.details &&
+                            uiState.viewMode ==
+                                PassengerHistoryViewMode.details &&
                             details.existingFeedback != null,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
@@ -225,7 +227,8 @@ class RideDetailsScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           hintText:
-                              uiState.viewMode == RideViewMode.feedback
+                              uiState.viewMode ==
+                                      PassengerHistoryViewMode.feedback
                                   ? 'Enter your valuable feedback'
                                   : 'Your Feedback',
                           hintStyle: const TextStyle(color: Colors.black45),
@@ -235,7 +238,7 @@ class RideDetailsScreen extends StatelessWidget {
 
                     const SizedBox(height: 40),
 
-                    if (uiState.viewMode == RideViewMode.details &&
+                    if (uiState.viewMode == PassengerHistoryViewMode.details &&
                         (details.existingFeedback == null ||
                             details.existingFeedback!.isEmpty))
                       ActionButton(
@@ -243,7 +246,7 @@ class RideDetailsScreen extends StatelessWidget {
                         onPressed: presenter.showFeedbackFormForSelectedRide,
                       ),
 
-                    if (uiState.viewMode == RideViewMode.feedback)
+                    if (uiState.viewMode == PassengerHistoryViewMode.feedback)
                       ActionButton(
                         isPrimary: true,
                         text: 'Submit Feedback',

@@ -181,7 +181,7 @@ class _RideBookingWidgetState extends State<RideBookingWidget> {
                       setState(() {});
                     },
                   )
-                  : const Icon(Icons.arrow_forward, size: 18),
+                  : const Icon(Icons.voice_chat, size: 18),
         ),
         onChanged: (value) => setState(() {}),
       ),

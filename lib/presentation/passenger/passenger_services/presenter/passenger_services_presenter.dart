@@ -1,13 +1,13 @@
-import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_ui_state.dart';
+import 'passenger_services_ui_state.dart';
 
-class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
-  final Obs<PassengerHomeUiState> uiState = Obs<PassengerHomeUiState>(
-    PassengerHomeUiState.empty(),
+class PassengerServicesPresenter
+    extends BasePresenter<PassengerServicesUiState> {
+  final Obs<PassengerServicesUiState> uiState = Obs<PassengerServicesUiState>(
+    PassengerServicesUiState.empty(),
   );
-  PassengerHomeUiState get currentUiState => uiState.value;
+  PassengerServicesUiState get currentUiState => uiState.value;
 
   @override
   Future<void> addUserMessage(String message) async {

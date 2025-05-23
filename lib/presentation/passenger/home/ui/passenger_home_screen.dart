@@ -83,6 +83,7 @@ class PassengerHomeScreen extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.px),
       child: CustomServicesCard(
+        showSeeAllButton: true,
         services: [
           Service(
             title: 'Car',

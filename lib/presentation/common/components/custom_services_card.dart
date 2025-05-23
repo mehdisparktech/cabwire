@@ -24,8 +24,13 @@ class CustomServicesCard extends StatelessWidget {
   static const Color _cardShadowColor = Color(0x26000000);
 
   final List<Service> services;
+  final bool showSeeAllButton;
 
-  const CustomServicesCard({super.key, required this.services});
+  const CustomServicesCard({
+    super.key,
+    required this.services,
+    this.showSeeAllButton = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +43,8 @@ class CustomServicesCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           _buildServicesContent(),
-          SizedBox(height: 10.px),
-          _buildSeeAllButton(),
+          SizedBox(height: 4.px),
+          if (showSeeAllButton) _buildSeeAllButton(),
         ],
       ),
     );
@@ -63,7 +68,7 @@ class CustomServicesCard extends StatelessWidget {
         _buildHeader(),
         SizedBox(height: 10.px),
         SizedBox(
-          height: _serviceCardHeight * (services.length / 2).ceil() + 13,
+          height: _serviceCardHeight * (services.length / 2).ceil() + 16.px,
           child: GridView.builder(
             physics:
                 const NeverScrollableScrollPhysics(), // Disable inner scroll

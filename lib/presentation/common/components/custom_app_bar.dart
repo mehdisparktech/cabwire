@@ -1,4 +1,3 @@
-import 'package:cabwire/presentation/driver/main/ui/driver_main_page.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -10,6 +9,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Color? foregroundColor;
   final double? elevation;
   final double height;
+  final VoidCallback? onBackPressed;
   @override
   final Size preferredSize;
 
@@ -23,6 +23,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.foregroundColor,
     this.elevation,
     this.height = kToolbarHeight,
+    this.onBackPressed,
   }) : preferredSize = Size.fromHeight(height);
 
   @override
@@ -36,12 +37,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading:
           showBackButton
               ? IconButton(
-                onPressed:
-                    () => Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => DriverMainPage()),
-                      (route) => false,
-                    ),
+                onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
                 icon: const Icon(Icons.arrow_back_ios_new_rounded),
               )
               : null,
