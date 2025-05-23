@@ -37,7 +37,7 @@ class PassengerServicesPage extends StatelessWidget {
             ),
             Service(
               title: 'Package delivery',
-              imageUrl: AppAssets.icServiceCar,
+              imageUrl: AppAssets.icPackageDelivery,
               fontWeight: FontWeight.w400,
             ),
           ],

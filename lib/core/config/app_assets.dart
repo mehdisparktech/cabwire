@@ -14,6 +14,8 @@ class AppAssets {
       'assets/images/png/splash_screen_logo.png';
   static const String icSplashScreen = 'assets/images/png/splash_screen.png';
   static const String icServiceCar = 'assets/images/png/service_car.png';
+  static const String icPackageDelivery =
+      'assets/images/png/package_delivery.png';
 
   ///svg file
   static const String icHomeOutline = 'assets/images/svg/ic_home_outline.svg';
