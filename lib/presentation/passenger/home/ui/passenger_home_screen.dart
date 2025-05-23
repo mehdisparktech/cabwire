@@ -5,7 +5,9 @@ import 'package:cabwire/presentation/common/components/circular_icon_button.dart
 import 'package:cabwire/presentation/common/components/custom_services_card.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/widgets/ride_booking_widget.dart';
+import 'package:cabwire/presentation/passenger/passenger_notification/ui/passenger_notification_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PassengerHomeScreen extends StatelessWidget {
@@ -73,7 +75,7 @@ class PassengerHomeScreen extends StatelessWidget {
         CircularIconButton(
           hMargin: 20.px,
           imageSrc: AppAssets.icNotifcationActive,
-          onTap: () {},
+          onTap: () => Get.to(() => PassengerNotificationScreen()),
         ),
       ],
     );
