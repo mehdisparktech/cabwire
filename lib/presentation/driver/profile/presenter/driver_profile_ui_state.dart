@@ -101,7 +101,7 @@ class DriverProfileUiState extends BaseUiState {
   // final String editProfileEmail;
   // ... and so on for all form fields. This can become very large.
 
-  DriverProfileUiState({
+  const DriverProfileUiState({
     required super.isLoading,
     required super.userMessage,
     required this.userProfile,
