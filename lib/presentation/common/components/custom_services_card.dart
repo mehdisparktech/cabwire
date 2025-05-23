@@ -67,7 +67,8 @@ class CustomServicesCard extends StatelessWidget {
       children: [
         _buildHeader(),
         SizedBox(height: 10.px),
-        SizedBox(
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 4.px),
           height: _serviceCardHeight * (services.length / 2).ceil() + 16.px,
           child: GridView.builder(
             physics:

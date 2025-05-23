@@ -1,3 +1,4 @@
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:flutter/material.dart';
 
 class CommonText extends StatelessWidget {
@@ -47,12 +48,12 @@ class CommonText extends StatelessWidget {
         style:
             style == true
                 ? TextStyle(
-                  fontSize: fontSize,
+                  fontSize: fontSize.px,
                   fontWeight: fontWeight,
                   color: color,
                 )
                 : TextStyle(
-                  fontSize: fontSize,
+                  fontSize: fontSize.px,
                   fontWeight: fontWeight,
                   color: color,
                 ),

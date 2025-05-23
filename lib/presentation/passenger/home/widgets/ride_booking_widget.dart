@@ -50,15 +50,15 @@ class _RideBookingWidgetState extends State<RideBookingWidget> {
       width: double.infinity,
       padding:
           widget.padding ??
-          const EdgeInsets.symmetric(horizontal: 13, vertical: 19),
+          EdgeInsets.symmetric(horizontal: 13.px, vertical: 19.px),
       decoration: _buildMainContainerDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
-          const SizedBox(height: 13),
+          SizedBox(height: 13.px),
           _buildLocationSelectors(),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.px),
           _buildSearchField(),
         ],
       ),
@@ -80,9 +80,9 @@ class _RideBookingWidgetState extends State<RideBookingWidget> {
   Widget _buildHeader() {
     return Text(
       widget.title,
-      style: const TextStyle(
+      style: TextStyle(
         color: _primaryTextColor,
-        fontSize: 16,
+        fontSize: 16.px,
         fontWeight: FontWeight.w600,
         height: 1.5,
       ),
@@ -122,7 +122,7 @@ class _RideBookingWidgetState extends State<RideBookingWidget> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 12.px),
         decoration: _buildCardDecoration(isSelected),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -135,15 +135,18 @@ class _RideBookingWidgetState extends State<RideBookingWidget> {
             ),
             const SizedBox(width: 8),
             Flexible(
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: _primaryTextColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  height: 1.5,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: _primaryTextColor,
+                    fontSize: 12.px,
+                    fontWeight: FontWeight.w500,
+                    height: 1.5,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -160,28 +163,28 @@ class _RideBookingWidgetState extends State<RideBookingWidget> {
         onSubmitted: _handleSearch,
         decoration: InputDecoration(
           hintText: widget.searchPlaceholder,
-          hintStyle: const TextStyle(
+          hintStyle: TextStyle(
             color: _primaryTextColor,
-            fontSize: 14,
+            fontSize: 14.px,
             fontWeight: FontWeight.w400,
             height: 1.5,
           ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 12,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 14.px,
+            vertical: 12.px,
           ),
-          prefixIcon: const Icon(Icons.search, size: 18),
+          prefixIcon: Icon(Icons.search, size: 18.px),
           suffixIcon:
               _searchController.text.isNotEmpty
                   ? IconButton(
-                    icon: const Icon(Icons.clear, size: 18),
+                    icon: Icon(Icons.clear, size: 18.px),
                     onPressed: () {
                       _searchController.clear();
                       setState(() {});
                     },
                   )
-                  : const Icon(Icons.voice_chat, size: 18),
+                  : Icon(Icons.voice_chat, size: 18.px),
         ),
         onChanged: (value) => setState(() {}),
       ),

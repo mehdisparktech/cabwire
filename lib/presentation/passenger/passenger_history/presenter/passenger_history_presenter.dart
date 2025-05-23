@@ -69,7 +69,7 @@ class PassengerHistoryPresenter extends BasePresenter<PassengerHistoryUiState> {
           driverName: 'Another Driver',
           driverLocation: 'Mirpur | Oct 25, 2023',
           pickupLocation: 'Mirpur DOHS',
-          dropoffLocation: 'Uttara Sector 10',
+          dropoffLocation: 'Green Road, Dhanmondi, Dhaka.',
           distance: '15.2 km',
           duration: '1 Hour 5 Minutes',
           isCarRide: true,

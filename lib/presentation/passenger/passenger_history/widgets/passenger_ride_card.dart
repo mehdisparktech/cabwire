@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -29,11 +30,11 @@ class PassengerRideCard extends StatelessWidget {
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.px),
         side: BorderSide(color: Colors.grey.shade200),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.px),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -41,27 +42,27 @@ class PassengerRideCard extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  radius: 24,
+                  radius: 24.px,
                   backgroundColor: Colors.blue.shade200,
                   backgroundImage: AssetImage(AppAssets.icProfileImage),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.px),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         driverName,
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: TextStyle(
+                          fontSize: 14.px,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.px),
                       Text(
                         driverLocation,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 14.px,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -71,7 +72,7 @@ class PassengerRideCard extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20.px),
 
             // Trip information
             Row(
@@ -83,14 +84,14 @@ class PassengerRideCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Your Trip',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.px,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8.px),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -98,24 +99,24 @@ class PassengerRideCard extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.person,
-                                size: 20,
+                                size: 20.px,
                                 color: Colors.black87,
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(height: 4.px),
                               Container(
-                                width: 2,
-                                height: 42,
+                                width: 2.px,
+                                height: 42.px,
                                 color: Colors.grey.shade300,
                               ),
                               Icon(
                                 Icons.location_on,
-                                size: 20,
+                                size: 20.px,
                                 color: context.theme.colorScheme.primary,
                               ),
                             ],
                           ),
 
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12.px),
 
                           // Trip details
                           Expanded(
@@ -124,16 +125,16 @@ class PassengerRideCard extends StatelessWidget {
                               children: [
                                 Text(
                                   pickupLocation,
-                                  style: const TextStyle(
-                                    fontSize: 14,
+                                  style: TextStyle(
+                                    fontSize: 14.px,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                SizedBox(height: 24.px),
                                 Text(
                                   dropoffLocation,
-                                  style: const TextStyle(
-                                    fontSize: 14,
+                                  style: TextStyle(
+                                    fontSize: 14.px,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -158,46 +159,46 @@ class PassengerRideCard extends StatelessWidget {
                           Text(
                             'Total Distance:',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 12.px,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
                             distance,
-                            style: const TextStyle(
-                              fontSize: 12,
+                            style: TextStyle(
+                              fontSize: 12.px,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8.px),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
                             'Travel Time:',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 12.px,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
                             duration,
-                            style: const TextStyle(
-                              fontSize: 12,
+                            style: TextStyle(
+                              fontSize: 12.px,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.px),
                       InkWell(
                         onTap: onTap,
                         child: Text(
                           'See Details',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 14.px,
                             fontWeight: FontWeight.bold,
                             color: context.theme.colorScheme.primary,
                           ),

@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart'; // For gapW25
@@ -32,7 +33,7 @@ class PassengerProfileScreen extends StatelessWidget {
           // Use your CommonText
           text: 'Profile',
           fontWeight: FontWeight.w700,
-          fontSize: 22,
+          fontSize: 22.px,
           color:
               Theme.of(context).colorScheme.onSurface, // Use Theme.of(context)
         ),
@@ -62,14 +63,14 @@ class PassengerProfileScreen extends StatelessWidget {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 30,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.px,
+                    vertical: 30.px,
                   ),
                   child: Row(
                     children: [
                       CircleAvatar(
-                        radius: 60, // Adjusted size
+                        radius: 60.px, // Adjusted size
                         backgroundImage:
                             (profile.avatarUrl.isNotEmpty &&
                                     !profile.avatarUrl.startsWith('http'))
@@ -81,8 +82,8 @@ class PassengerProfileScreen extends StatelessWidget {
                                 ? ClipOval(
                                   child: CommonImage(
                                     fill: BoxFit.cover,
-                                    height: 120, // Adjusted size
-                                    width: 120, // Adjusted size
+                                    height: 120.px, // Adjusted size
+                                    width: 120.px, // Adjusted size
                                     imageType:
                                         profile.avatarUrl.startsWith('http')
                                             ? ImageType.network
@@ -103,8 +104,8 @@ class PassengerProfileScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CommonText(
-                              fontSize: 22,
-                              bottom: 10,
+                              fontSize: 22.px,
+                              bottom: 10.px,
                               fontWeight: FontWeight.w700,
                               color: Theme.of(context).colorScheme.onSurface,
                               text:
@@ -113,8 +114,8 @@ class PassengerProfileScreen extends StatelessWidget {
                                       : "Passenger Name",
                             ),
                             CommonText(
-                              fontSize: 16,
-                              bottom: 10,
+                              fontSize: 16.px,
+                              bottom: 10.px,
                               fontWeight: FontWeight.w500,
                               color: Theme.of(context).colorScheme.onSurface,
                               text:
@@ -125,18 +126,18 @@ class PassengerProfileScreen extends StatelessWidget {
                             InkWell(
                               onTap: presenter.navigateToEditProfile,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.px,
+                                  vertical: 8.px,
                                 ), // Padding for text
-                                height: 40,
+                                height: 40.px,
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(8.px),
                                 ),
-                                child: const Center(
+                                child: Center(
                                   child: CommonText(
-                                    fontSize: 14,
+                                    fontSize: 14.px,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
                                     text: 'Edit Profile',
@@ -154,10 +155,10 @@ class PassengerProfileScreen extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: const BorderRadius.only(
+                    borderRadius: BorderRadius.only(
                       // Only top radius for a sheet-like feel
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20.px),
+                      topRight: Radius.circular(20.px),
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -170,45 +171,45 @@ class PassengerProfileScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 24,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 16.px,
+                    horizontal: 24.px,
                   ),
                   child: Column(
                     children: [
                       Item(
-                        vertical: 16,
+                        vertical: 16.px,
                         image: AppAssets.icPassword,
                         title: 'Password',
                         onTap: presenter.navigateToEditPassword,
                       ),
 
                       Item(
-                        vertical: 16,
+                        vertical: 16.px,
                         image: AppAssets.icTransitionHistory /* Check Asset */,
                         title: 'Terms & Conditions',
                         onTap: presenter.navigateToTermsAndConditions,
                       ),
                       Item(
-                        vertical: 16,
+                        vertical: 16.px,
                         image: AppAssets.icTermsCondition /* Check Asset */,
                         title: 'Privacy Policy',
                         onTap: presenter.navigateToPrivacyPolicy,
                       ),
                       Item(
-                        vertical: 16,
+                        vertical: 16.px,
                         image: AppAssets.icContactUs,
                         title: 'Contact Us',
                         onTap: presenter.navigateToContactUs,
                       ),
                       Item(
-                        vertical: 16,
+                        vertical: 16.px,
                         image: AppAssets.icDeleteAccount,
                         title: 'Delete Account',
                         onTap: () => presenter.showDeleteAccountDialog(context),
                       ),
                       Item(
-                        vertical: 16,
+                        vertical: 16.px,
                         image: AppAssets.icLogout,
                         title: 'Log Out',
                         onTap: () => presenter.showLogoutDialog(context),
