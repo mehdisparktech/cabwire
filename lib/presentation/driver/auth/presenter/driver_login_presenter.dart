@@ -3,7 +3,7 @@ import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/domain/driver/auth/usecases/login_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_login_ui_state.dart';
-import 'package:cabwire/presentation/driver/home/ui/driver_home_page_offline.dart';
+import 'package:cabwire/presentation/driver/home/ui/screens/driver_home_page_offline.dart';
 
 class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();

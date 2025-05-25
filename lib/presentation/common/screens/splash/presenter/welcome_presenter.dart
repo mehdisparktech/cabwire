@@ -2,8 +2,8 @@ import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/themes.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_ui_state.dart';
-import 'package:cabwire/presentation/driver/onboarding/ui/driver_onboarding_screen.dart';
-import 'package:cabwire/presentation/passenger/onboarding/ui/passenger_onboarding_screen.dart';
+import 'package:cabwire/presentation/driver/onboarding/ui/screens/driver_onboarding_screen.dart';
+import 'package:cabwire/presentation/passenger/onboarding/ui/screens/passenger_onboarding_screen.dart';
 import 'package:flutter/material.dart';
 
 class WelcomePresenter extends BasePresenter<WelcomeUiState> {

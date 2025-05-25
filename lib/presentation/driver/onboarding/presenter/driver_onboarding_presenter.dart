@@ -1,6 +1,6 @@
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_auth_navigator_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/onboarding/presenter/driver_onboarding_ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

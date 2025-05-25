@@ -1,15 +1,15 @@
-import 'package:cabwire/presentation/driver/auth/ui/driver_auth_navigator_screen.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_email_verify_screen.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_reset_password_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/domain/driver/auth/models/driver_registration.dart';
 import 'package:cabwire/domain/driver/auth/usecases/register_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_ui_state.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_confirm_information_screen.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_license_information.dart';
-import 'package:cabwire/presentation/driver/auth/ui/driver_vehicles_information_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/screens/driver_confirm_information_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/screens/driver_license_information.dart';
+import 'package:cabwire/presentation/driver/auth/ui/screens/driver_vehicles_information_screen.dart';
 
 /// Optimized Presenter for the sign-up process
 ///

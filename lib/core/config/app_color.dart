@@ -74,8 +74,7 @@ class AppColor {
   static const Color driverSuccess = Color(0xFF299647);
   static const Color driverCancel = Color(0xFFFD003A);
   static const Color driverCartBg = Color(0xFFFFFFFF);
-  static const Color driverStrokePrimary = Color(0xFFC53C09);
-
+  static const Color driverStrokePrimary = Color(0xFFFD6D12);
   // app color
 
   static const Color headerBackground = Color(0xFFFFD2A9);
@@ -98,4 +97,5 @@ class AppColor {
 
   static Color passengerPrimaryButtonGradient = Color(0xFF01308D);
   static Color passengerSecondaryButtonGradient = Color(0xFF04193F);
+  static Color passengerStrokePrimary = Color(0xFF001C60);
 }

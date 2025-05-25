@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/app_assets.dart'; // For sample data if needed
 import 'package:cabwire/domain/driver/entities/ride_history_item_entity.dart';
-import 'package:cabwire/presentation/driver/home/widgets/successful_payment.dart'; // For navigation
+import 'package:cabwire/presentation/driver/home/ui/widgets/successful_payment.dart'; // For navigation
 import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_ui_state.dart';
-import 'package:cabwire/presentation/driver/ride_history/ui/ride_details_page.dart';
+import 'package:cabwire/presentation/driver/ride_history/ui/screens/ride_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // For TextEditingController
 

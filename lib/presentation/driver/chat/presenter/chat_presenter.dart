@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/presentation/driver/chat/presenter/chat_ui_state.dart';
-import 'package:cabwire/presentation/driver/chat/ui/audio_call_page.dart';
+import 'package:cabwire/presentation/driver/chat/ui/screens/audio_call_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

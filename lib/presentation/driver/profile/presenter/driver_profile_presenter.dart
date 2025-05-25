@@ -2,17 +2,17 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/app_assets.dart'; // For default assets
-import 'package:cabwire/presentation/driver/auth/ui/driver_auth_navigator_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
-import 'package:cabwire/presentation/driver/profile/ui/contact_us_screen.dart';
-import 'package:cabwire/presentation/driver/profile/ui/edit_driving_info_screen.dart';
-import 'package:cabwire/presentation/driver/profile/ui/edit_password_screen.dart';
-import 'package:cabwire/presentation/driver/profile/ui/edit_profile_info_screen.dart';
-import 'package:cabwire/presentation/driver/profile/ui/privacy_policy_screen.dart';
-import 'package:cabwire/presentation/driver/profile/ui/terms_and_conditions_screen.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/delete_account_dialog.dart';
-import 'package:cabwire/presentation/driver/profile/widgets/logout_dialog.dart';
-import 'package:cabwire/presentation/driver/ride_history/ui/ride_history_page.dart';
+import 'package:cabwire/presentation/driver/profile/ui/screens/contact_us_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/screens/edit_driving_info_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/screens/edit_password_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/screens/edit_profile_info_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/screens/privacy_policy_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/screens/terms_and_conditions_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/widgets/delete_account_dialog.dart';
+import 'package:cabwire/presentation/driver/profile/ui/widgets/logout_dialog.dart';
+import 'package:cabwire/presentation/driver/ride_history/ui/screens/ride_history_page.dart';
 // import 'package:cabwire/features/auth/ui/login_screen.dart'; // For navigation after logout/delete
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
