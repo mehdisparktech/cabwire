@@ -1,7 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
-import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_pickup_location_screen.dart';
+import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
 import 'package:flutter/material.dart';
 
 class RideBookingWidget extends StatefulWidget {
@@ -232,7 +232,7 @@ class _RideBookingWidgetState extends State<RideBookingWidget> {
     // );
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PassengerPickupLocationScreen()),
+      MaterialPageRoute(builder: (context) => SearchDestinationScreen()),
     );
   }
 

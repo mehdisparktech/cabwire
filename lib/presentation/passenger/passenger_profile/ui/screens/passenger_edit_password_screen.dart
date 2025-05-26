@@ -1,6 +1,7 @@
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/core/utility/utility.dart';
 // import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_text_form_field.dart';
@@ -41,11 +42,11 @@ class PassengerEditPasswordScreen extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.grey.withOpacityInt(0.2),
                   ), // Corrected
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
+                      color: Colors.grey.withOpacityInt(0.2),
                       spreadRadius: 2,
                       blurRadius: 5,
                     ), // Corrected
