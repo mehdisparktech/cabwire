@@ -1,3 +1,4 @@
+import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:flutter/material.dart';
 
 // Simple model class for car service data
@@ -5,12 +6,14 @@ class CarService {
   final String name;
   final String description;
   final String imageUrl;
+  final String imageBackground;
   final double price;
 
   const CarService({
     required this.name,
     required this.description,
     required this.imageUrl,
+    required this.imageBackground,
     required this.price,
   });
 }
@@ -69,43 +72,24 @@ class CarServiceCard extends StatelessWidget {
 
   // Builder method for car image with oval background and error handling
   Widget _buildCarImage() {
-    return Container(
-      width: 90,
-      height: 64,
-      decoration: const BoxDecoration(
-        color: Color(0xFFD9D9D9), // Light gray background for contrast
-        shape: BoxShape.circle,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(
-          6,
-        ), // Inner padding to create border effect
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(6), // Rounded corners for image
-          child: Image.network(
-            service.imageUrl,
-            fit: BoxFit.cover,
-            width: 78, // Calculated to fit inside circle with padding
-            height: 48,
-            // Error handling - shows car icon if image fails to load
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                color: Colors.grey[300],
-                child: const Icon(Icons.directions_car, color: Colors.grey),
-              );
-            },
-            // Loading state - shows progress indicator while image loads
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Container(
-                color: Colors.grey[200],
-                child: const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              );
-            },
+    return Padding(
+      padding: const EdgeInsets.all(6), // Inner padding to create border effect
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          CommonImage(
+            imageSrc: service.imageBackground,
+            imageType: ImageType.svg,
+            width: 90,
+            height: 64,
           ),
-        ),
+          CommonImage(
+            imageSrc: service.imageUrl,
+            imageType: ImageType.png,
+            width: 78,
+            height: 49,
+          ),
+        ],
       ),
     );
   }

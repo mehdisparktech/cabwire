@@ -1,15 +1,16 @@
+import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:flutter/material.dart';
 
 class PaymentMethod {
   final String title;
-  final IconData icon;
+  final String imageSrc;
   final bool isSelected;
   final bool isRecommended;
   final String? subtitle;
 
   const PaymentMethod({
     required this.title,
-    required this.icon,
+    required this.imageSrc,
     this.isSelected = false,
     this.isRecommended = false,
     this.subtitle,
@@ -19,14 +20,14 @@ class PaymentMethod {
   // This is useful for state management when selection changes
   PaymentMethod copyWith({
     String? title,
-    IconData? icon,
+    String? imageSrc,
     bool? isSelected,
     bool? isRecommended,
     String? subtitle,
   }) {
     return PaymentMethod(
       title: title ?? this.title,
-      icon: icon ?? this.icon,
+      imageSrc: imageSrc ?? this.imageSrc,
       isSelected: isSelected ?? this.isSelected,
       isRecommended: isRecommended ?? this.isRecommended,
       subtitle: subtitle ?? this.subtitle,
@@ -157,10 +158,12 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
                       : Colors.grey[400],
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Icon(
-              method.icon,
-              size: 16,
-              color: method.isSelected ? Colors.white : Colors.grey[600],
+            child: CommonImage(
+              imageSrc: method.imageSrc,
+              imageType: ImageType.svg,
+              width: 16,
+              height: 16,
+              imageColor: method.isSelected ? Colors.white : Colors.grey[600],
             ),
           ),
 
@@ -195,8 +198,8 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
     return GestureDetector(
       onTap: () => _handleMethodSelection(method),
       child: Container(
-        width: 48,
-        height: 48,
+        width: 24,
+        height: 24,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
@@ -207,7 +210,7 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
         ),
         child:
             method.isSelected
-                ? const Icon(Icons.check, color: Color(0xFF033FCF), size: 24)
+                ? const Icon(Icons.check, color: Color(0xFF033FCF), size: 14)
                 : null, // Empty circle when not selected
       ),
     );

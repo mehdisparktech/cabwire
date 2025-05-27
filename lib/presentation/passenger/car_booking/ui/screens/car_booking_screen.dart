@@ -1,3 +1,4 @@
+import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/car_service_card.dart';
@@ -46,25 +47,28 @@ class CarBookingScreen extends StatelessWidget {
             service: CarService(
               name: 'Economy Car',
               description: 'Affordable Every Rides',
-              imageUrl: 'https://placehold.co/78x48',
+              imageUrl: AppAssets.icEconomyCar,
+              imageBackground: AppAssets.icCarBackground,
               price: 100,
             ),
           ),
           SizedBox(height: 16.px),
           CarServiceCard(
             service: CarService(
-              name: 'Economy Car',
+              name: 'Premium Car',
               description: 'Affordable Every Rides',
-              imageUrl: 'https://placehold.co/78x48',
+              imageUrl: AppAssets.icPremiumCar,
+              imageBackground: AppAssets.icCarBackground,
               price: 100,
             ),
           ),
           SizedBox(height: 16.px),
           CarServiceCard(
             service: CarService(
-              name: 'Economy Car',
+              name: 'Luxury Car',
               description: 'Affordable Every Rides',
-              imageUrl: 'https://placehold.co/78x48',
+              imageUrl: AppAssets.icLuxuryCar,
+              imageBackground: AppAssets.icCarBackground,
               price: 100,
             ),
           ),
@@ -74,13 +78,13 @@ class CarBookingScreen extends StatelessWidget {
             paymentMethods: [
               PaymentMethod(
                 title: 'Online Payment',
-                icon: Icons.credit_card,
+                imageSrc: AppAssets.icOnlinePayment,
                 isSelected: true, // Default selection
                 isRecommended: true, // Show as recommended option
               ),
               PaymentMethod(
                 title: 'Cash Payment',
-                icon: Icons.payments,
+                imageSrc: AppAssets.icCashPayment,
                 isSelected: false,
               ),
             ],
