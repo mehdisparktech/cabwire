@@ -100,8 +100,10 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
                 ),
               ),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildHeader(),
+                  _buildAppBar(context),
+                  gapH20,
                   _buildSearchInputs(),
                   gapH20,
                   _buildSearchHistory(),
@@ -114,36 +116,31 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
+  Widget _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text('Search Destination'),
+      centerTitle: true,
+      leading: IconButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        icon: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(100),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacityInt(0.1),
+                blurRadius: 10,
+                offset: Offset(0, 4),
               ),
-              child: Icon(
-                Icons.arrow_back_ios,
-                size: 20,
-                color: context.color.blackColor950,
-              ),
-            ),
+            ],
           ),
-          const SizedBox(width: 16),
-          const Text(
-            'Search Your Destination',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(Icons.arrow_back_ios_new),
           ),
-        ],
+        ),
       ),
     );
   }

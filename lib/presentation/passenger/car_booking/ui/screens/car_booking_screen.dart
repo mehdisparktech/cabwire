@@ -1,5 +1,6 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/car_service_card.dart';
 import 'package:cabwire/presentation/common/components/payment_method_card.dart';
@@ -39,10 +40,18 @@ class CarBookingScreen extends StatelessWidget {
   Widget _buildBottomSheet(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
-      color: Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.px),
+          topRight: Radius.circular(16.px),
+        ),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          _buildAppBar(context),
+          SizedBox(height: 16.px),
           CarServiceCard(
             service: CarService(
               name: 'Economy Car',
@@ -102,6 +111,35 @@ class CarBookingScreen extends StatelessWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text('Car Booking'),
+      centerTitle: true,
+      leading: IconButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        icon: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(100),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacityInt(0.1),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(Icons.arrow_back_ios_new),
+          ),
+        ),
       ),
     );
   }
