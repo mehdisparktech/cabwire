@@ -16,8 +16,6 @@ class PaymentMethod {
     this.subtitle,
   });
 
-  // Helper method to create a copy with modified properties
-  // This is useful for state management when selection changes
   PaymentMethod copyWith({
     String? title,
     String? imageSrc,
@@ -35,7 +33,6 @@ class PaymentMethod {
   }
 }
 
-// Main payment method selection widget with all functionality in one class
 class PaymentMethodSelector extends StatefulWidget {
   final List<PaymentMethod> paymentMethods;
   final Function(PaymentMethod)? onPaymentMethodSelected;
@@ -55,14 +52,11 @@ class PaymentMethodSelector extends StatefulWidget {
 }
 
 class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
-  // Track which payment method is currently selected
-  // Using late initialization because we'll set it in initState
   late List<PaymentMethod> _methods;
 
   @override
   void initState() {
     super.initState();
-    // Create a mutable copy of the payment methods for state management
     _methods = List.from(widget.paymentMethods);
   }
 
@@ -80,24 +74,16 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
     );
   }
 
-  // Builder method for the main container decoration
-  // This creates the outer container styling with shadow and rounded corners
   BoxDecoration _buildMainContainerDecoration() {
     return BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
       boxShadow: const [
-        BoxShadow(
-          color: Color(0x3F033FCF), // Blue tinted shadow for premium look
-          blurRadius: 4,
-          offset: Offset.zero,
-        ),
+        BoxShadow(color: Color(0x3F033FCF), blurRadius: 4, offset: Offset.zero),
       ],
     );
   }
 
-  // Builder method for individual payment method cards
-  // This is where the reusability magic happens - one method handles all variations
   Widget _buildPaymentMethodCard(PaymentMethod method) {
     return Container(
       width: double.infinity,
@@ -105,27 +91,22 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
         vertical: 5,
         horizontal: 10,
       ), // Space between cards
-      padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 17),
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 17),
       decoration: _buildCardDecoration(method.isSelected),
       child: Row(
         children: [
-          // Left side: Icon and title section
           Expanded(child: _buildMethodInfo(method)),
-
-          // Right side: Selection indicator
           _buildSelectionIndicator(method),
         ],
       ),
     );
   }
 
-  // Builder method for card decoration based on selection state
-  // This demonstrates how we can vary styling based on state
   BoxDecoration _buildCardDecoration(bool isSelected) {
     return BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
-      // Enhanced shadow for selected state to show visual feedback
+
       boxShadow: [
         BoxShadow(
           color: isSelected ? const Color(0x40033FCF) : const Color(0x26000000),
@@ -174,17 +155,13 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(method.title, style: _getMethodTitleStyle(method)),
-                // Show subtitle if provided
-                if (method.subtitle != null) ...[
-                  const SizedBox(height: 2),
-                  Text(method.subtitle!, style: _getMethodSubtitleStyle()),
-                ],
-                // Show recommended badge if applicable
-                if (method.isRecommended) ...[
-                  const SizedBox(height: 4),
-                  _buildRecommendedBadge(),
-                ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    method.title,
+                    style: _getMethodTitleStyle(method),
+                  ),
+                ),
               ],
             ),
           ),
@@ -216,25 +193,6 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
     );
   }
 
-  // Builder method for recommended badge
-  Widget _buildRecommendedBadge() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: Colors.green[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        'Recommended',
-        style: TextStyle(
-          color: Colors.green[700],
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
-
   // Helper method for method title styling based on selection state
   TextStyle _getMethodTitleStyle(PaymentMethod method) {
     return TextStyle(
@@ -248,21 +206,8 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
     );
   }
 
-  // Helper method for subtitle styling
-  TextStyle _getMethodSubtitleStyle() {
-    return const TextStyle(
-      color: Color(0xFF666666),
-      fontSize: 14,
-      fontFamily: 'Outfit',
-      fontWeight: FontWeight.w300,
-    );
-  }
-
-  // Method to handle payment method selection with state management
   void _handleMethodSelection(PaymentMethod selectedMethod) {
     setState(() {
-      // Update the methods list to reflect new selection
-      // This demonstrates proper state management for selection UI
       _methods =
           _methods.map((method) {
             return method.copyWith(
@@ -271,7 +216,6 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
           }).toList();
     });
 
-    // Notify parent widget about the selection through callback
     if (widget.onPaymentMethodSelected != null) {
       widget.onPaymentMethodSelected!(selectedMethod);
     }
