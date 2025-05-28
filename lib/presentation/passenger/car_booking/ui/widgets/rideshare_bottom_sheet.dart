@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
+import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/driver/chat/ui/screens/audio_call_page.dart';
 import 'package:cabwire/presentation/driver/chat/ui/screens/chat_page.dart';
-import 'package:cabwire/presentation/driver/home/ui/screens/driver_trip_close_otp_page.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_trip_close_otp_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // For context.theme in RideshareBottomSheet itself
 
@@ -32,6 +35,8 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
   void initState() {
     super.initState();
     _onRideStart();
+    _onRideProcessing();
+    _onRideEnd();
   }
 
   void _onRideStart() async {
@@ -39,6 +44,25 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
     await Future.delayed(duration, () {
       setState(() {
         isRideStart = true;
+      });
+    });
+  }
+
+  void _onRideProcessing() async {
+    Duration duration = const Duration(seconds: 10);
+    await Future.delayed(duration, () {
+      setState(() {
+        isRideProcessing = true;
+      });
+    });
+  }
+
+  void _onRideEnd() async {
+    Duration duration = const Duration(seconds: 15);
+    await Future.delayed(duration, () {
+      setState(() {
+        isRideProcessing = false;
+        isRideEnd = true;
       });
     });
   }
@@ -70,10 +94,58 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
             timerLeft: timerLeft,
             pickupText:
                 !isRideStart
-                    ? 'You\'re on the way to pick up the passenger.'
+                    ? 'Driver is on the way to pickup.'
+                    : isRideProcessing
+                    ? 'Your Trip Is Completed With-in'
+                    : isRideEnd
+                    ? 'Your Trip Is Completed'
                     : 'Ready To Start The Ride',
             isRideStart: isRideStart,
+            isRideProcessing: isRideProcessing,
           ), // Use the new widget
+          SizedBox(height: 16.px),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  // Added Expanded for long vehicle numbers
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'DHK METRO HA 64-8549',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Volvo XC90',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10), // Spacing
+                CommonImage(
+                  imageSrc: AppAssets.icCarImage,
+                  imageType: ImageType.png,
+                  height: 40,
+                  width: 100,
+                  fill: BoxFit.contain, // Ensure image fits
+                ),
+              ],
+            ),
+          ),
+
           const SizedBox(height: 16),
           const PassengerInfoWidget(), // Use the new widget
           const SizedBox(height: 16),
@@ -104,26 +176,27 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
           const TripStoppageInfoWidget(
             stoppageLocation: 'Green Road, Dhanmondi, Dhaka.',
           ), // Use the new widget
+          const SizedBox(height: 16),
+          const PaymentInfoWidget(),
           // Use the new widget
-          isRideStart
-              ? Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: ActionButton(
-                  isPrimary: true,
-                  text: isRideProcessing ? 'Trip Closure' : 'Start Ride',
-                  onPressed: () {
-                    // You can define specific onTap behavior here if needed
-                    if (isRideProcessing) {
-                      Get.to(() => DriverTripCloseOtpPage());
-                    } else {
-                      setState(() {
-                        isRideProcessing = true;
-                      });
-                    }
-                  },
-                ),
-              )
-              : const PaymentInfoWidget(),
+          if (isRideProcessing || isRideEnd)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: ActionButton(
+                isPrimary: true,
+                text: 'Trip Closure',
+                onPressed: () {
+                  // You can define specific onTap behavior here if needed
+                  if (isRideEnd) {
+                    Get.to(() => PassengerTripCloseOtpPage());
+                  } else {
+                    setState(() {
+                      isRideProcessing = true;
+                    });
+                  }
+                },
+              ),
+            ),
         ],
       ),
     );

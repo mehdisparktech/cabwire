@@ -23,7 +23,7 @@ class PassengerHistoryUiState extends BaseUiState {
       isLoading: false,
       userMessage: '',
       rides: [],
-      selectedRideId: null,
+      selectedRideId: 'ride2',
       viewMode: PassengerHistoryViewMode.list,
       currentFeedbackText: '',
     );

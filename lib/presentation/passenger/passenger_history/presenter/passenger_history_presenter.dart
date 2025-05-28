@@ -22,6 +22,7 @@ class PassengerHistoryPresenter extends BasePresenter<PassengerHistoryUiState> {
 
   void _initialize() {
     fetchRideHistory();
+    selectRideAndShowDetails(currentUiState.selectedRideId ?? '');
     _setupFeedbackListener();
   }
 
