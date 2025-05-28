@@ -2,7 +2,7 @@ import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/car_booking_screen.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/choose_car_type_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -60,7 +60,7 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
           isPrimary: true,
           text: 'Continue',
           onPressed: () {
-            Get.to(() => const CarBookingScreen());
+            Get.to(() => const ChooseCarTypeScreen());
           },
         ),
       ),
@@ -137,7 +137,7 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(4.0),
             child: Icon(Icons.arrow_back_ios_new),
           ),
         ),

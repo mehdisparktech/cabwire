@@ -4,12 +4,12 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/car_service_card.dart';
 import 'package:cabwire/presentation/common/components/payment_method_card.dart';
-import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class CarBookingScreen extends StatelessWidget {
-  const CarBookingScreen({super.key});
+class ChooseCarTypeScreen extends StatelessWidget {
+  const ChooseCarTypeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +104,7 @@ class CarBookingScreen extends StatelessWidget {
             text: 'Find A Car',
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => SearchDestinationScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => RideShareScreen()),
               );
             },
           ),
@@ -136,7 +134,7 @@ class CarBookingScreen extends StatelessWidget {
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(4.0),
             child: Icon(Icons.arrow_back_ios_new),
           ),
         ),
