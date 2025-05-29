@@ -4,6 +4,7 @@ import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/common/components/custom_services_card.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_presenter.dart';
+import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
 import 'package:cabwire/presentation/passenger/home/ui/widgets/ride_booking_widget.dart';
 import 'package:cabwire/presentation/passenger/passenger_notification/ui/screens/passenger_notification_page.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class PassengerHomeScreen extends StatelessWidget {
                   top: 0,
                   left: 0,
                   right: 0,
-                  child: _buildServicesWidget(),
+                  child: _buildServicesWidget(context),
                 ),
               ],
             ),
@@ -81,7 +82,7 @@ class PassengerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildServicesWidget() {
+  Widget _buildServicesWidget(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.px),
       child: CustomServicesCard(
@@ -91,11 +92,21 @@ class PassengerHomeScreen extends StatelessWidget {
             title: 'Car',
             imageUrl: AppAssets.icServiceCar,
             fontWeight: FontWeight.w600,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => const PassengerSearchDestinationScreen(),
+                ),
+              );
+            },
           ),
           Service(
             title: 'Emergency Car',
             imageUrl: AppAssets.icServiceCar,
             fontWeight: FontWeight.w400,
+            onTap: () {},
           ),
         ],
       ),

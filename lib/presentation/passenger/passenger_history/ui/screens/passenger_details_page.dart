@@ -234,21 +234,28 @@ class PassengerRideDetailsScreen extends StatelessWidget {
 
                   const SizedBox(height: 40),
 
-                  if (uiState.viewMode == PassengerHistoryViewMode.details &&
-                      details != null &&
-                      (details.existingFeedback == null ||
-                          details.existingFeedback!.isEmpty))
-                    ActionButton(
-                      text: 'Add Feedback',
-                      onPressed: presenter.showFeedbackFormForSelectedRide,
-                    ),
+                  // if (uiState.viewMode == PassengerHistoryViewMode.details &&
+                  //     details != null &&
+                  //     (details.existingFeedback == null ||
+                  //         details.existingFeedback!.isEmpty))
+                  //   ActionButton(
+                  //     text: 'Add Feedback',
+                  //     onPressed: presenter.showFeedbackFormForSelectedRide,
+                  //   ),
 
-                  if (uiState.viewMode == PassengerHistoryViewMode.feedback)
-                    ActionButton(
-                      isPrimary: true,
-                      text: 'Submit Feedback',
-                      onPressed: presenter.submitFeedback,
-                    ),
+                  // if (uiState.viewMode == PassengerHistoryViewMode.feedback)
+                  //   ActionButton(
+                  //     isPrimary: true,
+                  //     text: 'Submit Feedback',
+                  //     onPressed: presenter.submitFeedback,
+                  //   ),
+                  ActionButton(
+                    isPrimary: true,
+                    text: 'Submit Feedback',
+                    onPressed: () {
+                      presenter.showFeedbackFormForSelectedRide();
+                    },
+                  ),
                 ],
               ),
             ),

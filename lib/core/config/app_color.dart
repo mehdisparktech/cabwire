@@ -98,4 +98,5 @@ class AppColor {
   static Color passengerPrimaryButtonGradient = Color(0xFF01308D);
   static Color passengerSecondaryButtonGradient = Color(0xFF04193F);
   static Color passengerStrokePrimary = Color(0xFF001C60);
+  static Color passengerPrimaryColor = Color(0xFF01308D);
 }

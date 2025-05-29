@@ -7,15 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class SearchDestinationScreen extends StatefulWidget {
-  const SearchDestinationScreen({super.key});
+class PassengerSearchDestinationScreen extends StatefulWidget {
+  final Widget? bottomSheet;
+  const PassengerSearchDestinationScreen({super.key, this.bottomSheet});
 
   @override
-  State<SearchDestinationScreen> createState() =>
-      _SearchDestinationScreenState();
+  State<PassengerSearchDestinationScreen> createState() =>
+      _PassengerSearchDestinationScreenState();
 }
 
-class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
+class _PassengerSearchDestinationScreenState
+    extends State<PassengerSearchDestinationScreen> {
   final TextEditingController _destinationController = TextEditingController();
   final TextEditingController _fromController = TextEditingController();
   late GoogleMapController mapController;
@@ -60,7 +62,7 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
           isPrimary: true,
           text: 'Continue',
           onPressed: () {
-            Get.to(() => const ChooseCarTypeScreen());
+            Get.to(() => widget.bottomSheet ?? const ChooseCarTypeScreen());
           },
         ),
       ),

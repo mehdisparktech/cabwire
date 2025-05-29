@@ -1,16 +1,19 @@
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
+import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/passenger_services_page.dart';
 import 'package:flutter/material.dart';
 
 class Service {
   final String title;
   final String imageUrl;
   final FontWeight fontWeight;
+  final VoidCallback onTap;
 
   Service({
     required this.title,
     required this.imageUrl,
     required this.fontWeight,
+    required this.onTap,
   });
 }
 
@@ -44,7 +47,7 @@ class CustomServicesCard extends StatelessWidget {
         children: [
           _buildServicesContent(),
           SizedBox(height: 4.px),
-          if (showSeeAllButton) _buildSeeAllButton(),
+          if (showSeeAllButton) _buildSeeAllButton(context),
         ],
       ),
     );
@@ -86,6 +89,7 @@ class CustomServicesCard extends StatelessWidget {
                 title: service.title,
                 imageUrl: service.imageUrl,
                 fontWeight: service.fontWeight,
+                onTap: service.onTap,
               );
             },
           ),
@@ -110,12 +114,13 @@ class CustomServicesCard extends StatelessWidget {
     required String title,
     required String imageUrl,
     required FontWeight fontWeight,
+    required VoidCallback onTap,
   }) {
     return Container(
       width: _serviceCardWidth,
       height: _serviceCardHeight,
       decoration: _buildCardDecoration(),
-      child: _buildCardContent(title, imageUrl, fontWeight),
+      child: _buildCardContent(title, imageUrl, fontWeight, onTap),
     );
   }
 
@@ -133,42 +138,50 @@ class CustomServicesCard extends StatelessWidget {
     String title,
     String imageUrl,
     FontWeight fontWeight,
+    VoidCallback onTap,
   ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.px, vertical: 12.px),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CommonImage(
-            imageSrc: imageUrl,
-            imageType: ImageType.png,
-            width: _imageWidth,
-            height: _imageHeight,
-          ),
-          SizedBox(height: 6.px),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 12.px,
-              fontWeight: fontWeight,
-              height: 1.5,
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 15.px, vertical: 12.px),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CommonImage(
+              imageSrc: imageUrl,
+              imageType: ImageType.png,
+              width: _imageWidth,
+              height: _imageHeight,
             ),
-          ),
-        ],
+            SizedBox(height: 6.px),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 12.px,
+                fontWeight: fontWeight,
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSeeAllButton() {
+  Widget _buildSeeAllButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // ignore: avoid_print
-        print('See All tapped');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PassengerServicesPage(),
+          ),
+        );
       },
       child: Text(
         'See All',

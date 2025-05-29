@@ -1,4 +1,7 @@
+import 'package:cabwire/core/config/app_color.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
+import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:flutter/material.dart';
 
 class PaymentMethod {
@@ -38,6 +41,7 @@ class PaymentMethodSelector extends StatefulWidget {
   final Function(PaymentMethod)? onPaymentMethodSelected;
   final double? width;
   final EdgeInsets? padding;
+  final bool isIWillPay;
 
   const PaymentMethodSelector({
     super.key,
@@ -45,6 +49,7 @@ class PaymentMethodSelector extends StatefulWidget {
     this.onPaymentMethodSelected,
     this.width,
     this.padding = const EdgeInsets.symmetric(vertical: 15),
+    this.isIWillPay = false,
   });
 
   @override
@@ -68,8 +73,23 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
       decoration: _buildMainContainerDecoration(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children:
-            _methods.map((method) => _buildPaymentMethodCard(method)).toList(),
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children:
+                _methods
+                    .map((method) => _buildPaymentMethodCard(method))
+                    .toList(),
+          ),
+          gapH20,
+          if (widget.isIWillPay)
+            CustomText(
+              'Who pays the delivery fee?',
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          if (widget.isIWillPay) _buildPaymentSendWayCard(),
+        ],
       ),
     );
   }
@@ -219,5 +239,33 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
     if (widget.onPaymentMethodSelected != null) {
       widget.onPaymentMethodSelected!(selectedMethod);
     }
+  }
+
+  Widget _buildPaymentSendWayCard() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Radio(
+            value: true,
+            groupValue: true,
+            onChanged: (value) {},
+            activeColor: AppColor.passengerPrimaryColor,
+          ),
+          gapW10,
+          CustomText('I will pay'),
+          gapW10,
+          Radio(
+            value: false,
+            groupValue: false,
+            onChanged: (value) {},
+            activeColor: AppColor.passengerPrimaryColor,
+          ),
+          gapW10,
+          CustomText('The receiver will pay'),
+        ],
+      ),
+    );
   }
 }

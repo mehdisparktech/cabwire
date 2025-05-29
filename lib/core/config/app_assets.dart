@@ -19,6 +19,7 @@ class AppAssets {
   static const String icEconomyCar = 'assets/images/png/economy_car.png';
   static const String icLuxuryCar = 'assets/images/png/luxury_car.png';
   static const String icPremiumCar = 'assets/images/png/premium_car.png';
+  static const String icRentalCar = 'assets/images/png/rental_car.png';
 
   ///svg file
   static const String icHomeOutline = 'assets/images/svg/ic_home_outline.svg';

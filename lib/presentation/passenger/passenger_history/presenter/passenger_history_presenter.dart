@@ -3,6 +3,7 @@ import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/app_assets.dart'; // For sample data if needed
 import 'package:cabwire/domain/driver/entities/ride_history_item_entity.dart';
 import 'package:cabwire/presentation/driver/home/ui/widgets/successful_payment.dart'; // For navigation
+import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/ui/screens/passenger_details_page.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/presenter/passenger_history_ui_state.dart';
 import 'package:flutter/material.dart';
@@ -193,6 +194,7 @@ class PassengerHistoryPresenter extends BasePresenter<PassengerHistoryUiState> {
         );
       }
     }
+    Get.to(() => PassengerMainPage());
   }
 
   Future<void> submitFeedback() async {
