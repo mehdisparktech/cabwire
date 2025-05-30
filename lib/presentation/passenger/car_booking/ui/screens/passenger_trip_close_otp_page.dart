@@ -1,20 +1,41 @@
 import 'package:cabwire/core/config/app_assets.dart';
-import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
-import 'package:cabwire/presentation/common/components/action_button.dart';
-import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_presenter.dart';
-import 'package:cabwire/presentation/passenger/passenger_history/ui/screens/passenger_details_page.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/car_booking_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-class PassengerTripCloseOtpPage extends StatelessWidget {
-  PassengerTripCloseOtpPage({super.key});
+class PassengerTripCloseOtpPage extends StatefulWidget {
+  const PassengerTripCloseOtpPage({super.key});
 
-  final RideHistoryPresenter presenter = locate<RideHistoryPresenter>();
+  @override
+  State<PassengerTripCloseOtpPage> createState() =>
+      _PassengerTripCloseOtpPageState();
+}
+
+class _PassengerTripCloseOtpPageState extends State<PassengerTripCloseOtpPage> {
+  final otpController = TextEditingController()..text = '1';
+
+  @override
+  void initState() {
+    super.initState();
+    _onForwardPressed();
+  }
+
+  Future<void> _onForwardPressed() async {
+    await Future.delayed(const Duration(seconds: 5));
+
+    if (context.mounted) {
+      Navigator.push(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(builder: (context) => CarBookingDetailsScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +61,7 @@ class PassengerTripCloseOtpPage extends StatelessWidget {
                   width: 40,
                   height: 50,
                   child: TextField(
+                    controller: otpController,
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
@@ -91,22 +113,6 @@ class PassengerTripCloseOtpPage extends StatelessWidget {
             ),
             gapH20,
           ],
-        ),
-      ),
-      bottomSheet: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: ActionButton(
-          borderRadius: 0,
-          isPrimary: true,
-          text: 'Trip Closure',
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PassengerRideDetailsScreen(),
-              ),
-            );
-          },
         ),
       ),
     );

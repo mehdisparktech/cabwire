@@ -39,15 +39,15 @@ class PassengerRideDetailsScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // if (details == null) {
-          //   WidgetsBinding.instance.addPostFrameCallback((_) {
-          //     if (ModalRoute.of(context)?.isCurrent ?? false) {
-          //       // Only pop if current
-          //       presenter.goBackFromDetails();
-          //     }
-          //   });
-          //   return const Center(child: Text('Loading details or error...'));
-          // }
+          if (details == null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (ModalRoute.of(context)?.isCurrent ?? false) {
+                // Only pop if current
+                presenter.goBackFromDetails();
+              }
+            });
+            return const Center(child: Text('Loading details or error...'));
+          }
 
           return SingleChildScrollView(
             child: Padding(
@@ -56,8 +56,8 @@ class PassengerRideDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   PassengerProfileWidget(
-                    name: details?.driverName ?? 'N/A',
-                    address: details?.driverLocation ?? 'N/A',
+                    name: details.driverName,
+                    address: details.driverLocation,
                   ),
                   const SizedBox(height: 24),
                   Row(
@@ -69,7 +69,7 @@ class PassengerRideDetailsScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              details?.vehicleNumber ?? 'DHK METRO HA 64-8549',
+                              details.vehicleNumber ?? 'DHK METRO HA 64-8549',
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -79,7 +79,7 @@ class PassengerRideDetailsScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              details?.vehicleModel ?? 'Volvo XC90',
+                              details.vehicleModel ?? 'Volvo XC90',
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Colors.black87,
@@ -91,9 +91,9 @@ class PassengerRideDetailsScreen extends StatelessWidget {
                       const SizedBox(width: 10), // Spacing
                       CommonImage(
                         imageSrc:
-                            details?.vehicleImageUrl ?? AppAssets.icCarImage,
+                            details.vehicleImageUrl ?? AppAssets.icCarImage,
                         imageType:
-                            (details?.vehicleImageUrl ?? "").startsWith('http')
+                            (details.vehicleImageUrl ?? "").startsWith('http')
                                 ? ImageType.network
                                 : ImageType.png,
                         height: 40,
@@ -115,8 +115,8 @@ class PassengerRideDetailsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       PassengerRouteInformationWidget(
-                        pickupLocation: details?.pickupLocation ?? 'N/A',
-                        dropoffLocation: details?.dropoffLocation ?? 'N/A',
+                        pickupLocation: details.pickupLocation,
+                        dropoffLocation: details.dropoffLocation,
                       ),
                     ],
                   ),
@@ -130,7 +130,7 @@ class PassengerRideDetailsScreen extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                       CustomText(
-                        details?.distance ?? 'N/A',
+                        details.distance,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
@@ -146,7 +146,7 @@ class PassengerRideDetailsScreen extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                       CustomText(
-                        details?.duration ?? 'N/A',
+                        details.duration,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
@@ -170,7 +170,7 @@ class PassengerRideDetailsScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              details?.paymentMethod ?? 'Cash Payment Received',
+                              details.paymentMethod ?? 'Cash Payment Received',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -194,7 +194,6 @@ class PassengerRideDetailsScreen extends StatelessWidget {
 
                   if (uiState.viewMode == PassengerHistoryViewMode.feedback ||
                       (uiState.viewMode == PassengerHistoryViewMode.details &&
-                          details != null &&
                           details.existingFeedback != null &&
                           details.existingFeedback!.isNotEmpty))
                     TextField(
@@ -202,7 +201,7 @@ class PassengerRideDetailsScreen extends StatelessWidget {
                       readOnly:
                           uiState.viewMode ==
                               PassengerHistoryViewMode.details &&
-                          details?.existingFeedback != null,
+                          details.existingFeedback != null,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderSide: const BorderSide(

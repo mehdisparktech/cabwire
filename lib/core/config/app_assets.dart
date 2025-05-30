@@ -4,6 +4,8 @@ class AppAssets {
   /// png file
   static const String appLogo = 'assets/images/app_logo.png';
   static const String icSuccessful = 'assets/images/png/successful.png';
+  static const String icSuccessfulPassenger =
+      'assets/images/png/successful_pass.png';
   static const String icCarCreatePost = 'assets/images/png/car_create_post.png';
   static const String icNoImage = 'assets/images/png/no_image.png';
   static const String icPassengerNoDataFound =
