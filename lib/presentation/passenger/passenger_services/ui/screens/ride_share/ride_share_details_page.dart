@@ -6,9 +6,9 @@ import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/common/components/payment_method_card.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/sucessfull_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/passenger_profile_widget.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/passenger_route_information_widget.dart';
+import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/ride_share/ride_share_my_booking_screen.dart';
 import 'package:flutter/material.dart';
 
 class RideShareDetailsScreen extends StatelessWidget {
@@ -261,7 +261,7 @@ class RideShareDetailsScreen extends StatelessWidget {
   void _onBookNowPressed(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SucessfullScreen()),
+      MaterialPageRoute(builder: (context) => const RideShareMyBookingScreen()),
     );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_color.dart';
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/ride_share/ride_share_details_page.dart';
@@ -55,7 +57,7 @@ class RideShareCarTypeScreen extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return _buildCarServiceCard(context);
+                return _buildCarServiceCard(context, index == 0);
               },
               separatorBuilder: (context, index) => SizedBox(height: 12.px),
               itemCount: 4,
@@ -107,22 +109,22 @@ class RideShareCarTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCarServiceCard(BuildContext context) {
+  Widget _buildCarServiceCard(BuildContext context, bool isSelected) {
     return GestureDetector(
       onTap: () {},
       child: Container(
         width: 343.px,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
-        decoration: _buildCardDecoration(),
+        decoration: _buildCardDecoration(isSelected),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildDriverImage(),
             const SizedBox(width: 15),
-            Expanded(child: _buildCarDetails(context)),
+            Expanded(child: _buildCarDetails(context, isSelected)),
             const SizedBox(width: 30),
-            _buildPrice(context),
+            _buildPrice(context, isSelected),
           ],
         ),
       ),
@@ -130,9 +132,9 @@ class RideShareCarTypeScreen extends StatelessWidget {
   }
 
   // Builder method for card decoration - keeps styling logic organized
-  BoxDecoration _buildCardDecoration() {
+  BoxDecoration _buildCardDecoration(bool isSelected) {
     return BoxDecoration(
-      color: Colors.white,
+      color: isSelected ? AppColor.primary : Colors.white,
       borderRadius: BorderRadius.circular(12),
       boxShadow: const [
         BoxShadow(
@@ -157,18 +159,24 @@ class RideShareCarTypeScreen extends StatelessWidget {
   }
 
   // Builder method for car details section - name and description
-  Widget _buildCarDetails(BuildContext context) {
+  Widget _buildCarDetails(BuildContext context, bool isSelected) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Santiago Dslab'),
+        Text(
+          'Santiago Dslab',
+          style: TextStyle(
+            color: isSelected ? Colors.white : const Color(0xFF1E1E1E),
+          ),
+        ),
+        gapH8,
         // Car service name with theme-aware styling
         Text(
           'Volvo XC90',
           style:
               Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: const Color(0xFF1E1E1E),
+                color: isSelected ? Colors.white : const Color(0xFF1E1E1E),
                 fontWeight: FontWeight.w700,
                 fontFamily: 'Outfit',
               ) ??
@@ -182,7 +190,7 @@ class RideShareCarTypeScreen extends StatelessWidget {
           'Departure time 10.30',
           style:
               Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: const Color(0xFF1E1E1E),
+                color: isSelected ? Colors.white : const Color(0xFF1E1E1E),
                 fontFamily: 'Outfit',
               ) ??
               _getDefaultBodyStyle(), // Fallback styling
@@ -192,7 +200,7 @@ class RideShareCarTypeScreen extends StatelessWidget {
   }
 
   // Builder method for price display with currency formatting
-  Widget _buildPrice(BuildContext context) {
+  Widget _buildPrice(BuildContext context, bool isSelected) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -200,7 +208,7 @@ class RideShareCarTypeScreen extends StatelessWidget {
           '\$ 100',
           style:
               Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: const Color(0xFF1E1E1E),
+                color: isSelected ? Colors.white : const Color(0xFF1E1E1E),
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
               ) ??
@@ -211,7 +219,7 @@ class RideShareCarTypeScreen extends StatelessWidget {
           '2/3', // Format price without decimal places
           style:
               Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: const Color(0xFF1E1E1E),
+                color: isSelected ? Colors.white : const Color(0xFF1E1E1E),
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
               ) ??
