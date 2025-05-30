@@ -5,6 +5,7 @@ import 'package:cabwire/presentation/common/components/custom_services_card.dart
 import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/package_delivery/payment_method_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/rental_car_welcome_screen.dart';
+import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/ride_share/ride_share_car_type_screen.dart';
 import 'package:flutter/material.dart';
 
 class PassengerServicesPage extends StatelessWidget {
@@ -55,7 +56,17 @@ class PassengerServicesPage extends StatelessWidget {
               title: 'Cabwire Share',
               imageUrl: AppAssets.icServiceCar,
               fontWeight: FontWeight.w400,
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => const PassengerSearchDestinationScreen(
+                          nextScreen: RideShareCarTypeScreen(),
+                        ),
+                  ),
+                );
+              },
             ),
             Service(
               title: 'Package delivery',

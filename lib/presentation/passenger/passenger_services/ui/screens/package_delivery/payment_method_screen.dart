@@ -77,7 +77,7 @@ class PaymentMethodScreen extends StatelessWidget {
                 MaterialPageRoute(
                   builder:
                       (context) => PassengerSearchDestinationScreen(
-                        bottomSheet: const RideShareScreen(),
+                        nextScreen: const RideShareScreen(),
                       ),
                 ),
               );

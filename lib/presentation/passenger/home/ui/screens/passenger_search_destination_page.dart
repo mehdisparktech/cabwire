@@ -8,8 +8,8 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PassengerSearchDestinationScreen extends StatefulWidget {
-  final Widget? bottomSheet;
-  const PassengerSearchDestinationScreen({super.key, this.bottomSheet});
+  final Widget? nextScreen;
+  const PassengerSearchDestinationScreen({super.key, this.nextScreen});
 
   @override
   State<PassengerSearchDestinationScreen> createState() =>
@@ -62,7 +62,7 @@ class _PassengerSearchDestinationScreenState
           isPrimary: true,
           text: 'Continue',
           onPressed: () {
-            Get.to(() => widget.bottomSheet ?? const ChooseCarTypeScreen());
+            Get.to(() => widget.nextScreen ?? const ChooseCarTypeScreen());
           },
         ),
       ),
