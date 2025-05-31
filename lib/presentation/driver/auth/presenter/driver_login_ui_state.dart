@@ -1,5 +1,5 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
-import 'package:cabwire/domain/driver/auth/models/auth_user.dart';
+import 'package:cabwire/domain/auth/models/auth_user.dart';
 
 class DriverLoginUiState extends BaseUiState {
   final bool obscurePassword;

@@ -1,5 +1,5 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
-import 'package:cabwire/domain/driver/entities/ride_history_item_entity.dart';
+import 'package:cabwire/domain/entities/driver/ride_history_item_entity.dart';
 
 enum PassengerHistoryViewMode { list, details, feedback }
 

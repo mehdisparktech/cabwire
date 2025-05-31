@@ -4,13 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
 import 'package:cabwire/core/utility/trial_utility.dart';
-import 'package:cabwire/data/driver/services/backend_as_a_service.dart';
-import 'package:cabwire/data/driver/services/error_message_handler_impl.dart';
-import 'package:cabwire/data/driver/services/local_cache_service.dart';
-import 'package:cabwire/data/driver/services/notification/notification_service_impl.dart';
-import 'package:cabwire/domain/user/service/error_message_handler.dart';
-import 'package:cabwire/domain/user/service/notification_service.dart';
-import 'package:cabwire/domain/user/service/time_service.dart';
+import 'package:cabwire/data/services/backend_as_a_service.dart';
+import 'package:cabwire/data/services/error_message_handler_impl.dart';
+import 'package:cabwire/data/services/local_cache_service.dart';
+import 'package:cabwire/data/services/notification/notification_service_impl.dart';
+import 'package:cabwire/domain/service/error_message_handler.dart';
+import 'package:cabwire/domain/service/notification_service.dart';
+import 'package:cabwire/domain/service/time_service.dart';
+import 'package:cabwire/data/services/location_service.dart';
 
 class ServiceSetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -24,7 +25,8 @@ class ServiceSetup implements SetupModule {
       ..registerLazySingleton<NotificationService>(NotificationServiceImpl.new)
       ..registerLazySingleton<BackendAsAService>(BackendAsAService.new)
       ..registerLazySingleton<TimeService>(TimeService.new)
-      ..registerLazySingleton<LocalCacheService>(LocalCacheService.new);
+      ..registerLazySingleton<LocalCacheService>(LocalCacheService.new)
+      ..registerLazySingleton<LocationService>(() => LocationService());
 
     // await GetServerKey().getServerKeyToken();
     await LocalCacheService.setUp();

@@ -1,5 +1,5 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
-import 'package:cabwire/data/driver/models/ride_data_model.dart';
+import 'package:cabwire/data/models/ride_data_model.dart';
 
 class CreatePostUiState extends BaseUiState {
   const CreatePostUiState({

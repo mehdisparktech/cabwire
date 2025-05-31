@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/domain/user/service/time_service.dart';
+import 'package:cabwire/domain/service/time_service.dart';
 import 'package:cabwire/presentation/passenger/main/presenter/passenger_main_ui_state.dart';
 
 class PassengerMainPresenter extends BasePresenter<PassengerMainUiState> {

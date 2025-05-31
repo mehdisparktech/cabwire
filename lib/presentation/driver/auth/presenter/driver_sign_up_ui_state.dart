@@ -1,5 +1,5 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
-import 'package:cabwire/domain/driver/auth/models/driver_registration.dart';
+import 'package:cabwire/domain/auth/models/driver_registration.dart';
 
 /// Shared state for the entire driver registration process
 class DriverSignUpUiState extends BaseUiState {

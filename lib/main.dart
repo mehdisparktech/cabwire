@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/di/service_locator.dart';
-import 'package:cabwire/domain/user/usecases/determine_first_run_use_case.dart';
-import 'package:cabwire/domain/user/usecases/register_device_usecase.dart';
+import 'package:cabwire/domain/usecases/determine_first_run_use_case.dart';
+import 'package:cabwire/domain/usecases/register_device_usecase.dart';
+import 'package:cabwire/domain/usecases/location/check_location_permission_usecase.dart';
+import 'package:cabwire/domain/usecases/location/request_location_permission_usecase.dart';
 import 'package:cabwire/presentation/initial_app.dart';
 
 Future<void> main() async {
@@ -10,6 +12,7 @@ Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
     await _initializeApp();
     runApp(InitialApp(isFirstRun: await _checkFirstRun()));
+    _checkLocationPermission();
     // _registerDevice();
   }, (error, stackTrace) => (error, stackTrace, fatal: true));
 }
@@ -23,6 +26,23 @@ Future<void> _initializeApp() async {
 /// Check if the app is first run
 Future<bool> _checkFirstRun() {
   return locate<DetermineFirstRunUseCase>().execute();
+}
+
+/// Check location permission and request if not granted
+Future<void> _checkLocationPermission() async {
+  final checkLocationPermissionUsecase =
+      locate<CheckLocationPermissionUsecase>();
+  final requestLocationPermissionUsecase =
+      locate<RequestLocationPermissionUsecase>();
+
+  final hasPermission = await checkLocationPermissionUsecase.execute();
+  if (!hasPermission) {
+    await requestLocationPermissionUsecase.execute();
+  }
+
+  debugPrint(
+    'Location permission status: ${hasPermission ? 'Granted' : 'Requested'}',
+  );
 }
 
 /// Register the device

@@ -1,14 +1,16 @@
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
-import 'package:cabwire/data/driver/repositories/device_info_repository_impl.dart';
-import 'package:cabwire/data/driver/repositories/payment_repository_impl.dart';
-import 'package:cabwire/data/driver/repositories/user_data_repository_impl.dart';
-import 'package:cabwire/domain/user/repositories/device_info_repository.dart';
-import 'package:cabwire/domain/user/repositories/payment_repository.dart';
-import 'package:cabwire/domain/user/repositories/user_data_repository.dart';
-import 'package:cabwire/domain/driver/auth/repositories/auth_repository.dart';
-import 'package:cabwire/data/driver/auth/repositories/auth_repository_impl.dart';
+import 'package:cabwire/data/repositories/device_info_repository_impl.dart';
+import 'package:cabwire/data/repositories/payment_repository_impl.dart';
+import 'package:cabwire/data/repositories/user_data_repository_impl.dart';
+import 'package:cabwire/domain/repositories/device_info_repository.dart';
+import 'package:cabwire/domain/repositories/payment_repository.dart';
+import 'package:cabwire/domain/repositories/user_data_repository.dart';
+import 'package:cabwire/domain/auth/repositories/auth_repository.dart';
+import 'package:cabwire/data/auth/repositories/auth_repository_impl.dart';
+import 'package:cabwire/data/repositories/location_repository_impl.dart';
+import 'package:cabwire/domain/repositories/location_repository.dart';
 
 class RepositorySetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -28,6 +30,9 @@ class RepositorySetup implements SetupModule {
       )
       ..registerLazySingleton<DriverAuthRepository>(
         () => DriverAuthRepositoryImpl(),
+      )
+      ..registerLazySingleton<LocationRepository>(
+        () => LocationRepositoryImpl(locate(), locate(), locate()),
       );
   }
 }
