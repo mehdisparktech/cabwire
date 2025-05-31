@@ -140,7 +140,7 @@ class CustomServicesCard extends StatelessWidget {
     FontWeight fontWeight,
     VoidCallback onTap,
   ) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15.px, vertical: 12.px),

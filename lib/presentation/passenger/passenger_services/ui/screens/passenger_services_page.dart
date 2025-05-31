@@ -3,6 +3,7 @@ import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_services_card.dart';
 import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
+import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/package_delivery/payment_method_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/rental_car_welcome_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/ride_share/ride_share_car_type_screen.dart';
@@ -14,7 +15,15 @@ class PassengerServicesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Services'),
+      appBar: CustomAppBar(
+        title: 'Services',
+        onBackPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PassengerMainPage()),
+          );
+        },
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
         child: CustomServicesCard(
@@ -37,7 +46,15 @@ class PassengerServicesPage extends StatelessWidget {
               title: 'Emergency Car',
               imageUrl: AppAssets.icServiceCar,
               fontWeight: FontWeight.w400,
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => const PassengerSearchDestinationScreen(),
+                  ),
+                );
+              },
             ),
             Service(
               title: 'Rental Car',

@@ -106,7 +106,15 @@ class PassengerHomeScreen extends StatelessWidget {
             title: 'Emergency Car',
             imageUrl: AppAssets.icServiceCar,
             fontWeight: FontWeight.w400,
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => const PassengerSearchDestinationScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),

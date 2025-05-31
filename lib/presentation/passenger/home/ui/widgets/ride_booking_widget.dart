@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_color.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_pickup_location_screen.dart';
@@ -132,6 +133,7 @@ class _RideBookingWidgetState extends State<RideBookingWidget> {
             CommonImage(
               imageSrc: AppAssets.icLocation,
               imageType: ImageType.svg,
+              imageColor: AppColor.primary,
               width: 18.px,
               height: 18.px,
             ),
