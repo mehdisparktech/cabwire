@@ -1,4 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart'; // Assuming AppAssets is accessible
+import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:flutter/material.dart';
 // import 'package:get/get.dart'; // Not directly using context.theme here, but could if colors were themed
 
@@ -20,43 +23,42 @@ class PassengerInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.px),
       child: Row(
         children: [
-          const CircleAvatar(
-            radius: 20,
+          CircleAvatar(
+            radius: 20.px,
             backgroundImage: AssetImage(
               AppAssets.icProfileImage,
             ), // Use passed data if dynamic
           ),
-          const SizedBox(width: 12),
+          gapW12,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 // Use passed data if dynamic
-                Text(
+                CustomText(
                   'Santiago Dslob',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF1E1E1E),
-                    fontSize: 14,
-                  ),
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1E1E1E),
+                  fontSize: 14.px,
                 ),
-                SizedBox(height: 2),
-                Text(
+                gapH2,
+                CustomText(
                   'Block B, Banasree, Dhaka.',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14.px,
                 ),
               ],
             ),
           ),
-          const Text(
+          CustomText(
             // Use passed data if dynamic
             '3.3 km',
             style: TextStyle(
               fontWeight: FontWeight.w500,
-              fontSize: 12,
+              fontSize: 12.px,
               color: Color(0xFF1E1E1E),
             ),
           ),

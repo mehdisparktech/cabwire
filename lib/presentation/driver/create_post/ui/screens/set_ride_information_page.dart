@@ -89,7 +89,7 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.px),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -131,29 +131,29 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.px),
       child: Row(
         children: [
           GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8.px),
               decoration: BoxDecoration(
                 color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(8.px),
               ),
               child: Icon(
                 Icons.arrow_back_ios,
-                size: 20,
+                size: 20.px,
                 color: context.color.blackColor950,
               ),
             ),
           ),
-          const SizedBox(width: 30),
-          const Text(
+          gapW30,
+          Text(
             'Set Ride Information',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 20.px,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
@@ -175,14 +175,14 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
         gapH10,
         TextField(
           controller: controller,
-          style: const TextStyle(fontSize: 16, color: Colors.black87),
+          style: TextStyle(fontSize: 16.px, color: Colors.black87),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: TextStyle(color: Colors.grey[600], fontSize: 16),
+            hintStyle: TextStyle(color: Colors.grey[600], fontSize: 16.px),
 
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 16,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16.px,
+              vertical: 16.px,
             ),
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
@@ -16,7 +17,7 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
       appBar: CustomAppBar(title: 'Trip Closure OTP'),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+          padding: EdgeInsets.symmetric(horizontal: 30.px, vertical: 50.px),
           child: Column(
             children: [
               _buildOTPInputField(
@@ -77,7 +78,7 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
             gapW10,
             Text(
               title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: 18.px, fontWeight: FontWeight.w700),
             ),
           ],
         ),
@@ -88,31 +89,31 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
             ...List.generate(
               4,
               (index) => Container(
-                width: 60,
-                height: 70,
+                width: 60.px,
+                height: 70.px,
                 padding: const EdgeInsets.only(left: 10),
                 child: TextField(
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 22,
+                  style: TextStyle(
+                    fontSize: 22.px,
                     fontWeight: FontWeight.bold,
                   ),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8.px),
                       borderSide: BorderSide(
                         color: context.theme.colorScheme.primary,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8.px),
                       borderSide: BorderSide(
                         color: context.theme.colorScheme.primary,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8.px),
                       borderSide: BorderSide(
                         color: context.color.primaryBtn,
                         width: 2,

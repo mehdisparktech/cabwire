@@ -1,6 +1,9 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
+import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:flutter/material.dart';
 // import 'package:get/get.dart'; // Not directly using context.theme here
 
@@ -20,7 +23,7 @@ class PaymentInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.px),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -29,37 +32,34 @@ class PaymentInfoWidget extends StatelessWidget {
               CommonImage(
                 imageSrc: AppAssets.icOnlinePayment,
                 imageType: ImageType.svg,
-                height: 24,
-                width: 24,
+                height: 24.px,
+                width: 24.px,
               ),
-              const SizedBox(width: 8),
-              const Text(
+              gapW8,
+              CustomText(
                 // Use passed data if dynamic
                 'Online Payment',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 18,
-                  color: Color(0xFF1E1E1E),
-                ),
+                fontWeight: FontWeight.w700,
+                fontSize: 18.px,
+                color: Color(0xFF1E1E1E),
               ),
               const Spacer(),
-              Text(
+              CustomText(
                 // Use passed data if dynamic
                 '\$100',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.black.withOpacityInt(0.8),
-                ),
+                fontWeight: FontWeight.bold,
+                fontSize: 18.px,
+                color: Colors.black.withOpacityInt(0.8),
               ),
             ],
           ),
-          const Padding(
-            padding: EdgeInsets.only(top: 4, bottom: 24),
-            child: Text(
+          Padding(
+            padding: EdgeInsets.only(top: 4.px, bottom: 24.px),
+            child: CustomText(
               // Use passed data if dynamic
               'This is the estimated fare. This may vary.',
-              style: TextStyle(fontSize: 12, color: Colors.black54),
+              fontSize: 12.px,
+              color: Colors.black54,
             ),
           ),
         ],

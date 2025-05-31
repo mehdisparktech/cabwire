@@ -1,10 +1,12 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
+import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,14 +22,15 @@ class DriverTripCloseOtpPage extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(title: 'Trip Closure OTP'),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+        padding: EdgeInsets.symmetric(horizontal: 30.px, vertical: 50.px),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            CustomText(
               'Enter OTP To Close This Trip',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              fontSize: 18.px,
+              fontWeight: FontWeight.w700,
             ),
             gapH20,
             Row(
@@ -36,30 +39,30 @@ class DriverTripCloseOtpPage extends StatelessWidget {
               children: List.generate(
                 4,
                 (index) => SizedBox(
-                  width: 40,
-                  height: 50,
+                  width: 40.px,
+                  height: 50.px,
                   child: TextField(
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 22,
+                    style: TextStyle(
+                      fontSize: 22.px,
                       fontWeight: FontWeight.bold,
                     ),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.px),
                         borderSide: BorderSide(
                           color: context.theme.colorScheme.primary,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.px),
                         borderSide: BorderSide(
                           color: context.theme.colorScheme.primary,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.px),
                         borderSide: BorderSide(
                           color: context.color.primaryBtn,
                           width: 2,
@@ -87,7 +90,7 @@ class DriverTripCloseOtpPage extends StatelessWidget {
         ),
       ),
       bottomSheet: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
+        padding: EdgeInsets.only(bottom: 16.px),
         child: ActionButton(
           borderRadius: 0,
           isPrimary: true,

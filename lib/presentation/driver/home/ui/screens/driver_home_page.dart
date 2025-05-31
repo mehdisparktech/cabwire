@@ -1,7 +1,9 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
+import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_ui_state.dart';
 import 'package:flutter/material.dart';
@@ -37,9 +39,9 @@ class DriverHomePage extends StatelessWidget {
     final uiState = presenter.currentUiState;
 
     return AppBar(
-      toolbarHeight: 80,
+      toolbarHeight: 80.px,
       leading: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: EdgeInsets.all(4.px),
         child: CircleAvatar(
           backgroundImage: AssetImage(AppAssets.icProfileImage),
         ),
@@ -49,11 +51,11 @@ class DriverHomePage extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
+              CustomText(
                 'Hello ${uiState.userName}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(width: 5),
+              gapW5,
               Icon(
                 Icons.circle,
                 size: 10,
@@ -61,9 +63,9 @@ class DriverHomePage extends StatelessWidget {
               ),
             ],
           ),
-          Text(
+          CustomText(
             uiState.isOnline ? 'You\'re Now Online' : 'You\'re Offline',
-            style: const TextStyle(fontSize: 12),
+            fontSize: 12.px,
           ),
         ],
       ),
@@ -110,14 +112,14 @@ class DriverHomePage extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
+        padding: EdgeInsets.only(bottom: 20.px),
         child: SizedBox(
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
               if (uiState.isOnline) ...[
                 Positioned(
-                  bottom: 40,
+                  bottom: 40.px,
                   child: _rideCard(
                     context: context,
                     presenter: presenter,
@@ -131,7 +133,7 @@ class DriverHomePage extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  bottom: 20,
+                  bottom: 20.px,
                   child: _rideCard(
                     context: context,
                     presenter: presenter,
@@ -145,7 +147,7 @@ class DriverHomePage extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  bottom: 0,
+                  bottom: 0.px,
                   child: _rideCard(
                     context: context,
                     presenter: presenter,
@@ -180,10 +182,10 @@ class DriverHomePage extends StatelessWidget {
   }) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.85,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.px),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.px),
         boxShadow: const [
           BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4)),
         ],
@@ -196,7 +198,7 @@ class DriverHomePage extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(backgroundImage: AssetImage(profileImageUrl)),
-              const SizedBox(width: 12),
+              gapW12,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,11 +206,8 @@ class DriverHomePage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          name,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(distance),
+                        CustomText(name, fontWeight: FontWeight.bold),
+                        CustomText(distance),
                       ],
                     ),
                     Row(
@@ -226,10 +225,7 @@ class DriverHomePage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Text(
-                          ' $rating ($ratingCount)',
-                          style: const TextStyle(fontSize: 12),
-                        ),
+                        CustomText(' $rating ($ratingCount)', fontSize: 12.px),
                       ],
                     ),
                   ],
@@ -237,17 +233,11 @@ class DriverHomePage extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          gapH8,
           Divider(color: Colors.grey.shade300),
-          const Text(
-            'PICK UP',
-            style: TextStyle(fontSize: 12, color: Colors.grey),
-          ),
-          Text(
-            pickupLocation,
-            style: const TextStyle(fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(height: 8),
+          CustomText('PICK UP', fontSize: 12.px, color: Colors.grey),
+          CustomText(pickupLocation, fontWeight: FontWeight.w500),
+          gapH8,
           Divider(color: Colors.grey.shade300),
           Row(
             children: [
@@ -259,7 +249,7 @@ class DriverHomePage extends StatelessWidget {
                   },
                 ),
               ),
-              const SizedBox(width: 12),
+              gapW12,
               Expanded(
                 child: ActionButton(
                   text: 'Accept',
@@ -279,10 +269,10 @@ class DriverHomePage extends StatelessWidget {
   Widget _rideOfflineCard(BuildContext context, DriverHomePresenter presenter) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20.px),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.px),
         boxShadow: const [
           BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4)),
         ],
@@ -291,23 +281,24 @@ class DriverHomePage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
+          CustomText(
             'Ready to drive?',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            fontSize: 18.px,
+            fontWeight: FontWeight.w700,
           ),
           gapH10,
-          const Text(
+          CustomText(
             'Your status is offline. Please go online to get your next ride.',
-            style: TextStyle(fontWeight: FontWeight.w500),
+            fontWeight: FontWeight.w500,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 12),
+          gapH12,
           ActionButton(
             text: 'Go Online',
             isPrimary: true,
             onPressed: presenter.goOnline,
           ),
-          const SizedBox(height: 12),
+          gapH12,
           SizedBox(
             width: double.infinity,
             child: ActionButton(

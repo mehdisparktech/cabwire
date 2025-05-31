@@ -2,6 +2,7 @@ import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
@@ -35,8 +36,8 @@ class DriverLoginScreen extends StatelessWidget {
         final ui = presenter.uiState.value;
 
         return AuthScreenWrapper(
-          title: "Sign In",
-          subtitle: "Welcome Back To Cabwire.",
+          title: AppStrings.driverSignIn,
+          subtitle: AppStrings.driverWelcomeBackToCabwire,
           textColor: context.color.blackColor100,
           child: AuthFormContainer(
             logoAssetPath: AppAssets.icDriverLogo,
@@ -67,7 +68,7 @@ class DriverLoginScreen extends StatelessWidget {
       gapH20,
       CustomTextFormField(
         controller: presenter.passwordController,
-        hintText: 'Password',
+        hintText: AppStrings.driverPassword,
         isPassword: true,
         obscureTextValue: ui.obscurePassword,
         onVisibilityToggle: presenter.togglePasswordVisibility,
@@ -88,7 +89,7 @@ class DriverLoginScreen extends StatelessWidget {
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           child: Text(
-            "Forgot Password",
+            AppStrings.driverForgotPassword,
             style: TextStyle(
               color: context.color.blackColor800,
               fontSize: px14,
@@ -106,7 +107,7 @@ class DriverLoginScreen extends StatelessWidget {
     DriverLoginPresenter presenter,
   ) {
     return CustomButton(
-      text: "Sign In",
+      text: AppStrings.driverSignIn,
       onPressed: () => presenter.onSignIn(context),
     );
   }
@@ -115,8 +116,8 @@ class DriverLoginScreen extends StatelessWidget {
   List<Widget> _buildSignUpOption() {
     return [
       ToggleAuthOption(
-        leadingText: "Don't Have an Account?",
-        actionText: "Sign Up",
+        leadingText: AppStrings.driverDontHaveAnAccount,
+        actionText: AppStrings.driverSignUp,
         onActionPressed: toggleView,
       ),
     ];

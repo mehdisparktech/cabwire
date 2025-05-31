@@ -1,6 +1,8 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
 import 'package:cabwire/presentation/driver/earnings/presenter/earning_presenter.dart';
@@ -42,7 +44,7 @@ class EarningsPage extends StatelessWidget {
 
           return SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(16.px),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -50,7 +52,7 @@ class EarningsPage extends StatelessWidget {
                     totalEarnings: data.totalEarnings,
                     availableEarnings: data.availableEarnings,
                   ),
-                  const SizedBox(height: 20),
+                  gapH20,
                   DailyEarningsCard(
                     date: data.currentDate,
                     todayEarning: data.todayEarning,
@@ -58,7 +60,7 @@ class EarningsPage extends StatelessWidget {
                     onlinePayment: data.onlinePayment,
                     walletAmount: data.walletAmount,
                   ),
-                  const SizedBox(height: 60),
+                  gapH60,
                   CustomButton(
                     text: 'Withdraw Amount',
                     onPressed: presenter.withdrawAmount,
@@ -134,8 +136,8 @@ class EarningsPage extends StatelessWidget {
               ],
             ),
             child: CommonImage(
-              width: 24,
-              height: 24,
+              width: 24.px,
+              height: 24.px,
               imageType: ImageType.svg,
               imageSrc: AppAssets.icSort,
             ),
@@ -159,7 +161,7 @@ class EarningsPage extends StatelessWidget {
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 14,
+          fontSize: 14.px,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           color: isSelected ? Colors.orange[700] : Colors.black,
         ),

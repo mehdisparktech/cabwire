@@ -2,6 +2,7 @@
 
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
@@ -27,8 +28,8 @@ class VehiclesInformationScreen extends StatelessWidget {
     final presenter = locate<DriverSignUpPresenter>();
 
     return AuthScreenWrapper(
-      title: "Vehicles Information",
-      subtitle: "Please confirm your vehicles information to continue.",
+      title: AppStrings.driverVehiclesInformation,
+      subtitle: AppStrings.driverPleaseConfirmVehiclesInformation,
       textColor: context.color.blackColor100,
       child: AuthFormContainer(
         showLogo: false,
@@ -37,7 +38,7 @@ class VehiclesInformationScreen extends StatelessWidget {
         formKey: presenter.vehicleInfoFormKey,
         formFields: _buildFormFields(context, presenter),
         actionButton: CustomButton(
-          text: "Complete Registration",
+          text: AppStrings.driverCompleteRegistration,
           onPressed: () => presenter.confirmVehicleInformation(context),
         ),
       ),
@@ -51,7 +52,7 @@ class VehiclesInformationScreen extends StatelessWidget {
     return [
       CustomTextFormField(
         controller: presenter.vehiclesMakeController,
-        hintText: 'Enter Vehicles Make',
+        hintText: AppStrings.driverVehiclesMakeEnter,
         keyboardType: TextInputType.text,
         validator:
             (value) =>
@@ -62,7 +63,7 @@ class VehiclesInformationScreen extends StatelessWidget {
       gapH20,
       CustomTextFormField(
         controller: presenter.vehiclesModelController,
-        hintText: 'Enter Vehicles Model',
+        hintText: AppStrings.driverVehiclesModelEnter,
         keyboardType: TextInputType.text,
         validator:
             (value) =>
@@ -73,7 +74,7 @@ class VehiclesInformationScreen extends StatelessWidget {
       gapH20,
       CustomTextFormField(
         controller: presenter.vehiclesYearController,
-        hintText: 'Enter Vehicles Year',
+        hintText: AppStrings.driverVehiclesYearEnter,
         keyboardType: TextInputType.number,
         validator:
             (value) =>
@@ -84,7 +85,7 @@ class VehiclesInformationScreen extends StatelessWidget {
       gapH20,
       CustomTextFormField(
         controller: presenter.vehiclesRegistrationNumberController,
-        hintText: 'Enter Vehicles Registration Number',
+        hintText: AppStrings.driverVehiclesRegistrationNumberEnter,
         keyboardType: TextInputType.text,
         validator:
             (value) =>
@@ -95,7 +96,7 @@ class VehiclesInformationScreen extends StatelessWidget {
       gapH20,
       CustomTextFormField(
         controller: presenter.vehiclesInsuranceNumberController,
-        hintText: 'Enter Vehicles Insurance Number',
+        hintText: AppStrings.driverVehiclesInsuranceNumberEnter,
         keyboardType: TextInputType.text,
         validator:
             (value) =>

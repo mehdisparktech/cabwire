@@ -1,6 +1,8 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
@@ -80,8 +82,8 @@ class RideOverviewScreen extends StatelessWidget {
   Widget _buildDriverSection(dynamic rideData) {
     return DriverProfileWidget(
       name: rideData?.driverName ?? '',
-      textStyle: const TextStyle(
-        fontSize: 16,
+      textStyle: TextStyle(
+        fontSize: 16.px,
         color: Colors.black,
         fontWeight: FontWeight.w400,
       ),
@@ -98,25 +100,25 @@ class RideOverviewScreen extends StatelessWidget {
             children: [
               Text(
                 rideData?.vehicleNumber ?? '',
-                style: const TextStyle(
-                  fontSize: 14,
+                style: TextStyle(
+                  fontSize: 14.px,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
                 ),
               ),
-              const SizedBox(height: 4),
+              gapH4,
               Text(
                 rideData?.vehicleModel ?? '',
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                style: TextStyle(fontSize: 14.px, color: Colors.black87),
               ),
             ],
           ),
         ),
-        const CommonImage(
+        CommonImage(
           imageSrc: AppAssets.icCarImage,
           imageType: ImageType.png,
-          height: 40,
-          width: 100,
+          height: 40.px,
+          width: 100.px,
         ),
       ],
     );
@@ -126,11 +128,11 @@ class RideOverviewScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'My Trip',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 16.px, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 10),
+        gapH10,
         RouteInformationWidget(
           pickupLocation: rideData?.pickupLocation ?? '',
           dropoffLocation: rideData?.dropoffLocation ?? '',
@@ -162,23 +164,23 @@ class RideOverviewScreen extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(8.px),
           decoration: BoxDecoration(
             color: Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(8.px),
           ),
-          child: const Icon(Icons.wallet, size: 20),
+          child: Icon(Icons.wallet, size: 20.px),
         ),
-        const SizedBox(width: 12),
-        const Expanded(
+        gapW12,
+        Expanded(
           child: CustomText(
             'Total Amount',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 18.px, fontWeight: FontWeight.w600),
           ),
         ),
         CustomText(
           rideData?.totalAmount ?? '',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 16.px, fontWeight: FontWeight.w600),
         ),
       ],
     );
@@ -188,7 +190,7 @@ class RideOverviewScreen extends StatelessWidget {
     if (!isCreatePost) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: EdgeInsets.only(bottom: 16.px),
       child: ActionButton(
         borderRadius: 0,
         isPrimary: true,

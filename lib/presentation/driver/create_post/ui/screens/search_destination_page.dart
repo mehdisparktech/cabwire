@@ -122,10 +122,10 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
           GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8.px),
               decoration: BoxDecoration(
                 color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(8.px),
               ),
               child: Icon(
                 Icons.arrow_back_ios,
@@ -134,11 +134,11 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 16),
-          const Text(
+          gapW16,
+          Text(
             'Search Your Destination',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 20.px,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
@@ -150,11 +150,11 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
 
   Widget _buildSearchInputs() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.symmetric(horizontal: 16.px),
+      padding: EdgeInsets.all(16.px),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.px),
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
@@ -174,7 +174,7 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
             showVoiceIcon: true,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20.px),
             child: Divider(color: context.color.strokePrimary),
           ),
           _buildSearchField(
@@ -202,20 +202,20 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
       style: const TextStyle(fontSize: 16, color: Colors.black87),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: Colors.grey[600], fontSize: 16),
-        prefixIcon: Icon(icon, color: iconColor, size: 22),
+        hintStyle: TextStyle(color: Colors.grey[600], fontSize: 16.px),
+        prefixIcon: Icon(icon, color: iconColor, size: 22.px),
         suffixIcon:
             showVoiceIcon
-                ? Icon(Icons.mic, color: Colors.grey[600], size: 22)
+                ? Icon(Icons.mic, color: Colors.grey[600], size: 22.px)
                 : showCloseIcon
-                ? Icon(Icons.close, color: Colors.grey[600], size: 22)
+                ? Icon(Icons.close, color: Colors.grey[600], size: 22.px)
                 : null,
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
         focusedBorder: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 16.px,
+          vertical: 16.px,
         ),
       ),
     );
@@ -223,7 +223,7 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
 
   Widget _buildAddButton() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      margin: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
       child: Align(
         alignment: Alignment.centerRight,
         child: TextButton(
@@ -232,16 +232,16 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
           },
           style: TextButton.styleFrom(
             backgroundColor: context.color.whiteColor,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 20.px, vertical: 12.px),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8.px),
             ),
           ),
           child: Text(
             'Add',
             style: TextStyle(
               color: context.color.blackColor950,
-              fontSize: 18,
+              fontSize: 18.px,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -257,15 +257,15 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Search History',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.px,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 16),
+            gapH16,
             Expanded(
               child: ListView.separated(
                 itemCount: _searchHistory.length,
@@ -288,11 +288,15 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.location_on, color: context.color.primaryBtn, size: 18),
-            const SizedBox(height: 4),
+            Icon(
+              Icons.location_on,
+              color: context.color.primaryBtn,
+              size: 18.px,
+            ),
+            gapH4,
             Text(
               item.distance,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 12.px, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -304,8 +308,8 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
             children: [
               Text(
                 item.location,
-                style: const TextStyle(
-                  fontSize: 14,
+                style: TextStyle(
+                  fontSize: 14.px,
                   color: Colors.black87,
                   fontWeight: FontWeight.w500,
                 ),

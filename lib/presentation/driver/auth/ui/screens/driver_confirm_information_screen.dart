@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
@@ -23,8 +24,8 @@ class ConfirmInformationScreen extends StatelessWidget {
     final presenter = locate<DriverSignUpPresenter>();
 
     return AuthScreenWrapper(
-      title: "Confirm Information",
-      subtitle: "Please confirm your information to continue.",
+      title: AppStrings.driverConfirmInformation,
+      subtitle: AppStrings.driverConfirmInformationHint,
       textColor: context.color.blackColor100,
       child: Column(
         children: [
@@ -80,7 +81,7 @@ class ConfirmInformationScreen extends StatelessWidget {
 
           gapH16,
           Text(
-            "Upload Your Profile Picture",
+            AppStrings.driverUploadProfilePicture,
             style: TextStyle(fontSize: px16, fontWeight: FontWeight.w500),
           ),
 
@@ -94,7 +95,7 @@ class ConfirmInformationScreen extends StatelessWidget {
             formKey: presenter.confirmInfoFormKey,
             formFields: _buildFormFields(context, presenter),
             actionButton: CustomButton(
-              text: "Continue",
+              text: AppStrings.driverContinue,
               onPressed: () => presenter.confirmPersonalInformation(context),
             ),
           ),
@@ -110,21 +111,21 @@ class ConfirmInformationScreen extends StatelessWidget {
     return [
       CustomTextFormField(
         controller: presenter.nameController,
-        hintText: 'Enter Your Name',
+        hintText: AppStrings.driverName,
         keyboardType: TextInputType.name,
         validator: AuthValidators.validateName,
       ),
       gapH20,
       CustomTextFormField(
         controller: presenter.phoneNumberController,
-        hintText: 'Enter Your Phone Number',
+        hintText: AppStrings.driverPhoneNumber,
         keyboardType: TextInputType.phone,
         validator: AuthValidators.validatePhoneNumber,
       ),
       gapH20,
       CustomTextFormField(
         controller: presenter.genderController,
-        hintText: 'Select Your Gender',
+        hintText: AppStrings.driverGender,
         suffixIcon: const Icon(Icons.keyboard_arrow_down),
         readOnly: true,
         onTap: () => presenter.showGenderSelectionSheet(context),
@@ -132,7 +133,7 @@ class ConfirmInformationScreen extends StatelessWidget {
       gapH20,
       CustomTextFormField(
         controller: presenter.dateOfBirthController,
-        hintText: 'Date Of Birth',
+        hintText: AppStrings.driverDateOfBirth,
         suffixIcon: Icon(Icons.calendar_today, size: px20),
         readOnly: true,
         onTap: () => presenter.selectDateOfBirth(context),

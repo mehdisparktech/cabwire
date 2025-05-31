@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
@@ -23,8 +24,8 @@ class DriverLicenseInformationScreen extends StatelessWidget {
     final presenter = locate<DriverSignUpPresenter>();
 
     return AuthScreenWrapper(
-      title: "Driver License Information",
-      subtitle: "Please confirm your driver license information to continue.",
+      title: AppStrings.driverLicenseInformation,
+      subtitle: AppStrings.driverLicenseInformationHint,
       textColor: context.color.blackColor100,
       child: AuthFormContainer(
         showLogo: false,
@@ -33,7 +34,7 @@ class DriverLicenseInformationScreen extends StatelessWidget {
         formKey: presenter.licenseInfoFormKey,
         formFields: _buildFormFields(context, presenter),
         actionButton: CustomButton(
-          text: "Continue",
+          text: AppStrings.driverContinue,
           onPressed: () => presenter.confirmLicenseInformation(context),
         ),
       ),
@@ -52,31 +53,31 @@ class DriverLicenseInformationScreen extends StatelessWidget {
       gapH20,
       CustomTextFormField(
         controller: presenter.driverLicenseNumberController,
-        hintText: 'Driver License Number',
+        hintText: AppStrings.driverLicenseNumber,
         keyboardType: TextInputType.text,
         validator:
             (value) =>
                 value != null && value.isNotEmpty
                     ? null
-                    : 'Please enter license number',
+                    : AppStrings.driverLicenseNumberError,
       ),
       gapH20,
       CustomTextFormField(
         controller: presenter.licenseExpiryDateController,
-        hintText: 'License Expiry Date',
+        hintText: AppStrings.driverLicenseExpiry,
         suffixIcon: Icon(Icons.calendar_today, size: px20),
         readOnly: true,
         validator:
             (value) =>
                 value != null && value.isNotEmpty
                     ? null
-                    : 'Please select expiry date',
+                    : AppStrings.driverLicenseExpiryError,
         onTap: () => presenter.selectLicenseExpiryDate(context),
       ),
       gapH20,
       CustomTextFormField(
         controller: presenter.driverLicenseImageController,
-        hintText: 'Upload Your Driver License',
+        hintText: AppStrings.driverLicenseFront,
         readOnly: true,
         suffixIcon: Icon(Icons.add_a_photo_outlined, size: px20),
         onTap: () => presenter.selectLicenseImage(),

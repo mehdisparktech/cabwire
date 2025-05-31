@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
 import 'package:flutter/material.dart';
@@ -39,8 +40,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return AuthScreenWrapper(
-      title: "Forgot Password",
-      subtitle: "Please enter your email to continue.",
+      title: AppStrings.driverForgotPassword,
+      subtitle: AppStrings.driverEnterEmailHint,
       textColor: Colors.black,
       child: AuthFormContainer(
         logoAssetPath: AppAssets.icDriverLogo,
@@ -55,7 +56,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
         ],
         actionButton: CustomButton(
-          text: "Get Verification Code",
+          text: AppStrings.driverGetVerificationCode,
           onPressed: _sendVerificationCode,
         ),
       ),

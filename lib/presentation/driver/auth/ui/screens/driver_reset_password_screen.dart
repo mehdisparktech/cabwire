@@ -1,5 +1,6 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
@@ -22,8 +23,8 @@ class ResetPasswordScreen extends StatelessWidget {
     final presenter = locate<DriverSignUpPresenter>();
 
     return AuthScreenWrapper(
-      title: "Reset Password",
-      subtitle: "Please enter your new password.",
+      title: AppStrings.driverResetPassword,
+      subtitle: AppStrings.driverEnterNewPassword,
       textColor: context.color.blackColor100,
       child: AuthFormContainer(
         logoAssetPath: AppAssets.icDriverLogo,
@@ -32,7 +33,7 @@ class ResetPasswordScreen extends StatelessWidget {
         formFields: [
           CustomTextFormField(
             controller: presenter.resetPasswordController,
-            hintText: 'New Password',
+            hintText: AppStrings.driverNewPassword,
             isPassword: true,
             obscureTextValue: presenter.resetObscurePassword,
             onVisibilityToggle: () => presenter.toggleResetPasswordVisibility(),
@@ -41,7 +42,7 @@ class ResetPasswordScreen extends StatelessWidget {
           gapH20,
           CustomTextFormField(
             controller: presenter.resetConfirmPasswordController,
-            hintText: 'Confirm New Password',
+            hintText: AppStrings.driverConfirmNewPassword,
             isPassword: true,
             obscureTextValue: presenter.resetObscureConfirmPassword,
             onVisibilityToggle:
@@ -54,7 +55,7 @@ class ResetPasswordScreen extends StatelessWidget {
           ),
         ],
         actionButton: CustomButton(
-          text: "Reset Password",
+          text: AppStrings.driverResetPassword,
           onPressed: () => presenter.resetPassword(context),
         ),
       ),

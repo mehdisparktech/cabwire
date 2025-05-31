@@ -1,7 +1,10 @@
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
+import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -80,12 +83,12 @@ class DriverHomePageOffline extends StatelessWidget {
           // Removed redundant Stack, Container is enough
           width: double.infinity,
           // Added margin for better spacing from screen edges
-          padding: const EdgeInsets.all(24), // Increased padding for content
+          padding: EdgeInsets.all(24.px), // Increased padding for content
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+              topLeft: Radius.circular(20.px),
+              topRight: Radius.circular(20.px),
             ), // Slightly more rounded
             boxShadow: [
               BoxShadow(
@@ -101,20 +104,20 @@ class DriverHomePageOffline extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              CustomText(
                 'Ready to drive?',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24.px, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8), // Increased spacing
-              const Text(
+              gapH8, // Increased spacing
+              CustomText(
                 'Switch to online mode to receive your first ride.',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 16.px,
                   color: Colors.black54,
                 ), // Adjusted style
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24), // Increased spacing
+              gapH24, // Increased spacing
               SizedBox(
                 width: double.infinity,
                 child: ActionButton(
@@ -125,7 +128,7 @@ class DriverHomePageOffline extends StatelessWidget {
                   },
                 ),
               ),
-              const SizedBox(height: 16), // Increased spacing
+              gapH16, // Increased spacing
               SizedBox(
                 width: double.infinity,
                 child: ActionButton(

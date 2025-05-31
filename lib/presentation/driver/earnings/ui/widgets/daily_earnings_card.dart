@@ -1,3 +1,5 @@
+import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -31,34 +33,34 @@ class DailyEarningsCard extends StatelessWidget {
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.px),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               dateFormat.format(date),
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16.px, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
+            gapH16,
             _buildEarningRow(
               'Today Total Earning',
               todayEarning,
               currencyFormat,
             ),
-            const SizedBox(height: 12),
+            gapH12,
 
             _buildEarningRow(
               'Cash Payment Received',
               cashPayment,
               currencyFormat,
             ),
-            const SizedBox(height: 12),
+            gapH12,
             _buildEarningRow(
               'Online Payment Received',
               onlinePayment,
               currencyFormat,
             ),
-            const SizedBox(height: 12),
+            gapH12,
             _buildEarningRow(
               'Wallet Amount',
               walletAmount,
@@ -82,12 +84,12 @@ class DailyEarningsCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 14.px, fontWeight: FontWeight.w500),
         ),
         Text(
           formatter.format(amount),
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 16.px,
             fontWeight: FontWeight.bold,
             color: textColor,
           ),

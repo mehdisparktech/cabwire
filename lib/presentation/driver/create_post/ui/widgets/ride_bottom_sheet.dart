@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
@@ -44,7 +46,7 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(8.px),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: const BorderRadius.only(
@@ -63,7 +65,7 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 12),
+          gapH12,
           PickupInfoWidget(
             timerLeft: timerLeft,
             pickupText:
@@ -72,9 +74,9 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
                     : 'Ready To Start The Ride',
             isRideStart: isRideStart,
           ), // Use the new widget
-          const SizedBox(height: 16),
+          gapH16,
           const PassengerInfoWidget(), // Use the new widget
-          const SizedBox(height: 16),
+          gapH16,
           Row(
             children: [
               Expanded(
@@ -98,7 +100,7 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          gapH16,
           const TripStoppageInfoWidget(
             stoppageLocation: 'Green Road, Dhanmondi, Dhaka.',
           ), // Use the new widget

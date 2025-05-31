@@ -1,3 +1,5 @@
+import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,41 +25,41 @@ class EarningsSummaryCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.px),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Total Earnings',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 16.px,
                 color: Colors.black87,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 8),
+            gapH8,
             Text(
               currencyFormat.format(totalEarnings),
               style: TextStyle(
-                fontSize: 28,
+                fontSize: 28.px,
                 fontWeight: FontWeight.bold,
                 color: Colors.orange[700],
               ),
             ),
-            Divider(height: 24, color: Colors.grey),
-            const Text(
+            Divider(height: 24.px, color: Colors.grey),
+            Text(
               'Today Available Earnings',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 16.px,
                 color: Colors.black87,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 8),
+            gapH8,
             Text(
               currencyFormat.format(availableEarnings),
               style: TextStyle(
-                fontSize: 28,
+                fontSize: 28.px,
                 fontWeight: FontWeight.bold,
                 color: Colors.orange[700],
               ),

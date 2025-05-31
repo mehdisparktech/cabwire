@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
@@ -30,8 +31,8 @@ class DriverEmailVerificationScreen extends StatelessWidget {
     final maskedEmail = presenter.getMaskedEmail(email);
 
     return AuthScreenWrapper(
-      title: "Verify Email",
-      subtitle: "Please enter the code sent to your email",
+      title: AppStrings.driverVerifyEmail,
+      subtitle: AppStrings.driverEnterCodeEmailError,
       textColor: context.color.blackColor100,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -42,7 +43,7 @@ class DriverEmailVerificationScreen extends StatelessWidget {
           ),
           gapH40,
           Text(
-            "We've Sent a Code to $maskedEmail",
+            "${AppStrings.driverWeveSentCode} $maskedEmail",
             style: TextStyle(
               color: context.color.blackColor800,
               fontSize: px16,
@@ -101,7 +102,7 @@ class DriverEmailVerificationScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "If you didn't receive a code: ",
+                AppStrings.driverIfYouDidntReceiveCode,
                 style: TextStyle(
                   color: context.color.blackColor800,
                   fontSize: px14,
@@ -115,7 +116,7 @@ class DriverEmailVerificationScreen extends StatelessWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  "Resend",
+                  AppStrings.driverResend,
                   style: TextStyle(
                     color: context.color.primaryBtn,
                     fontSize: px14,
@@ -127,7 +128,7 @@ class DriverEmailVerificationScreen extends StatelessWidget {
           ),
           gapH30,
           CustomButton(
-            text: "Verify",
+            text: AppStrings.driverVerify,
             onPressed: () => presenter.verifyEmailCode(context, isSignUp),
           ),
         ],

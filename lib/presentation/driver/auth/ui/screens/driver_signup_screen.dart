@@ -1,5 +1,6 @@
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +32,8 @@ class DriverSignUpScreen extends StatelessWidget {
         final currentUiState = presenter.uiState.value;
 
         return AuthScreenWrapper(
-          title: "Sign Up",
-          subtitle: "Please Register To Login.",
+          title: AppStrings.driverSignUp,
+          subtitle: AppStrings.driverPleaseRegisterToLogin,
           textColor: context.color.blackColor100,
           child: AuthFormContainer(
             logoAssetPath: AppAssets.icDriverLogo,
@@ -56,20 +57,20 @@ class DriverSignUpScreen extends StatelessWidget {
     return [
       CustomTextFormField(
         controller: presenter.nameController,
-        hintText: 'Enter Full Name Here',
+        hintText: AppStrings.driverName,
         validator: AuthValidators.validateName,
       ),
       gapH10,
       CustomTextFormField(
         controller: presenter.emailController,
-        hintText: 'example@email.com',
+        hintText: AppStrings.driverEmail,
         keyboardType: TextInputType.emailAddress,
         validator: AuthValidators.validateEmail,
       ),
       gapH10,
       CustomTextFormField(
         controller: presenter.passwordController,
-        hintText: 'Password',
+        hintText: AppStrings.driverPassword,
         isPassword: true,
         obscureTextValue: currentUiState.obscurePassword,
         onVisibilityToggle: presenter.togglePasswordVisibility,
@@ -78,7 +79,7 @@ class DriverSignUpScreen extends StatelessWidget {
       gapH10,
       CustomTextFormField(
         controller: presenter.confirmPasswordController,
-        hintText: 'Confirm Password',
+        hintText: AppStrings.driverConfirmPassword,
         isPassword: true,
         obscureTextValue: currentUiState.obscureConfirmPassword,
         onVisibilityToggle: presenter.toggleConfirmPasswordVisibility,
@@ -97,7 +98,7 @@ class DriverSignUpScreen extends StatelessWidget {
     DriverSignUpPresenter presenter,
   ) {
     return CustomButton(
-      text: "Sign Up",
+      text: AppStrings.driverSignUp,
       onPressed: () => presenter.onSignUp(context),
     );
   }
@@ -106,8 +107,8 @@ class DriverSignUpScreen extends StatelessWidget {
   List<Widget> _buildAlreadyHaveAccountOption() {
     return [
       ToggleAuthOption(
-        leadingText: "Already Signed Up?",
-        actionText: "Sign In",
+        leadingText: AppStrings.driverAlreadySignedUp,
+        actionText: AppStrings.driverSignIn,
         onActionPressed: toggleView,
       ),
     ];

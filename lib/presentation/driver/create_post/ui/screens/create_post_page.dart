@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
@@ -22,12 +23,12 @@ class CreatePostPage extends StatelessWidget {
             imageType: ImageType.png,
             imageSrc: AppAssets.icCarCreatePost,
             width: double.infinity,
-            height: 300,
+            height: 300.px,
           ),
           gapH20,
           CustomText(
             'Book Your Car Seat for\n Passengers! ',
-            fontSize: 20,
+            fontSize: 20.px,
             fontWeight: FontWeight.bold,
             textAlign: TextAlign.center,
           ),
@@ -36,7 +37,7 @@ class CreatePostPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: CustomText(
               'Ensure a comfortable and safe ride by making sure your car seat is ready for passengers. Reserve your seat in advance and offer a hassle-free experience to those you drive. Book now and be prepared! ',
-              fontSize: 14,
+              fontSize: 14.px,
               fontWeight: FontWeight.w400,
               color: context.theme.colorScheme.onSurface,
               textAlign: TextAlign.justify,
