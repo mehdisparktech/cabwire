@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:cabwire/core/config/app_color.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
+import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
+import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/passenger_route_information_widget.dart';
 import 'package:flutter/material.dart';
 // For context.theme in RideshareBottomSheet itself
@@ -34,7 +37,7 @@ class _FindingRideshareBottomSheetState
   }
 
   void _onRideStart() async {
-    Duration duration = const Duration(seconds: 5);
+    Duration duration = const Duration(seconds: 15);
     await Future.delayed(duration, () {
       Navigator.push(
         // ignore: use_build_context_synchronously
@@ -79,34 +82,57 @@ class _FindingRideshareBottomSheetState
           SizedBox(height: 16.px),
           _buildProgressBar(),
           SizedBox(height: 16.px),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Your Trip',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Edit',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              PassengerRouteInformationWidget(
-                pickupLocation: 'Green Road, Dhanmondi, Dhaka.',
-                dropoffLocation: 'Green Road, Dhanmondi, Dhaka.',
-              ),
-            ],
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.px),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Your Trip',
+                      style: TextStyle(
+                        fontSize: 16.px,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        // Add your onTap logic here
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    const PassengerSearchDestinationScreen(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Edit',
+                        style: TextStyle(
+                          fontSize: 14.px,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                PassengerRouteInformationWidget(
+                  pickupLocation: 'Green Road, Dhanmondi, Dhaka.',
+                  dropoffLocation: 'Green Road, Dhanmondi, Dhaka.',
+                ),
+              ],
+            ),
           ),
           // Use the new widget
           SizedBox(height: 16.px),
           const PaymentInfoWidget(),
           SizedBox(height: 16.px),
           _buildCancelButton(),
+          SizedBox(height: 16.px),
         ],
       ),
     );
@@ -247,6 +273,49 @@ class _FindingRideshareBottomSheetState
               GestureDetector(
                 onTap: () {
                   // Add your onTap logic here
+                  showDialog(
+                    context: context,
+                    builder:
+                        (context) => AlertDialog(
+                          title: Text(
+                            'Are you sure you want to cancel this ride?',
+                            style: TextStyle(
+                              fontSize: 18.px,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          content: Row(
+                            children: [
+                              Expanded(
+                                child: ActionButton(
+                                  text: 'No',
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 16.px),
+                              Expanded(
+                                child: ActionButton(
+                                  isPrimary: true,
+                                  text: 'Yes',
+                                  onPressed: () {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => PassengerMainPage(),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                  );
                 },
                 child: Text(
                   'Cancel Now',
