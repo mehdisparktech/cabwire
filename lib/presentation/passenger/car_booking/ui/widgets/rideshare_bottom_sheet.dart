@@ -31,6 +31,7 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
   int timerLeft = 5;
   bool isRideEnd = false;
   bool isRideProcessing = false;
+  Timer? _timer;
   @override
   void initState() {
     super.initState();
@@ -50,7 +51,7 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
 
   void _onRideProcessing() async {
     Duration duration = const Duration(seconds: 10);
-    await Future.delayed(duration, () {
+    _timer = Timer(duration, () {
       setState(() {
         isRideProcessing = true;
       });
@@ -59,12 +60,19 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
 
   void _onRideEnd() async {
     Duration duration = const Duration(seconds: 15);
-    await Future.delayed(duration, () {
+    _timer = Timer(duration, () {
       setState(() {
         isRideProcessing = false;
         isRideEnd = true;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer?.cancel();
+    _timer = null;
   }
 
   @override

@@ -4,7 +4,7 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/car_service_card.dart';
 import 'package:cabwire/presentation/common/components/payment_method_card.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/finding_rides_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -104,7 +104,7 @@ class ChooseCarTypeScreen extends StatelessWidget {
             text: 'Find A Car',
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => RideShareScreen()),
+                MaterialPageRoute(builder: (context) => FindingRidesScreen()),
               );
             },
           ),
