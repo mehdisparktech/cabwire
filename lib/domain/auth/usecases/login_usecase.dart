@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:cabwire/domain/auth/models/auth_user.dart';
-import 'package:cabwire/domain/auth/repositories/driver_auth_repository.dart';
+import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
 
 class LoginUseCase {
   final DriverAuthRepository repository;

@@ -4,7 +4,6 @@ import 'package:cabwire/core/di/setup/setup_module.dart';
 import 'package:cabwire/data/datasources/local/user_data_local_data_source.dart';
 import 'package:cabwire/data/datasources/remote/device_info_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/info_remote_data_source.dart';
-import 'package:cabwire/data/datasources/remote/payment_remote_data_source.dart';
 import 'package:cabwire/data/datasources/local/location_local_data_source.dart';
 
 class DatasourceSetup implements SetupModule {
@@ -20,9 +19,6 @@ class DatasourceSetup implements SetupModule {
       )
       ..registerLazySingleton<InfoRemoteDataSource>(
         () => InfoRemoteDataSourceImpl(locate()),
-      )
-      ..registerLazySingleton<PaymentRemoteDataSource>(
-        () => PaymentRemoteDataSourceImpl(locate()),
       )
       ..registerLazySingleton<LocationLocalDataSource>(
         () => LocationLocalDataSourceImpl(locate()),

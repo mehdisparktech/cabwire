@@ -1,5 +1,5 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
-import 'package:cabwire/domain/entities/driver/notification_entity.dart';
+import 'package:cabwire/domain/entities/notification_entity.dart';
 
 class NotificationUiState extends BaseUiState {
   const NotificationUiState({
