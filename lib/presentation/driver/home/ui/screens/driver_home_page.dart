@@ -95,12 +95,29 @@ class DriverHomePage extends StatelessWidget {
       onMapCreated: presenter.onMapCreated,
       initialCameraPosition: CameraPosition(
         target: uiState.centerMapCoordinates,
-        zoom: 14.0,
+        zoom: 18.0,
       ),
       myLocationEnabled: true,
-      myLocationButtonEnabled: false,
+      myLocationButtonEnabled: true,
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
+      markers: {
+        Marker(
+          markerId: MarkerId('source'),
+          position: uiState.sourceMapCoordinates,
+          icon: uiState.sourceIcon,
+        ),
+        Marker(
+          markerId: MarkerId('destination'),
+          position: uiState.destinationMapCoordinates,
+          icon: uiState.destinationIcon,
+        ),
+        Marker(
+          markerId: MarkerId('currentLocation'),
+          position: uiState.centerMapCoordinates,
+          icon: uiState.sourceIcon,
+        ),
+      },
     );
   }
 
