@@ -1,15 +1,15 @@
+import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:cabwire/domain/auth/models/auth_user.dart';
 
 abstract class DriverAuthRepository {
   /// Logs in a driver with email and password
-  Future<Either<String, AuthUser>> login({
+  Future<Either<String, DriverRegistrationEntity>> login({
     required String email,
     required String password,
   });
 
   /// Registers a new driver
-  Future<Either<String, AuthUser>> register({
+  Future<Either<String, DriverRegistrationEntity>> register({
     required String email,
     required String password,
     required String name,
@@ -32,5 +32,5 @@ abstract class DriverAuthRepository {
   Future<Either<String, bool>> isLoggedIn();
 
   /// Gets the current authenticated user
-  Future<Either<String, AuthUser>> getCurrentUser();
+  Future<Either<String, DriverRegistrationEntity>> getCurrentUser();
 }

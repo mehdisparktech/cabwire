@@ -1,5 +1,5 @@
+import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:cabwire/domain/auth/models/auth_user.dart';
 import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
 
 /// Implementation of the [DriverAuthRepository] interface
@@ -7,10 +7,10 @@ import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
 /// Currently uses mock data but is structured for easy API integration
 class DriverAuthRepositoryImpl implements DriverAuthRepository {
   // Mock current user for development
-  AuthUser? _currentUser;
+  DriverRegistrationEntity? _currentUser;
 
   @override
-  Future<Either<String, AuthUser>> login({
+  Future<Either<String, DriverRegistrationEntity>> login({
     required String email,
     required String password,
   }) async {
@@ -23,12 +23,11 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
 
       // Mock implementation for development
       if (email == 'mehdi@gmail.com' && password == '12345678') {
-        _currentUser = AuthUser(
-          id: '1',
+        _currentUser = DriverRegistrationEntity(
           email: email,
           name: 'Mehdi',
           phone: '+1234567890',
-          isVerified: true,
+          password: password,
         );
         return right(_currentUser!);
       }
@@ -40,7 +39,7 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
   }
 
   @override
-  Future<Either<String, AuthUser>> register({
+  Future<Either<String, DriverRegistrationEntity>> register({
     required String email,
     required String password,
     required String name,
@@ -51,12 +50,11 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
       await Future.delayed(const Duration(seconds: 1));
 
       // Mock implementation - replace with actual API call
-      _currentUser = AuthUser(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+      _currentUser = DriverRegistrationEntity(
         email: email,
         name: name,
         phone: phone,
-        isVerified: false,
+        password: password,
       );
 
       return right(_currentUser!);
@@ -79,7 +77,7 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
   }
 
   @override
-  Future<Either<String, AuthUser>> getCurrentUser() async {
+  Future<Either<String, DriverRegistrationEntity>> getCurrentUser() async {
     try {
       if (_currentUser != null) {
         return right(_currentUser!);

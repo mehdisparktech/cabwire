@@ -1,5 +1,7 @@
+import 'package:cabwire/core/base/base_entity.dart';
+
 /// Model for driver registration data
-class DriverRegistration {
+class DriverRegistrationEntity extends BaseEntity {
   // Basic information
   final String name;
   final String email;
@@ -23,7 +25,7 @@ class DriverRegistration {
   final String? vehicleCategory;
   final String? vehicleImage;
 
-  DriverRegistration({
+  const DriverRegistrationEntity({
     required this.name,
     required this.email,
     required this.password,
@@ -43,11 +45,8 @@ class DriverRegistration {
     this.vehicleImage,
   });
 
-  factory DriverRegistration.empty() {
-    return DriverRegistration(name: '', email: '', password: '');
-  }
-
-  DriverRegistration copyWith({
+  /// Creates a copy of this DriverRegistrationEntity with the given fields replaced with new values
+  DriverRegistrationEntity copyWith({
     String? name,
     String? email,
     String? password,
@@ -66,7 +65,7 @@ class DriverRegistration {
     String? vehicleCategory,
     String? vehicleImage,
   }) {
-    return DriverRegistration(
+    return DriverRegistrationEntity(
       name: name ?? this.name,
       email: email ?? this.email,
       password: password ?? this.password,
@@ -88,4 +87,25 @@ class DriverRegistration {
       vehicleImage: vehicleImage ?? this.vehicleImage,
     );
   }
+
+  @override
+  List<Object?> get props => [
+    name,
+    email,
+    password,
+    phone,
+    gender,
+    dateOfBirth,
+    profileImage,
+    licenseNumber,
+    licenseExpiryDate,
+    licenseImage,
+    vehicleMake,
+    vehicleModel,
+    vehicleYear,
+    vehicleRegistrationNumber,
+    vehicleInsuranceNumber,
+    vehicleCategory,
+    vehicleImage,
+  ];
 }

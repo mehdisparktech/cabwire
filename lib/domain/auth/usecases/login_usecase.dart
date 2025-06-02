@@ -1,5 +1,5 @@
+import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:cabwire/domain/auth/models/auth_user.dart';
 import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
 
 class LoginUseCase {
@@ -11,7 +11,7 @@ class LoginUseCase {
   ///
   /// Returns an [Either] with an error message on the left side
   /// or an [AuthUser] on successful login
-  Future<Either<String, AuthUser>> execute({
+  Future<Either<String, DriverRegistrationEntity>> execute({
     required String email,
     required String password,
   }) async {

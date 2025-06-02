@@ -1,6 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:cabwire/domain/auth/models/auth_user.dart';
-import 'package:cabwire/domain/auth/models/driver_registration.dart';
+import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
 import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
 
 class RegisterUseCase {
@@ -12,8 +11,8 @@ class RegisterUseCase {
   ///
   /// Returns an [Either] with an error message on the left side
   /// or an [AuthUser] on successful registration
-  Future<Either<String, AuthUser>> execute({
-    required DriverRegistration registration,
+  Future<Either<String, DriverRegistrationEntity>> execute({
+    required DriverRegistrationEntity registration,
   }) async {
     // Basic validation
     if (registration.name.isEmpty) {

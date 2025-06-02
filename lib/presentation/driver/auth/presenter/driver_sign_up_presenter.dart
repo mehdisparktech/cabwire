@@ -4,7 +4,7 @@ import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_passwor
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
-import 'package:cabwire/domain/auth/models/driver_registration.dart';
+import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
 import 'package:cabwire/domain/auth/usecases/register_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_ui_state.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_confirm_information_screen.dart';
@@ -327,7 +327,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     bool? obscurePassword,
     bool? obscureConfirmPassword,
     bool? isRegistered,
-    DriverRegistration? registration,
+    DriverRegistrationEntity? registration,
     int? currentStep,
   }) {
     uiState.value = currentUiState.copyWith(
@@ -340,7 +340,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   }
 
   void _updateRegistrationStep1() {
-    final registration = DriverRegistration(
+    final registration = DriverRegistrationEntity(
       name: nameController.text.trim(),
       email: emailController.text.trim(),
       password: passwordController.text,

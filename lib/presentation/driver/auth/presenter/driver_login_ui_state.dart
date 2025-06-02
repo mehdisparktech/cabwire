@@ -1,9 +1,9 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
-import 'package:cabwire/domain/auth/models/auth_user.dart';
+import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
 
 class DriverLoginUiState extends BaseUiState {
   final bool obscurePassword;
-  final AuthUser? user;
+  final DriverRegistrationEntity? user;
   final bool isAuthenticated;
 
   const DriverLoginUiState({
@@ -37,7 +37,7 @@ class DriverLoginUiState extends BaseUiState {
     bool? isLoading,
     String? userMessage,
     bool? obscurePassword,
-    AuthUser? user,
+    DriverRegistrationEntity? user,
     bool? isAuthenticated,
   }) {
     return DriverLoginUiState(

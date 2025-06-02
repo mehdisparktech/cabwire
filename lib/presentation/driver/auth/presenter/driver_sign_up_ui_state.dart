@@ -1,9 +1,9 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
-import 'package:cabwire/domain/auth/models/driver_registration.dart';
+import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
 
 /// Shared state for the entire driver registration process
 class DriverSignUpUiState extends BaseUiState {
-  final DriverRegistration registration;
+  final DriverRegistrationEntity registration;
   final bool obscurePassword;
   final bool obscureConfirmPassword;
   final int currentStep;
@@ -23,7 +23,25 @@ class DriverSignUpUiState extends BaseUiState {
     return DriverSignUpUiState(
       isLoading: false,
       userMessage: null,
-      registration: DriverRegistration.empty(),
+      registration: DriverRegistrationEntity(
+        name: '',
+        email: '',
+        password: '',
+        phone: '',
+        gender: '',
+        dateOfBirth: '',
+        profileImage: '',
+        licenseNumber: '',
+        licenseExpiryDate: '',
+        licenseImage: '',
+        vehicleMake: '',
+        vehicleModel: '',
+        vehicleYear: '',
+        vehicleRegistrationNumber: '',
+        vehicleInsuranceNumber: '',
+        vehicleCategory: '',
+        vehicleImage: '',
+      ),
       obscurePassword: true,
       obscureConfirmPassword: true,
       currentStep: 0,
@@ -45,7 +63,7 @@ class DriverSignUpUiState extends BaseUiState {
   DriverSignUpUiState copyWith({
     bool? isLoading,
     String? userMessage,
-    DriverRegistration? registration,
+    DriverRegistrationEntity? registration,
     bool? obscurePassword,
     bool? obscureConfirmPassword,
     int? currentStep,
