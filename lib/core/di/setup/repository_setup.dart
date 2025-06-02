@@ -24,7 +24,7 @@ class RepositorySetup implements SetupModule {
         () => DeviceInfoRepositoryImpl(locate(), locate(), locate()),
       )
       ..registerLazySingleton<DriverAuthRepository>(
-        () => DriverAuthRepositoryImpl(),
+        DriverAuthRepositoryImpl.new,
       )
       ..registerLazySingleton<LocationRepository>(
         () => LocationRepositoryImpl(locate(), locate(), locate()),

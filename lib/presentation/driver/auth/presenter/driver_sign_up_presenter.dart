@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
-import 'package:cabwire/domain/auth/usecases/register_usecase.dart';
+import 'package:cabwire/domain/usecases/register_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_ui_state.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_confirm_information_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_license_information.dart';
