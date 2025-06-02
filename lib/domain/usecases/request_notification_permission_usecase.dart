@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:cabwire/core/base/base_use_case.dart';
-import 'package:cabwire/domain/service/notification_service.dart';
-import 'package:cabwire/domain/service/error_message_handler.dart';
+import 'package:cabwire/domain/services/notification_service.dart';
+import 'package:cabwire/domain/services/error_message_handler.dart';
 
 class RequestNotificationPermissionUsecase extends BaseUseCase<void> {
   final NotificationService _notificationService;

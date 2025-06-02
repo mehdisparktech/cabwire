@@ -8,9 +8,9 @@ import 'package:cabwire/data/services/backend_as_a_service.dart';
 import 'package:cabwire/data/services/error_message_handler_impl.dart';
 import 'package:cabwire/data/services/local_cache_service.dart';
 import 'package:cabwire/data/services/notification/notification_service_impl.dart';
-import 'package:cabwire/domain/service/error_message_handler.dart';
-import 'package:cabwire/domain/service/notification_service.dart';
-import 'package:cabwire/domain/service/time_service.dart';
+import 'package:cabwire/domain/services/error_message_handler.dart';
+import 'package:cabwire/domain/services/notification_service.dart';
+import 'package:cabwire/domain/services/time_service.dart';
 import 'package:cabwire/data/services/location_service.dart';
 
 class ServiceSetup implements SetupModule {

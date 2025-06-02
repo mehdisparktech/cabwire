@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:cabwire/core/base/base_use_case.dart';
 import 'package:cabwire/domain/repositories/device_info_repository.dart';
-import 'package:cabwire/domain/service/error_message_handler.dart';
+import 'package:cabwire/domain/services/error_message_handler.dart';
 
 class RegisterDeviceUsecase extends BaseUseCase<void> {
   final DeviceInfoRepository _deviceInfoRepository;

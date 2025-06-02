@@ -2,7 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:cabwire/core/base/base_use_case.dart';
 import 'package:cabwire/domain/entities/location_entity.dart';
 import 'package:cabwire/domain/repositories/location_repository.dart';
-import 'package:cabwire/domain/service/error_message_handler.dart';
+import 'package:cabwire/domain/services/error_message_handler.dart';
 
 class GetCurrentLocationUsecase extends BaseUseCase<LocationEntity> {
   final LocationRepository _locationRepository;

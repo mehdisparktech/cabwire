@@ -1,4 +1,4 @@
-import 'package:cabwire/domain/service/error_message_handler.dart';
+import 'package:cabwire/domain/services/error_message_handler.dart';
 
 class ErrorMessageHandlerImpl implements ErrorMessageHandler {
   @override

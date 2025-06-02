@@ -9,7 +9,7 @@ import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/trial_utility.dart';
 import 'package:cabwire/core/utility/number_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/domain/service/notification_service.dart';
+import 'package:cabwire/domain/services/notification_service.dart';
 
 class NotificationServiceImpl implements NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
