@@ -7,7 +7,7 @@ import 'package:cabwire/data/repositories/user_data_repository_impl.dart';
 import 'package:cabwire/domain/repositories/device_info_repository.dart';
 import 'package:cabwire/domain/repositories/payment_repository.dart';
 import 'package:cabwire/domain/repositories/user_data_repository.dart';
-import 'package:cabwire/domain/auth/repositories/auth_repository.dart';
+import 'package:cabwire/domain/auth/repositories/driver_auth_repository.dart';
 import 'package:cabwire/data/repositories/auth_repository_impl.dart';
 import 'package:cabwire/data/repositories/location_repository_impl.dart';
 import 'package:cabwire/domain/repositories/location_repository.dart';

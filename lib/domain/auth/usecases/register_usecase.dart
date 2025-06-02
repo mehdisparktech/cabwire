@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:cabwire/domain/auth/models/auth_user.dart';
 import 'package:cabwire/domain/auth/models/driver_registration.dart';
-import 'package:cabwire/domain/auth/repositories/auth_repository.dart';
+import 'package:cabwire/domain/auth/repositories/driver_auth_repository.dart';
 
 class RegisterUseCase {
   final DriverAuthRepository repository;
