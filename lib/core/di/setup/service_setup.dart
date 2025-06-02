@@ -11,7 +11,7 @@ import 'package:cabwire/data/services/notification/notification_service_impl.dar
 import 'package:cabwire/domain/services/error_message_handler.dart';
 import 'package:cabwire/domain/services/notification_service.dart';
 import 'package:cabwire/domain/services/time_service.dart';
-import 'package:cabwire/data/services/location_service.dart';
+import 'package:cabwire/data/services/location/location_service.dart';
 
 class ServiceSetup implements SetupModule {
   final GetIt _serviceLocator;

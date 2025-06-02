@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:cabwire/data/datasources/local/location_local_data_source.dart';
-import 'package:cabwire/data/services/location_service.dart';
+import 'package:cabwire/data/services/location/location_service.dart';
 import 'package:cabwire/domain/entities/location_entity.dart';
 import 'package:cabwire/domain/repositories/location_repository.dart';
 import 'package:cabwire/domain/services/error_message_handler.dart';
