@@ -167,4 +167,10 @@ class AppStrings {
   static const String passengerAppName = "Cabwire";
   static const String passengerAppDescription =
       "Cabwire is a taxi booking app that allows you to book a taxi from your location to your destination.";
+
+  static const String thisFieldIsRequired = "This field is required";
+  static const String enterValidEmail = "Enter a valid email";
+  static const String passwordMustBeeEightCharacters =
+      "Password must be at least 8 characters";
+  static const String thePasswordDoesNotMatch = "The password does not match";
 }
