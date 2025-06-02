@@ -22,7 +22,9 @@ class ServiceSetup implements SetupModule {
     // await _setUpFirebaseServices();
     _serviceLocator
       ..registerLazySingleton<ErrorMessageHandler>(ErrorMessageHandlerImpl.new)
-      ..registerLazySingleton<NotificationService>(NotificationServiceImpl.new)
+      ..registerLazySingleton<NotificationService>(
+        () => NotificationServiceImpl.instance,
+      )
       ..registerLazySingleton<BackendAsAService>(BackendAsAService.new)
       ..registerLazySingleton<TimeService>(TimeService.new)
       ..registerLazySingleton<LocalCacheService>(LocalCacheService.new)
