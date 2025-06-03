@@ -1,23 +1,17 @@
+import 'package:cabwire/core/utility/logger_utility.dart';
+import 'package:cabwire/domain/entities/driver/driver_entity.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
-import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
 import 'package:cabwire/domain/usecases/register_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_ui_state.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_confirm_information_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_license_information.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_vehicles_information_screen.dart';
 
-/// Optimized Presenter for the sign-up process
-///
-/// Key optimizations:
-/// - Lazy initialization of controllers
-/// - Grouped related functionality
-/// - Better memory management
-/// - Extracted constants and configuration
 class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // Configuration constants
   static const int _verificationCodeLength = 6;
@@ -60,7 +54,11 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     'resetPassword': GlobalKey<FormState>(),
   };
 
-  DriverSignUpPresenter(this._registerUseCase) {
+  DriverSignUpPresenter(this._registerUseCase);
+
+  @override
+  void onInit() {
+    super.onInit();
     _initializeControllers();
   }
 
@@ -289,7 +287,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   Future<void> completeRegistration(BuildContext context) async {
     await executeTaskWithLoading(() async {
       final result = await _registerUseCase.execute(
-        registration: currentUiState.registration,
+        driver: currentUiState.driver!,
       );
 
       await result.fold(
@@ -327,63 +325,84 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     bool? obscurePassword,
     bool? obscureConfirmPassword,
     bool? isRegistered,
-    DriverRegistrationEntity? registration,
+    DriverEntity? driver,
     int? currentStep,
   }) {
     uiState.value = currentUiState.copyWith(
       obscurePassword: obscurePassword,
       obscureConfirmPassword: obscureConfirmPassword,
       isRegistered: isRegistered,
-      registration: registration,
+      driver: driver,
       currentStep: currentStep,
     );
   }
 
-  void _updateRegistrationStep1() {
-    final registration = DriverRegistrationEntity(
+  Future<void> _updateRegistrationStep1() async {
+    final driver = DriverEntity(
       name: nameController.text.trim(),
       email: emailController.text.trim(),
       password: passwordController.text,
+      contact: '01682015732',
+      role: 'DRIVER',
+      status: 'active',
+      location: DriverLocation(
+        lat: uiState.value.driver?.location?.lat ?? 0,
+        lng: uiState.value.driver?.location?.lng ?? 0,
+        address: uiState.value.driver?.location?.address ?? '',
+      ),
     );
 
-    _updateUiState(registration: registration, currentStep: 1);
-    phoneNumberController.text = nameController.text.trim();
+    final result = await _registerUseCase.execute(driver: driver);
+    logError('result: $result');
+    result.fold((errorMessage) async => await addUserMessage(errorMessage), (
+      user,
+    ) async {
+      logError(user);
+      _updateUiState(driver: driver, currentStep: 1);
+    });
   }
 
   void _updateRegistrationStep2() {
-    final updatedRegistration = currentUiState.registration.copyWith(
-      phone: phoneNumberController.text.trim(),
+    final updatedDriver = currentUiState.driver?.copyWith(
+      contact: phoneNumberController.text.trim(),
       gender: genderController.text.trim(),
       dateOfBirth: dateOfBirthController.text.trim(),
-      profileImage: profileImagePath,
+      image: profileImagePath,
     );
 
-    _updateUiState(registration: updatedRegistration, currentStep: 2);
+    _updateUiState(driver: updatedDriver, currentStep: 2);
   }
 
   void _updateRegistrationStep3() {
-    final updatedRegistration = currentUiState.registration.copyWith(
-      licenseNumber: driverLicenseNumberController.text.trim(),
-      licenseExpiryDate: licenseExpiryDateController.text.trim(),
-      licenseImage: licenseImagePath,
+    final updatedDriver = currentUiState.driver?.copyWith(
+      driverLicense: DriverLicense(
+        licenseNumber: int.parse(driverLicenseNumberController.text.trim()),
+        licenseExpiryDate: licenseExpiryDateController.text.trim(),
+        uploadDriversLicense: licenseImagePath ?? '',
+      ),
     );
 
-    _updateUiState(registration: updatedRegistration, currentStep: 3);
+    _updateUiState(driver: updatedDriver, currentStep: 3);
   }
 
   void _updateRegistrationStep4() {
-    final updatedRegistration = currentUiState.registration.copyWith(
-      vehicleMake: vehiclesMakeController.text.trim(),
-      vehicleModel: vehiclesModelController.text.trim(),
-      vehicleYear: vehiclesYearController.text.trim(),
-      vehicleRegistrationNumber:
+    final updatedDriver = currentUiState.driver?.copyWith(
+      driverVehicles: DriverVehicle(
+        vehiclesMake: vehiclesMakeController.text.trim(),
+        vehiclesModel: vehiclesModelController.text.trim(),
+        vehiclesYear: vehiclesYearController.text.trim(),
+        vehiclesRegistrationNumber: int.parse(
           vehiclesRegistrationNumberController.text.trim(),
-      vehicleInsuranceNumber: vehiclesInsuranceNumberController.text.trim(),
-      vehicleCategory: vehicleCategoryController.text.trim(),
-      vehicleImage: vehicleImagePath,
+        ),
+        vehiclesInsuranceNumber: int.parse(
+          vehiclesInsuranceNumberController.text.trim(),
+        ),
+        vehiclesCategory: int.parse(vehicleCategoryController.text.trim()),
+        vehiclesPicture: vehicleImagePath ?? '',
+      ),
     );
 
-    _updateUiState(registration: updatedRegistration, currentStep: 4);
+    _updateUiState(driver: updatedDriver, currentStep: 4);
   }
 
   Future<DateTime?> _showDatePicker({

@@ -1,26 +1,31 @@
 import 'package:cabwire/core/base/base_entity.dart';
 
-class DriverRegistrationEntity extends BaseEntity {
-  final String name;
+class DriverEntity extends BaseEntity {
+  final String? name;
   final String? email;
+  final String? password;
+  final String? contact;
+  final String? gender;
+  final String? dateOfBirth;
   final String? role;
   final String? image;
   final String? status;
   final bool? verified;
-  final String? password;
+  final DriverLocation? location;
+  final DriverLicense? driverLicense;
+  final DriverVehicle? driverVehicles;
 
-  final DriverLocationEntity? location;
-  final DriverLicenseEntity? driverLicense;
-  final DriverVehicleEntity? driverVehicles;
-
-  const DriverRegistrationEntity({
-    required this.name,
+  const DriverEntity({
+    this.name,
     this.email,
+    this.password,
     this.role,
     this.image,
     this.status,
     this.verified,
-    this.password,
+    this.contact,
+    this.gender,
+    this.dateOfBirth,
     this.location,
     this.driverLicense,
     this.driverVehicles,
@@ -30,36 +35,45 @@ class DriverRegistrationEntity extends BaseEntity {
   List<Object?> get props => [
     name,
     email,
+    password,
+    contact,
+    gender,
+    dateOfBirth,
     role,
     image,
     status,
     verified,
-    password,
     location,
     driverLicense,
     driverVehicles,
   ];
 
-  DriverRegistrationEntity copyWith({
+  DriverEntity copyWith({
     String? name,
     String? email,
+    String? password,
+    String? contact,
+    String? gender,
+    String? dateOfBirth,
     String? role,
     String? image,
     String? status,
     bool? verified,
-    String? password,
-    DriverLocationEntity? location,
-    DriverLicenseEntity? driverLicense,
-    DriverVehicleEntity? driverVehicles,
+    DriverLocation? location,
+    DriverLicense? driverLicense,
+    DriverVehicle? driverVehicles,
   }) {
-    return DriverRegistrationEntity(
+    return DriverEntity(
       name: name ?? this.name,
       email: email ?? this.email,
+      password: password ?? this.password,
+      contact: contact ?? this.contact,
+      gender: gender ?? this.gender,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       role: role ?? this.role,
       image: image ?? this.image,
       status: status ?? this.status,
       verified: verified ?? this.verified,
-      password: password ?? this.password,
       location: location ?? this.location,
       driverLicense: driverLicense ?? this.driverLicense,
       driverVehicles: driverVehicles ?? this.driverVehicles,
@@ -67,36 +81,46 @@ class DriverRegistrationEntity extends BaseEntity {
   }
 }
 
-class DriverLocationEntity {
+class DriverLocation extends BaseEntity {
   final double? lat;
   final double? lng;
   final String? address;
 
-  const DriverLocationEntity({this.lat, this.lng, this.address});
+  const DriverLocation({this.lat, this.lng, this.address});
+
+  @override
+  List<Object?> get props => [lat, lng, address];
 }
 
-class DriverLicenseEntity {
+class DriverLicense extends BaseEntity {
   final int? licenseNumber;
   final String? licenseExpiryDate;
   final String? uploadDriversLicense;
 
-  const DriverLicenseEntity({
+  const DriverLicense({
     this.licenseNumber,
     this.licenseExpiryDate,
     this.uploadDriversLicense,
   });
+
+  @override
+  List<Object?> get props => [
+    licenseNumber,
+    licenseExpiryDate,
+    uploadDriversLicense,
+  ];
 }
 
-class DriverVehicleEntity {
+class DriverVehicle extends BaseEntity {
   final String? vehiclesMake;
   final String? vehiclesModel;
   final String? vehiclesYear;
   final int? vehiclesRegistrationNumber;
   final int? vehiclesInsuranceNumber;
-  final dynamic vehiclesPicture;
+  final String? vehiclesPicture;
   final int? vehiclesCategory;
 
-  const DriverVehicleEntity({
+  const DriverVehicle({
     this.vehiclesMake,
     this.vehiclesModel,
     this.vehiclesYear,
@@ -105,4 +129,15 @@ class DriverVehicleEntity {
     this.vehiclesPicture,
     this.vehiclesCategory,
   });
+
+  @override
+  List<Object?> get props => [
+    vehiclesMake,
+    vehiclesModel,
+    vehiclesYear,
+    vehiclesRegistrationNumber,
+    vehiclesInsuranceNumber,
+    vehiclesPicture,
+    vehiclesCategory,
+  ];
 }

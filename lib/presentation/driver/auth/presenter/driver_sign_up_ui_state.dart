@@ -1,9 +1,10 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
-import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
+import 'package:cabwire/domain/entities/driver/driver_entity.dart';
 
 /// Shared state for the entire driver registration process
 class DriverSignUpUiState extends BaseUiState {
-  final DriverRegistrationEntity registration;
+  //final DriverRegistrationEntity? registration;
+  final DriverEntity? driver;
   final bool obscurePassword;
   final bool obscureConfirmPassword;
   final int currentStep;
@@ -12,7 +13,7 @@ class DriverSignUpUiState extends BaseUiState {
   const DriverSignUpUiState({
     required super.isLoading,
     required super.userMessage,
-    required this.registration,
+    required this.driver,
     this.obscurePassword = true,
     this.obscureConfirmPassword = true,
     this.currentStep = 0,
@@ -23,25 +24,7 @@ class DriverSignUpUiState extends BaseUiState {
     return DriverSignUpUiState(
       isLoading: false,
       userMessage: null,
-      registration: DriverRegistrationEntity(
-        name: '',
-        email: '',
-        password: '',
-        phone: '',
-        gender: '',
-        dateOfBirth: '',
-        profileImage: '',
-        licenseNumber: '',
-        licenseExpiryDate: '',
-        licenseImage: '',
-        vehicleMake: '',
-        vehicleModel: '',
-        vehicleYear: '',
-        vehicleRegistrationNumber: '',
-        vehicleInsuranceNumber: '',
-        vehicleCategory: '',
-        vehicleImage: '',
-      ),
+      driver: null,
       obscurePassword: true,
       obscureConfirmPassword: true,
       currentStep: 0,
@@ -53,7 +36,7 @@ class DriverSignUpUiState extends BaseUiState {
   List<Object?> get props => [
     isLoading,
     userMessage,
-    registration,
+    driver,
     obscurePassword,
     obscureConfirmPassword,
     currentStep,
@@ -63,7 +46,7 @@ class DriverSignUpUiState extends BaseUiState {
   DriverSignUpUiState copyWith({
     bool? isLoading,
     String? userMessage,
-    DriverRegistrationEntity? registration,
+    DriverEntity? driver,
     bool? obscurePassword,
     bool? obscureConfirmPassword,
     int? currentStep,
@@ -72,7 +55,7 @@ class DriverSignUpUiState extends BaseUiState {
     return DriverSignUpUiState(
       isLoading: isLoading ?? this.isLoading,
       userMessage: userMessage ?? this.userMessage,
-      registration: registration ?? this.registration,
+      driver: driver ?? this.driver,
       obscurePassword: obscurePassword ?? this.obscurePassword,
       obscureConfirmPassword:
           obscureConfirmPassword ?? this.obscureConfirmPassword,

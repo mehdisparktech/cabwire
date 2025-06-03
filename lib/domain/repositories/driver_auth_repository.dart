@@ -1,3 +1,4 @@
+import 'package:cabwire/domain/entities/driver/driver_entity.dart';
 import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -10,10 +11,7 @@ abstract class DriverAuthRepository {
 
   /// Registers a new driver
   Future<Either<String, DriverRegistrationEntity>> register({
-    required String email,
-    required String password,
-    required String name,
-    required String phone,
+    required DriverEntity driver,
   });
 
   /// Sends password reset email

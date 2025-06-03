@@ -1,13 +1,16 @@
+import 'package:cabwire/data/datasources/remote/driver_auth_remote_data_source.dart';
+import 'package:cabwire/data/models/driver/driver_model.dart';
+import 'package:cabwire/domain/entities/driver/driver_entity.dart';
 import 'package:cabwire/domain/entities/driver/driver_registration_entity.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
 
-/// Implementation of the [DriverAuthRepository] interface
-///
-/// Currently uses mock data but is structured for easy API integration
 class DriverAuthRepositoryImpl implements DriverAuthRepository {
   // Mock current user for development
   DriverRegistrationEntity? _currentUser;
+
+  DriverAuthRepositoryImpl(this._driverAuthRemoteDataSource);
+  final DriverAuthRemoteDataSource _driverAuthRemoteDataSource;
 
   @override
   Future<Either<String, DriverRegistrationEntity>> login({
@@ -26,7 +29,6 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
         _currentUser = DriverRegistrationEntity(
           email: email,
           name: 'Mehdi',
-          phone: '+1234567890',
           password: password,
         );
         return right(_currentUser!);
@@ -40,24 +42,21 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
 
   @override
   Future<Either<String, DriverRegistrationEntity>> register({
-    required String email,
-    required String password,
-    required String name,
-    required String phone,
+    required DriverEntity driver,
   }) async {
     try {
-      // Simulate API delay
-      await Future.delayed(const Duration(seconds: 1));
-
-      // Mock implementation - replace with actual API call
-      _currentUser = DriverRegistrationEntity(
-        email: email,
-        name: name,
-        phone: phone,
-        password: password,
+      // Convert DriverEntity to DriverModel
+      final driverModel = DriverModel(
+        name: driver.name,
+        email: driver.email,
+        password: driver.password,
+        role: driver.role,
+        contact: driver.contact,
+        location: driver.location,
       );
 
-      return right(_currentUser!);
+      final result = await _driverAuthRemoteDataSource.register(driverModel);
+      return result.fold((l) => left(l), (r) => right(r));
     } catch (e) {
       return left('Registration failed: ${e.toString()}');
     }
