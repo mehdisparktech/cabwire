@@ -23,6 +23,7 @@ class AppAssets {
   static const String icPremiumCar = 'assets/images/png/premium_car.png';
   static const String icRentalCar = 'assets/images/png/rental_car.png';
   static const String icMyCar = 'assets/images/png/my_car.png';
+  static const String icLocationActive = 'assets/images/png/location_pin.png';
 
   ///svg file
   static const String icHomeOutline = 'assets/images/svg/ic_home_outline.svg';
@@ -68,5 +69,4 @@ class AppAssets {
   static const String icCarBackground = 'assets/images/svg/car_background.svg';
   static const String icOnlinePayment = 'assets/images/svg/online_pay.svg';
   static const String icCashPayment = 'assets/images/svg/cash_pay.svg';
-  static const String icLocationActive = 'assets/images/svg/location_pin.svg';
 }

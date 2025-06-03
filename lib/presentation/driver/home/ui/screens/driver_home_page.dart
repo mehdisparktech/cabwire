@@ -116,7 +116,7 @@ class DriverHomePage extends StatelessWidget {
           Marker(
             markerId: MarkerId('currentLocation'),
             position: uiState.currentLocation!,
-            icon: uiState.sourceIcon,
+            icon: uiState.currentLocationIcon,
           ),
       },
     );

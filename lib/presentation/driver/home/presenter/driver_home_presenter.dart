@@ -74,13 +74,13 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   Future<void> setCustomIcons() async {
     try {
       await BitmapDescriptor.asset(
-        ImageConfiguration(size: Size(50, 80)),
+        ImageConfiguration(size: Size(50, 50)),
         AppAssets.icLocationActive,
       ).then((value) {
         uiState.value = currentUiState.copyWith(sourceIcon: value);
       });
       await BitmapDescriptor.asset(
-        ImageConfiguration(size: Size(50, 80)),
+        ImageConfiguration(size: Size(50, 50)),
         AppAssets.icLocationActive,
       ).then((value) {
         uiState.value = currentUiState.copyWith(destinationIcon: value);

@@ -29,7 +29,7 @@ class DriverHomeUiState extends BaseUiState {
     // required this.rideRequests,
   });
 
-  // सुरुवातीची स्थिती (initial state)
+  // (initial state)
   factory DriverHomeUiState.initial() {
     return const DriverHomeUiState(
       isLoading: false,
