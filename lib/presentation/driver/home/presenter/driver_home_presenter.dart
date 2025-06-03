@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/static/constants.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
@@ -10,6 +11,7 @@ import 'package:cabwire/presentation/driver/home/ui/screens/rideshare_page.dart'
 import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
 import 'package:cabwire/presentation/driver/notification/ui/screens/notification_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -31,6 +33,7 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
     super.onInit();
     await _initializeFromArguments();
     await getCurrentLocation();
+    await setPolyline();
     setCustomIcons();
   }
 
@@ -93,6 +96,61 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
       });
     } catch (e) {
       logError(e);
+    }
+  }
+
+  Future<void> setPolyline() async {
+    try {
+      debugPrint('Setting polyline');
+      if (currentUiState.currentLocation == null) {
+        debugPrint('Current location is null, cannot set polyline');
+        return;
+      }
+
+      PolylineResult polylineResult = await currentUiState.polylinePoints
+          .getRouteBetweenCoordinates(
+            googleApiKey: googleApiKey,
+            request: PolylineRequest(
+              origin: PointLatLng(
+                currentUiState.currentLocation!.latitude,
+                currentUiState.currentLocation!.longitude,
+              ),
+              destination: PointLatLng(
+                currentUiState.destinationMapCoordinates.latitude,
+                currentUiState.destinationMapCoordinates.longitude,
+              ),
+              mode: TravelMode.driving,
+              optimizeWaypoints: true,
+            ),
+          );
+
+      if (polylineResult.status == 'REQUEST_DENIED') {
+        logError('Google Maps API key error: ${polylineResult.errorMessage}');
+        uiState.value = currentUiState.copyWith(
+          userMessage: 'Unable to load route. Please check API configuration.',
+        );
+        return;
+      }
+
+      if (polylineResult.points.isEmpty) {
+        debugPrint('No route points returned from API');
+        return;
+      }
+
+      uiState.value = currentUiState.copyWith(
+        polylineCoordinates:
+            polylineResult.points
+                .map((point) => LatLng(point.latitude, point.longitude))
+                .toList(),
+      );
+      debugPrint(
+        'Successfully set polyline with ${polylineResult.points.length} points',
+      );
+    } catch (e) {
+      logError('Error setting polyline: $e');
+      uiState.value = currentUiState.copyWith(
+        userMessage: 'Unable to load route. Please try again later.',
+      );
     }
   }
 

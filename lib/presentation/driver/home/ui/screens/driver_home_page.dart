@@ -97,7 +97,7 @@ class DriverHomePage extends StatelessWidget {
         target: uiState.currentLocation ?? uiState.centerMapCoordinates,
         zoom: 18.0,
       ),
-      myLocationEnabled: false,
+      myLocationEnabled: true,
       myLocationButtonEnabled: true,
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
@@ -118,6 +118,14 @@ class DriverHomePage extends StatelessWidget {
             position: uiState.currentLocation!,
             icon: uiState.currentLocationIcon,
           ),
+      },
+      polylines: {
+        Polyline(
+          polylineId: PolylineId('polyline'),
+          points: uiState.polylineCoordinates ?? [],
+          color: Colors.black,
+          width: 3,
+        ),
       },
     );
   }

@@ -36,3 +36,5 @@ const String facebookGroupUrl = "https://www.facebook.com/groups/irdofficial";
 const String facebookPageUrl = "https://www.facebook.com/com.oratiq/";
 
 const Duration defaultPageTransitionDuration = Duration(milliseconds: 370);
+
+const String googleApiKey = 'AIzaSyDtoM2PFII8A8v2PXIxL9ITj1evfIdBb0Y';

@@ -1,4 +1,5 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DriverHomeUiState extends BaseUiState {
@@ -11,6 +12,8 @@ class DriverHomeUiState extends BaseUiState {
   final BitmapDescriptor sourceIcon;
   final BitmapDescriptor destinationIcon;
   final BitmapDescriptor currentLocationIcon;
+  final PolylinePoints polylinePoints;
+  final List<LatLng>? polylineCoordinates;
   // Uncomment when ride model is implemented
   // final List<RideRequest> rideRequests;
 
@@ -26,23 +29,27 @@ class DriverHomeUiState extends BaseUiState {
     required this.sourceIcon,
     required this.destinationIcon,
     required this.currentLocationIcon,
+    required this.polylinePoints,
+    this.polylineCoordinates,
     // required this.rideRequests,
   });
 
   // (initial state)
   factory DriverHomeUiState.initial() {
-    return const DriverHomeUiState(
+    return DriverHomeUiState(
       isLoading: false,
       userMessage: '',
       isOnline: false,
       userName: "Sabbir",
-      centerMapCoordinates: LatLng(23.759112, 90.429365),
+      centerMapCoordinates: const LatLng(23.759112, 90.429365),
       currentLocation: null,
-      destinationMapCoordinates: LatLng(23.763766, 90.431407),
-      sourceMapCoordinates: LatLng(23.759112, 90.429365),
+      destinationMapCoordinates: const LatLng(23.763766, 90.431407),
+      sourceMapCoordinates: const LatLng(23.759112, 90.429365),
       sourceIcon: BitmapDescriptor.defaultMarker,
       destinationIcon: BitmapDescriptor.defaultMarker,
       currentLocationIcon: BitmapDescriptor.defaultMarker,
+      polylinePoints: PolylinePoints(),
+      polylineCoordinates: null,
       // rideRequests: [],
     );
   }
@@ -60,6 +67,8 @@ class DriverHomeUiState extends BaseUiState {
     sourceIcon,
     destinationIcon,
     currentLocationIcon,
+    polylinePoints,
+    polylineCoordinates,
     // rideRequests,
   ];
 
@@ -75,6 +84,8 @@ class DriverHomeUiState extends BaseUiState {
     BitmapDescriptor? sourceIcon,
     BitmapDescriptor? destinationIcon,
     BitmapDescriptor? currentLocationIcon,
+    PolylinePoints? polylinePoints,
+    List<LatLng>? polylineCoordinates,
     // List<RideRequest>? rideRequests,
   }) {
     return DriverHomeUiState(
@@ -90,6 +101,8 @@ class DriverHomeUiState extends BaseUiState {
       sourceIcon: sourceIcon ?? this.sourceIcon,
       destinationIcon: destinationIcon ?? this.destinationIcon,
       currentLocationIcon: currentLocationIcon ?? this.currentLocationIcon,
+      polylinePoints: polylinePoints ?? this.polylinePoints,
+      polylineCoordinates: polylineCoordinates ?? this.polylineCoordinates,
       // rideRequests: rideRequests ?? this.rideRequests,
     );
   }
