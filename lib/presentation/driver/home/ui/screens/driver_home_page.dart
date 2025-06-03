@@ -94,10 +94,10 @@ class DriverHomePage extends StatelessWidget {
     return GoogleMap(
       onMapCreated: presenter.onMapCreated,
       initialCameraPosition: CameraPosition(
-        target: uiState.centerMapCoordinates,
+        target: uiState.currentLocation ?? uiState.centerMapCoordinates,
         zoom: 18.0,
       ),
-      myLocationEnabled: true,
+      myLocationEnabled: false,
       myLocationButtonEnabled: true,
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
@@ -112,11 +112,12 @@ class DriverHomePage extends StatelessWidget {
           position: uiState.destinationMapCoordinates,
           icon: uiState.destinationIcon,
         ),
-        Marker(
-          markerId: MarkerId('currentLocation'),
-          position: uiState.centerMapCoordinates,
-          icon: uiState.sourceIcon,
-        ),
+        if (uiState.currentLocation != null)
+          Marker(
+            markerId: MarkerId('currentLocation'),
+            position: uiState.currentLocation!,
+            icon: uiState.sourceIcon,
+          ),
       },
     );
   }

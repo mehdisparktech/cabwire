@@ -68,4 +68,5 @@ class AppAssets {
   static const String icCarBackground = 'assets/images/svg/car_background.svg';
   static const String icOnlinePayment = 'assets/images/svg/online_pay.svg';
   static const String icCashPayment = 'assets/images/svg/cash_pay.svg';
+  static const String icLocationActive = 'assets/images/svg/location_pin.svg';
 }
