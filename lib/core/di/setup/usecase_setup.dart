@@ -7,8 +7,6 @@ import 'package:cabwire/domain/usecases/determine_first_run_use_case.dart';
 import 'package:cabwire/domain/usecases/get_device_info_usecase.dart';
 import 'package:cabwire/domain/usecases/register_device_usecase.dart';
 import 'package:cabwire/domain/usecases/save_first_time_use_case.dart';
-import 'package:cabwire/domain/usecases/login_usecase.dart';
-import 'package:cabwire/domain/usecases/register_usecase.dart';
 import 'package:cabwire/domain/usecases/location/check_location_permission_usecase.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:cabwire/domain/usecases/location/get_location_updates_usecase.dart';
@@ -28,8 +26,6 @@ class UsecaseSetup implements SetupModule {
       ..registerLazySingleton(() => SaveFirstTimeUseCase(locate(), locate()))
       ..registerLazySingleton(() => GetDeviceInfoUsecase(locate(), locate()))
       ..registerLazySingleton(() => RegisterDeviceUsecase(locate(), locate()))
-      ..registerFactory(() => LoginUseCase(locate()))
-      ..registerFactory(() => RegisterUseCase(locate()))
       ..registerLazySingleton(
         () => CheckLocationPermissionUsecase(locate(), locate()),
       )

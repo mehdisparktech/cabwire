@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
-import 'package:cabwire/core/utility/navigation_utility.dart';
-import 'package:cabwire/domain/usecases/login_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_login_ui_state.dart';
-import 'package:cabwire/presentation/driver/home/ui/screens/driver_home_page_offline.dart';
 
 class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -13,13 +10,12 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
   final Obs<DriverLoginUiState> uiState = Obs(DriverLoginUiState.empty());
   DriverLoginUiState get currentUiState => uiState.value;
 
-  final LoginUseCase _loginUseCase;
+  // final LoginUseCase _loginUseCase;
 
-  DriverLoginPresenter(this._loginUseCase) {
-    // For development purposes only - should be removed in production
+  @override
+  void onInit() {
+    super.onInit();
     _initDevelopmentCredentials();
-
-    // Check for existing login on initialization
     _checkExistingLogin();
   }
 
@@ -41,33 +37,33 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
 
   Future<void> onSignIn(BuildContext context) async {
     if (formKey.currentState?.validate() ?? false) {
-      await executeTaskWithLoading(() async {
-        final result = await _loginUseCase.execute(
-          email: emailController.text.trim(),
-          password: passwordController.text,
-        );
+      // await executeTaskWithLoading(() async {
+      //   final result = await _loginUseCase.execute(
+      //     email: emailController.text.trim(),
+      //     password: passwordController.text,
+      //   );
 
-        await result.fold(
-          // Handle error
-          (errorMessage) async {
-            await addUserMessage(errorMessage);
-          },
-          // Handle success
-          (user) async {
-            uiState.value = currentUiState.copyWith(
-              user: user,
-              isAuthenticated: true,
-            );
+      //   await result.fold(
+      //     // Handle error
+      //     (errorMessage) async {
+      //       await addUserMessage(errorMessage);
+      //     },
+      //     // Handle success
+      //     (user) async {
+      //       uiState.value = currentUiState.copyWith(
+      //         user: user,
+      //         isAuthenticated: true,
+      //       );
 
-            if (context.mounted) {
-              NavigationUtility.fadeReplacement(
-                context,
-                DriverHomePageOffline(),
-              );
-            }
-          },
-        );
-      });
+      //       if (context.mounted) {
+      //         NavigationUtility.fadeReplacement(
+      //           context,
+      //           DriverHomePageOffline(),
+      //         );
+      //       }
+      //     },
+      //   );
+      // });
     }
   }
 

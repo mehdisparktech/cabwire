@@ -1,12 +1,12 @@
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/domain/entities/driver/driver_entity.dart';
+import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
-import 'package:cabwire/domain/usecases/register_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_ui_state.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_confirm_information_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_license_information.dart';
@@ -21,7 +21,7 @@ import 'utils/driver_sign_up_ui_helpers.dart';
 
 class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // Use case dependency
-  final RegisterUseCase _registerUseCase;
+  final DriverAuthRepository _driverAuthRepository;
 
   // State management
   final Obs<DriverSignUpUiState> uiState = Obs(DriverSignUpUiState.empty());
@@ -39,7 +39,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // UI helpers
   late final DriverSignUpUIHelpers _uiHelpers;
 
-  DriverSignUpPresenter(this._registerUseCase);
+  DriverSignUpPresenter(this._driverAuthRepository);
 
   @override
   void onInit() {
@@ -259,9 +259,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // Registration completion
   Future<void> completeRegistration(BuildContext context) async {
     await executeTaskWithLoading(() async {
-      final result = await _registerUseCase.execute(
-        driver: currentUiState.driver!,
-      );
+      final result = await _driverAuthRepository.signUp(currentUiState.driver!);
 
       await result.fold(
         (errorMessage) async => await addUserMessage(errorMessage),
@@ -314,14 +312,10 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
       contact: '01682015732',
       role: 'DRIVER',
       status: 'active',
-      location: DriverLocation(
-        lat: uiState.value.driver?.location?.lat ?? 0,
-        lng: uiState.value.driver?.location?.lng ?? 0,
-        address: uiState.value.driver?.location?.address ?? '',
-      ),
+      location: DriverLocation(lat: 0, lng: 0, address: ''),
     );
 
-    final result = await _registerUseCase.execute(driver: driver);
+    final result = await _driverAuthRepository.signUp(driver);
     logError('result: $result');
     result.fold((errorMessage) async => await addUserMessage(errorMessage), (
       user,
@@ -335,7 +329,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     final updatedDriver = currentUiState.driver?.copyWith(
       contact: phoneNumberController.text.trim(),
       gender: genderController.text.trim(),
-      dateOfBirth: dateOfBirthController.text.trim(),
+      dateOfBirth: DateTime.parse(dateOfBirthController.text.trim()),
       image: profileImagePath,
     );
     _updateUiState(driver: updatedDriver, currentStep: 2);
@@ -345,7 +339,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     final updatedDriver = currentUiState.driver?.copyWith(
       driverLicense: DriverLicense(
         licenseNumber: int.parse(driverLicenseNumberController.text.trim()),
-        licenseExpiryDate: licenseExpiryDateController.text.trim(),
+        licenseExpiryDate: DateTime.parse(
+          licenseExpiryDateController.text.trim(),
+        ),
         uploadDriversLicense: licenseImagePath ?? '',
       ),
     );
@@ -357,7 +353,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
       driverVehicles: DriverVehicle(
         vehiclesMake: vehiclesMakeController.text.trim(),
         vehiclesModel: vehiclesModelController.text.trim(),
-        vehiclesYear: vehiclesYearController.text.trim(),
+        vehiclesYear: DateTime.parse(vehiclesYearController.text.trim()),
         vehiclesRegistrationNumber: int.parse(
           vehiclesRegistrationNumberController.text.trim(),
         ),
@@ -365,7 +361,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
           vehiclesInsuranceNumberController.text.trim(),
         ),
         vehiclesCategory: int.parse(vehicleCategoryController.text.trim()),
-        vehiclesPicture: vehicleImagePath ?? '',
+        vehiclesPicture: int.parse(vehicleImagePath ?? ''),
       ),
     );
     _updateUiState(driver: updatedDriver, currentStep: 4);
