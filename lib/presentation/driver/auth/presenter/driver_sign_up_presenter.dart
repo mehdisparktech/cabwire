@@ -12,24 +12,14 @@ import 'package:cabwire/presentation/driver/auth/ui/screens/driver_confirm_infor
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_license_information.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_vehicles_information_screen.dart';
 
+// Import the separated files
+import 'controllers/driver_sign_up_controllers.dart';
+import 'utils/driver_sign_up_constants.dart';
+import 'utils/driver_sign_up_navigation.dart';
+import 'utils/driver_sign_up_validation.dart';
+import 'utils/driver_sign_up_ui_helpers.dart';
+
 class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
-  // Configuration constants
-  static const int _verificationCodeLength = 6;
-  static const int _minAge = 18;
-  static const int _maxLicenseValidityYears = 10;
-
-  static const List<String> _genderOptions = ['Male', 'Female', 'Other'];
-  static const List<String> _vehicleCategories = [
-    'Sedan',
-    'SUV',
-    'Hatchback',
-    'Convertible',
-    'Van',
-    'Truck',
-    'Motorcycle',
-    'Other',
-  ];
-
   // Use case dependency
   final RegisterUseCase _registerUseCase;
 
@@ -37,127 +27,122 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   final Obs<DriverSignUpUiState> uiState = Obs(DriverSignUpUiState.empty());
   DriverSignUpUiState get currentUiState => uiState.value;
 
-  // Lazy-initialized controllers grouped by functionality
-  late final _SignUpControllers _signUpControllers;
-  late final _VerificationControllers _verificationControllers;
-  late final _PersonalInfoControllers _personalInfoControllers;
-  late final _LicenseControllers _licenseControllers;
-  late final _VehicleControllers _vehicleControllers;
-  late final _ResetPasswordControllers _resetPasswordControllers;
+  // Controllers - delegated to separate file
+  late final DriverSignUpControllers _controllers;
 
-  // Form keys
-  final Map<String, GlobalKey<FormState>> _formKeys = {
-    'signUp': GlobalKey<FormState>(),
-    'confirmInfo': GlobalKey<FormState>(),
-    'license': GlobalKey<FormState>(),
-    'vehicle': GlobalKey<FormState>(),
-    'resetPassword': GlobalKey<FormState>(),
-  };
+  // Navigation helper
+  late final DriverSignUpNavigation _navigation;
+
+  // Validation helper
+  late final DriverSignUpValidation _validation;
+
+  // UI helpers
+  late final DriverSignUpUIHelpers _uiHelpers;
 
   DriverSignUpPresenter(this._registerUseCase);
 
   @override
   void onInit() {
     super.onInit();
-    _initializeControllers();
+    _initializeHelpers();
   }
 
-  // Lazy initialization of controllers
-  void _initializeControllers() {
-    _signUpControllers = _SignUpControllers();
-    _verificationControllers = _VerificationControllers();
-    _personalInfoControllers = _PersonalInfoControllers();
-    _licenseControllers = _LicenseControllers();
-    _vehicleControllers = _VehicleControllers();
-    _resetPasswordControllers = _ResetPasswordControllers();
+  void _initializeHelpers() {
+    _controllers = DriverSignUpControllers();
+    _navigation = DriverSignUpNavigation();
+    _validation = DriverSignUpValidation();
+    _uiHelpers = DriverSignUpUIHelpers();
   }
 
-  // Getters for easy access
-  GlobalKey<FormState> get signUpFormKey => _formKeys['signUp']!;
-  GlobalKey<FormState> get confirmInfoFormKey => _formKeys['confirmInfo']!;
-  GlobalKey<FormState> get licenseInfoFormKey => _formKeys['license']!;
-  GlobalKey<FormState> get vehicleInfoFormKey => _formKeys['vehicle']!;
-  GlobalKey<FormState> get resetPasswordFormKey => _formKeys['resetPassword']!;
+  // Form keys
+  GlobalKey<FormState> get signUpFormKey => _controllers.signUpFormKey;
+  GlobalKey<FormState> get confirmInfoFormKey =>
+      _controllers.confirmInfoFormKey;
+  GlobalKey<FormState> get licenseInfoFormKey =>
+      _controllers.licenseInfoFormKey;
+  GlobalKey<FormState> get vehicleInfoFormKey =>
+      _controllers.vehicleInfoFormKey;
+  GlobalKey<FormState> get resetPasswordFormKey =>
+      _controllers.resetPasswordFormKey;
 
-  // Sign-up screen getters
-  TextEditingController get nameController => _signUpControllers.name;
-  TextEditingController get emailController => _signUpControllers.email;
-  TextEditingController get passwordController => _signUpControllers.password;
+  // Controller getters - delegated to controllers class
+  TextEditingController get nameController => _controllers.nameController;
+  TextEditingController get emailController => _controllers.emailController;
+  TextEditingController get passwordController =>
+      _controllers.passwordController;
   TextEditingController get confirmPasswordController =>
-      _signUpControllers.confirmPassword;
+      _controllers.confirmPasswordController;
 
-  // Verification code getters
   List<TextEditingController> get verificationCodeControllers =>
-      _verificationControllers.controllers;
+      _controllers.verificationCodeControllers;
   List<FocusNode> get verificationCodeFocusNodes =>
-      _verificationControllers.focusNodes;
+      _controllers.verificationCodeFocusNodes;
 
-  // Personal info getters
   TextEditingController get phoneNumberController =>
-      _personalInfoControllers.phoneNumber;
-  TextEditingController get genderController => _personalInfoControllers.gender;
+      _controllers.phoneNumberController;
+  TextEditingController get genderController => _controllers.genderController;
   TextEditingController get dateOfBirthController =>
-      _personalInfoControllers.dateOfBirth;
-  String? get profileImagePath => _personalInfoControllers.profileImagePath;
+      _controllers.dateOfBirthController;
+  String? get profileImagePath => _controllers.profileImagePath;
 
-  // License info getters
   TextEditingController get driverLicenseNumberController =>
-      _licenseControllers.licenseNumber;
+      _controllers.driverLicenseNumberController;
   TextEditingController get licenseExpiryDateController =>
-      _licenseControllers.expiryDate;
+      _controllers.licenseExpiryDateController;
   TextEditingController get driverLicenseImageController =>
-      _licenseControllers.licenseImage;
-  String? get licenseImagePath => _licenseControllers.licenseImagePath;
+      _controllers.driverLicenseImageController;
+  String? get licenseImagePath => _controllers.licenseImagePath;
 
-  // Vehicle info getters
-  TextEditingController get vehiclesMakeController => _vehicleControllers.make;
+  TextEditingController get vehiclesMakeController =>
+      _controllers.vehiclesMakeController;
   TextEditingController get vehiclesModelController =>
-      _vehicleControllers.model;
-  TextEditingController get vehiclesYearController => _vehicleControllers.year;
+      _controllers.vehiclesModelController;
+  TextEditingController get vehiclesYearController =>
+      _controllers.vehiclesYearController;
   TextEditingController get vehiclesRegistrationNumberController =>
-      _vehicleControllers.registrationNumber;
+      _controllers.vehiclesRegistrationNumberController;
   TextEditingController get vehiclesInsuranceNumberController =>
-      _vehicleControllers.insuranceNumber;
+      _controllers.vehiclesInsuranceNumberController;
   TextEditingController get vehicleCategoryController =>
-      _vehicleControllers.category;
+      _controllers.vehicleCategoryController;
   TextEditingController get vehiclesPictureController =>
-      _vehicleControllers.picture;
-  String? get vehicleImagePath => _vehicleControllers.vehicleImagePath;
+      _controllers.vehiclesPictureController;
+  String? get vehicleImagePath => _controllers.vehicleImagePath;
 
-  // Reset password getters
   TextEditingController get resetPasswordController =>
-      _resetPasswordControllers.password;
+      _controllers.resetPasswordController;
   TextEditingController get resetConfirmPasswordController =>
-      _resetPasswordControllers.confirmPassword;
-  bool get resetObscurePassword => _resetPasswordControllers.obscurePassword;
+      _controllers.resetConfirmPasswordController;
+  bool get resetObscurePassword => _controllers.resetObscurePassword;
   bool get resetObscureConfirmPassword =>
-      _resetPasswordControllers.obscureConfirmPassword;
+      _controllers.resetObscureConfirmPassword;
 
   // Password visibility methods
   void togglePasswordVisibility() =>
       _updateUiState(obscurePassword: !currentUiState.obscurePassword);
-
   void toggleConfirmPasswordVisibility() => _updateUiState(
     obscureConfirmPassword: !currentUiState.obscureConfirmPassword,
   );
-
   void toggleResetPasswordVisibility() {
-    _resetPasswordControllers.togglePasswordVisibility();
+    _controllers.toggleResetPasswordVisibility();
     _updateUiState();
   }
 
   void toggleResetConfirmPasswordVisibility() {
-    _resetPasswordControllers.toggleConfirmPasswordVisibility();
+    _controllers.toggleResetConfirmPasswordVisibility();
     _updateUiState();
   }
 
-  // Validation methods
-  bool validatePasswords() =>
-      passwordController.text == confirmPasswordController.text;
+  // Validation methods - delegated to validation helper
+  bool validatePasswords() => _validation.validatePasswords(
+    passwordController.text,
+    confirmPasswordController.text,
+  );
 
   // Email verification methods
   void onCodeDigitInput(int index, String value) {
-    if (value.isNotEmpty && index < _verificationCodeLength - 1) {
+    if (value.isNotEmpty &&
+        index < DriverSignUpConstants.verificationCodeLength - 1) {
       verificationCodeFocusNodes[index + 1].requestFocus();
     }
   }
@@ -166,18 +151,15 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     addUserMessage('Verification code resent');
   }
 
-  String getMaskedEmail(String email) {
-    if (email.isEmpty || !email.contains('@')) return email;
-    return email.replaceRange(3, email.indexOf('@'), '...');
-  }
+  String getMaskedEmail(String email) => _validation.getMaskedEmail(email);
 
   Future<void> verifyEmailCode(BuildContext context, bool isSignUp) async {
     final code =
         verificationCodeControllers.map((controller) => controller.text).join();
 
-    if (code.length != _verificationCodeLength) {
+    if (code.length != DriverSignUpConstants.verificationCodeLength) {
       await addUserMessage(
-        'Please enter a valid $_verificationCodeLength-digit code',
+        'Please enter a valid ${DriverSignUpConstants.verificationCodeLength}-digit code',
       );
       return;
     }
@@ -188,20 +170,24 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
             : const ResetPasswordScreen();
 
     if (context.mounted) {
-      _navigateWithSlideTransition(context, targetScreen, clearStack: true);
+      _navigation.navigateWithSlideTransition(
+        context,
+        targetScreen,
+        clearStack: true,
+      );
     }
   }
 
   // Sign-up flow methods
   Future<void> onSignUp(BuildContext context) async {
-    if (!_validateForm(signUpFormKey)) return;
+    if (!_validation.validateForm(signUpFormKey)) return;
 
     if (!validatePasswords()) {
       await addUserMessage('Passwords do not match');
       return;
     }
 
-    _updateRegistrationStep1();
+    await _updateRegistrationStep1();
 
     if (context.mounted) {
       NavigationUtility.slideRight(
@@ -212,8 +198,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   }
 
   void confirmPersonalInformation(BuildContext context) {
-    if (!_validateForm(confirmInfoFormKey)) return;
-
+    if (!_validation.validateForm(confirmInfoFormKey)) return;
     _updateRegistrationStep2();
     NavigationUtility.slideRight(
       context,
@@ -222,66 +207,54 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   }
 
   void confirmLicenseInformation(BuildContext context) {
-    if (!_validateForm(licenseInfoFormKey)) return;
-
+    if (!_validation.validateForm(licenseInfoFormKey)) return;
     _updateRegistrationStep3();
     NavigationUtility.slideRight(context, const VehiclesInformationScreen());
   }
 
   void confirmVehicleInformation(BuildContext context) {
-    if (!_validateForm(vehicleInfoFormKey)) return;
-
+    if (!_validation.validateForm(vehicleInfoFormKey)) return;
     _updateRegistrationStep4();
     completeRegistration(context);
   }
 
-  // Date picker methods
+  // Date picker methods - delegated to UI helpers
   Future<void> selectDateOfBirth(BuildContext context) async {
-    final picked = await _showDatePicker(
-      context: context,
-      initialDate: DateTime.now().subtract(Duration(days: 365 * _minAge)),
-      firstDate: DateTime(1940),
-      lastDate: DateTime.now(),
-    );
-
+    final picked = await _uiHelpers.showDateOfBirthPicker(context);
     if (picked != null) {
-      dateOfBirthController.text = _formatDate(picked);
+      dateOfBirthController.text = _uiHelpers.formatDate(picked);
     }
   }
 
   Future<void> selectLicenseExpiryDate(BuildContext context) async {
-    final picked = await _showDatePicker(
-      context: context,
-      initialDate: DateTime.now().add(const Duration(days: 365)),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(
-        Duration(days: 365 * _maxLicenseValidityYears),
-      ),
-    );
-
+    final picked = await _uiHelpers.showLicenseExpiryDatePicker(context);
     if (picked != null) {
-      licenseExpiryDateController.text = _formatDate(picked);
+      licenseExpiryDateController.text = _uiHelpers.formatDate(picked);
     }
   }
 
-  // Selection methods
+  // Selection methods - delegated to UI helpers
   void showGenderSelectionSheet(BuildContext context) =>
-      _showSelectionSheet(context, _genderOptions, genderController);
+      _uiHelpers.showSelectionSheet(
+        context,
+        DriverSignUpConstants.genderOptions,
+        genderController,
+      );
 
   void showVehicleCategorySelectionSheet(BuildContext context) =>
-      _showSelectionSheet(
+      _uiHelpers.showSelectionSheet(
         context,
-        _vehicleCategories,
+        DriverSignUpConstants.vehicleCategories,
         vehicleCategoryController,
       );
 
   // Image selection methods
   void uploadProfilePicture() =>
-      _personalInfoControllers.setProfileImage('dummy_profile_path');
+      _controllers.setProfileImage('dummy_profile_path');
   void selectLicenseImage() =>
-      _licenseControllers.setLicenseImage('dummy_license_path');
+      _controllers.setLicenseImage('dummy_license_path');
   void selectVehicleImage() =>
-      _vehicleControllers.setVehicleImage('dummy_vehicle_path');
+      _controllers.setVehicleImage('dummy_vehicle_path');
 
   // Registration completion
   Future<void> completeRegistration(BuildContext context) async {
@@ -295,7 +268,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
         (user) async {
           _updateUiState(isRegistered: true);
           if (context.mounted) {
-            _navigateWithFadeTransition(
+            _navigation.navigateWithFadeTransition(
               context,
               const AuthNavigator(),
               clearStack: true,
@@ -308,9 +281,8 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
 
   // Reset password
   void resetPassword(BuildContext context) {
-    if (!_validateForm(resetPasswordFormKey)) return;
-
-    _navigateWithSlideTransition(
+    if (!_validation.validateForm(resetPasswordFormKey)) return;
+    _navigation.navigateWithSlideTransition(
       context,
       const AuthNavigator(),
       clearStack: true,
@@ -318,9 +290,6 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   }
 
   // Private helper methods
-  bool _validateForm(GlobalKey<FormState> formKey) =>
-      formKey.currentState?.validate() ?? false;
-
   void _updateUiState({
     bool? obscurePassword,
     bool? obscureConfirmPassword,
@@ -369,7 +338,6 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
       dateOfBirth: dateOfBirthController.text.trim(),
       image: profileImagePath,
     );
-
     _updateUiState(driver: updatedDriver, currentStep: 2);
   }
 
@@ -381,7 +349,6 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
         uploadDriversLicense: licenseImagePath ?? '',
       ),
     );
-
     _updateUiState(driver: updatedDriver, currentStep: 3);
   }
 
@@ -401,94 +368,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
         vehiclesPicture: vehicleImagePath ?? '',
       ),
     );
-
     _updateUiState(driver: updatedDriver, currentStep: 4);
-  }
-
-  Future<DateTime?> _showDatePicker({
-    required BuildContext context,
-    required DateTime initialDate,
-    required DateTime firstDate,
-    required DateTime lastDate,
-  }) => showDatePicker(
-    context: context,
-    initialDate: initialDate,
-    firstDate: firstDate,
-    lastDate: lastDate,
-  );
-
-  String _formatDate(DateTime date) => "${date.day}/${date.month}/${date.year}";
-
-  void _showSelectionSheet(
-    BuildContext context,
-    List<String> options,
-    TextEditingController controller,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      builder:
-          (context) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children:
-                options
-                    .map(
-                      (option) => ListTile(
-                        title: Text(option),
-                        onTap: () {
-                          controller.text = option;
-                          Navigator.pop(context);
-                        },
-                      ),
-                    )
-                    .toList(),
-          ),
-    );
-  }
-
-  void _navigateWithSlideTransition(
-    BuildContext context,
-    Widget destination, {
-    bool clearStack = false,
-  }) {
-    final route = PageRouteBuilder(
-      pageBuilder: (context, animation1, animation2) => destination,
-      transitionDuration: const Duration(milliseconds: 300),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1.0, 0.0),
-            end: Offset.zero,
-          ).animate(animation),
-          child: child,
-        );
-      },
-    );
-
-    if (clearStack) {
-      Navigator.pushAndRemoveUntil(context, route, (route) => false);
-    } else {
-      Navigator.push(context, route);
-    }
-  }
-
-  void _navigateWithFadeTransition(
-    BuildContext context,
-    Widget destination, {
-    bool clearStack = false,
-  }) {
-    final route = PageRouteBuilder(
-      pageBuilder: (context, animation1, animation2) => destination,
-      transitionDuration: const Duration(milliseconds: 300),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(opacity: animation, child: child);
-      },
-    );
-
-    if (clearStack) {
-      Navigator.pushAndRemoveUntil(context, route, (route) => false);
-    } else {
-      Navigator.push(context, route);
-    }
   }
 
   // BasePresenter overrides
@@ -505,161 +385,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
 
   @override
   void dispose() {
-    _signUpControllers.dispose();
-    _verificationControllers.dispose();
-    _personalInfoControllers.dispose();
-    _licenseControllers.dispose();
-    _vehicleControllers.dispose();
-    _resetPasswordControllers.dispose();
+    _controllers.dispose();
     super.dispose();
-  }
-}
-
-// Controller groups for better organization and memory management
-class _SignUpControllers {
-  late final TextEditingController name;
-  late final TextEditingController email;
-  late final TextEditingController password;
-  late final TextEditingController confirmPassword;
-
-  _SignUpControllers() {
-    name = TextEditingController();
-    email = TextEditingController();
-    password = TextEditingController();
-    confirmPassword = TextEditingController();
-  }
-
-  void dispose() {
-    name.dispose();
-    email.dispose();
-    password.dispose();
-    confirmPassword.dispose();
-  }
-}
-
-class _VerificationControllers {
-  late final List<TextEditingController> controllers;
-  late final List<FocusNode> focusNodes;
-
-  _VerificationControllers() {
-    controllers = List.generate(6, (_) => TextEditingController());
-    focusNodes = List.generate(6, (_) => FocusNode());
-  }
-
-  void dispose() {
-    for (var controller in controllers) {
-      controller.dispose();
-    }
-    for (var focusNode in focusNodes) {
-      focusNode.dispose();
-    }
-  }
-}
-
-class _PersonalInfoControllers {
-  late final TextEditingController phoneNumber;
-  late final TextEditingController gender;
-  late final TextEditingController dateOfBirth;
-  String? profileImagePath;
-
-  _PersonalInfoControllers() {
-    phoneNumber = TextEditingController();
-    gender = TextEditingController();
-    dateOfBirth = TextEditingController();
-  }
-
-  void setProfileImage(String path) {
-    profileImagePath = path;
-  }
-
-  void dispose() {
-    phoneNumber.dispose();
-    gender.dispose();
-    dateOfBirth.dispose();
-  }
-}
-
-class _LicenseControllers {
-  late final TextEditingController licenseNumber;
-  late final TextEditingController expiryDate;
-  late final TextEditingController licenseImage;
-  String? licenseImagePath;
-
-  _LicenseControllers() {
-    licenseNumber = TextEditingController();
-    expiryDate = TextEditingController();
-    licenseImage = TextEditingController();
-  }
-
-  void setLicenseImage(String path) {
-    licenseImagePath = path;
-    licenseImage.text = 'License image selected';
-  }
-
-  void dispose() {
-    licenseNumber.dispose();
-    expiryDate.dispose();
-    licenseImage.dispose();
-  }
-}
-
-class _VehicleControllers {
-  late final TextEditingController make;
-  late final TextEditingController model;
-  late final TextEditingController year;
-  late final TextEditingController registrationNumber;
-  late final TextEditingController insuranceNumber;
-  late final TextEditingController category;
-  late final TextEditingController picture;
-  String? vehicleImagePath;
-
-  _VehicleControllers() {
-    make = TextEditingController();
-    model = TextEditingController();
-    year = TextEditingController();
-    registrationNumber = TextEditingController();
-    insuranceNumber = TextEditingController();
-    category = TextEditingController();
-    picture = TextEditingController();
-  }
-
-  void setVehicleImage(String path) {
-    vehicleImagePath = path;
-    picture.text = 'Vehicle image selected';
-  }
-
-  void dispose() {
-    make.dispose();
-    model.dispose();
-    year.dispose();
-    registrationNumber.dispose();
-    insuranceNumber.dispose();
-    category.dispose();
-    picture.dispose();
-  }
-}
-
-class _ResetPasswordControllers {
-  late final TextEditingController password;
-  late final TextEditingController confirmPassword;
-  bool obscurePassword = true;
-  bool obscureConfirmPassword = true;
-
-  _ResetPasswordControllers() {
-    password = TextEditingController();
-    confirmPassword = TextEditingController();
-  }
-
-  void togglePasswordVisibility() {
-    obscurePassword = !obscurePassword;
-  }
-
-  void toggleConfirmPasswordVisibility() {
-    obscureConfirmPassword = !obscureConfirmPassword;
-  }
-
-  void dispose() {
-    password.dispose();
-    confirmPassword.dispose();
   }
 }
