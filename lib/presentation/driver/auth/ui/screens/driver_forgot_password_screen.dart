@@ -1,44 +1,20 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/app_strings.dart';
-import 'package:cabwire/core/utility/navigation_utility.dart';
-import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../../common/components/auth/custom_text_form_field.dart';
 import '../../../../common/components/auth/custom_button.dart';
 import '../../../../common/components/auth/auth_screen_wrapper.dart';
 import '../../../../common/components/auth/auth_form_container.dart';
 import '../../../../common/components/auth/auth_validators.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
+class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
-}
-
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    super.dispose();
-  }
-
-  void _sendVerificationCode() {
-    // if (_formKey.currentState?.validate() ?? false) {
-    //   // Sign in logic here
-    //   print('Email: ${_emailController.text}');
-    // }
-    NavigationUtility.slideRight(
-      context,
-      DriverEmailVerificationScreen(isSignUp: false),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final presenter = locate<DriverSignUpPresenter>();
     return AuthScreenWrapper(
       title: AppStrings.driverForgotPassword,
       subtitle: AppStrings.driverEnterEmailHint,
@@ -46,10 +22,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       child: AuthFormContainer(
         logoAssetPath: AppAssets.icDriverLogo,
         logoAssetPath2: AppAssets.icCabwireLogo,
-        formKey: _formKey,
+        formKey: presenter.resetPasswordFormKey,
         formFields: [
           CustomTextFormField(
-            controller: _emailController,
+            controller: presenter.emailController,
             hintText: 'example@email.com',
             keyboardType: TextInputType.emailAddress,
             validator: AuthValidators.validateEmail,
@@ -57,7 +33,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ],
         actionButton: CustomButton(
           text: AppStrings.driverGetVerificationCode,
-          onPressed: _sendVerificationCode,
+          onPressed: () => presenter.resendVerificationCode(),
         ),
       ),
     );
