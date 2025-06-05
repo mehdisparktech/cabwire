@@ -1,4 +1,5 @@
 import 'package:cabwire/core/utility/logger_utility.dart';
+import 'package:cabwire/data/models/user_model.dart';
 import 'package:cabwire/domain/entities/driver/driver_entity.dart';
 import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
@@ -7,6 +8,7 @@ import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_passwor
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_ui_state.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_confirm_information_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_license_information.dart';
@@ -119,18 +121,18 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
 
   // Password visibility methods
   void togglePasswordVisibility() =>
-      _updateUiState(obscurePassword: !currentUiState.obscurePassword);
-  void toggleConfirmPasswordVisibility() => _updateUiState(
+      currentUiState.copyWith(obscurePassword: !currentUiState.obscurePassword);
+  void toggleConfirmPasswordVisibility() => currentUiState.copyWith(
     obscureConfirmPassword: !currentUiState.obscureConfirmPassword,
   );
   void toggleResetPasswordVisibility() {
     _controllers.toggleResetPasswordVisibility();
-    _updateUiState();
+    currentUiState.copyWith();
   }
 
   void toggleResetConfirmPasswordVisibility() {
     _controllers.toggleResetConfirmPasswordVisibility();
-    _updateUiState();
+    currentUiState.copyWith();
   }
 
   // Validation methods - delegated to validation helper
@@ -184,17 +186,11 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
 
     if (!validatePasswords()) {
       await addUserMessage('Passwords do not match');
+      await showMessage(message: 'Passwords do not match');
       return;
     }
 
-    await _updateRegistrationStep1();
-
-    if (context.mounted) {
-      NavigationUtility.slideRight(
-        context,
-        const DriverEmailVerificationScreen(isSignUp: true),
-      );
-    }
+    await _updateRegistrationStep1(context);
   }
 
   void confirmPersonalInformation(BuildContext context) {
@@ -259,12 +255,14 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // Registration completion
   Future<void> completeRegistration(BuildContext context) async {
     await executeTaskWithLoading(() async {
-      final result = await _driverAuthRepository.signUp(currentUiState.driver!);
+      final result = await _driverAuthRepository.signUp(
+        currentUiState.user! as UserModel,
+      );
 
       await result.fold(
         (errorMessage) async => await addUserMessage(errorMessage),
         (user) async {
-          _updateUiState(isRegistered: true);
+          currentUiState.copyWith(isRegistered: true);
           if (context.mounted) {
             _navigation.navigateWithFadeTransition(
               context,
@@ -288,41 +286,53 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   }
 
   // Private helper methods
-  void _updateUiState({
-    bool? obscurePassword,
-    bool? obscureConfirmPassword,
-    bool? isRegistered,
-    DriverEntity? driver,
-    int? currentStep,
-  }) {
-    uiState.value = currentUiState.copyWith(
-      obscurePassword: obscurePassword,
-      obscureConfirmPassword: obscureConfirmPassword,
-      isRegistered: isRegistered,
-      driver: driver,
-      currentStep: currentStep,
-    );
-  }
+  // void _updateUiState({
+  //   bool? obscurePassword,
+  //   bool? obscureConfirmPassword,
+  //   bool? isRegistered,
+  //   DriverEntity? driver,
+  //   int? currentStep,
+  // }) {
+  //   uiState.value = currentUiState.copyWith(
+  //     obscurePassword: obscurePassword,
+  //     obscureConfirmPassword: obscureConfirmPassword,
+  //     isRegistered: isRegistered,
+  //     driver: driver,
+  //     currentStep: currentStep,
+  //   );
+  // }
 
-  Future<void> _updateRegistrationStep1() async {
-    final driver = DriverEntity(
+  Future<void> _updateRegistrationStep1(BuildContext context) async {
+    final driver = UserModel(
       name: nameController.text.trim(),
+      role: 'DRIVER',
       email: emailController.text.trim(),
       password: passwordController.text,
-      contact: '01682015732',
-      role: 'DRIVER',
-      status: 'active',
-      location: DriverLocation(lat: 0, lng: 0, address: ''),
     );
 
     final result = await _driverAuthRepository.signUp(driver);
     logError('result: $result');
-    result.fold((errorMessage) async => await addUserMessage(errorMessage), (
-      user,
-    ) async {
-      logError(user);
-      _updateUiState(driver: driver, currentStep: 1);
-    });
+    result.fold(
+      (errorMessage) async {
+        await addUserMessage(errorMessage);
+        uiState.value = currentUiState.copyWith(currentStep: 0);
+        await showMessage(message: errorMessage);
+      },
+      (user) async {
+        logError(user);
+        uiState.value = currentUiState.copyWith(user: user, currentStep: 1);
+        await showMessage(message: 'send otp to ${user.data?.email}');
+      },
+    );
+    if (result.isRight()) {
+      debugPrint('currentUiState: ${currentUiState.user?.success}');
+      if (context.mounted) {
+        NavigationUtility.slideRight(
+          context,
+          const DriverEmailVerificationScreen(isSignUp: true),
+        );
+      }
+    }
   }
 
   void _updateRegistrationStep2() {
@@ -332,7 +342,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
       dateOfBirth: DateTime.parse(dateOfBirthController.text.trim()),
       image: profileImagePath,
     );
-    _updateUiState(driver: updatedDriver, currentStep: 2);
+    currentUiState.copyWith(driver: updatedDriver, currentStep: 2);
   }
 
   void _updateRegistrationStep3() {
@@ -345,7 +355,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
         uploadDriversLicense: licenseImagePath ?? '',
       ),
     );
-    _updateUiState(driver: updatedDriver, currentStep: 3);
+    currentUiState.copyWith(driver: updatedDriver, currentStep: 3);
   }
 
   void _updateRegistrationStep4() {
@@ -364,19 +374,18 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
         vehiclesPicture: int.parse(vehicleImagePath ?? ''),
       ),
     );
-    _updateUiState(driver: updatedDriver, currentStep: 4);
+    currentUiState.copyWith(driver: updatedDriver, currentStep: 4);
   }
 
   // BasePresenter overrides
   @override
   Future<void> addUserMessage(String message) async {
-    _updateUiState(); // Trigger UI update with message
+    currentUiState.copyWith(userMessage: message);
   }
 
   @override
   Future<void> toggleLoading({required bool loading}) async {
-    // Implementation depends on your UI state structure
-    // uiState.value = currentUiState.copyWith(isLoading: loading);
+    currentUiState.copyWith(isLoading: loading);
   }
 
   @override

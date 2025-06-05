@@ -101,7 +101,7 @@ Future<void> showMessage({String? message}) async {
 
   ToastUtility.showCustomToast(
     message: message,
-    yOffset: 100.0,
+    yOffset: 50.0,
     duration: const Duration(milliseconds: 1000),
   );
 }
