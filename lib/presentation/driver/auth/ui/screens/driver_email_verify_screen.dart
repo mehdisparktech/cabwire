@@ -55,7 +55,7 @@ class DriverEmailVerificationScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: List.generate(
-              6,
+              4,
               (index) => SizedBox(
                 width: px40,
                 height: px50,

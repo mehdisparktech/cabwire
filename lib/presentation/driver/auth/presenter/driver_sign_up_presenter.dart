@@ -2,6 +2,8 @@ import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/data/models/user_model.dart';
 import 'package:cabwire/domain/entities/driver/driver_entity.dart';
 import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
+import 'package:cabwire/domain/usecases/driver/resent_code_usecase.dart';
+import 'package:cabwire/domain/usecases/driver/verify_email_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_password_screen.dart';
@@ -24,7 +26,8 @@ import 'utils/driver_sign_up_ui_helpers.dart';
 class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // Use case dependency
   final DriverAuthRepository _driverAuthRepository;
-
+  final VerifyEmailUsecase _verifyEmailUsecase;
+  final ResentCodeUsecase _resentCodeUsecase;
   // State management
   final Obs<DriverSignUpUiState> uiState = Obs(DriverSignUpUiState.empty());
   DriverSignUpUiState get currentUiState => uiState.value;
@@ -41,7 +44,11 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // UI helpers
   late final DriverSignUpUIHelpers _uiHelpers;
 
-  DriverSignUpPresenter(this._driverAuthRepository);
+  DriverSignUpPresenter(
+    this._driverAuthRepository,
+    this._verifyEmailUsecase,
+    this._resentCodeUsecase,
+  );
 
   @override
   void onInit() {
@@ -149,8 +156,15 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     }
   }
 
-  void resendVerificationCode() {
-    addUserMessage('Verification code resent');
+  Future<void> resendVerificationCode() async {
+    final result = await _resentCodeUsecase.execute(
+      emailController.text.trim(),
+    );
+    result.fold(
+      (errorMessage) async => await addUserMessage(errorMessage),
+      (message) async => await addUserMessage(message),
+    );
+    await showMessage(message: result.fold((l) => l, (r) => r));
   }
 
   String getMaskedEmail(String email) => _validation.getMaskedEmail(email);
@@ -158,6 +172,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   Future<void> verifyEmailCode(BuildContext context, bool isSignUp) async {
     final code =
         verificationCodeControllers.map((controller) => controller.text).join();
+    debugPrint('code: $code');
 
     if (code.length != DriverSignUpConstants.verificationCodeLength) {
       await addUserMessage(
@@ -166,18 +181,31 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
       return;
     }
 
-    final targetScreen =
-        isSignUp
-            ? const ConfirmInformationScreen()
-            : const ResetPasswordScreen();
+    final result = await _verifyEmailUsecase.execute(
+      emailController.text.trim(),
+      code,
+    );
+    debugPrint('result: $result');
+    result.fold(
+      (errorMessage) async => await addUserMessage(errorMessage),
+      (message) async => await addUserMessage(message),
+    );
 
-    if (context.mounted) {
-      _navigation.navigateWithSlideTransition(
-        context,
-        targetScreen,
-        clearStack: true,
-      );
+    if (result.isRight()) {
+      final targetScreen =
+          isSignUp
+              ? const ConfirmInformationScreen()
+              : const ResetPasswordScreen();
+
+      if (context.mounted) {
+        _navigation.navigateWithSlideTransition(
+          context,
+          targetScreen,
+          clearStack: true,
+        );
+      }
     }
+    await showMessage(message: result.fold((l) => l, (r) => r));
   }
 
   // Sign-up flow methods

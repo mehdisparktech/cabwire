@@ -1,6 +1,6 @@
 class DriverSignUpConstants {
   // Configuration constants
-  static const int verificationCodeLength = 6;
+  static const int verificationCodeLength = 4;
   static const int minAge = 18;
   static const int maxLicenseValidityYears = 10;
 
