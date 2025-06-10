@@ -1,5 +1,6 @@
 import 'package:cabwire/core/base/result.dart';
 import 'package:cabwire/core/config/api/api_end_point.dart';
+import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/data/models/signin_response_model.dart';
 import 'package:cabwire/data/models/signup_response_model.dart';
 import 'package:cabwire/data/models/user_model.dart';
@@ -12,6 +13,7 @@ abstract class DriverAuthRemoteDataSource {
   Future<Result<String>> verifyEmail(String email, String otp);
   Future<Result<String>> resetCode(String email);
   Future<Result<String>> forgotPassword(String email);
+  Future<Result<String>> updateDriverProfile(DriverProfileModel profile);
 }
 
 class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
@@ -92,6 +94,23 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
       final result = await apiService.post(
         ApiEndPoint.forgotPassword,
         body: {'email': email},
+      );
+      return result.fold(
+        (l) => left(l.message),
+        (r) => right(r.data['message']),
+      );
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
+
+  // update driver profile
+  @override
+  Future<Result<String>> updateDriverProfile(DriverProfileModel profile) async {
+    try {
+      final result = await apiService.put(
+        ApiEndPoint.updateDriverProfile,
+        body: profile.toJson(),
       );
       return result.fold(
         (l) => left(l.message),

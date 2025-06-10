@@ -1,6 +1,9 @@
 import 'package:cabwire/core/utility/logger_utility.dart';
+import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/data/models/user_model.dart';
 import 'package:cabwire/domain/entities/driver/driver_entity.dart';
+import 'package:cabwire/domain/entities/driver/driver_profile_entity.dart';
+import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/forget_password_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/resent_code_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_sign_up_usecase.dart';
@@ -31,6 +34,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   final ResentCodeUsecase _resentCodeUsecase;
   final DriverSignUpUseCase _signUpUsecase;
   final ForgetPasswordUsecase _forgotPasswordUsecase;
+  final DriverProfileUpdateUsecase _driverProfileUpdateUsecase;
 
   // State management
   final Obs<DriverSignUpUiState> uiState = Obs(DriverSignUpUiState.empty());
@@ -54,6 +58,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     this._resentCodeUsecase,
     this._signUpUsecase,
     this._forgotPasswordUsecase,
+    this._driverProfileUpdateUsecase,
   );
 
   @override
@@ -293,9 +298,33 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // Registration completion
   Future<void> completeRegistration(BuildContext context) async {
     await executeTaskWithLoading(() async {
-      final result = await _signUpUsecase.call(
-        currentUiState.user! as UserModel,
+      final profile = DriverProfileModel(
+        name: nameController.text.trim(),
+        contact: phoneNumberController.text.trim(),
+        gender: genderController.text.trim(),
+        dateOfBirth: dateOfBirthController.text.trim(),
+        image: profileImagePath,
+        driverLicense: DriverLicenseEntity(
+          licenseNumber: int.parse(driverLicenseNumberController.text.trim()),
+          licenseExpiryDate: licenseExpiryDateController.text.trim(),
+          uploadDriversLicense: licenseImagePath ?? '',
+        ),
+        driverVehicles: DriverVehicleEntity(
+          vehiclesMake: vehiclesMakeController.text.trim(),
+          vehiclesModel: vehiclesModelController.text.trim(),
+          vehiclesYear: vehiclesYearController.text.trim(),
+          vehiclesRegistrationNumber: int.parse(
+            vehiclesRegistrationNumberController.text.trim(),
+          ),
+          vehiclesInsuranceNumber: int.parse(
+            vehiclesInsuranceNumberController.text.trim(),
+          ),
+          // vehiclesCategory: int.parse(vehicleCategoryController.text.trim()),
+          vehiclesCategory: 1,
+          vehiclesPicture: vehicleImagePath ?? '',
+        ),
       );
+      final result = await _driverProfileUpdateUsecase.execute(profile);
 
       await result.fold(
         (errorMessage) async => await addUserMessage(errorMessage),

@@ -1,4 +1,5 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
+import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/domain/entities/driver/driver_entity.dart';
 import 'package:cabwire/domain/entities/signup_response_entity.dart';
 
@@ -11,6 +12,7 @@ class DriverSignUpUiState extends BaseUiState {
   final bool obscureConfirmPassword;
   final int currentStep;
   final bool isRegistered;
+  final DriverProfileModel? profile;
 
   const DriverSignUpUiState({
     required super.isLoading,
@@ -21,6 +23,7 @@ class DriverSignUpUiState extends BaseUiState {
     this.obscureConfirmPassword = true,
     this.currentStep = 0,
     this.isRegistered = false,
+    this.profile,
   });
 
   factory DriverSignUpUiState.empty() {
@@ -33,6 +36,7 @@ class DriverSignUpUiState extends BaseUiState {
       obscureConfirmPassword: true,
       currentStep: 0,
       isRegistered: false,
+      profile: null,
     );
   }
 
@@ -46,6 +50,7 @@ class DriverSignUpUiState extends BaseUiState {
     obscureConfirmPassword,
     currentStep,
     isRegistered,
+    profile,
   ];
 
   DriverSignUpUiState copyWith({
@@ -57,6 +62,7 @@ class DriverSignUpUiState extends BaseUiState {
     bool? obscureConfirmPassword,
     int? currentStep,
     bool? isRegistered,
+    DriverProfileModel? profile,
   }) {
     return DriverSignUpUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -68,6 +74,7 @@ class DriverSignUpUiState extends BaseUiState {
           obscureConfirmPassword ?? this.obscureConfirmPassword,
       currentStep: currentStep ?? this.currentStep,
       isRegistered: isRegistered ?? this.isRegistered,
+      profile: profile ?? this.profile,
     );
   }
 }

@@ -1,4 +1,7 @@
+import 'package:cabwire/data/models/driver/driver_profile_model.dart';
+
 import '../../domain/entities/driver/driver_entity.dart';
+import '../../domain/entities/driver/driver_profile_entity.dart';
 import '../models/driver/driver_model.dart';
 
 extension DriverModelMapper on DriverModel {
@@ -71,6 +74,36 @@ extension DriverEntityMapper on DriverEntity {
         vehiclesInsuranceNumber: driverVehicles?.vehiclesInsuranceNumber ?? 0,
         vehiclesPicture: driverVehicles?.vehiclesPicture ?? 0,
         vehiclesCategory: driverVehicles?.vehiclesCategory ?? 0,
+      ),
+    );
+  }
+}
+
+extension DriverProfileModelMapper on DriverProfileModel {
+  DriverProfileEntity toEntity() {
+    return DriverProfileEntity(
+      name: name,
+      contact: contact,
+      isOnline: isOnline,
+      geoLocation: geoLocation,
+      image: image,
+      status: status,
+      verified: verified,
+      gender: gender,
+      dateOfBirth: dateOfBirth,
+      driverLicense: DriverLicenseEntity(
+        licenseNumber: driverLicense?.licenseNumber,
+        licenseExpiryDate: driverLicense?.licenseExpiryDate,
+        uploadDriversLicense: driverLicense?.uploadDriversLicense,
+      ),
+      driverVehicles: DriverVehicleEntity(
+        vehiclesMake: driverVehicles?.vehiclesMake,
+        vehiclesModel: driverVehicles?.vehiclesModel,
+        vehiclesYear: driverVehicles?.vehiclesYear,
+        vehiclesRegistrationNumber: driverVehicles?.vehiclesRegistrationNumber,
+        vehiclesInsuranceNumber: driverVehicles?.vehiclesInsuranceNumber,
+        vehiclesPicture: driverVehicles?.vehiclesPicture,
+        vehiclesCategory: driverVehicles?.vehiclesCategory,
       ),
     );
   }

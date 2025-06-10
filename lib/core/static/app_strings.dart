@@ -12,7 +12,7 @@ class AppStrings {
   static const String driverUploadProfilePicture =
       "Upload Your Profile Picture";
   static const String driverLicenseInformation =
-      "Please confirm your driver license information to continue.";
+      "Confirm your driver license information";
   static const String driverContinue = "Continue";
   static const String driverUpload = "Upload";
   static const String driverCamera = "Camera";

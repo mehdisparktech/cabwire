@@ -2,6 +2,7 @@ import 'package:cabwire/core/base/result.dart';
 import 'package:cabwire/data/datasources/remote/driver_auth_remote_data_source.dart';
 import 'package:cabwire/data/mappers/signin_response_mapper.dart';
 import 'package:cabwire/data/mappers/signup_response_mapper.dart';
+import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/data/models/user_model.dart';
 import 'package:cabwire/domain/entities/signin_response_entity.dart';
 import 'package:cabwire/domain/entities/signup_response_entity.dart';
@@ -40,6 +41,12 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
   @override
   Future<Result<String>> forgotPassword(String email) async {
     final result = await _authDataSource.forgotPassword(email);
+    return result.fold((l) => left(l), (r) => right(r));
+  }
+
+  @override
+  Future<Result<String>> updateDriverProfile(DriverProfileModel profile) async {
+    final result = await _authDataSource.updateDriverProfile(profile);
     return result.fold((l) => left(l), (r) => right(r));
   }
 }

@@ -39,7 +39,13 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(() => loadPresenter(DriverProfilePresenter()))
       ..registerLazySingleton(
         () => loadPresenter(
-          DriverSignUpPresenter(locate(), locate(), locate(), locate()),
+          DriverSignUpPresenter(
+            locate(),
+            locate(),
+            locate(),
+            locate(),
+            locate(),
+          ),
         ),
       )
       ..registerLazySingleton(
