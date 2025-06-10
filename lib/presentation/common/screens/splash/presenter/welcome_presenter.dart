@@ -1,6 +1,7 @@
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/themes.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_ui_state.dart';
 import 'package:cabwire/presentation/driver/onboarding/ui/screens/driver_onboarding_screen.dart';
 import 'package:cabwire/presentation/passenger/onboarding/ui/screens/passenger_onboarding_screen.dart';
@@ -12,6 +13,12 @@ class WelcomePresenter extends BasePresenter<WelcomeUiState> {
   WelcomeUiState get currentUiState => uiState.value;
 
   WelcomePresenter();
+
+  @override
+  void onInit() {
+    super.onInit();
+    checkTheme();
+  }
 
   void onPassengerButtonPressed(BuildContext context) {
     uiState.value = currentUiState.copyWith(userType: UserType.passenger);
@@ -25,6 +32,19 @@ class WelcomePresenter extends BasePresenter<WelcomeUiState> {
     uiState.value = currentUiState.copyWith(theme: AppTheme.driverTheme);
 
     NavigationUtility.fadePush(context, DriverOnboardingScreen());
+  }
+
+  void onThemeChanged(ThemeData theme) {
+    uiState.value = currentUiState.copyWith(theme: theme);
+  }
+
+  Future<void> checkTheme() async {
+    await LocalStorage.getAllPrefData();
+    if (LocalStorage.isLogIn && !LocalStorage.isTokenExpired()) {
+      uiState.value = currentUiState.copyWith(theme: LocalStorage.theme);
+    } else {
+      uiState.value = currentUiState.copyWith(theme: AppTheme.lightTheme);
+    }
   }
 
   @override

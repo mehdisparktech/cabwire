@@ -33,10 +33,7 @@ class InitialApp extends StatelessWidget {
               navigatorKey: navigatorKey,
               builder: (context, child) {
                 return AnimatedTheme(
-                  data:
-                      LocalStorage.isLogIn && !LocalStorage.isTokenExpired()
-                          ? LocalStorage.theme
-                          : presenter.uiState.value.theme,
+                  data: presenter.uiState.value.theme,
                   duration: const Duration(milliseconds: 100),
                   child: Overlay(
                     initialEntries: [
@@ -54,10 +51,7 @@ class InitialApp extends StatelessWidget {
                 LocalStorage.getAllPrefData();
               },
               debugShowCheckedModeBanner: false,
-              theme:
-                  LocalStorage.isLogIn && !LocalStorage.isTokenExpired()
-                      ? LocalStorage.theme
-                      : presenter.uiState.value.theme,
+              theme: presenter.uiState.value.theme,
               title: 'Cabwire',
               home: FutureBuilder(
                 future: LocalStorage.getAllPrefData(),
