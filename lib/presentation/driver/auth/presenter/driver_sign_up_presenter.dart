@@ -1,8 +1,9 @@
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/data/models/user_model.dart';
 import 'package:cabwire/domain/entities/driver/driver_entity.dart';
-import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
+import 'package:cabwire/domain/usecases/driver/forget_password_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/resent_code_usecase.dart';
+import 'package:cabwire/domain/usecases/driver/driver_sign_up_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/verify_email_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
@@ -25,9 +26,12 @@ import 'utils/driver_sign_up_ui_helpers.dart';
 
 class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // Use case dependency
-  final DriverAuthRepository _driverAuthRepository;
+  // final DriverAuthRepository _driverAuthRepository;
   final VerifyEmailUsecase _verifyEmailUsecase;
   final ResentCodeUsecase _resentCodeUsecase;
+  final DriverSignUpUseCase _signUpUsecase;
+  final ForgetPasswordUsecase _forgotPasswordUsecase;
+
   // State management
   final Obs<DriverSignUpUiState> uiState = Obs(DriverSignUpUiState.empty());
   DriverSignUpUiState get currentUiState => uiState.value;
@@ -45,9 +49,11 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   late final DriverSignUpUIHelpers _uiHelpers;
 
   DriverSignUpPresenter(
-    this._driverAuthRepository,
+    // this._driverAuthRepository,
     this._verifyEmailUsecase,
     this._resentCodeUsecase,
+    this._signUpUsecase,
+    this._forgotPasswordUsecase,
   );
 
   @override
@@ -156,6 +162,8 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     }
   }
 
+  // reset verification code
+
   Future<void> resendVerificationCode() async {
     final result = await _resentCodeUsecase.execute(
       emailController.text.trim(),
@@ -167,8 +175,10 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     await showMessage(message: result.fold((l) => l, (r) => r));
   }
 
+  //get masked email
   String getMaskedEmail(String email) => _validation.getMaskedEmail(email);
 
+  //verify email code
   Future<void> verifyEmailCode(BuildContext context, bool isSignUp) async {
     final code =
         verificationCodeControllers.map((controller) => controller.text).join();
@@ -283,7 +293,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // Registration completion
   Future<void> completeRegistration(BuildContext context) async {
     await executeTaskWithLoading(() async {
-      final result = await _driverAuthRepository.signUp(
+      final result = await _signUpUsecase.call(
         currentUiState.user! as UserModel,
       );
 
@@ -303,14 +313,39 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     });
   }
 
-  // Reset password
-  void resetPassword(BuildContext context) {
+  //forgot password
+  Future<void> forgotPassword() async {
     if (!_validation.validateForm(resetPasswordFormKey)) return;
-    _navigation.navigateWithSlideTransition(
-      context,
-      const AuthNavigator(),
-      clearStack: true,
+    final result = await _forgotPasswordUsecase.execute(
+      emailController.text.trim(),
     );
+    result.fold(
+      (errorMessage) async => await addUserMessage(errorMessage),
+      (message) async => await addUserMessage(message),
+    );
+  }
+
+  // Reset password
+  Future<void> resetPassword(BuildContext context) async {
+    if (!_validation.validateForm(resetPasswordFormKey)) return;
+    // final result = await _signInUsecase.execute(
+    //   UserModel(
+    //     email: emailController.text.trim(),
+    //     password: resetPasswordController.text,
+    //   ),
+    // );
+    // result.fold(
+    //   (errorMessage) async => await addUserMessage(errorMessage),
+    //   (user) async => await addUserMessage(user.data?.email ?? ''),
+    // );
+    // await showMessage(message: result.fold((l) => l, (r) => r));
+
+    // _navigation.navigateWithSlideTransition(
+    //   // ignore: use_build_context_synchronously
+    //   context,
+    //   const AuthNavigator(),
+    //   clearStack: true,
+    // );
   }
 
   // Private helper methods
@@ -338,7 +373,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
       password: passwordController.text,
     );
 
-    final result = await _driverAuthRepository.signUp(driver);
+    final result = await _signUpUsecase.call(driver);
     logError('result: $result');
     result.fold(
       (errorMessage) async {
