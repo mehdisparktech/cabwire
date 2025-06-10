@@ -16,6 +16,7 @@ import 'package:cabwire/presentation/driver/ride_history/ui/screens/ride_history
 // import 'package:cabwire/features/auth/ui/login_screen.dart'; // For navigation after logout/delete
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 // import 'package:image_picker/image_picker.dart'; // If you implement image picking
 
 class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
@@ -305,9 +306,11 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     toggleLoading(loading: true);
     // Perform actual logout (clear tokens, user data)
     print("Logging out user...");
+    LocalStorage.removeAllPrefData();
     Future.delayed(const Duration(seconds: 1), () {
       toggleLoading(loading: false);
       // GetNavigation.Get.offAll(() => LoginScreen()); // Navigate to login
+      Get.offAll(() => AuthNavigator());
       addUserMessage("Logged out successfully (navigation not implemented).");
     });
   }

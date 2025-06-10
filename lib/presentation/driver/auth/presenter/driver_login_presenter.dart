@@ -1,9 +1,12 @@
-import 'package:cabwire/core/utility/navigation_utility.dart';
-import 'package:cabwire/presentation/driver/home/ui/screens/driver_home_page_offline.dart';
+import 'package:cabwire/core/config/themes.dart';
+import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_ui_state.dart';
+import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_login_ui_state.dart';
 import 'package:cabwire/domain/usecases/driver/sign_in_usecase.dart';
+import 'package:get/get.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 
 class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
   final SignInUsecase _signInUsecase;
@@ -30,8 +33,12 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
   }
 
   Future<void> _checkExistingLogin() async {
-    // This would check for existing login session using a usecase
-    // For now, we'll leave it empty
+    await LocalStorage.getAllPrefData();
+
+    if (LocalStorage.isLogIn && !LocalStorage.isTokenExpired()) {
+      // Valid token exists, navigate to home
+      Get.offAll(() => DriverMainPage());
+    }
   }
 
   void togglePasswordVisibility() {
@@ -43,6 +50,7 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
   Future<void> onSignIn(BuildContext context) async {
     if (formKey.currentState?.validate() ?? false) {
       await executeTaskWithLoading(() async {
+        print('Attempting sign in...'); // Debug print
         final result = await _signInUsecase.execute(
           emailController.text.trim(),
           passwordController.text,
@@ -51,21 +59,30 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
         await result.fold(
           // Handle error
           (errorMessage) async {
+            print('Sign in error: $errorMessage'); // Debug print
             await addUserMessage(errorMessage);
           },
           // Handle success
           (user) async {
+            print('Sign in successful, updating UI state...'); // Debug print
+
+            // Save token and user data
+            if (user.data?.token != null) {
+              await LocalStorage.saveLoginData(
+                user.data!.token!,
+                UserType.driver,
+                AppTheme.driverTheme,
+              );
+            }
+
             uiState.value = currentUiState.copyWith(
               user: user,
               isAuthenticated: true,
             );
 
-            if (context.mounted) {
-              NavigationUtility.fadeReplacement(
-                context,
-                DriverHomePageOffline(),
-              );
-            }
+            print('Attempting navigation...'); // Debug print
+            Get.offAll(() => DriverMainPage());
+            print('Navigation called'); // Debug print
           },
         );
       });

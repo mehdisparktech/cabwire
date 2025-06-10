@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_ui_state.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cabwire/core/config/themes.dart';
 import 'storage_keys.dart';
 
 class LocalStorage {
@@ -11,7 +15,8 @@ class LocalStorage {
   static String myImage = "";
   static String myName = "";
   static String myEmail = "";
-
+  static String userType = "";
+  static ThemeData theme = AppTheme.lightTheme;
   // Create Local Storage Instance
   static SharedPreferences? preferences;
 
@@ -33,8 +38,89 @@ class LocalStorage {
     myImage = localStorage.getString(LocalStorageKeys.myImage) ?? "";
     myName = localStorage.getString(LocalStorageKeys.myName) ?? "";
     myEmail = localStorage.getString(LocalStorageKeys.myEmail) ?? "";
+    userType = localStorage.getString(LocalStorageKeys.userType) ?? "driver";
+    // Get stored theme type
+    final themeType = userType == "driver" ? "driver" : "passenger";
+    theme =
+        themeType == "driver" ? AppTheme.driverTheme : AppTheme.passengerTheme;
 
-    appLog(userId, source: "Local Storage");
+    appLog(
+      "userId: $userId, userType: $userType, themeType: $themeType, theme: ${theme.toString()}",
+      source: "Local Storage",
+    );
+  }
+
+  /// Save token and user data
+  static Future<void> saveLoginData(
+    String authToken,
+    UserType userType,
+    ThemeData theme,
+  ) async {
+    final localStorage = await _getStorage();
+
+    // Save token
+    await localStorage.setString(LocalStorageKeys.token, authToken);
+    token = authToken;
+
+    // Save user type
+    await localStorage.setString(LocalStorageKeys.userType, userType.name);
+    userType = userType;
+
+    // Save theme based on user type
+    final themeType = userType == UserType.driver ? "driver" : "passenger";
+    await localStorage.setString(LocalStorageKeys.theme, themeType);
+    theme =
+        themeType == "driver" ? AppTheme.driverTheme : AppTheme.passengerTheme;
+
+    // Parse JWT to get user data
+    try {
+      final parts = authToken.split('.');
+      if (parts.length == 3) {
+        final payload = json.decode(
+          utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
+        );
+
+        // Save user data from token
+        await localStorage.setString(
+          LocalStorageKeys.userId,
+          payload['id'] ?? '',
+        );
+        await localStorage.setString(
+          LocalStorageKeys.myEmail,
+          payload['email'] ?? '',
+        );
+        await localStorage.setBool(LocalStorageKeys.isLogIn, true);
+
+        // Update static variables
+        userId = payload['id'] ?? '';
+        myEmail = payload['email'] ?? '';
+        isLogIn = true;
+      }
+    } catch (e) {
+      appLog('Error parsing JWT: $e', source: "Local Storage");
+    }
+  }
+
+  /// Check if token is expired
+  static bool isTokenExpired() {
+    try {
+      final parts = token.split('.');
+      if (parts.length == 3) {
+        final payload = json.decode(
+          utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
+        );
+
+        final exp = payload['exp'];
+        if (exp != null) {
+          final expiry = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
+          return DateTime.now().isAfter(expiry);
+        }
+      }
+      return true; // If we can't verify, assume it's expired
+    } catch (e) {
+      appLog('Error checking token expiry: $e', source: "Local Storage");
+      return true;
+    }
   }
 
   /// Remove All Data From SharedPreferences
@@ -42,7 +128,6 @@ class LocalStorage {
     final localStorage = await _getStorage();
     await localStorage.clear();
     _resetLocalStorageData();
-    //Get.offAllNamed();
     await getAllPrefData();
   }
 
@@ -57,6 +142,7 @@ class LocalStorage {
     localStorage.setString(LocalStorageKeys.myName, "");
     localStorage.setString(LocalStorageKeys.myEmail, "");
     localStorage.setBool(LocalStorageKeys.isLogIn, false);
+    localStorage.setString(LocalStorageKeys.theme, "light");
   }
 
   // Save Data To SharedPreferences

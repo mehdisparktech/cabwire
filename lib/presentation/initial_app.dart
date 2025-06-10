@@ -1,7 +1,9 @@
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_presenter.dart';
 import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart';
+import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:cabwire/core/config/app_screen.dart';
@@ -31,7 +33,10 @@ class InitialApp extends StatelessWidget {
               navigatorKey: navigatorKey,
               builder: (context, child) {
                 return AnimatedTheme(
-                  data: presenter.uiState.value.theme,
+                  data:
+                      LocalStorage.isLogIn && !LocalStorage.isTokenExpired()
+                          ? LocalStorage.theme
+                          : presenter.uiState.value.theme,
                   duration: const Duration(milliseconds: 100),
                   child: Overlay(
                     initialEntries: [
@@ -40,13 +45,35 @@ class InitialApp extends StatelessWidget {
                   ),
                 );
               },
-              onInit: () => AppScreen.setUp(context),
-              onReady: () => AppScreen.setUp(context),
+              onInit: () {
+                AppScreen.setUp(context);
+                LocalStorage.getAllPrefData();
+              },
+              onReady: () {
+                AppScreen.setUp(context);
+                LocalStorage.getAllPrefData();
+              },
               debugShowCheckedModeBanner: false,
-              theme: presenter.uiState.value.theme,
+              theme:
+                  LocalStorage.isLogIn && !LocalStorage.isTokenExpired()
+                      ? LocalStorage.theme
+                      : presenter.uiState.value.theme,
               title: 'Cabwire',
-              // home: isFirstRun ? OnboardingPage() : MainPage(),
-              home: WelcomeScreen(),
+              home: FutureBuilder(
+                future: LocalStorage.getAllPrefData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  // Check if user is logged in and token is valid
+                  if (LocalStorage.isLogIn && !LocalStorage.isTokenExpired()) {
+                    return DriverMainPage();
+                  }
+
+                  return WelcomeScreen();
+                },
+              ),
             );
           },
         );
