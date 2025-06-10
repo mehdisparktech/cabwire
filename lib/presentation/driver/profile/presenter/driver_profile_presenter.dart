@@ -311,7 +311,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       toggleLoading(loading: false);
       // GetNavigation.Get.offAll(() => LoginScreen()); // Navigate to login
       Get.offAll(() => AuthNavigator());
-      addUserMessage("Logged out successfully (navigation not implemented).");
+      addUserMessage("Logged out successfully");
     });
   }
 

@@ -33,7 +33,7 @@ class ForgotPasswordScreen extends StatelessWidget {
         ],
         actionButton: CustomButton(
           text: AppStrings.driverGetVerificationCode,
-          onPressed: () => presenter.resendVerificationCode(),
+          onPressed: () => presenter.forgotPassword(context),
         ),
       ),
     );
