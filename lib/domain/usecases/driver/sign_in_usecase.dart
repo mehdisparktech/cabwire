@@ -1,5 +1,4 @@
 import 'package:cabwire/core/base/result.dart';
-import 'package:cabwire/data/models/user_model.dart';
 import 'package:cabwire/domain/entities/signin_response_entity.dart';
 import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
 
@@ -8,7 +7,7 @@ class SignInUsecase {
 
   SignInUsecase(this.repository);
 
-  Future<Result<SigninResponseEntity>> execute(UserModel user) {
-    return repository.signIn(user);
+  Future<Result<SigninResponseEntity>> execute(String email, String password) {
+    return repository.signIn(email, password);
   }
 }

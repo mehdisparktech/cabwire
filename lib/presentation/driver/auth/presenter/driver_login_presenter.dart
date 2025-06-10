@@ -1,5 +1,4 @@
 import 'package:cabwire/core/utility/navigation_utility.dart';
-import 'package:cabwire/data/models/user_model.dart';
 import 'package:cabwire/presentation/driver/home/ui/screens/driver_home_page_offline.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
@@ -45,10 +44,8 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
     if (formKey.currentState?.validate() ?? false) {
       await executeTaskWithLoading(() async {
         final result = await _signInUsecase.execute(
-          UserModel(
-            email: emailController.text.trim(),
-            password: passwordController.text,
-          ),
+          emailController.text.trim(),
+          passwordController.text,
         );
 
         await result.fold(

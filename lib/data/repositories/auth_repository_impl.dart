@@ -21,8 +21,11 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
   }
 
   @override
-  Future<Result<SigninResponseEntity>> signIn(UserModel user) async {
-    final result = await _authDataSource.signIn(user);
+  Future<Result<SigninResponseEntity>> signIn(
+    String email,
+    String password,
+  ) async {
+    final result = await _authDataSource.signIn(email, password);
     return result.fold((l) => left(l), (r) => right(r.toEntity()));
   }
 

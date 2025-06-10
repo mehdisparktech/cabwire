@@ -7,11 +7,15 @@ class SigninResponseModel extends SigninResponseEntity {
     return SigninResponseModel(
       message: json['message'],
       success: json['success'],
-      data: json['data'],
+      data: json['data'] != null ? Data(token: json['data']['token']) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'message': message, 'success': success, 'data': data};
+    return {
+      'message': message,
+      'success': success,
+      'data': data != null ? {'token': data?.token} : null,
+    };
   }
 }

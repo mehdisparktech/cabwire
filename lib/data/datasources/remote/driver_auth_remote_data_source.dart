@@ -9,7 +9,7 @@ import 'package:fpdart/fpdart.dart';
 
 abstract class DriverAuthRemoteDataSource {
   Future<Result<SignupResponseModel>> signUp(UserModel user);
-  Future<Result<SigninResponseModel>> signIn(UserModel user);
+  Future<Result<SigninResponseModel>> signIn(String email, String password);
   Future<Result<String>> verifyEmail(String email, String otp);
   Future<Result<String>> resetCode(String email);
   Future<Result<String>> forgotPassword(String email);
@@ -38,11 +38,14 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
 
   // Sign In
   @override
-  Future<Result<SigninResponseModel>> signIn(UserModel user) async {
+  Future<Result<SigninResponseModel>> signIn(
+    String email,
+    String password,
+  ) async {
     try {
       final result = await apiService.post(
         ApiEndPoint.signIn,
-        body: user.toJson(),
+        body: {'email': email, 'password': password},
       );
       return result.fold(
         (l) => left(l.message),
