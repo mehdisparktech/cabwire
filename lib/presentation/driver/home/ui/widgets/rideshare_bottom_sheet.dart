@@ -28,18 +28,27 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
   int timerLeft = 5;
   bool isRideEnd = false;
   bool isRideProcessing = false;
+  Timer? _rideStartTimer;
+
   @override
   void initState() {
     super.initState();
     _onRideStart();
   }
 
-  void _onRideStart() async {
-    Duration duration = const Duration(seconds: 5);
-    await Future.delayed(duration, () {
-      setState(() {
-        isRideStart = true;
-      });
+  @override
+  void dispose() {
+    _rideStartTimer?.cancel();
+    super.dispose();
+  }
+
+  void _onRideStart() {
+    _rideStartTimer = Timer(const Duration(seconds: 5), () {
+      if (mounted) {
+        setState(() {
+          isRideStart = true;
+        });
+      }
     });
   }
 

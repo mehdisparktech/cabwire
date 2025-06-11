@@ -240,7 +240,8 @@ class RideHistoryPresenter extends BasePresenter<RideHistoryUiState> {
       viewMode: RideViewMode.list,
       currentFeedbackText: '',
     );
-    Get.back();
+    // Use microtask to ensure state changes are completed before navigation
+    Future.microtask(() => Get.back());
   }
 
   void goBackFromHistoryList() {
