@@ -219,10 +219,12 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
       code,
     );
     debugPrint('result: $result');
-    result.fold(
-      (errorMessage) async => await addUserMessage(errorMessage),
-      (message) async => await addUserMessage(message),
-    );
+    result.fold((errorMessage) async => await addUserMessage(errorMessage), (
+      data,
+    ) async {
+      await addUserMessage(data['message']);
+      currentUiState.copyWith(resetToken: data['data']);
+    });
 
     if (result.isRight()) {
       final targetScreen =
@@ -231,14 +233,14 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
               : const ResetPasswordScreen();
 
       if (context.mounted) {
-        _navigation.navigateWithSlideTransition(
+        Navigator.pushAndRemoveUntil(
           context,
-          targetScreen,
-          clearStack: true,
+          MaterialPageRoute(builder: (context) => targetScreen),
+          (route) => false,
         );
       }
     }
-    await showMessage(message: result.fold((l) => l, (r) => r));
+    await showMessage(message: result.fold((l) => l, (r) => r['message']));
   }
 
   // Sign-up flow methods
@@ -348,6 +350,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         (errorMessage) async => await addUserMessage(errorMessage),
         (user) async {
           currentUiState.copyWith(isRegistered: true);
+          clearControllers();
           if (context.mounted) {
             _navigation.navigateWithFadeTransition(
               context,
@@ -359,68 +362,6 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
       );
     });
   }
-
-  //forgot password
-  // Future<void> forgotPassword(BuildContext context) async {
-  //   if (!_validation.validateForm(resetPasswordFormKey)) return;
-  //   final result = await _forgotPasswordUsecase.execute(
-  //     emailController.text.trim(),
-  //   );
-  //   result.fold(
-  //     (errorMessage) async => await addUserMessage(errorMessage),
-  //     (message) async => await addUserMessage(message),
-  //   );
-  //   if (result.isRight()) {
-  //     //await showMessage(message: 'Verification code sent to your email');
-  //     if (context.mounted) {
-  //       _navigation.navigateWithSlideTransition(
-  //         context,
-  //         const DriverEmailVerificationScreen(isSignUp: false),
-  //       );
-  //     }
-  //   }
-  //   await showMessage(message: result.fold((l) => l, (r) => r));
-  // }
-
-  // Reset password
-  Future<void> resetPassword(BuildContext context) async {
-    if (!_validation.validateForm(resetPasswordFormKey)) return;
-    // final result = await _signInUsecase.execute(
-    //   UserModel(
-    //     email: emailController.text.trim(),
-    //     password: resetPasswordController.text,
-    //   ),
-    // );
-    // result.fold(
-    //   (errorMessage) async => await addUserMessage(errorMessage),
-    //   (user) async => await addUserMessage(user.data?.email ?? ''),
-    // );
-    // await showMessage(message: result.fold((l) => l, (r) => r));
-
-    // _navigation.navigateWithSlideTransition(
-    //   // ignore: use_build_context_synchronously
-    //   context,
-    //   const AuthNavigator(),
-    //   clearStack: true,
-    // );
-  }
-
-  // Private helper methods
-  // void _updateUiState({
-  //   bool? obscurePassword,
-  //   bool? obscureConfirmPassword,
-  //   bool? isRegistered,
-  //   DriverEntity? driver,
-  //   int? currentStep,
-  // }) {
-  //   uiState.value = currentUiState.copyWith(
-  //     obscurePassword: obscurePassword,
-  //     obscureConfirmPassword: obscureConfirmPassword,
-  //     isRegistered: isRegistered,
-  //     driver: driver,
-  //     currentStep: currentStep,
-  //   );
-  // }
 
   Future<void> _updateRegistrationStep1(BuildContext context) async {
     final driver = UserModel(
@@ -521,5 +462,30 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
   void dispose() {
     _controllers.dispose();
     super.dispose();
+  }
+
+  void clearControllers() {
+    emailController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+    for (final c in verificationCodeControllers) {
+      c.clear();
+    }
+    nameController.clear();
+    phoneNumberController.clear();
+    genderController.clear();
+    dateOfBirthController.clear();
+    driverLicenseNumberController.clear();
+    licenseExpiryDateController.clear();
+    driverLicenseImageController.clear();
+    vehiclesMakeController.clear();
+    vehiclesModelController.clear();
+    vehiclesYearController.clear();
+    vehiclesRegistrationNumberController.clear();
+    vehiclesInsuranceNumberController.clear();
+    vehicleCategoryController.clear();
+    vehiclesPictureController.clear();
+    resetPasswordController.clear();
+    resetConfirmPasswordController.clear();
   }
 }

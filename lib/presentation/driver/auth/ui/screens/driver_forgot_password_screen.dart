@@ -22,7 +22,7 @@ class ForgotPasswordScreen extends StatelessWidget {
       child: AuthFormContainer(
         logoAssetPath: AppAssets.icDriverLogo,
         logoAssetPath2: AppAssets.icCabwireLogo,
-        formKey: presenter.resetPasswordFormKey,
+        formKey: presenter.forgotPasswordFormKey,
         formFields: [
           CustomTextFormField(
             controller: presenter.emailController,

@@ -30,7 +30,10 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
   }
 
   @override
-  Future<Result<String>> verifyEmail(String email, String otp) async {
+  Future<Result<Map<String, dynamic>>> verifyEmail(
+    String email,
+    String otp,
+  ) async {
     final result = await _authDataSource.verifyEmail(email, otp);
     return result.fold((l) => left(l), (r) => right(r));
   }
@@ -50,6 +53,20 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
   @override
   Future<Result<String>> updateDriverProfile(DriverProfileModel profile) async {
     final result = await _authDataSource.updateDriverProfile(profile);
+    return result.fold((l) => left(l), (r) => right(r));
+  }
+
+  @override
+  Future<Result<String>> resetPasswordWithToken(
+    String token,
+    String newpassword,
+    String confirmPassword,
+  ) async {
+    final result = await _authDataSource.resetPasswordWithToken(
+      token,
+      newpassword,
+      confirmPassword,
+    );
     return result.fold((l) => left(l), (r) => right(r));
   }
 }

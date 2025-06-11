@@ -82,6 +82,7 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
             );
 
             print('Attempting navigation...'); // Debug print
+            clearControllers();
             Get.offAll(() => DriverHomePageOffline());
             print('Navigation called'); // Debug print
           },
@@ -105,5 +106,10 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  void clearControllers() {
+    emailController.clear();
+    passwordController.clear();
   }
 }

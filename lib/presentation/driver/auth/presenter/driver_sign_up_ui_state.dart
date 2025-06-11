@@ -13,7 +13,7 @@ class DriverSignUpUiState extends BaseUiState {
   final int currentStep;
   final bool isRegistered;
   final DriverProfileModel? profile;
-
+  final String? resetToken;
   const DriverSignUpUiState({
     required super.isLoading,
     required super.userMessage,
@@ -24,6 +24,7 @@ class DriverSignUpUiState extends BaseUiState {
     this.currentStep = 0,
     this.isRegistered = false,
     this.profile,
+    this.resetToken,
   });
 
   factory DriverSignUpUiState.empty() {
@@ -37,6 +38,7 @@ class DriverSignUpUiState extends BaseUiState {
       currentStep: 0,
       isRegistered: false,
       profile: null,
+      resetToken: null,
     );
   }
 
@@ -51,6 +53,7 @@ class DriverSignUpUiState extends BaseUiState {
     currentStep,
     isRegistered,
     profile,
+    resetToken,
   ];
 
   DriverSignUpUiState copyWith({
@@ -63,6 +66,7 @@ class DriverSignUpUiState extends BaseUiState {
     int? currentStep,
     bool? isRegistered,
     DriverProfileModel? profile,
+    String? resetToken,
   }) {
     return DriverSignUpUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -75,6 +79,7 @@ class DriverSignUpUiState extends BaseUiState {
       currentStep: currentStep ?? this.currentStep,
       isRegistered: isRegistered ?? this.isRegistered,
       profile: profile ?? this.profile,
+      resetToken: resetToken ?? this.resetToken,
     );
   }
 }

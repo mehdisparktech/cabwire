@@ -3,7 +3,7 @@ import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/driver_forgot_password_presenter.dart';
 import 'package:flutter/material.dart';
 import '../../../../common/components/auth/custom_text_form_field.dart';
 import '../../../../common/components/auth/custom_button.dart';
@@ -20,7 +20,7 @@ class ResetPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get presenter from service locator
-    final presenter = locate<DriverSignUpPresenter>();
+    final presenter = locate<DriverForgotPasswordPresenter>();
 
     return AuthScreenWrapper(
       title: AppStrings.driverResetPassword,
@@ -32,25 +32,25 @@ class ResetPasswordScreen extends StatelessWidget {
         formKey: presenter.resetPasswordFormKey,
         formFields: [
           CustomTextFormField(
-            controller: presenter.resetPasswordController,
+            controller: presenter.passwordController,
             hintText: AppStrings.driverNewPassword,
             isPassword: true,
-            obscureTextValue: presenter.resetObscurePassword,
-            onVisibilityToggle: () => presenter.toggleResetPasswordVisibility(),
+            obscureTextValue: presenter.obscurePassword,
+            onVisibilityToggle: () => presenter.togglePasswordVisibility(),
             validator: AuthValidators.validatePassword,
           ),
           gapH20,
           CustomTextFormField(
-            controller: presenter.resetConfirmPasswordController,
+            controller: presenter.confirmPasswordController,
             hintText: AppStrings.driverConfirmNewPassword,
             isPassword: true,
-            obscureTextValue: presenter.resetObscureConfirmPassword,
+            obscureTextValue: presenter.obscureConfirmPassword,
             onVisibilityToggle:
-                () => presenter.toggleResetConfirmPasswordVisibility(),
+                () => presenter.toggleConfirmPasswordVisibility(),
             validator:
                 (value) => AuthValidators.validateConfirmPassword(
                   value,
-                  presenter.resetPasswordController.text,
+                  presenter.passwordController.text,
                 ),
           ),
         ],

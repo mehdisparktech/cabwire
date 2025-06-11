@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dart';
+import 'package:cabwire/domain/usecases/driver/driver_reset_password_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/forget_password_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/resent_code_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/sign_in_usecase.dart';
@@ -51,6 +52,9 @@ class UsecaseSetup implements SetupModule {
       ..registerLazySingleton(() => ForgetPasswordUsecase(locate(), locate()))
       ..registerLazySingleton(
         () => DriverProfileUpdateUsecase(locate(), locate()),
+      )
+      ..registerLazySingleton(
+        () => DriverResetPasswordUsecase(locate(), locate()),
       );
   }
 }

@@ -10,10 +10,15 @@ import 'package:fpdart/fpdart.dart';
 abstract class DriverAuthRemoteDataSource {
   Future<Result<SignupResponseModel>> signUp(UserModel user);
   Future<Result<SigninResponseModel>> signIn(String email, String password);
-  Future<Result<String>> verifyEmail(String email, String otp);
+  Future<Result<Map<String, dynamic>>> verifyEmail(String email, String otp);
   Future<Result<String>> resetCode(String email);
   Future<Result<String>> forgotPassword(String email);
   Future<Result<String>> updateDriverProfile(DriverProfileModel profile);
+  Future<Result<String>> resetPasswordWithToken(
+    String token,
+    String newpassword,
+    String confirmPassword,
+  );
 }
 
 class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
@@ -58,16 +63,16 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
 
   // Verify Email
   @override
-  Future<Result<String>> verifyEmail(String email, String otp) async {
+  Future<Result<Map<String, dynamic>>> verifyEmail(
+    String email,
+    String otp,
+  ) async {
     try {
       final result = await apiService.post(
         ApiEndPoint.verifyEmail,
         body: {'email': email, 'oneTimeCode': int.parse(otp)},
       );
-      return result.fold(
-        (l) => left(l.message),
-        (r) => right(r.data['message']),
-      );
+      return result.fold((l) => left(l.message), (r) => right(r.data));
     } catch (e) {
       return left(e.toString());
     }
@@ -114,6 +119,28 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
       final result = await apiService.put(
         ApiEndPoint.updateDriverProfile,
         body: profile.toJson(),
+      );
+      return result.fold(
+        (l) => left(l.message),
+        (r) => right(r.data['message']),
+      );
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
+
+  // reset password with token
+  @override
+  Future<Result<String>> resetPasswordWithToken(
+    String token,
+    String newpassword,
+    String confirmPassword,
+  ) async {
+    try {
+      final result = await apiService.post(
+        ApiEndPoint.resetPasswordWithToken,
+        header: {'Authorization': token, 'Content-Type': 'application/json'},
+        body: {'newPassword': newpassword, 'confirmPassword': confirmPassword},
       );
       return result.fold(
         (l) => left(l.message),

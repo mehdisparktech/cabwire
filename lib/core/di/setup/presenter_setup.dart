@@ -48,7 +48,7 @@ class PresenterSetup implements SetupModule {
       )
       ..registerLazySingleton(
         () => loadPresenter(
-          DriverForgotPasswordPresenter(locate(), locate(), locate()),
+          DriverForgotPasswordPresenter(locate(), locate(), locate(), locate()),
         ),
       )
       ..registerLazySingleton(() => loadPresenter(NotificationPresenter()))

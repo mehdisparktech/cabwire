@@ -7,8 +7,13 @@ import 'package:cabwire/domain/entities/signup_response_entity.dart';
 abstract class DriverAuthRepository {
   Future<Result<SignupResponseEntity>> signUp(UserModel user);
   Future<Result<SigninResponseEntity>> signIn(String email, String password);
-  Future<Result<String>> verifyEmail(String email, String otp);
+  Future<Result<Map<String, dynamic>>> verifyEmail(String email, String otp);
   Future<Result<String>> resetCode(String email);
   Future<Result<String>> forgotPassword(String email);
   Future<Result<String>> updateDriverProfile(DriverProfileModel profile);
+  Future<Result<String>> resetPasswordWithToken(
+    String token,
+    String newpassword,
+    String confirmPassword,
+  );
 }

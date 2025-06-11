@@ -7,7 +7,7 @@ class VerifyEmailUsecase extends BaseUseCase<void> {
 
   VerifyEmailUsecase(super.errorMessageHandler, this.repository);
 
-  Future<Result<String>> execute(String email, String otp) async {
+  Future<Result<Map<String, dynamic>>> execute(String email, String otp) async {
     return repository.verifyEmail(email, otp);
   }
 }

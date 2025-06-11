@@ -1,11 +1,15 @@
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/usecases/driver/driver_reset_password_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/forget_password_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/resent_code_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/verify_email_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_email_verification_presenter.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_forgot_password_ui_state.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/utils/driver_sign_up_constants.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/utils/driver_sign_up_validation.dart';
+import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_confirm_information_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_password_screen.dart';
@@ -18,16 +22,23 @@ class DriverForgotPasswordPresenter
 
   final VerifyEmailUsecase _verifyEmailUsecase;
   final ResentCodeUsecase _resentCodeUsecase;
+  final DriverResetPasswordUsecase _resetPasswordUsecase;
   DriverForgotPasswordPresenter(
     this._forgetPasswordUsecase,
     this._verifyEmailUsecase,
     this._resentCodeUsecase,
-  );
+    this._resetPasswordUsecase,
+  ) {
+    _validation = DriverSignUpValidation();
+  }
 
   final Obs<DriverForgotPasswordUiState> uiState = Obs(
     DriverForgotPasswordUiState.empty(),
   );
   DriverForgotPasswordUiState get currentUiState => uiState.value;
+
+  // Validation helper
+  late final DriverSignUpValidation _validation;
 
   // Email Controller
   @override
@@ -47,6 +58,7 @@ class DriverForgotPasswordPresenter
 
   // Reset Password Controllers
   final GlobalKey<FormState> resetPasswordFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> forgotPasswordFormKey = GlobalKey<FormState>();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
@@ -95,12 +107,19 @@ class DriverForgotPasswordPresenter
       code,
     );
     debugPrint('result: $result');
-    result.fold(
-      (errorMessage) async => await addUserMessage(errorMessage),
-      (message) async => await addUserMessage(message),
-    );
+    result.fold((errorMessage) async => await addUserMessage(errorMessage), (
+      data,
+    ) async {
+      debugPrint('Verification response data: $data');
+      await addUserMessage(data['message']);
+      final token = data['data'] as String;
+      debugPrint('Token to be saved: $token');
+      uiState.value = currentUiState.copyWith(resetToken: token);
+      debugPrint('Updated state token: ${uiState.value.resetToken}');
+    });
 
     if (result.isRight()) {
+      debugPrint('result: ${result.fold((l) => l, (r) => r)}');
       final targetScreen =
           isSignUp
               ? const ConfirmInformationScreen()
@@ -112,8 +131,9 @@ class DriverForgotPasswordPresenter
           MaterialPageRoute(builder: (context) => targetScreen),
         );
       }
+      logError('resetToken: ${currentUiState.resetToken}');
     }
-    await showMessage(message: result.fold((l) => l, (r) => r));
+    await showMessage(message: result.fold((l) => l, (r) => r['message']));
   }
 
   @override
@@ -135,6 +155,7 @@ class DriverForgotPasswordPresenter
   }
 
   Future<void> forgotPassword(BuildContext context) async {
+    if (!_validation.validateForm(forgotPasswordFormKey)) return;
     final result = await _forgetPasswordUsecase.execute(
       emailController.text.trim(),
     );
@@ -149,13 +170,41 @@ class DriverForgotPasswordPresenter
       },
     );
     if (result.isRight()) {
+      clearControllers();
       if (context.mounted) {
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder:
                 (context) => DriverEmailVerificationScreen(isSignUp: false),
           ),
+          (route) => false,
+        );
+      }
+    }
+    await showMessage(message: result.fold((l) => l, (r) => r));
+  }
+
+  // reset password
+
+  Future<void> resetPassword(BuildContext context) async {
+    if (!_validation.validateForm(resetPasswordFormKey)) return;
+    final result = await _resetPasswordUsecase.execute(
+      currentUiState.resetToken ?? '',
+      passwordController.text,
+      confirmPasswordController.text,
+    );
+    result.fold(
+      (errorMessage) async => await addUserMessage(errorMessage),
+      (message) async => await addUserMessage(message),
+    );
+    if (result.isRight()) {
+      clearControllers();
+      if (context.mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const AuthNavigator()),
+          (route) => false,
         );
       }
     }
@@ -164,7 +213,7 @@ class DriverForgotPasswordPresenter
 
   @override
   Future<void> addUserMessage(String message) async {
-    currentUiState.copyWith(userMessage: message);
+    uiState.value = currentUiState.copyWith(userMessage: message);
   }
 
   @override
@@ -184,5 +233,14 @@ class DriverForgotPasswordPresenter
     }
     passwordController.dispose();
     confirmPasswordController.dispose();
+  }
+
+  void clearControllers() {
+    emailController.clear();
+    for (final c in verificationCodeControllers) {
+      c.clear();
+    }
+    passwordController.clear();
+    confirmPasswordController.clear();
   }
 }
