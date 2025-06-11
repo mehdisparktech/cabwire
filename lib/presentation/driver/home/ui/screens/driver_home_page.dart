@@ -144,48 +144,23 @@ class DriverHomePage extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             children: [
               if (uiState.isOnline) ...[
-                Positioned(
-                  bottom: 40.px,
-                  child: _rideCard(
-                    context: context,
-                    presenter: presenter,
-                    name: 'Passenger 1',
-                    rideId: 'ride1',
-                    distance: '3.3 km',
-                    pickupLocation: 'Block B, Banasree, Dhaka.',
-                    profileImageUrl: AppAssets.icProfileImage,
-                    rating: 5,
-                    ratingCount: 5,
+                for (int i = 0; i < uiState.rideRequests.length; i++) ...[
+                  Positioned(
+                    bottom: (40 - i * 20).px,
+                    child: _rideCard(
+                      context: context,
+                      presenter: presenter,
+                      name: 'Passenger ${i + 1}',
+                      rideId: uiState.rideRequests[i],
+                      distance: '${3.3} km',
+                      pickupLocation:
+                          'Block ${String.fromCharCode(66 + i)}, ${['Banasree', 'Mirpur', 'Gulshan'][i]}, Dhaka.',
+                      profileImageUrl: AppAssets.icProfileImage,
+                      rating: i == 1 ? 4 : 5,
+                      ratingCount: [5, 12, 8][i],
+                    ),
                   ),
-                ),
-                Positioned(
-                  bottom: 20.px,
-                  child: _rideCard(
-                    context: context,
-                    presenter: presenter,
-                    name: 'Passenger 2',
-                    rideId: 'ride2',
-                    distance: '2.5 km',
-                    pickupLocation: 'Block C, Mirpur, Dhaka.',
-                    profileImageUrl: AppAssets.icProfileImage,
-                    rating: 4,
-                    ratingCount: 12,
-                  ),
-                ),
-                Positioned(
-                  bottom: 0.px,
-                  child: _rideCard(
-                    context: context,
-                    presenter: presenter,
-                    name: 'Passenger 3',
-                    rideId: 'ride3',
-                    distance: '5.1 km',
-                    pickupLocation: 'Block D, Gulshan, Dhaka.',
-                    profileImageUrl: AppAssets.icProfileImage,
-                    rating: 5,
-                    ratingCount: 8,
-                  ),
-                ),
+                ],
               ],
               if (!uiState.isOnline) ...[_rideOfflineCard(context, presenter)],
             ],

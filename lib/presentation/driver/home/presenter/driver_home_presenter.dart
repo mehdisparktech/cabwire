@@ -175,7 +175,10 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   }
 
   void declineRide(String rideId) {
-    // Implementation for declining ride
+    // Remove the ride from the list
+    final List<String> updatedRides = List.from(currentUiState.rideRequests)
+      ..remove(rideId);
+    uiState.value = currentUiState.copyWith(rideRequests: updatedRides);
   }
 
   void handleNotNowPassenger(BuildContext context) {

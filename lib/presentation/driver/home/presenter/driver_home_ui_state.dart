@@ -14,8 +14,7 @@ class DriverHomeUiState extends BaseUiState {
   final BitmapDescriptor currentLocationIcon;
   final PolylinePoints polylinePoints;
   final List<LatLng>? polylineCoordinates;
-  // Uncomment when ride model is implemented
-  // final List<RideRequest> rideRequests;
+  final List<String> rideRequests;
 
   const DriverHomeUiState({
     required super.isLoading,
@@ -31,7 +30,7 @@ class DriverHomeUiState extends BaseUiState {
     required this.currentLocationIcon,
     required this.polylinePoints,
     this.polylineCoordinates,
-    // required this.rideRequests,
+    required this.rideRequests,
   });
 
   // (initial state)
@@ -50,7 +49,7 @@ class DriverHomeUiState extends BaseUiState {
       currentLocationIcon: BitmapDescriptor.defaultMarker,
       polylinePoints: PolylinePoints(),
       polylineCoordinates: null,
-      // rideRequests: [],
+      rideRequests: ['ride1', 'ride2', 'ride3'],
     );
   }
 
@@ -69,7 +68,7 @@ class DriverHomeUiState extends BaseUiState {
     currentLocationIcon,
     polylinePoints,
     polylineCoordinates,
-    // rideRequests,
+    rideRequests,
   ];
 
   DriverHomeUiState copyWith({
@@ -86,7 +85,7 @@ class DriverHomeUiState extends BaseUiState {
     BitmapDescriptor? currentLocationIcon,
     PolylinePoints? polylinePoints,
     List<LatLng>? polylineCoordinates,
-    // List<RideRequest>? rideRequests,
+    List<String>? rideRequests,
   }) {
     return DriverHomeUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -103,7 +102,7 @@ class DriverHomeUiState extends BaseUiState {
       currentLocationIcon: currentLocationIcon ?? this.currentLocationIcon,
       polylinePoints: polylinePoints ?? this.polylinePoints,
       polylineCoordinates: polylineCoordinates ?? this.polylineCoordinates,
-      // rideRequests: rideRequests ?? this.rideRequests,
+      rideRequests: rideRequests ?? this.rideRequests,
     );
   }
 }

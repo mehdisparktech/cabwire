@@ -114,7 +114,7 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
                   onPressed: () {
                     // You can define specific onTap behavior here if needed
                     if (isRideProcessing) {
-                      Get.to(() => DriverTripCloseOtpPage());
+                      Get.off(() => DriverTripCloseOtpPage());
                     } else {
                       setState(() {
                         isRideProcessing = true;
