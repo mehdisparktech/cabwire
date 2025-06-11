@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/themes.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_ui_state.dart';
 import 'package:cabwire/presentation/driver/home/ui/screens/driver_home_page_offline.dart';
 import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
@@ -62,6 +63,7 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
           (errorMessage) async {
             print('Sign in error: $errorMessage'); // Debug print
             await addUserMessage(errorMessage);
+            showMessage(message: errorMessage);
           },
           // Handle success
           (user) async {

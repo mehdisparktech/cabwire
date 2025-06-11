@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
@@ -14,6 +16,7 @@ import 'package:cabwire/presentation/driver/auth/ui/screens/driver_confirm_infor
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_password_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class DriverForgotPasswordPresenter
     extends BasePresenter<DriverForgotPasswordUiState>
@@ -56,9 +59,15 @@ class DriverForgotPasswordPresenter
     (_) => FocusNode(),
   );
 
+  // Form keys - create them lazily to avoid state lifecycle issues
+  late final GlobalKey<FormState> resetPasswordFormKey = GlobalKey<FormState>(
+    debugLabel: 'resetPasswordForm_${identityHashCode(this)}',
+  );
+  late final GlobalKey<FormState> forgotPasswordFormKey = GlobalKey<FormState>(
+    debugLabel: 'forgotPasswordForm_${identityHashCode(this)}',
+  );
+
   // Reset Password Controllers
-  final GlobalKey<FormState> resetPasswordFormKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> forgotPasswordFormKey = GlobalKey<FormState>();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
@@ -170,7 +179,6 @@ class DriverForgotPasswordPresenter
       },
     );
     if (result.isRight()) {
-      clearControllers();
       if (context.mounted) {
         Navigator.pushAndRemoveUntil(
           context,
@@ -178,7 +186,7 @@ class DriverForgotPasswordPresenter
             builder:
                 (context) => DriverEmailVerificationScreen(isSignUp: false),
           ),
-          (route) => false,
+          (route) => true,
         );
       }
     }
@@ -199,13 +207,20 @@ class DriverForgotPasswordPresenter
       (message) async => await addUserMessage(message),
     );
     if (result.isRight()) {
+      // Clear data before navigation
       clearControllers();
+
+      // Ensure we're not in a bad state before navigating
       if (context.mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const AuthNavigator()),
-          (route) => false,
-        );
+        // Use a microtask to ensure we're not in the middle of a build
+        Future.microtask(() {
+          // Pop all routes and push AuthNavigator
+          Get.offAll(
+            () => const AuthNavigator(),
+            predicate: (_) => false,
+            duration: const Duration(milliseconds: 0), // Instant transition
+          );
+        });
       }
     }
     await showMessage(message: result.fold((l) => l, (r) => r));
@@ -223,7 +238,7 @@ class DriverForgotPasswordPresenter
 
   @override
   void dispose() {
-    super.dispose();
+    // Dispose controllers first
     emailController.dispose();
     for (final c in verificationCodeControllers) {
       c.dispose();
@@ -233,6 +248,16 @@ class DriverForgotPasswordPresenter
     }
     passwordController.dispose();
     confirmPasswordController.dispose();
+
+    // Clear form state if it exists
+    if (resetPasswordFormKey.currentState != null) {
+      resetPasswordFormKey.currentState?.deactivate();
+    }
+    if (forgotPasswordFormKey.currentState != null) {
+      forgotPasswordFormKey.currentState?.deactivate();
+    }
+
+    super.dispose();
   }
 
   void clearControllers() {

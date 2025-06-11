@@ -13,7 +13,10 @@ abstract class DriverAuthRemoteDataSource {
   Future<Result<Map<String, dynamic>>> verifyEmail(String email, String otp);
   Future<Result<String>> resetCode(String email);
   Future<Result<String>> forgotPassword(String email);
-  Future<Result<String>> updateDriverProfile(DriverProfileModel profile);
+  Future<Result<String>> updateDriverProfile(
+    DriverProfileModel profile,
+    String email,
+  );
   Future<Result<String>> resetPasswordWithToken(
     String token,
     String newpassword,
@@ -114,10 +117,13 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
 
   // update driver profile
   @override
-  Future<Result<String>> updateDriverProfile(DriverProfileModel profile) async {
+  Future<Result<String>> updateDriverProfile(
+    DriverProfileModel profile,
+    String email,
+  ) async {
     try {
-      final result = await apiService.put(
-        ApiEndPoint.updateDriverProfile,
+      final result = await apiService.patch(
+        ApiEndPoint.updateProfileByEmail + email,
         body: profile.toJson(),
       );
       return result.fold(

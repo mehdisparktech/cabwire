@@ -10,7 +10,10 @@ abstract class DriverAuthRepository {
   Future<Result<Map<String, dynamic>>> verifyEmail(String email, String otp);
   Future<Result<String>> resetCode(String email);
   Future<Result<String>> forgotPassword(String email);
-  Future<Result<String>> updateDriverProfile(DriverProfileModel profile);
+  Future<Result<String>> updateDriverProfile(
+    DriverProfileModel profile,
+    String email,
+  );
   Future<Result<String>> resetPasswordWithToken(
     String token,
     String newpassword,

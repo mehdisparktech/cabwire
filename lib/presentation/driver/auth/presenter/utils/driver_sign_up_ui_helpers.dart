@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cabwire/core/utility/helpers/date_format_helper.dart';
 import 'driver_sign_up_constants.dart';
 
 class DriverSignUpUIHelpers {
@@ -54,9 +55,9 @@ class DriverSignUpUIHelpers {
     );
   }
 
-  // Format date to string
+  // Format date to string for display
   String formatDate(DateTime date) {
-    return "${date.day}/${date.month}/${date.year}";
+    return DateFormatHelper.formatDateForDisplay(date);
   }
 
   // Format date with month name
@@ -94,58 +95,17 @@ class DriverSignUpUIHelpers {
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Handle bar
-                Container(
-                  margin: const EdgeInsets.only(top: 12),
-                  height: 4,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                // Title
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    'Select Option',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[800],
-                    ),
-                  ),
-                ),
-                // Options list
-                Flexible(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: options.length,
-                    itemBuilder: (context, index) {
-                      final option = options[index];
-                      return ListTile(
-                        title: Text(
-                          option,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        trailing:
-                            controller.text == option
-                                ? const Icon(Icons.check, color: Colors.blue)
-                                : null,
-                        onTap: () {
-                          controller.text = option;
-                          Navigator.pop(context);
-                        },
-                      );
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: options.length,
+              itemBuilder:
+                  (context, index) => ListTile(
+                    title: Text(options[index]),
+                    onTap: () {
+                      controller.text = options[index];
+                      Navigator.pop(context);
                     },
                   ),
-                ),
-                // Bottom padding
-                const SizedBox(height: 20),
-              ],
             ),
           ),
     );

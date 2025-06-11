@@ -8,7 +8,10 @@ class DriverProfileUpdateUsecase extends BaseUseCase<String> {
 
   DriverProfileUpdateUsecase(super.errorMessageHandler, this.repository);
 
-  Future<Result<String>> execute(DriverProfileModel profile) async {
-    return repository.updateDriverProfile(profile);
+  Future<Result<String>> execute(
+    DriverProfileModel profile,
+    String email,
+  ) async {
+    return repository.updateDriverProfile(profile, email);
   }
 }

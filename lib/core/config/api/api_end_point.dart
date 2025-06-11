@@ -17,6 +17,7 @@ class ApiEndPoint {
   static const chats = "$baseUrl/chats";
   static const messages = "$baseUrl/messages";
   static const resetCode = "$baseUrl/auth/forget-password";
-  static const updateDriverProfile = "$baseUrl/user/profile";
+  static const updateDriverProfile = "$baseUrl/user/profile/";
   static const resetPasswordWithToken = "$baseUrl/auth/reset-password";
+  static const updateProfileByEmail = "$baseUrl/user/update-profile-by-email/";
 }

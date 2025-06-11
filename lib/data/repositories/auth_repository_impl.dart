@@ -51,8 +51,11 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
   }
 
   @override
-  Future<Result<String>> updateDriverProfile(DriverProfileModel profile) async {
-    final result = await _authDataSource.updateDriverProfile(profile);
+  Future<Result<String>> updateDriverProfile(
+    DriverProfileModel profile,
+    String email,
+  ) async {
+    final result = await _authDataSource.updateDriverProfile(profile, email);
     return result.fold((l) => left(l), (r) => right(r));
   }
 

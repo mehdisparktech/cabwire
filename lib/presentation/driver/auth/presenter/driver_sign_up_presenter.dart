@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/core/utility/helpers/date_format_helper.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_ui_state.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_confirm_information_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_license_information.dart';
@@ -223,7 +224,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
       data,
     ) async {
       await addUserMessage(data['message']);
-      currentUiState.copyWith(resetToken: data['data']);
+      // currentUiState.copyWith(resetToken: data['data']);
     });
 
     if (result.isRight()) {
@@ -318,15 +319,30 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
   // Registration completion
   Future<void> completeRegistration(BuildContext context) async {
     await executeTaskWithLoading(() async {
+      // Parse the display dates to DateTime objects
+      final dateOfBirthDateTime = DateFormatHelper.parseDisplayDate(
+        dateOfBirthController.text.trim(),
+      );
+      final licenseExpiryDateTime = DateFormatHelper.parseDisplayDate(
+        licenseExpiryDateController.text.trim(),
+      );
+
+      if (dateOfBirthDateTime == null || licenseExpiryDateTime == null) {
+        await addUserMessage('Invalid date format');
+        return;
+      }
+
       final profile = DriverProfileModel(
         name: nameController.text.trim(),
         contact: phoneNumberController.text.trim(),
         gender: genderController.text.trim(),
-        dateOfBirth: dateOfBirthController.text.trim(),
+        dateOfBirth: DateFormatHelper.formatDateForApi(dateOfBirthDateTime),
         image: profileImagePath,
         driverLicense: DriverLicenseEntity(
           licenseNumber: int.parse(driverLicenseNumberController.text.trim()),
-          licenseExpiryDate: licenseExpiryDateController.text.trim(),
+          licenseExpiryDate: DateFormatHelper.formatDateForApi(
+            licenseExpiryDateTime,
+          ),
           uploadDriversLicense: licenseImagePath ?? '',
         ),
         driverVehicles: DriverVehicleEntity(
@@ -339,12 +355,14 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           vehiclesInsuranceNumber: int.parse(
             vehiclesInsuranceNumberController.text.trim(),
           ),
-          // vehiclesCategory: int.parse(vehicleCategoryController.text.trim()),
           vehiclesCategory: 1,
           vehiclesPicture: vehicleImagePath ?? '',
         ),
       );
-      final result = await _driverProfileUpdateUsecase.execute(profile);
+      final result = await _driverProfileUpdateUsecase.execute(
+        profile,
+        emailController.text.trim(),
+      );
 
       await result.fold(
         (errorMessage) async => await addUserMessage(errorMessage),
