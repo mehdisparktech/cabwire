@@ -4,10 +4,11 @@ import 'package:cabwire/data/models/user_model.dart';
 import 'package:cabwire/domain/entities/driver/driver_entity.dart';
 import 'package:cabwire/domain/entities/driver/driver_profile_entity.dart';
 import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dart';
-import 'package:cabwire/domain/usecases/driver/forget_password_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/resent_code_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_sign_up_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/verify_email_usecase.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/driver_email_verification_presenter.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_resend_code.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_password_screen.dart';
@@ -27,13 +28,13 @@ import 'utils/driver_sign_up_navigation.dart';
 import 'utils/driver_sign_up_validation.dart';
 import 'utils/driver_sign_up_ui_helpers.dart';
 
-class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
+class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
+    implements DriverEmailVerificationPresenter {
   // Use case dependency
   // final DriverAuthRepository _driverAuthRepository;
   final VerifyEmailUsecase _verifyEmailUsecase;
   final ResentCodeUsecase _resentCodeUsecase;
   final DriverSignUpUseCase _signUpUsecase;
-  final ForgetPasswordUsecase _forgotPasswordUsecase;
   final DriverProfileUpdateUsecase _driverProfileUpdateUsecase;
 
   // State management
@@ -52,12 +53,14 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   // UI helpers
   late final DriverSignUpUIHelpers _uiHelpers;
 
+  // Resend code handler
+  late final DriverResendCodeHandler _resendCodeHandler;
+
   DriverSignUpPresenter(
     // this._driverAuthRepository,
     this._verifyEmailUsecase,
     this._resentCodeUsecase,
     this._signUpUsecase,
-    this._forgotPasswordUsecase,
     this._driverProfileUpdateUsecase,
   );
 
@@ -72,6 +75,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
     _navigation = DriverSignUpNavigation();
     _validation = DriverSignUpValidation();
     _uiHelpers = DriverSignUpUIHelpers();
+    _resendCodeHandler = DriverResendCodeHandler(
+      resentCodeUsecase: _resentCodeUsecase,
+    );
   }
 
   // Form keys
@@ -87,14 +93,17 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
 
   // Controller getters - delegated to controllers class
   TextEditingController get nameController => _controllers.nameController;
+  @override
   TextEditingController get emailController => _controllers.emailController;
   TextEditingController get passwordController =>
       _controllers.passwordController;
   TextEditingController get confirmPasswordController =>
       _controllers.confirmPasswordController;
 
+  @override
   List<TextEditingController> get verificationCodeControllers =>
       _controllers.verificationCodeControllers;
+  @override
   List<FocusNode> get verificationCodeFocusNodes =>
       _controllers.verificationCodeFocusNodes;
 
@@ -160,6 +169,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   );
 
   // Email verification methods
+  @override
   void onCodeDigitInput(int index, String value) {
     if (value.isNotEmpty &&
         index < DriverSignUpConstants.verificationCodeLength - 1) {
@@ -169,27 +179,29 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
 
   // reset verification code
 
-  Future<void> resendVerificationCode() async {
-    final result = await _resentCodeUsecase.execute(
-      emailController.text.trim(),
-    );
-    result.fold(
-      (errorMessage) async {
-        await addUserMessage(errorMessage);
-        await showMessage(message: errorMessage);
-      },
-      (message) async {
-        await addUserMessage(message);
-        await showMessage(message: message);
-      },
-    );
-    await showMessage(message: result.fold((l) => l, (r) => r));
-  }
+  // Future<void> resendVerificationCode() async {
+  //   final result = await _resentCodeUsecase.execute(
+  //     emailController.text.trim(),
+  //   );
+  //   result.fold(
+  //     (errorMessage) async {
+  //       await addUserMessage(errorMessage);
+  //       await showMessage(message: errorMessage);
+  //     },
+  //     (message) async {
+  //       await addUserMessage(message);
+  //       await showMessage(message: message);
+  //     },
+  //   );
+  //   await showMessage(message: result.fold((l) => l, (r) => r));
+  // }
 
   //get masked email
+  @override
   String getMaskedEmail(String email) => _validation.getMaskedEmail(email);
 
   //verify email code
+  @override
   Future<void> verifyEmailCode(BuildContext context, bool isSignUp) async {
     final code =
         verificationCodeControllers.map((controller) => controller.text).join();
@@ -349,26 +361,26 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
   }
 
   //forgot password
-  Future<void> forgotPassword(BuildContext context) async {
-    if (!_validation.validateForm(resetPasswordFormKey)) return;
-    final result = await _forgotPasswordUsecase.execute(
-      emailController.text.trim(),
-    );
-    result.fold(
-      (errorMessage) async => await addUserMessage(errorMessage),
-      (message) async => await addUserMessage(message),
-    );
-    if (result.isRight()) {
-      //await showMessage(message: 'Verification code sent to your email');
-      if (context.mounted) {
-        _navigation.navigateWithSlideTransition(
-          context,
-          const DriverEmailVerificationScreen(isSignUp: false),
-        );
-      }
-    }
-    await showMessage(message: result.fold((l) => l, (r) => r));
-  }
+  // Future<void> forgotPassword(BuildContext context) async {
+  //   if (!_validation.validateForm(resetPasswordFormKey)) return;
+  //   final result = await _forgotPasswordUsecase.execute(
+  //     emailController.text.trim(),
+  //   );
+  //   result.fold(
+  //     (errorMessage) async => await addUserMessage(errorMessage),
+  //     (message) async => await addUserMessage(message),
+  //   );
+  //   if (result.isRight()) {
+  //     //await showMessage(message: 'Verification code sent to your email');
+  //     if (context.mounted) {
+  //       _navigation.navigateWithSlideTransition(
+  //         context,
+  //         const DriverEmailVerificationScreen(isSignUp: false),
+  //       );
+  //     }
+  //   }
+  //   await showMessage(message: result.fold((l) => l, (r) => r));
+  // }
 
   // Reset password
   Future<void> resetPassword(BuildContext context) async {
@@ -483,6 +495,15 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState> {
       ),
     );
     currentUiState.copyWith(driver: updatedDriver, currentStep: 4);
+  }
+
+  @override
+  Future<void> resendVerificationCode() async {
+    await _resendCodeHandler.resendCode(
+      email: emailController.text,
+      showMessage: (message) => showMessage(message: message),
+      addUserMessage: addUserMessage,
+    );
   }
 
   // BasePresenter overrides

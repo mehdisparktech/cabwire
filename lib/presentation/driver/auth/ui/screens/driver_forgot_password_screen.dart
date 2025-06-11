@@ -6,7 +6,7 @@ import '../../../../common/components/auth/custom_button.dart';
 import '../../../../common/components/auth/auth_screen_wrapper.dart';
 import '../../../../common/components/auth/auth_form_container.dart';
 import '../../../../common/components/auth/auth_validators.dart';
-import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/driver_forgot_password_presenter.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
@@ -14,7 +14,7 @@ class ForgotPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final presenter = locate<DriverSignUpPresenter>();
+    final presenter = locate<DriverForgotPasswordPresenter>();
     return AuthScreenWrapper(
       title: AppStrings.driverForgotPassword,
       subtitle: AppStrings.driverEnterEmailHint,

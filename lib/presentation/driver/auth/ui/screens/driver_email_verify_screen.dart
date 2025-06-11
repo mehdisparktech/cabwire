@@ -4,6 +4,8 @@ import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/driver_email_verification_presenter.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/driver_forgot_password_presenter.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +24,10 @@ class DriverEmailVerificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get presenter from service locator
-    final presenter = locate<DriverSignUpPresenter>();
+    final DriverEmailVerificationPresenter presenter =
+        isSignUp
+            ? locate<DriverSignUpPresenter>()
+            : locate<DriverForgotPasswordPresenter>();
 
     // Get the email from the presenter
     final email = presenter.emailController.text;

@@ -1,6 +1,7 @@
 import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_presenter.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_login_presenter.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/driver_forgot_password_presenter.dart';
 import 'package:cabwire/presentation/driver/chat/presenter/chat_presenter.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/create_post_presenter.dart';
 import 'package:cabwire/presentation/driver/earnings/presenter/earning_presenter.dart';
@@ -39,17 +40,16 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(() => loadPresenter(DriverProfilePresenter()))
       ..registerLazySingleton(
         () => loadPresenter(
-          DriverSignUpPresenter(
-            locate(),
-            locate(),
-            locate(),
-            locate(),
-            locate(),
-          ),
+          DriverSignUpPresenter(locate(), locate(), locate(), locate()),
         ),
       )
       ..registerLazySingleton(
         () => loadPresenter(DriverLoginPresenter(locate())),
+      )
+      ..registerLazySingleton(
+        () => loadPresenter(
+          DriverForgotPasswordPresenter(locate(), locate(), locate()),
+        ),
       )
       ..registerLazySingleton(() => loadPresenter(NotificationPresenter()))
       ..registerLazySingleton(() => loadPresenter(CreatePostPresenter()))
