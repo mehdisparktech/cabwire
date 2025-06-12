@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'driver_login_screen.dart';
 import 'driver_signup_screen.dart';
 
-class AuthNavigator extends StatefulWidget {
-  const AuthNavigator({super.key});
+class DriverAuthNavigatorScreen extends StatefulWidget {
+  const DriverAuthNavigatorScreen({super.key});
 
   @override
-  State<AuthNavigator> createState() => _AuthNavigatorState();
+  State<DriverAuthNavigatorScreen> createState() =>
+      _DriverAuthNavigatorScreenState();
 }
 
-class _AuthNavigatorState extends State<AuthNavigator> {
+class _DriverAuthNavigatorScreenState extends State<DriverAuthNavigatorScreen> {
   bool _showLogin = true;
 
   void _toggleView() {

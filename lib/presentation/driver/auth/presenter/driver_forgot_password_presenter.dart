@@ -216,7 +216,7 @@ class DriverForgotPasswordPresenter
         Future.microtask(() {
           // Pop all routes and push AuthNavigator
           Get.offAll(
-            () => const AuthNavigator(),
+            () => const DriverAuthNavigatorScreen(),
             predicate: (_) => false,
             duration: const Duration(milliseconds: 0), // Instant transition
           );

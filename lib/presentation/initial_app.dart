@@ -57,7 +57,10 @@ class InitialApp extends StatelessWidget {
                 future: LocalStorage.getAllPrefData(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Container(
+                      color: Colors.white,
+                      child: const Center(child: CircularProgressIndicator()),
+                    );
                   }
 
                   // Check if user is logged in and token is valid

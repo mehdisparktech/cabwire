@@ -37,7 +37,7 @@ class DriverOnboardingPresenter extends BasePresenter<DriverOnboardingUiState> {
 
   void onGetStarted() {
     // Navigate to AuthNavigator for login/signup
-    Get.to(() => const AuthNavigator());
+    Get.to(() => const DriverAuthNavigatorScreen());
   }
 
   @override

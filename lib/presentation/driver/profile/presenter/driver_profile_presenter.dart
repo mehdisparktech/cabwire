@@ -310,7 +310,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     Future.delayed(const Duration(seconds: 1), () {
       toggleLoading(loading: false);
       // GetNavigation.Get.offAll(() => LoginScreen()); // Navigate to login
-      Get.offAll(() => AuthNavigator());
+      Get.offAll(() => DriverAuthNavigatorScreen());
       addUserMessage("Logged out successfully");
     });
   }
@@ -322,7 +322,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     Future.delayed(const Duration(seconds: 2), () {
       toggleLoading(loading: false);
       Get.offAll(
-        () => const AuthNavigator(),
+        () => const DriverAuthNavigatorScreen(),
       ); // Navigate to login or welcome screen
       addUserMessage(
         "Account deleted successfully (navigation not implemented).",

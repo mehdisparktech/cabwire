@@ -372,7 +372,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           if (context.mounted) {
             _navigation.navigateWithFadeTransition(
               context,
-              const AuthNavigator(),
+              const DriverAuthNavigatorScreen(),
               clearStack: true,
             );
           }

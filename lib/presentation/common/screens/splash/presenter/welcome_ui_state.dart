@@ -10,10 +10,12 @@ class WelcomeUiState extends BaseUiState {
     required super.userMessage,
     required this.userType,
     required this.theme,
+    required this.isFirstRun,
   });
 
   final UserType userType;
   final ThemeData theme;
+  final bool isFirstRun;
 
   factory WelcomeUiState.empty() {
     return WelcomeUiState(
@@ -21,23 +23,32 @@ class WelcomeUiState extends BaseUiState {
       userMessage: '',
       userType: UserType.passenger,
       theme: AppTheme.passengerTheme,
+      isFirstRun: false,
     );
   }
 
   @override
-  List<Object?> get props => [isLoading, userMessage, userType, theme];
+  List<Object?> get props => [
+    isLoading,
+    userMessage,
+    userType,
+    theme,
+    isFirstRun,
+  ];
 
   WelcomeUiState copyWith({
     bool? isLoading,
     String? userMessage,
     UserType? userType,
     ThemeData? theme,
+    bool? isFirstRun,
   }) {
     return WelcomeUiState(
       isLoading: isLoading ?? this.isLoading,
       userMessage: userMessage ?? this.userMessage,
       userType: userType ?? this.userType,
       theme: theme ?? this.theme,
+      isFirstRun: isFirstRun ?? this.isFirstRun,
     );
   }
 }
