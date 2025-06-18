@@ -97,8 +97,8 @@ class DriverHomePage extends StatelessWidget {
         target: uiState.currentLocation ?? uiState.centerMapCoordinates,
         zoom: 18.0,
       ),
-      myLocationEnabled: true,
-      myLocationButtonEnabled: true,
+      myLocationEnabled: false,
+      myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
       markers: {
