@@ -11,8 +11,9 @@ Future<void> main() async {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await _initializeApp();
+    // Wait for location permission check to complete before running the app
+    await _checkLocationPermission();
     runApp(InitialApp(isFirstRun: await _checkFirstRun()));
-    _checkLocationPermission();
     // _registerDevice();
   }, (error, stackTrace) => (error, stackTrace, fatal: true));
 }

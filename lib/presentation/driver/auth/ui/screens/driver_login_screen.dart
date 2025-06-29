@@ -1,5 +1,4 @@
 import 'package:cabwire/core/config/app_assets.dart';
-import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/app_strings.dart';
@@ -84,18 +83,16 @@ class DriverLoginScreen extends StatelessWidget {
                 const ForgotPasswordScreen(),
               ),
           style: TextButton.styleFrom(
+            foregroundColor: context.color.blackColor800,
+            textStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+            ),
             minimumSize: Size.zero,
             padding: EdgeInsets.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          child: Text(
-            AppStrings.driverForgotPassword,
-            style: TextStyle(
-              color: context.color.blackColor800,
-              fontSize: px14,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
+          child: Text(AppStrings.driverForgotPassword),
         ),
       ),
     ];
@@ -109,6 +106,7 @@ class DriverLoginScreen extends StatelessWidget {
     return CustomButton(
       text: AppStrings.driverSignIn,
       onPressed: () => presenter.onSignIn(context),
+      isLoading: presenter.uiState.value.isLoading,
     );
   }
 

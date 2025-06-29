@@ -28,15 +28,17 @@ class ToggleAuthOption extends StatelessWidget {
           ),
           TextButton(
             onPressed: onActionPressed,
-            // Style comes from TextButtonTheme in AppTheme
-            child: Text(
-              actionText,
-              style: TextStyle(
-                color: context.color.primaryBtn,
+            style: TextButton.styleFrom(
+              foregroundColor: context.color.primaryBtn,
+              textStyle: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
               ),
+              padding: const EdgeInsets.only(left: 4),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
+            child: Text(actionText),
           ),
         ],
       ),

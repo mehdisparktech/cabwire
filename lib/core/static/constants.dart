@@ -37,4 +37,10 @@ const String facebookPageUrl = "https://www.facebook.com/com.oratiq/";
 
 const Duration defaultPageTransitionDuration = Duration(milliseconds: 370);
 
+// Google Maps API key - Make sure this key has the following APIs enabled:
+// - Maps SDK for Android
+// - Maps SDK for iOS
+// - Directions API
+// - Places API
+// - Geocoding API
 const String googleApiKey = 'AIzaSyBVd7ggzUDHSxsiQ0tsB1IBxteOXyiz_uU';

@@ -27,6 +27,7 @@ class DriverEmailVerificationScreen extends StatelessWidget {
     final DriverEmailVerificationPresenter presenter =
         isSignUp
             ? locate<DriverSignUpPresenter>()
+                as DriverEmailVerificationPresenter
             : locate<DriverForgotPasswordPresenter>();
 
     // Get the email from the presenter
@@ -116,18 +117,16 @@ class DriverEmailVerificationScreen extends StatelessWidget {
               TextButton(
                 onPressed: () => presenter.resendVerificationCode(),
                 style: TextButton.styleFrom(
+                  foregroundColor: context.color.primaryBtn,
+                  textStyle: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                   minimumSize: Size.zero,
                   padding: EdgeInsets.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: Text(
-                  AppStrings.driverResend,
-                  style: TextStyle(
-                    color: context.color.primaryBtn,
-                    fontSize: px14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: Text(AppStrings.driverResend),
               ),
             ],
           ),

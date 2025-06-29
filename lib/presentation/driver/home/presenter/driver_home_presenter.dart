@@ -33,8 +33,10 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
     super.onInit();
     await _initializeFromArguments();
     await getCurrentLocation();
-    await setPolyline();
     setCustomIcons();
+    if (location != null) {
+      await setPolyline();
+    }
   }
 
   Future<void> getCurrentLocation() async {
@@ -52,8 +54,20 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
         (result) {
           // Success case
           location = result;
+          final currentLatLng = LatLng(location!.latitude, location!.longitude);
+
+          // Set a destination that's nearby the current location (about 1-2km away)
+          // This adds a small offset to ensure we can get a valid route
+          final destinationLatLng = LatLng(
+            location!.latitude + 0.01, // Approximately 1km north
+            location!.longitude + 0.01, // Approximately 1km east
+          );
+
           uiState.value = currentUiState.copyWith(
-            currentLocation: LatLng(location!.latitude, location!.longitude),
+            currentLocation: currentLatLng,
+            // Update destination and source based on current location
+            destinationMapCoordinates: destinationLatLng,
+            sourceMapCoordinates: currentLatLng,
           );
           debugPrint('Location updated: ${location.toString()}');
         },
@@ -128,6 +142,19 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
         logError('Google Maps API key error: ${polylineResult.errorMessage}');
         uiState.value = currentUiState.copyWith(
           userMessage: 'Unable to load route. Please check API configuration.',
+        );
+        return;
+      }
+
+      if (polylineResult.status == 'ZERO_RESULTS') {
+        debugPrint('No route available between the specified points');
+        // Use a straight line instead or update destination to a nearby location
+        uiState.value = currentUiState.copyWith(
+          polylineCoordinates: [
+            currentUiState.currentLocation!,
+            currentUiState.destinationMapCoordinates,
+          ],
+          userMessage: 'No direct route available. Showing approximate path.',
         );
         return;
       }

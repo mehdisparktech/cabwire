@@ -16,6 +16,9 @@ class LocationService {
   /// Stream for location updates
   Stream<LocationModel> get locationStream => _locationController.stream;
 
+  /// Flag to track if a permission request is in progress
+  bool _isRequestingPermission = false;
+
   /// Initialize the location service
   Future<void> _initialize() async {
     // Check if location services are enabled
@@ -39,9 +42,18 @@ class LocationService {
   /// Request location permission from the user
   Future<bool> requestLocationPermission() async {
     try {
+      // Check if a request is already in progress
+      if (_isRequestingPermission) {
+        debugPrint('A permission request is already in progress');
+        return false;
+      }
+
+      _isRequestingPermission = true;
       final status = await Permission.location.request();
+      _isRequestingPermission = false;
       return status.isGranted;
     } catch (e) {
+      _isRequestingPermission = false;
       debugPrint('Error requesting location permission: $e');
       return false;
     }

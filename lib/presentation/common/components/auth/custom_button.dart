@@ -7,18 +7,20 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
   final double? radius;
   final double? widthPercentage;
+  final bool isLoading;
   const CustomButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.radius,
     this.widthPercentage,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: isLoading ? null : onPressed,
       child: Container(
         width: context.width * (widthPercentage ?? 0.95),
         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -48,14 +50,17 @@ class CustomButton extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               spacing: 10,
               children: [
-                Text(
-                  text,
-                  style: TextStyle(
-                    color: Colors.white /* Text-Primary */,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                if (isLoading)
+                  const CircularProgressIndicator(color: Colors.white),
+                if (!isLoading)
+                  Text(
+                    text,
+                    style: TextStyle(
+                      color: Colors.white /* Text-Primary */,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
               ],
             ),
           ],
