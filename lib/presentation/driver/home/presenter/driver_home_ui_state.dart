@@ -39,7 +39,7 @@ class DriverHomeUiState extends BaseUiState {
       isLoading: false,
       userMessage: '',
       isOnline: false,
-      userName: "Sabbir",
+      userName: '',
       centerMapCoordinates: const LatLng(23.759112, 90.429365),
       currentLocation: null,
       destinationMapCoordinates: const LatLng(23.763766, 90.431407),

@@ -27,7 +27,6 @@ class PassengerNotificationItem extends StatelessWidget {
         border: Border.all(color: context.theme.colorScheme.primary),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CircularIconButton(
@@ -37,8 +36,7 @@ class PassengerNotificationItem extends StatelessWidget {
           ),
           gapW16,
 
-          SizedBox(
-            width: 255,
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -64,12 +62,12 @@ class PassengerNotificationItem extends StatelessWidget {
               ],
             ),
           ),
+          gapW10,
           CommonText(
             text: time,
             fontSize: 14,
             fontWeight: FontWeight.w500,
             textAlign: TextAlign.start,
-
             color: Colors.black,
             maxLines: 1,
           ),

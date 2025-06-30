@@ -20,4 +20,5 @@ class ApiEndPoint {
   static const updateDriverProfile = "$baseUrl/user/profile/";
   static const resetPasswordWithToken = "$baseUrl/auth/reset-password";
   static const updateProfileByEmail = "$baseUrl/user/update-profile-by-email/";
+  static const getProfile = "$baseUrl/user/profile";
 }

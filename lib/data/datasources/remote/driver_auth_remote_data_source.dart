@@ -1,6 +1,7 @@
 import 'package:cabwire/core/base/result.dart';
 import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
+import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/models/signin_response_model.dart';
 import 'package:cabwire/data/models/signup_response_model.dart';
 import 'package:cabwire/data/models/user_model.dart';
@@ -22,6 +23,7 @@ abstract class DriverAuthRemoteDataSource {
     String newpassword,
     String confirmPassword,
   );
+  Future<Result<ProfileResponseModel>> getDriverProfile(String token);
 }
 
 class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
@@ -151,6 +153,23 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
       return result.fold(
         (l) => left(l.message),
         (r) => right(r.data['message']),
+      );
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
+
+  // get driver profile
+  @override
+  Future<Result<ProfileResponseModel>> getDriverProfile(String token) async {
+    try {
+      final result = await apiService.get(
+        ApiEndPoint.getProfile,
+        header: {'Authorization': token, 'Content-Type': 'application/json'},
+      );
+      return result.fold(
+        (l) => left(l.message),
+        (r) => right(ProfileResponseModel.fromJson(r.data)),
       );
     } catch (e) {
       return left(e.toString());

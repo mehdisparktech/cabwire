@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:cabwire/core/enum/user_type.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/data/models/profile_model.dart';
+import 'package:cabwire/data/services/local_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cabwire/core/config/themes.dart';
@@ -159,5 +161,24 @@ class LocalStorage {
   static Future<void> setInt(String key, int value) async {
     final localStorage = await _getStorage();
     await localStorage.setInt(key, value);
+  }
+
+  static Future<void> saveDriverProfile(ProfileModel profile) async {
+    final localStorage = await _getStorage();
+    await localStorage.setString(
+      CacheKeys.driverProfile,
+      json.encode(profile.toJson()),
+    );
+  }
+
+  static Future<ProfileModel?> getDriverProfile() async {
+    final localStorage = await _getStorage();
+    final profile = localStorage.getString(CacheKeys.driverProfile);
+    return profile != null ? ProfileModel.fromJson(json.decode(profile)) : null;
+  }
+
+  static Future<void> removeDriverProfile() async {
+    final localStorage = await _getStorage();
+    await localStorage.remove(CacheKeys.driverProfile);
   }
 }

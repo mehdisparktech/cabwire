@@ -4,6 +4,8 @@ import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/constants.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
+import 'package:cabwire/data/models/profile_model.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:cabwire/domain/entities/location_entity.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_ui_state.dart';
@@ -32,10 +34,22 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   Future<void> onInit() async {
     super.onInit();
     await _initializeFromArguments();
+    await loadDriverProfile();
     await getCurrentLocation();
     setCustomIcons();
     if (location != null) {
       await setPolyline();
+    }
+  }
+
+  Future<void> loadDriverProfile() async {
+    try {
+      final ProfileModel? profile = await LocalStorage.getDriverProfile();
+      if (profile != null) {
+        uiState.value = currentUiState.copyWith(userName: profile.name ?? '');
+      }
+    } catch (e) {
+      logError('Error loading driver profile: $e');
     }
   }
 

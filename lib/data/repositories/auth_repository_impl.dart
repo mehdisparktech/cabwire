@@ -3,7 +3,9 @@ import 'package:cabwire/data/datasources/remote/driver_auth_remote_data_source.d
 import 'package:cabwire/data/mappers/signin_response_mapper.dart';
 import 'package:cabwire/data/mappers/signup_response_mapper.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
+import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/models/user_model.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/entities/signin_response_entity.dart';
 import 'package:cabwire/domain/entities/signup_response_entity.dart';
 import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
@@ -26,7 +28,22 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
     String password,
   ) async {
     final result = await _authDataSource.signIn(email, password);
-    return result.fold((l) => left(l), (r) => right(r.toEntity()));
+    if (result.isRight()) {
+      final profileResult = await _authDataSource.getDriverProfile(
+        'Bearer ${result.fold((l) => l, (r) => r.data?.token ?? '')}',
+      );
+      if (profileResult.isRight()) {
+        final profileData = profileResult.fold((l) => l, (r) => r.data);
+        if (profileData != null) {
+          final profileModel = profileData as ProfileModel;
+          await LocalStorage.saveDriverProfile(profileModel);
+        } else {
+          await LocalStorage.removeDriverProfile();
+        }
+      }
+      return result.fold((l) => left(l), (r) => right(r.toEntity()));
+    }
+    return left('Error');
   }
 
   @override
