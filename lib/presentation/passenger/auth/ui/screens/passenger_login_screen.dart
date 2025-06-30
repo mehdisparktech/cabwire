@@ -89,7 +89,12 @@ class PassengerLoginScreen extends StatelessWidget {
             ],
             actionButton: CustomButton(
               text: AppStrings.passengerSignIn,
-              onPressed: () => presenter.onSignIn(context),
+              onPressed:
+                  () =>
+                      presenter.uiState.value.isLoading
+                          ? null
+                          : presenter.onSignIn(context),
+              isLoading: presenter.uiState.value.isLoading,
             ),
             bottomWidgets: [
               ToggleAuthOption(

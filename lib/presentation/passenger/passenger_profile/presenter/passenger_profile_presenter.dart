@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/app_assets.dart'; // For default assets
-import 'package:cabwire/presentation/passenger/auth/ui/screens/passenger_auth_navigator_screen.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart'; // Import LocalStorage
+import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart'; // Import WelcomeScreen
 import 'package:cabwire/presentation/passenger/passenger_profile/ui/screens/passenger_contact_us_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_profile/ui/screens/passenger_edit_password_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_profile/ui/screens/passenger_edit_profile_info_screen.dart';
@@ -190,11 +192,11 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
       return;
     }
     // Simulate API call to update profile
-    print(
+    appLog(
       "Saving profile: ${editNameController.text}, ${editEmailController.text}",
     );
     if (selectedProfileImageFile != null) {
-      print("New profile image to upload: ${selectedProfileImageFile!.path}");
+      appLog("New profile image to upload: ${selectedProfileImageFile!.path}");
       // Handle image upload here
     }
     await Future.delayed(const Duration(seconds: 2));
@@ -230,7 +232,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     }
     toggleLoading(loading: true);
     // Simulate API call
-    print(
+    appLog(
       "Changing password. Old: ${oldPasswordController.text}, New: ${newPasswordController.text}",
     );
     await Future.delayed(const Duration(seconds: 2));
@@ -243,7 +245,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   Future<void> savePassengerInfo() async {
     toggleLoading(loading: true);
     // Simulate API call
-    print("Saving passenger info: ${editNameController.text}");
+    appLog("Saving passenger info: ${editNameController.text}");
     await Future.delayed(const Duration(seconds: 2));
     final updatedPassengerInfo = currentUiState.passengerProfile.copyWith(
       name: editNameController.text,
@@ -267,7 +269,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     }
     toggleLoading(loading: true);
     // Simulate API call
-    print(
+    appLog(
       "Submitting contact form: ${contactNameController.text}, Message: ${contactMessageController.text}",
     );
     await Future.delayed(const Duration(seconds: 2));
@@ -276,30 +278,56 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     Get.back();
   }
 
-  void _logoutUser() {
+  void _logoutUser() async {
     toggleLoading(loading: true);
     // Perform actual logout (clear tokens, user data)
-    print("Logging out user...");
-    Future.delayed(const Duration(seconds: 1), () {
+    appLog("Logging out user...");
+
+    try {
+      // Clean all tokens and user data from LocalStorage
+      // This will clear token, userId, isLogIn status, etc.
+      // But will preserve firstTime flag which is stored in a different location
+      await LocalStorage.removeAllPrefData();
+
+      appLog("Successfully cleared user data and tokens");
+
+      // Navigate to welcome screen after logout
+      Future.delayed(const Duration(milliseconds: 500), () {
+        toggleLoading(loading: false);
+        // Navigate to welcome screen which will show auth screen since isLogIn is now false
+        Get.offAll(() => WelcomeScreen());
+        addUserMessage("Logged out successfully");
+      });
+    } catch (e) {
+      appLog("Error during logout: $e");
       toggleLoading(loading: false);
-      // GetNavigation.Get.offAll(() => LoginScreen()); // Navigate to login
-      addUserMessage("Logged out successfully (navigation not implemented).");
-    });
+      addUserMessage("Error during logout. Please try again.", isError: true);
+    }
   }
 
-  void _deleteAccount() {
+  void _deleteAccount() async {
     toggleLoading(loading: true);
     // Perform actual account deletion
-    print("Deleting account...");
-    Future.delayed(const Duration(seconds: 2), () {
+    appLog("Deleting account...");
+
+    try {
+      await LocalStorage.removeAllPrefData();
+
+      appLog("Successfully deleted account and cleared user data");
+
+      Future.delayed(const Duration(milliseconds: 500), () {
+        toggleLoading(loading: false);
+        Get.offAll(() => WelcomeScreen());
+        addUserMessage("Account deleted successfully");
+      });
+    } catch (e) {
+      appLog("Error during account deletion: $e");
       toggleLoading(loading: false);
-      Get.offAll(
-        () => const PassengerAuthNavigationScreen(),
-      ); // Navigate to login or welcome screen
       addUserMessage(
-        "Account deleted successfully (navigation not implemented).",
+        "Error deleting account. Please try again.",
+        isError: true,
       );
-    });
+    }
   }
 
   void goBack() {

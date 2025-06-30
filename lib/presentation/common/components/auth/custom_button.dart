@@ -1,6 +1,7 @@
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -51,7 +52,14 @@ class CustomButton extends StatelessWidget {
               spacing: 10,
               children: [
                 if (isLoading)
-                  const CircularProgressIndicator(color: Colors.white),
+                  SizedBox(
+                    height: 3.h,
+                    width: 6.w,
+                    child: const CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  ),
                 if (!isLoading)
                   Text(
                     text,

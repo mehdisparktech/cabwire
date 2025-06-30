@@ -78,7 +78,6 @@ class InitialApp extends StatelessWidget {
                       return PassengerMainPage();
                     }
                   }
-
                   return WelcomeScreen();
                 },
               ),
