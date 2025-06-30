@@ -173,4 +173,21 @@ class AppStrings {
   static const String passwordMustBeeEightCharacters =
       "Password must be at least 8 characters";
   static const String thePasswordDoesNotMatch = "The password does not match";
+  static const String passengerSignIn = "Sign In";
+  static const String passengerWelcomeBackToCabwire =
+      "Welcome Back To Cabwire.";
+  static const String passengerDontHaveAnAccount = "Don't Have an Account?";
+  static const String passengerEnterEmail = "Enter Your Email";
+  static const String passengerEnterEmailHint = "Enter Your Email";
+  static const String passengerEnterEmailError = "Please enter your email";
+  static const String passengerEnterPassword = "Enter Your Password";
+  static const String passengerEnterPasswordHint = "Enter Your Password";
+  static const String passengerEnterPasswordError =
+      "Please enter your password";
+  static const String passengerForgotPassword = "Forgot Password";
+  static const String passengerSignUp = "Sign Up";
+  static const String passengerSignUpWithEmail = "Sign Up with Email";
+  static const String passengerSignUpWithGoogle = "Sign Up with Google";
+  static const String passengerSignUpWithFacebook = "Sign Up with Facebook";
+  static const String passengerSignUpWithApple = "Sign Up with Apple";
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'passenger_login_screen.dart';
-import 'passenger_signup_screen.dart';
+import 'package:cabwire/presentation/passenger/auth/ui/screens/passenger_login_screen.dart';
+import 'package:cabwire/presentation/passenger/auth/ui/screens/passenger_signup_screen.dart';
 
 class PassengerAuthNavigationScreen extends StatefulWidget {
   const PassengerAuthNavigationScreen({super.key});
@@ -23,9 +23,9 @@ class _PassengerAuthNavigationScreenState
   @override
   Widget build(BuildContext context) {
     if (_showLogin) {
-      return LoginScreen(toggleView: _toggleView);
+      return PassengerLoginScreen(toggleView: _toggleView);
     } else {
-      return SignUpScreen(toggleView: _toggleView);
+      return PassengerSignUpScreen(toggleView: _toggleView);
     }
   }
 }

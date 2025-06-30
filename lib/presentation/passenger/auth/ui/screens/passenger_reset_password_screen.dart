@@ -46,7 +46,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   void _resetPassword() {
     if (_formKey.currentState?.validate() ?? false) {
       // Reset password logic
-      Get.to(() => LoginScreen(toggleView: () {}));
+      Get.to(() => PassengerLoginScreen(toggleView: () {}));
     }
   }
 

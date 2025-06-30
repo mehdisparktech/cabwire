@@ -1,8 +1,11 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/app_colors.dart';
+import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/presentation/passenger/auth/presenter/passenger_login_presenter.dart';
 import 'package:cabwire/presentation/passenger/auth/ui/screens/passenger_forgot_password_screen.dart';
-import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_text_form_field.dart';
@@ -12,114 +15,92 @@ import 'package:cabwire/presentation/common/components/auth/auth_screen_wrapper.
 import 'package:cabwire/presentation/common/components/auth/auth_form_container.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_validators.dart';
 
-class LoginScreen extends StatefulWidget {
+class PassengerLoginScreen extends StatelessWidget {
   final VoidCallback toggleView;
 
-  const LoginScreen({super.key, required this.toggleView});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _obscurePassword = true;
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void _togglePasswordVisibility() {
-    setState(() {
-      _obscurePassword = !_obscurePassword;
-    });
-  }
-
-  void _signIn() {
-    // if (_formKey.currentState?.validate() ?? false) {
-    //   // Sign in logic here
-    //   print('Email: ${_emailController.text}');
-    //   print('Password: ${_passwordController.text}');
-    // }
-    Get.offAll(() => PassengerMainPage());
-  }
+  const PassengerLoginScreen({super.key, required this.toggleView});
 
   @override
   Widget build(BuildContext context) {
-    return AuthScreenWrapper(
-      title: "Sign In",
-      subtitle: "Welcome Back To Cabwire.",
-      textColor: Colors.white,
-      child: AuthFormContainer(
-        formKey: _formKey,
-        logoAssetPath: AppAssets.icPassengerLogo,
-        logoAssetPath2: AppAssets.icCabwireLogo,
-        formFields: [
-          CustomTextFormField(
-            controller: _emailController,
-            hintText: 'example@email.com',
-            keyboardType: TextInputType.emailAddress,
-            validator: AuthValidators.validateEmail,
-          ),
-          gapH20,
-          CustomTextFormField(
-            controller: _passwordController,
-            hintText: 'Password',
-            isPassword: true,
-            obscureTextValue: _obscurePassword,
-            onVisibilityToggle: _togglePasswordVisibility,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your password';
-              }
-              return null;
-            },
-          ),
-          gapH10,
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: () {
-                // Forgot password logic
-                Get.to(() => ForgotPasswordScreen());
-              },
-              style: TextButton.styleFrom(
-                minimumSize: Size.zero,
-                padding: EdgeInsets.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                textStyle: const TextStyle(
-                  color: AppColors.textBlack87,
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  inherit: true,
+    final presenter = locate<PassengerLoginPresenter>();
+
+    return PresentableWidgetBuilder(
+      presenter: presenter,
+      builder: () {
+        return AuthScreenWrapper(
+          title: AppStrings.passengerSignIn,
+          subtitle: AppStrings.passengerWelcomeBackToCabwire,
+          textColor: Colors.white,
+          child: AuthFormContainer(
+            formKey: presenter.formKey,
+            logoAssetPath: AppAssets.icPassengerLogo,
+            logoAssetPath2: AppAssets.icCabwireLogo,
+            formFields: [
+              CustomTextFormField(
+                controller: presenter.emailController,
+                hintText: AppStrings.passengerEnterEmailHint,
+                keyboardType: TextInputType.emailAddress,
+                validator: AuthValidators.validateEmail,
+              ),
+              gapH20,
+              CustomTextFormField(
+                controller: presenter.passwordController,
+                hintText: AppStrings.passengerEnterPassword,
+                isPassword: true,
+                obscureTextValue: presenter.uiState.value.obscurePassword,
+                onVisibilityToggle: presenter.togglePasswordVisibility,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppStrings.passengerEnterPassword;
+                  }
+                  return null;
+                },
+              ),
+              gapH10,
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    // Forgot password logic
+                    Get.to(() => ForgotPasswordScreen());
+                  },
+                  style: TextButton.styleFrom(
+                    minimumSize: Size.zero,
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    textStyle: const TextStyle(
+                      color: AppColors.textBlack87,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      inherit: true,
+                    ),
+                  ),
+                  child: Text(
+                    AppStrings.passengerForgotPassword,
+                    style: TextStyle(
+                      color: AppColors.textBlack87,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      inherit: true,
+                    ),
+                  ),
                 ),
               ),
-              child: const Text(
-                "Forgot Password",
-                style: TextStyle(
-                  color: AppColors.textBlack87,
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  inherit: true,
-                ),
-              ),
+            ],
+            actionButton: CustomButton(
+              text: AppStrings.passengerSignIn,
+              onPressed: () => presenter.onSignIn(context),
             ),
+            bottomWidgets: [
+              ToggleAuthOption(
+                leadingText: AppStrings.passengerDontHaveAnAccount,
+                actionText: AppStrings.passengerSignUp,
+                onActionPressed: toggleView,
+              ),
+            ],
           ),
-        ],
-        actionButton: CustomButton(text: "Sign In", onPressed: _signIn),
-        bottomWidgets: [
-          ToggleAuthOption(
-            leadingText: "Don't Have an Account?",
-            actionText: "Sign Up",
-            onActionPressed: widget.toggleView,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

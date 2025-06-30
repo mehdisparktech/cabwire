@@ -1,8 +1,7 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
+import 'package:cabwire/core/enum/user_type.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/config/themes.dart';
-
-enum UserType { passenger, driver }
 
 class WelcomeUiState extends BaseUiState {
   const WelcomeUiState({

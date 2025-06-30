@@ -10,16 +10,16 @@ import 'package:cabwire/presentation/common/components/auth/auth_form_container.
 import 'package:cabwire/presentation/common/components/auth/auth_validators.dart';
 import 'passenger_email_verify_screen.dart';
 
-class SignUpScreen extends StatefulWidget {
+class PassengerSignUpScreen extends StatefulWidget {
   final VoidCallback toggleView;
 
-  const SignUpScreen({super.key, required this.toggleView});
+  const PassengerSignUpScreen({super.key, required this.toggleView});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<PassengerSignUpScreen> createState() => _PassengerSignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _PassengerSignUpScreenState extends State<PassengerSignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();

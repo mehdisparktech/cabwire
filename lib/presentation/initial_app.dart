@@ -1,9 +1,11 @@
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/enum/user_type.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_presenter.dart';
 import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart';
 import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
+import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:cabwire/core/config/app_screen.dart';
@@ -70,7 +72,11 @@ class InitialApp extends StatelessWidget {
 
                   // Check if user is logged in and token is valid
                   if (LocalStorage.isLogIn && !LocalStorage.isTokenExpired()) {
-                    return DriverMainPage();
+                    if (LocalStorage.userType == UserType.driver.name) {
+                      return DriverMainPage();
+                    } else {
+                      return PassengerMainPage();
+                    }
                   }
 
                   return WelcomeScreen();

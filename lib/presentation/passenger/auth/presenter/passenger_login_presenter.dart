@@ -2,26 +2,25 @@ import 'package:cabwire/core/config/themes.dart';
 import 'package:cabwire/core/enum/user_type.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/presentation/driver/home/ui/screens/driver_home_page_offline.dart';
-import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
+import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
-import 'package:cabwire/presentation/driver/auth/presenter/driver_login_ui_state.dart';
+import 'package:cabwire/presentation/passenger/auth/presenter/passenger_login_ui_state.dart';
 import 'package:cabwire/domain/usecases/driver/sign_in_usecase.dart';
 import 'package:get/get.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 
-class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
+class PassengerLoginPresenter extends BasePresenter<PassengerLoginUiState> {
   final SignInUsecase _signInUsecase;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final Obs<DriverLoginUiState> uiState = Obs(DriverLoginUiState.empty());
-  DriverLoginUiState get currentUiState => uiState.value;
+  final Obs<PassengerLoginUiState> uiState = Obs(PassengerLoginUiState.empty());
+  PassengerLoginUiState get currentUiState => uiState.value;
 
   // final LoginUseCase _loginUseCase;
-  DriverLoginPresenter(this._signInUsecase);
+  PassengerLoginPresenter(this._signInUsecase);
 
   @override
   void onInit() {
@@ -31,8 +30,8 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
   }
 
   void _initDevelopmentCredentials() {
-    emailController.text = 'mehdi@gmail.com';
-    passwordController.text = '12345678';
+    emailController.text = 'user@gmail.com';
+    passwordController.text = 'hello123';
   }
 
   Future<void> _checkExistingLogin() async {
@@ -40,7 +39,7 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
 
     if (LocalStorage.isLogIn && !LocalStorage.isTokenExpired()) {
       // Valid token exists, navigate to home
-      Get.offAll(() => DriverMainPage());
+      Get.offAll(() => PassengerMainPage());
     }
   }
 
@@ -74,8 +73,8 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
             if (user.data?.token != null) {
               await LocalStorage.saveLoginData(
                 user.data!.token!,
-                UserType.driver,
-                AppTheme.driverTheme,
+                UserType.passenger,
+                AppTheme.passengerTheme,
               );
             }
 
@@ -86,7 +85,7 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
 
             appLog('Attempting navigation...'); // Debug print
             clearControllers();
-            Get.offAll(() => DriverHomePageOffline());
+            Get.offAll(() => PassengerMainPage());
             appLog('Navigation called'); // Debug print
           },
         );

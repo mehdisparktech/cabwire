@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:cabwire/core/enum/user_type.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
-import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cabwire/core/config/themes.dart';
