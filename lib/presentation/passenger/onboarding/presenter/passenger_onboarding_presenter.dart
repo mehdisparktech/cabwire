@@ -1,5 +1,7 @@
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/usecases/save_first_time_use_case.dart';
 import 'package:cabwire/presentation/passenger/auth/ui/screens/passenger_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/passenger/onboarding/presenter/passenger_onboarding_ui_state.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +62,11 @@ class PassengerOnboardingPresenter
     }
   }
 
-  void onGetStarted() {
+  void onGetStarted() async {
+    // Mark first time as done
+    final saveFirstTimeUseCase = locate<SaveFirstTimeUseCase>();
+    await saveFirstTimeUseCase.execute();
+
     // Navigate to AuthNavigator for login/signup
     Get.to(() => const PassengerAuthNavigationScreen());
   }

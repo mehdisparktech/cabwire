@@ -92,6 +92,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 minimumSize: Size.zero,
                 padding: EdgeInsets.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                textStyle: const TextStyle(
+                  color: AppColors.textBlack87,
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                  inherit: true,
+                ),
               ),
               child: const Text(
                 "Forgot Password",
@@ -99,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: AppColors.textBlack87,
                   fontSize: 14,
                   fontWeight: FontWeight.normal,
+                  inherit: true,
                 ),
               ),
             ),

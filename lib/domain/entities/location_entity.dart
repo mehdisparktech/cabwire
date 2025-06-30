@@ -1,4 +1,7 @@
-class LocationEntity {
+import 'package:cabwire/core/base/base_entity.dart';
+
+/// Entity representing a geographical location
+class LocationEntity extends BaseEntity {
   final double latitude;
   final double longitude;
   final String? address;
@@ -19,6 +22,24 @@ class LocationEntity {
       isDefault: true,
     );
   }
+
+  /// Create a copy with updated values
+  LocationEntity copyWith({
+    double? latitude,
+    double? longitude,
+    String? address,
+    bool? isDefault,
+  }) {
+    return LocationEntity(
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      address: address ?? this.address,
+      isDefault: isDefault ?? this.isDefault,
+    );
+  }
+
+  @override
+  List<Object?> get props => [latitude, longitude, address, isDefault];
 
   @override
   String toString() =>

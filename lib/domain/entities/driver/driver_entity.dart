@@ -1,26 +1,59 @@
 import 'package:cabwire/core/base/base_entity.dart';
 
-class DriverLocation {
+/// Location information for a driver
+class DriverLocationEntity extends BaseEntity {
   final double? lat;
   final double? lng;
   final String? address;
 
-  const DriverLocation({this.lat, this.lng, this.address});
+  const DriverLocationEntity({this.lat, this.lng, this.address});
+
+  @override
+  List<Object?> get props => [lat, lng, address];
+
+  DriverLocationEntity copyWith({double? lat, double? lng, String? address}) {
+    return DriverLocationEntity(
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+      address: address ?? this.address,
+    );
+  }
 }
 
-class DriverLicense {
+/// Driver's license information
+class DriverLicenseEntity extends BaseEntity {
   final int? licenseNumber;
   final DateTime? licenseExpiryDate;
   final String? uploadDriversLicense;
 
-  const DriverLicense({
+  const DriverLicenseEntity({
     this.licenseNumber,
     this.licenseExpiryDate,
     this.uploadDriversLicense,
   });
+
+  @override
+  List<Object?> get props => [
+    licenseNumber,
+    licenseExpiryDate,
+    uploadDriversLicense,
+  ];
+
+  DriverLicenseEntity copyWith({
+    int? licenseNumber,
+    DateTime? licenseExpiryDate,
+    String? uploadDriversLicense,
+  }) {
+    return DriverLicenseEntity(
+      licenseNumber: licenseNumber ?? this.licenseNumber,
+      licenseExpiryDate: licenseExpiryDate ?? this.licenseExpiryDate,
+      uploadDriversLicense: uploadDriversLicense ?? this.uploadDriversLicense,
+    );
+  }
 }
 
-class DriverVehicle {
+/// Driver's vehicle information
+class DriverVehicleEntity extends BaseEntity {
   final String? vehiclesMake;
   final String? vehiclesModel;
   final DateTime? vehiclesYear;
@@ -29,7 +62,7 @@ class DriverVehicle {
   final int? vehiclesPicture;
   final int? vehiclesCategory;
 
-  const DriverVehicle({
+  const DriverVehicleEntity({
     this.vehiclesMake,
     this.vehiclesModel,
     this.vehiclesYear,
@@ -38,8 +71,42 @@ class DriverVehicle {
     this.vehiclesPicture,
     this.vehiclesCategory,
   });
+
+  @override
+  List<Object?> get props => [
+    vehiclesMake,
+    vehiclesModel,
+    vehiclesYear,
+    vehiclesRegistrationNumber,
+    vehiclesInsuranceNumber,
+    vehiclesPicture,
+    vehiclesCategory,
+  ];
+
+  DriverVehicleEntity copyWith({
+    String? vehiclesMake,
+    String? vehiclesModel,
+    DateTime? vehiclesYear,
+    int? vehiclesRegistrationNumber,
+    int? vehiclesInsuranceNumber,
+    int? vehiclesPicture,
+    int? vehiclesCategory,
+  }) {
+    return DriverVehicleEntity(
+      vehiclesMake: vehiclesMake ?? this.vehiclesMake,
+      vehiclesModel: vehiclesModel ?? this.vehiclesModel,
+      vehiclesYear: vehiclesYear ?? this.vehiclesYear,
+      vehiclesRegistrationNumber:
+          vehiclesRegistrationNumber ?? this.vehiclesRegistrationNumber,
+      vehiclesInsuranceNumber:
+          vehiclesInsuranceNumber ?? this.vehiclesInsuranceNumber,
+      vehiclesPicture: vehiclesPicture ?? this.vehiclesPicture,
+      vehiclesCategory: vehiclesCategory ?? this.vehiclesCategory,
+    );
+  }
 }
 
+/// Main driver entity class
 class DriverEntity extends BaseEntity {
   final String? id;
   final String? name;
@@ -47,14 +114,14 @@ class DriverEntity extends BaseEntity {
   final String? contact;
   final String? email;
   final String? password;
-  final DriverLocation? location;
+  final DriverLocationEntity? location;
   final String? image;
   final String? status;
   final bool? verified;
   final String? gender;
   final DateTime? dateOfBirth;
-  final DriverLicense? driverLicense;
-  final DriverVehicle? driverVehicles;
+  final DriverLicenseEntity? driverLicense;
+  final DriverVehicleEntity? driverVehicles;
 
   const DriverEntity({
     this.id,
@@ -98,14 +165,14 @@ class DriverEntity extends BaseEntity {
     String? contact,
     String? email,
     String? password,
-    DriverLocation? location,
+    DriverLocationEntity? location,
     String? image,
     String? status,
     bool? verified,
     String? gender,
     DateTime? dateOfBirth,
-    DriverLicense? driverLicense,
-    DriverVehicle? driverVehicles,
+    DriverLicenseEntity? driverLicense,
+    DriverVehicleEntity? driverVehicles,
   }) {
     return DriverEntity(
       id: id ?? this.id,

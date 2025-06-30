@@ -22,6 +22,12 @@ class WelcomePresenter extends BasePresenter<WelcomeUiState> {
   void onInit() {
     super.onInit();
     checkTheme();
+    _checkFirstRun();
+  }
+
+  Future<void> _checkFirstRun() async {
+    final isFirstTime = await _determineFirstRunUseCase.execute();
+    uiState.value = currentUiState.copyWith(isFirstRun: isFirstTime);
   }
 
   Future<void> onFirstRunPressed(BuildContext context) async {

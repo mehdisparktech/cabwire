@@ -97,10 +97,11 @@ class DriverHomePage extends StatelessWidget {
         target: uiState.currentLocation ?? uiState.centerMapCoordinates,
         zoom: 18.0,
       ),
-      myLocationEnabled: false,
-      myLocationButtonEnabled: false,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: true,
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
+      mapType: MapType.normal,
       markers: {
         Marker(
           markerId: MarkerId('source'),

@@ -24,7 +24,7 @@ class ToggleAuthOption extends StatelessWidget {
         children: [
           Text(
             leadingText,
-            style: const TextStyle(color: AppColors.textBlack87),
+            style: const TextStyle(color: AppColors.textBlack87, inherit: true),
           ),
           TextButton(
             onPressed: onActionPressed,
@@ -33,12 +33,21 @@ class ToggleAuthOption extends StatelessWidget {
               textStyle: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
+                inherit: true,
               ),
               padding: const EdgeInsets.only(left: 4),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            child: Text(actionText),
+            child: Text(
+              actionText,
+              style: TextStyle(
+                color: context.color.primaryBtn,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                inherit: true,
+              ),
+            ),
           ),
         ],
       ),

@@ -24,6 +24,11 @@ class InitialApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Update the presenter with the isFirstRun value from main
+    presenter.uiState.value = presenter.currentUiState.copyWith(
+      isFirstRun: isFirstRun,
+    );
+
     return ResponsiveSizer(
       builder: (context, orientation, deviceType) {
         return PresentableWidgetBuilder(

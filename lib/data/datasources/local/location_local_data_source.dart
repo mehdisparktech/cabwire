@@ -29,7 +29,7 @@ class LocationLocalDataSourceImpl implements LocationLocalDataSource {
 
     if (locationData != null) {
       try {
-        return LocationModel.fromMap(locationData);
+        return LocationModel.fromJson(locationData);
       } catch (e) {
         // If we can't parse the saved location, return the default one
         return LocationModel.fromEntity(LocationEntity.defaultLocation());
@@ -44,7 +44,7 @@ class LocationLocalDataSourceImpl implements LocationLocalDataSource {
   Future<void> saveLastKnownLocation(LocationModel location) async {
     await _localCacheService.saveData(
       key: _lastLocationKey,
-      value: location.toMap(),
+      value: location.toJson(),
     );
   }
 
@@ -56,7 +56,7 @@ class LocationLocalDataSourceImpl implements LocationLocalDataSource {
 
     if (locationData != null) {
       try {
-        return LocationModel.fromMap(locationData);
+        return LocationModel.fromJson(locationData);
       } catch (e) {
         return null;
       }

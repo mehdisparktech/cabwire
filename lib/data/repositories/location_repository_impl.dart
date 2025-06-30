@@ -34,7 +34,7 @@ class LocationRepositoryImpl implements LocationRepository {
       // Save the last known location
       await _locationLocalDataSource.saveLastKnownLocation(locationModel);
 
-      return right(locationModel);
+      return right(locationModel.toEntity());
     } catch (error) {
       final errorMessage = _errorMessageHandler.generateErrorMessage(error);
       return left(errorMessage);
@@ -46,7 +46,10 @@ class LocationRepositoryImpl implements LocationRepository {
     _locationService.startLocationUpdates();
 
     return _locationService.locationStream
-        .map((locationModel) => right<String, LocationEntity>(locationModel))
+        .map(
+          (locationModel) =>
+              right<String, LocationEntity>(locationModel.toEntity()),
+        )
         .handleError((error) {
           final errorMessage = _errorMessageHandler.generateErrorMessage(error);
           return left<String, LocationEntity>(errorMessage);
@@ -55,6 +58,7 @@ class LocationRepositoryImpl implements LocationRepository {
 
   @override
   Future<LocationEntity> getDefaultLocation() async {
-    return await _locationLocalDataSource.getDefaultLocation();
+    final locationModel = await _locationLocalDataSource.getDefaultLocation();
+    return locationModel.toEntity();
   }
 }

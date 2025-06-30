@@ -1,8 +1,10 @@
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/data/models/user_model.dart';
-import 'package:cabwire/domain/entities/driver/driver_entity.dart';
-import 'package:cabwire/domain/entities/driver/driver_profile_entity.dart';
+import 'package:cabwire/domain/entities/driver/driver_entity.dart'
+    as driver_entity;
+import 'package:cabwire/domain/entities/driver/driver_profile_entity.dart'
+    as profile_entity;
 import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/resent_code_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_sign_up_usecase.dart';
@@ -338,14 +340,14 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         gender: genderController.text.trim(),
         dateOfBirth: DateFormatHelper.formatDateForApi(dateOfBirthDateTime),
         image: profileImagePath,
-        driverLicense: DriverLicenseEntity(
+        driverLicense: profile_entity.DriverLicenseEntity(
           licenseNumber: int.parse(driverLicenseNumberController.text.trim()),
           licenseExpiryDate: DateFormatHelper.formatDateForApi(
             licenseExpiryDateTime,
           ),
           uploadDriversLicense: licenseImagePath ?? '',
         ),
-        driverVehicles: DriverVehicleEntity(
+        driverVehicles: profile_entity.DriverVehicleEntity(
           vehiclesMake: vehiclesMakeController.text.trim(),
           vehiclesModel: vehiclesModelController.text.trim(),
           vehiclesYear: vehiclesYearController.text.trim(),
@@ -356,7 +358,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
             vehiclesInsuranceNumberController.text.trim(),
           ),
           vehiclesCategory: 1,
-          vehiclesPicture: vehicleImagePath ?? '',
+          vehiclesPicture: vehicleImagePath,
         ),
       );
       final result = await _driverProfileUpdateUsecase.execute(
@@ -426,7 +428,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
 
   void _updateRegistrationStep3() {
     final updatedDriver = currentUiState.driver?.copyWith(
-      driverLicense: DriverLicense(
+      driverLicense: driver_entity.DriverLicenseEntity(
         licenseNumber: int.parse(driverLicenseNumberController.text.trim()),
         licenseExpiryDate: DateTime.parse(
           licenseExpiryDateController.text.trim(),
@@ -439,7 +441,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
 
   void _updateRegistrationStep4() {
     final updatedDriver = currentUiState.driver?.copyWith(
-      driverVehicles: DriverVehicle(
+      driverVehicles: driver_entity.DriverVehicleEntity(
         vehiclesMake: vehiclesMakeController.text.trim(),
         vehiclesModel: vehiclesModelController.text.trim(),
         vehiclesYear: DateTime.parse(vehiclesYearController.text.trim()),
@@ -450,7 +452,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           vehiclesInsuranceNumberController.text.trim(),
         ),
         vehiclesCategory: int.parse(vehicleCategoryController.text.trim()),
-        vehiclesPicture: int.parse(vehicleImagePath ?? ''),
+        vehiclesPicture: int.parse(vehicleImagePath ?? '0'),
       ),
     );
     currentUiState.copyWith(driver: updatedDriver, currentStep: 4);
