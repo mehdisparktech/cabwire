@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/app_assets.dart'; // For default assets
+import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/core/utility/logger_utility.dart';
+import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
 import 'package:cabwire/presentation/driver/profile/ui/screens/contact_us_screen.dart';
@@ -60,7 +63,28 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       TextEditingController();
 
   DriverProfilePresenter() {
+    loadDriverProfile();
     _loadInitialData();
+  }
+
+  Future<void> loadDriverProfile() async {
+    try {
+      final ProfileModel? profile = await LocalStorage.getDriverProfile();
+      if (profile != null) {
+        uiState.value = currentUiState.copyWith(
+          userProfile: UserProfileData(
+            name: profile.name ?? '',
+            email: profile.email ?? '',
+            phoneNumber: '01625815151',
+            avatarUrl: AppAssets.icProfileImage,
+            dateOfBirth: '1990-01-01',
+            gender: 'Male',
+          ),
+        );
+      }
+    } catch (e) {
+      logError('Error loading driver profile: $e');
+    }
   }
 
   Future<void> _loadInitialData() async {
@@ -69,14 +93,14 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     await Future.delayed(const Duration(seconds: 1));
 
     // Populate with fetched data
-    final fetchedUserProfile = UserProfileData(
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      phoneNumber: '1234567890',
-      avatarUrl: AppAssets.icProfileImage, // Placeholder or actual URL
-      dateOfBirth: '1990-01-01',
-      gender: 'Male',
-    );
+    // final fetchedUserProfile = UserProfileData(
+    //   name: 'John Doe',
+    //   email: 'john.doe@example.com',
+    //   phoneNumber: '1234567890',
+    //   avatarUrl: AppAssets.icProfileImage, // Placeholder or actual URL
+    //   dateOfBirth: '1990-01-01',
+    //   gender: 'Male',
+    // );
 
     final fetchedDrivingInfo = DrivingInfoData(
       licenseNumber: 'DL12345XYZ',
@@ -85,12 +109,12 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     );
 
     uiState.value = currentUiState.copyWith(
-      userProfile: fetchedUserProfile,
+      //userProfile: fetchedUserProfile,
       drivingInfo: fetchedDrivingInfo,
     );
 
     // Initialize controllers for edit forms with fetched data
-    _populateEditProfileControllers(fetchedUserProfile);
+    _populateEditProfileControllers(currentUiState.userProfile);
     _populateEditDrivingControllers(fetchedDrivingInfo);
 
     toggleLoading(loading: false);
@@ -218,11 +242,11 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       return;
     }
     // Simulate API call to update profile
-    print(
+    appLog(
       "Saving profile: ${editNameController.text}, ${editEmailController.text}",
     );
     if (selectedProfileImageFile != null) {
-      print("New profile image to upload: ${selectedProfileImageFile!.path}");
+      appLog("New profile image to upload: ${selectedProfileImageFile!.path}");
       // Handle image upload here
     }
     await Future.delayed(const Duration(seconds: 2));
@@ -258,7 +282,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     }
     toggleLoading(loading: true);
     // Simulate API call
-    print(
+    appLog(
       "Changing password. Old: ${oldPasswordController.text}, New: ${newPasswordController.text}",
     );
     await Future.delayed(const Duration(seconds: 2));
@@ -271,7 +295,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   Future<void> saveDrivingInfo() async {
     toggleLoading(loading: true);
     // Simulate API call
-    print("Saving driving info: ${drivingLicenseNumberController.text}");
+    appLog("Saving driving info: ${drivingLicenseNumberController.text}");
     await Future.delayed(const Duration(seconds: 2));
     final updatedDrivingInfo = currentUiState.drivingInfo.copyWith(
       licenseNumber: drivingLicenseNumberController.text,
@@ -293,7 +317,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     }
     toggleLoading(loading: true);
     // Simulate API call
-    print(
+    appLog(
       "Submitting contact form: ${contactNameController.text}, Message: ${contactMessageController.text}",
     );
     await Future.delayed(const Duration(seconds: 2));
@@ -305,7 +329,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   void _logoutUser() {
     toggleLoading(loading: true);
     // Perform actual logout (clear tokens, user data)
-    print("Logging out user...");
+    appLog("Logging out user...");
     LocalStorage.removeAllPrefData();
     Future.delayed(const Duration(seconds: 1), () {
       toggleLoading(loading: false);
@@ -318,7 +342,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   void _deleteAccount() {
     toggleLoading(loading: true);
     // Perform actual account deletion
-    print("Deleting account...");
+    appLog("Deleting account...");
     Future.delayed(const Duration(seconds: 2), () {
       toggleLoading(loading: false);
       Get.offAll(
