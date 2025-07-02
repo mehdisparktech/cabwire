@@ -34,7 +34,7 @@ class PresenterSetup implements SetupModule {
       //>>>>>>>>>>>>>>>>>>>>>>>>>> Driver Presenters  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       ..registerFactory(() => loadPresenter(DriverMainPresenter(locate())))
       ..registerLazySingleton(
-        () => loadPresenter(DriverHomePresenter(locate())),
+        () => loadPresenter(DriverHomePresenter(locate(), locate())),
       )
       ..registerLazySingleton(() => loadPresenter(DriverOnboardingPresenter()))
       ..registerLazySingleton(() => loadPresenter(WelcomePresenter(locate())))

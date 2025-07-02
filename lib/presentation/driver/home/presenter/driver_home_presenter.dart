@@ -8,6 +8,7 @@ import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:cabwire/domain/entities/location_entity.dart';
+import 'package:cabwire/domain/usecases/update_online_status_usecase.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_ui_state.dart';
 import 'package:cabwire/presentation/driver/home/ui/screens/rideshare_page.dart';
 import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
@@ -19,6 +20,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   final GetCurrentLocationUsecase getCurrentLocationUsecase;
+  final UpdateOnlineStatusUseCase updateOnlineStatusUseCase;
   LocationEntity? location;
 
   final Obs<DriverHomeUiState> uiState = Obs<DriverHomeUiState>(
@@ -28,7 +30,10 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   DriverHomeUiState get currentUiState => uiState.value;
   GoogleMapController? _mapController;
 
-  DriverHomePresenter(this.getCurrentLocationUsecase);
+  DriverHomePresenter(
+    this.getCurrentLocationUsecase,
+    this.updateOnlineStatusUseCase,
+  );
 
   @override
   Future<void> onInit() async {
@@ -47,6 +52,9 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
       final ProfileModel? profile = await LocalStorage.getDriverProfile();
       if (profile != null) {
         uiState.value = currentUiState.copyWith(userName: profile.name ?? '');
+        uiState.value = currentUiState.copyWith(
+          driverEmail: profile.email ?? '',
+        );
       }
     } catch (e) {
       logError('Error loading driver profile: $e');
@@ -199,12 +207,42 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
     _mapController = controller;
   }
 
-  void toggleOnlineStatus(bool value) {
+  Future<void> toggleOnlineStatus(bool value) async {
+    // Update the UI first for immediate feedback
     uiState.value = currentUiState.copyWith(isOnline: value);
+
+    // Then update the backend
+    if (currentUiState.driverEmail?.isNotEmpty == true) {
+      toggleLoading(loading: true);
+
+      final params = UpdateStatusParams(
+        email: currentUiState.driverEmail!,
+        isOnline: value,
+      );
+
+      final result = await updateOnlineStatusUseCase.call(params);
+
+      result.fold(
+        (error) {
+          // Handle error
+          addUserMessage('Failed to update online status: $error');
+          // Revert UI state if the API call failed
+          uiState.value = currentUiState.copyWith(isOnline: !value);
+        },
+        (_) {
+          // Success case
+          addUserMessage(value ? 'You are now online' : 'You are now offline');
+        },
+      );
+
+      toggleLoading(loading: false);
+    } else {
+      addUserMessage('Cannot update status: Email not available');
+    }
   }
 
-  void goOnline() {
-    uiState.value = currentUiState.copyWith(isOnline: true);
+  void goOnline() async {
+    await toggleOnlineStatus(true);
   }
 
   void goToNotifications() {
@@ -227,12 +265,12 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   }
 
   void handleNotNow(BuildContext context) {
-    uiState.value = currentUiState.copyWith(isOnline: false);
+    toggleOnlineStatus(false);
     NavigationUtility.fadeReplacement(context, DriverMainPage());
   }
 
   void setOnlineAndNavigate(BuildContext context) {
-    uiState.value = currentUiState.copyWith(isOnline: true);
+    toggleOnlineStatus(true);
     NavigationUtility.fadeReplacement(context, DriverMainPage());
   }
 
