@@ -1,5 +1,6 @@
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/domain/usecases/passenger/verify_email_usecase.dart';
 import 'package:cabwire/presentation/passenger/auth/presenter/passenger_email_verify_ui_state.dart';
 import 'package:cabwire/presentation/passenger/auth/ui/screens/passenger_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/passenger/auth/ui/screens/passenger_confirm_information_screen.dart';
@@ -8,6 +9,7 @@ import 'package:get/get.dart';
 
 class PassengerEmailVerifyPresenter
     extends BasePresenter<PassengerEmailVerifyUiState> {
+  final VerifyEmailUseCase _verifyEmailUseCase;
   final List<TextEditingController> codeControllers = List.generate(
     4,
     (_) => TextEditingController(),
@@ -18,7 +20,7 @@ class PassengerEmailVerifyPresenter
     PassengerEmailVerifyUiState.empty(),
   );
 
-  PassengerEmailVerifyPresenter();
+  PassengerEmailVerifyPresenter(this._verifyEmailUseCase);
 
   PassengerEmailVerifyUiState get currentUiState => uiState.value;
 
@@ -52,15 +54,29 @@ class PassengerEmailVerifyPresenter
     // For now, we'll simulate success and navigate based on isSignUp
 
     // Simulating API call delay
-    await Future.delayed(const Duration(seconds: 1));
+    final result = await _verifyEmailUseCase.execute(
+      VerifyEmailParams(
+        email: uiState.value.email,
+        oneTimeCode: int.tryParse(code) ?? 0,
+      ),
+    );
 
-    await toggleLoading(loading: false);
-
-    if (uiState.value.isSignUp) {
-      Get.to(() => ConfirmInformationScreen());
-    } else {
-      Get.to(() => PassengerAuthNavigationScreen());
-    }
+    result.fold(
+      (error) {
+        addUserMessage(error);
+      },
+      (entity) {
+        uiState.value = uiState.value.copyWith(
+          isLoading: false,
+          userMessage: entity.message,
+        );
+        if (uiState.value.isSignUp) {
+          Get.to(() => ConfirmInformationScreen());
+        } else {
+          Get.to(() => PassengerAuthNavigationScreen());
+        }
+      },
+    );
   }
 
   Future<void> resendCode() async {

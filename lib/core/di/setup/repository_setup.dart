@@ -6,6 +6,7 @@ import 'package:cabwire/data/repositories/driver_profile_repository_impl.dart';
 import 'package:cabwire/data/repositories/driver_repository_impl.dart';
 import 'package:cabwire/data/repositories/user_data_repository_impl.dart';
 import 'package:cabwire/data/repositories/passenger_repository_impl.dart';
+import 'package:cabwire/data/repositories/verify_email_repository_impl.dart';
 import 'package:cabwire/domain/repositories/device_info_repository.dart';
 import 'package:cabwire/domain/repositories/driver_profile_repository.dart';
 import 'package:cabwire/domain/repositories/driver_repository.dart';
@@ -15,6 +16,7 @@ import 'package:cabwire/data/repositories/auth_repository_impl.dart';
 import 'package:cabwire/data/repositories/location_repository_impl.dart';
 import 'package:cabwire/domain/repositories/location_repository.dart';
 import 'package:cabwire/domain/repositories/passenger_repository.dart';
+import 'package:cabwire/domain/repositories/verify_email_repository.dart';
 
 class RepositorySetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -40,6 +42,9 @@ class RepositorySetup implements SetupModule {
       )
       ..registerLazySingleton<DriverProfileRepository>(
         () => DriverProfileRepositoryImpl(locate()),
+      )
+      ..registerLazySingleton<VerifyEmailRepository>(
+        () => VerifyEmailRepositoryImpl(locate()),
       );
     _setupPassengerRepositories();
   }

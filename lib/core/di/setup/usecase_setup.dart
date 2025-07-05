@@ -8,6 +8,7 @@ import 'package:cabwire/domain/usecases/driver/resent_code_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/sign_in_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_sign_up_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/verify_email_usecase.dart';
+import 'package:cabwire/domain/usecases/passenger/verify_email_usecase.dart';
 import 'package:cabwire/domain/usecases/update_online_status_usecase.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/service_locator.dart';
@@ -65,8 +66,8 @@ class UsecaseSetup implements SetupModule {
   }
 
   void _setupPassengerUseCases() {
-    _serviceLocator.registerLazySingleton(
-      () => CreatePassengerUseCase(_serviceLocator()),
-    );
+    _serviceLocator
+      ..registerLazySingleton(() => CreatePassengerUseCase(_serviceLocator()))
+      ..registerLazySingleton(() => VerifyEmailUseCase(locate(), locate()));
   }
 }

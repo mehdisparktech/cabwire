@@ -1,15 +1,16 @@
-[FEATURE_NAME] = passenger Creation
+[FEATURE_NAME] = Passenger Email Verification
 [HTTP_METHOD] = POST
-[API_ENDPOINT] = api/passengers
-[REQUEST_MODEL_NAME] = CreatepassengerModel
-[RESPONSE_MODEL_NAME] = passengerResponseModel
-[ENTITY_NAME] = passengerEntity
-[MAPPER_NAME] = passengerMapper
-[DATASOURCE_NAME] = passengerRemoteDataSource
-[REPOSITORY_NAME] = passengerRepository
-[USECASE_NAME] = CreatepassengerUseCase
-[USECASE_PARAMS] = CreatepassengerParams
+[API_ENDPOINT] = api/auth/verify-email
+[REQUEST_MODEL_NAME] = VerifyEmailModel
+[RESPONSE_MODEL_NAME] = VerifyEmailResponseModel
+[ENTITY_NAME] = VerifyEmailEntity
+[MAPPER_NAME] = VerifyEmailMapper
+[DATASOURCE_NAME] = VerifyEmailRemoteDataSource
+[REPOSITORY_NAME] = VerifyEmailRepository
+[USECASE_NAME] = VerifyEmailUseCase
+[USECASE_PARAMS] = VerifyEmailParams
 [RETURN_TYPE] = void
+
 
 
 Generate Dart code for a **[FEATURE_NAME]** feature in a Flutter project that follows Clean Architecture.
@@ -28,10 +29,9 @@ Implement an API call to [DESCRIBE_THE_FEATURE_PURPOSE].
     
     ```json
     [REQUEST_BODY_JSON]
-    "name": "Zulkar Naeem Rabby",
-    "role": "USER",
-    "email": "abc2@gmail.com",
-    "password": "hello123"
+   {
+    "email": "zn.rabby@gmail.com",
+    "oneTimeCode": 1305 }
     ```
     
 - **Response:** Assume the API returns a 200 OK status on success.
@@ -41,26 +41,8 @@ Implement an API call to [DESCRIBE_THE_FEATURE_PURPOSE].
     [RESPONSE_BODY_JSON]
     {
     "success": true,
-    "message": "User created successfully",
-    "data": {
-        "name": "John Doe",
-        "location": {
-            "lat": 23.8103,
-            "lng": 90.4125,
-            "address": "Dhaka, Bangladesh"
-        },
-        "role": "USER",
-        "email": "xedavil361@eduhed.com",
-        "password": "$2b$12$z0lNyuvcCNRcYjGywjApmOICpQDogxPDuARdkte2z0hNmeNw03ym.",
-        "image": "https://i.ibb.co/z5YHLV9/profile.png",
-        "status": "active",
-        "verified": false,
-        "_id": "683d7b53ca4c4a5da5791cf0",
-        "createdAt": "2025-06-02T10:22:11.219Z",
-        "updatedAt": "2025-06-02T10:22:11.219Z",
-        "__v": 0
-    }
-}
+    "message": "Email verify successfully",
+    "data": {}}
     ```
 
 ### **3. Project Flow & Folder Structure:**

@@ -9,8 +9,10 @@ import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter
 import 'package:cabwire/presentation/driver/notification/presenter/notification_presenter.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_presenter.dart';
 import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_presenter.dart';
+import 'package:cabwire/presentation/passenger/auth/presenter/passenger_confirm_information_presenter.dart';
 import 'package:cabwire/presentation/passenger/auth/presenter/passenger_email_verify_presenter.dart';
 import 'package:cabwire/presentation/passenger/auth/presenter/passenger_login_presenter.dart';
+import 'package:cabwire/presentation/passenger/auth/presenter/passenger_set_location_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/presenter/passenger_history_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_notification/presenter/passenger_notification_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_profile/presenter/passenger_profile_presenter.dart';
@@ -35,7 +37,13 @@ class PresenterSetup implements SetupModule {
       ..registerFactory(
         () => loadPresenter(PassengerSignupPresenter((locate()))),
       )
-      ..registerFactory(() => loadPresenter(PassengerEmailVerifyPresenter()));
+      ..registerFactory(
+        () => loadPresenter(PassengerEmailVerifyPresenter(locate())),
+      )
+      ..registerFactory(
+        () => loadPresenter(PassengerConfirmInformationPresenter()),
+      )
+      ..registerFactory(() => loadPresenter(PassengerSetLocationPresenter()));
   }
 
   @override
