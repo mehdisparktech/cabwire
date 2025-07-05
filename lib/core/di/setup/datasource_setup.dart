@@ -7,6 +7,7 @@ import 'package:cabwire/data/datasources/remote/driver_all_remote_data_source.da
 import 'package:cabwire/data/datasources/remote/info_remote_data_source.dart';
 import 'package:cabwire/data/datasources/local/location_local_data_source.dart';
 import 'package:cabwire/data/datasources/remote/driver_auth_remote_data_source.dart';
+import 'package:cabwire/data/datasources/remote/driver_profile_remote_data_source.dart';
 
 class DatasourceSetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -30,6 +31,9 @@ class DatasourceSetup implements SetupModule {
       )
       ..registerLazySingleton<DriverAllRemoteDataSource>(
         () => DriverAllRemoteDataSourceImpl(),
+      )
+      ..registerLazySingleton<DriverProfileRemoteDataSource>(
+        () => DriverProfileRemoteDataSourceImpl(),
       );
   }
 }

@@ -43,7 +43,7 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
       }
       return result.fold((l) => left(l), (r) => right(r.toEntity()));
     }
-    return left('Error');
+    return result.fold((l) => left(l), (r) => right(r.toEntity()));
   }
 
   @override

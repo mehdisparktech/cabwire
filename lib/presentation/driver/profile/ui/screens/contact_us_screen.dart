@@ -92,6 +92,13 @@ class ContactUsScreen extends StatelessWidget {
                               keyboardType: TextInputType.phone,
                             ),
                             gapH10,
+                            const CommonText(text: 'Subject'),
+                            gapH10,
+                            CustomTextFormField(
+                              hintText: 'Enter Subject',
+                              controller: presenter.contactSubjectController,
+                            ),
+                            gapH10,
                             const CommonText(text: 'Message'),
                             gapH10,
                             CustomTextFormField(
@@ -112,8 +119,12 @@ class ContactUsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(14.0),
                 child: CustomButton(
                   text: 'Submit Message',
-                  onPressed: presenter.submitContactUsForm,
+                  onPressed: () {
+                    if (uiState.isLoading) return;
+                    presenter.submitContactUsForm();
+                  },
                   radius: 10,
+                  isLoading: uiState.isLoading,
                 ),
               ),
               gapH20,

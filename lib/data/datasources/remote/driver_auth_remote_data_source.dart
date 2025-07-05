@@ -1,5 +1,6 @@
 import 'package:cabwire/core/base/result.dart';
 import 'package:cabwire/core/config/api/api_end_point.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/models/signin_response_model.dart';
@@ -57,11 +58,13 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
         ApiEndPoint.signIn,
         body: {'email': email, 'password': password},
       );
+      appLog("signIn result: ${result.fold((l) => l.message, (r) => r.data)}");
       return result.fold(
         (l) => left(l.message),
         (r) => right(SigninResponseModel.fromJson(r.data)),
       );
     } catch (e) {
+      appLog("signIn error: ${e.toString()}");
       return left(e.toString());
     }
   }

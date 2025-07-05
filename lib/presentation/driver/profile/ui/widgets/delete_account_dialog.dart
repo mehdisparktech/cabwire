@@ -1,3 +1,5 @@
+import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:flutter/material.dart';
 
 class DeleteAccountDialog extends StatefulWidget {
@@ -29,33 +31,33 @@ class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               'Want to delete account !',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: px22,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
             ),
-            const SizedBox(height: 12),
-            const Text(
+            gapH10,
+            Text(
               'Please confirm your password to remove your account.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.black87),
+              style: TextStyle(fontSize: px16, color: Colors.black87),
             ),
-            const SizedBox(height: 24),
+            gapH20,
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Password',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: px16,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 8),
+                gapH10,
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
@@ -88,7 +90,7 @@ class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            gapH20,
             Row(
               children: [
                 Expanded(
@@ -103,13 +105,13 @@ class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Cancel',
-                      style: TextStyle(fontSize: 16, color: Colors.black),
+                      style: TextStyle(fontSize: px16, color: Colors.black),
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                gapW10,
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
@@ -124,9 +126,9 @@ class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Delete',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      style: TextStyle(fontSize: px16, color: Colors.white),
                     ),
                   ),
                 ),

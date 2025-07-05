@@ -2,9 +2,11 @@ import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
 import 'package:cabwire/data/repositories/device_info_repository_impl.dart';
+import 'package:cabwire/data/repositories/driver_profile_repository_impl.dart';
 import 'package:cabwire/data/repositories/driver_repository_impl.dart';
 import 'package:cabwire/data/repositories/user_data_repository_impl.dart';
 import 'package:cabwire/domain/repositories/device_info_repository.dart';
+import 'package:cabwire/domain/repositories/driver_profile_repository.dart';
 import 'package:cabwire/domain/repositories/driver_repository.dart';
 import 'package:cabwire/domain/repositories/user_data_repository.dart';
 import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
@@ -33,6 +35,9 @@ class RepositorySetup implements SetupModule {
       )
       ..registerLazySingleton<DriverRepository>(
         () => DriverRepositoryImpl(locate()),
+      )
+      ..registerLazySingleton<DriverProfileRepository>(
+        () => DriverProfileRepositoryImpl(locate()),
       );
   }
 }

@@ -51,9 +51,11 @@ class DriverHomePage extends StatelessWidget {
         children: [
           Row(
             children: [
-              CustomText(
-                'Hello ${uiState.userName}',
-                fontWeight: FontWeight.bold,
+              Expanded(
+                child: CustomText(
+                  'Hello ${uiState.userName}',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               gapW5,
               Icon(

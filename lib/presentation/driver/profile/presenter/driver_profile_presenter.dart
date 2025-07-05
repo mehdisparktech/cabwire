@@ -5,6 +5,7 @@ import 'package:cabwire/core/config/app_assets.dart'; // For default assets
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/data/models/profile_model.dart';
+import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
 import 'package:cabwire/presentation/driver/profile/ui/screens/contact_us_screen.dart';
@@ -27,6 +28,9 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     DriverProfileUiState.initial(),
   );
   DriverProfileUiState get currentUiState => uiState.value;
+
+  // Use cases
+  final DriverContactUseCase _driverContactUseCase;
 
   // --- Text Editing Controllers for Forms ---
   // Edit Profile Info
@@ -61,8 +65,10 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       TextEditingController();
   final TextEditingController contactMessageController =
       TextEditingController();
+  final TextEditingController contactSubjectController =
+      TextEditingController();
 
-  DriverProfilePresenter() {
+  DriverProfilePresenter(this._driverContactUseCase) {
     loadDriverProfile();
     _loadInitialData();
   }
@@ -315,15 +321,52 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       addUserMessage("Message cannot be empty.", isError: true);
       return;
     }
+    if (contactNameController.text.isEmpty) {
+      addUserMessage("Name cannot be empty.", isError: true);
+      return;
+    }
+    if (contactEmailController.text.isEmpty) {
+      addUserMessage("Email cannot be empty.", isError: true);
+      return;
+    }
+    if (contactSubjectController.text.isEmpty) {
+      addUserMessage("Subject cannot be empty.", isError: true);
+      return;
+    }
+
     toggleLoading(loading: true);
-    // Simulate API call
-    appLog(
-      "Submitting contact form: ${contactNameController.text}, Message: ${contactMessageController.text}",
+
+    final params = DriverContactParams(
+      fullName: contactNameController.text,
+      email: contactEmailController.text,
+      phone: contactPhoneNumberController.text,
+      subject: contactSubjectController.text,
+      description: contactMessageController.text,
+      status: true,
     );
-    await Future.delayed(const Duration(seconds: 2));
-    toggleLoading(loading: false);
-    addUserMessage("Your message has been sent!");
-    Get.back();
+
+    final result = await _driverContactUseCase(params);
+
+    result.fold(
+      (error) {
+        toggleLoading(loading: false);
+        addUserMessage("Failed to send message: $error", isError: true);
+      },
+      (_) {
+        toggleLoading(loading: false);
+        addUserMessage("Your message has been sent!");
+        _clearContactForm();
+        Get.back();
+      },
+    );
+  }
+
+  void _clearContactForm() {
+    contactNameController.clear();
+    contactEmailController.clear();
+    contactPhoneNumberController.clear();
+    contactSubjectController.clear();
+    contactMessageController.clear();
   }
 
   void _logoutUser() {
@@ -376,6 +419,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     contactEmailController.dispose();
     contactPhoneNumberController.dispose();
     contactMessageController.dispose();
+    contactSubjectController.dispose();
     super.dispose();
   }
 }

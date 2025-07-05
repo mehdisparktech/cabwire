@@ -22,4 +22,5 @@ class ApiEndPoint {
   static const updateProfileByEmail = "$baseUrl/user/update-profile-by-email/";
   static const getProfile = "$baseUrl/user/profile";
   static const updateOnlineStatus = "$baseUrl/user/update-online-status/";
+  static const contact = "$baseUrl/contact";
 }
