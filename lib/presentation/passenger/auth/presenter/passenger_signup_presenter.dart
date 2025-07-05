@@ -1,5 +1,6 @@
 import 'package:cabwire/core/base/base_presenter.dart';
-import 'package:cabwire/core/enum/user_type.dart';
+import 'package:cabwire/core/external_libs/flutter_toast/toast_utility.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/domain/usecases/passenger/create_passenger_usecase.dart';
 import 'package:cabwire/presentation/passenger/auth/presenter/passenger_signup_ui_state.dart';
 import 'package:cabwire/presentation/passenger/auth/ui/screens/passenger_email_verify_screen.dart';
@@ -35,48 +36,104 @@ class PassengerSignupPresenter extends BasePresenter<PassengerSignupUiState> {
     );
   }
 
-  Future<void> signupPassenger() async {
+  Future<void> signupPassenger(BuildContext context) async {
     await toggleLoading(loading: true);
+    appLog("Sign Up Button Pressed", source: "PassengerSignupPresenter");
+    appLog(
+      "loading: ${uiState.value.isLoading}",
+      source: "PassengerSignupPresenter",
+    );
+    appLog(
+      "Form Key: ${formKey.currentState?.validate()}",
+      source: "PassengerSignupPresenter",
+    );
+    appLog("Name: ${nameController.text}", source: "PassengerSignupPresenter");
+    appLog(
+      "Email: ${emailController.text}",
+      source: "PassengerSignupPresenter",
+    );
+    appLog(
+      "Password: ${passwordController.text}",
+      source: "PassengerSignupPresenter",
+    );
+    appLog(
+      "Confirm Password: ${confirmPasswordController.text}",
+      source: "PassengerSignupPresenter",
+    );
 
     if (formKey.currentState?.validate() ?? false) {
-      return;
+      final params = CreatePassengerParams(
+        name: nameController.text,
+        role: "USER",
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      final result = await _createPassengerUseCase.execute(params);
+
+      result.fold(
+        (error) {
+          uiState.value = uiState.value.copyWith(
+            isLoading: false,
+            userMessage: error,
+          );
+        },
+        (_) {
+          uiState.value = uiState.value.copyWith(
+            isLoading: false,
+            isSuccess: true,
+            userMessage: "sent verification code to your email",
+          );
+          Get.to(
+            () => EmailVerificationScreen(
+              email: emailController.text,
+              isSignUp: true,
+            ),
+          );
+        },
+      );
+      ToastUtility.showCustomToast(message: uiState.value.userMessage ?? "");
     }
 
     if (passwordController.text != confirmPasswordController.text) {
+      uiState.value = uiState.value.copyWith(
+        isLoading: false,
+        userMessage: "Password and Confirm Password do not match",
+      );
       return;
     }
 
-    final params = CreatePassengerParams(
-      name: nameController.text,
-      role: UserType.passenger.name,
-      email: emailController.text,
-      password: passwordController.text,
-    );
+    if (nameController.text.isEmpty) {
+      uiState.value = uiState.value.copyWith(
+        isLoading: false,
+        userMessage: "Please enter your name",
+      );
+      return;
+    }
 
-    final result = await _createPassengerUseCase.execute(params);
+    if (emailController.text.isEmpty) {
+      uiState.value = uiState.value.copyWith(
+        isLoading: false,
+        userMessage: "Please enter your email",
+      );
+      return;
+    }
 
-    result.fold(
-      (error) {
-        uiState.value = uiState.value.copyWith(
-          isLoading: false,
-          userMessage: error,
-        );
-      },
-      (_) {
-        uiState.value = uiState.value.copyWith(
-          isLoading: false,
-          isSuccess: true,
-        );
-        Get.to(
-          () => EmailVerificationScreen(
-            email: emailController.text,
-            onResendCode: () {},
-            onVerify: (code) {},
-            isSignUp: true,
-          ),
-        );
-      },
-    );
+    if (passwordController.text.isEmpty) {
+      uiState.value = uiState.value.copyWith(
+        isLoading: false,
+        userMessage: "Please enter your password",
+      );
+      return;
+    }
+
+    if (confirmPasswordController.text.isEmpty) {
+      uiState.value = uiState.value.copyWith(
+        isLoading: false,
+        userMessage: "Please enter your confirm password",
+      );
+      return;
+    }
   }
 
   @override

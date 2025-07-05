@@ -4,10 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
 import 'package:cabwire/core/utility/trial_utility.dart';
+import 'package:cabwire/data/services/api/api_service_impl.dart';
 import 'package:cabwire/data/services/backend_as_a_service.dart';
 import 'package:cabwire/data/services/error_message_handler_impl.dart';
 import 'package:cabwire/data/services/local_cache_service.dart';
 import 'package:cabwire/data/services/notification/notification_service_impl.dart';
+import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/services/error_message_handler.dart';
 import 'package:cabwire/domain/services/notification_service.dart';
 import 'package:cabwire/domain/services/time_service.dart';
@@ -25,6 +27,7 @@ class ServiceSetup implements SetupModule {
       ..registerLazySingleton<NotificationService>(
         () => NotificationServiceImpl.instance,
       )
+      ..registerLazySingleton<ApiService>(() => ApiServiceImpl.instance)
       ..registerLazySingleton<BackendAsAService>(BackendAsAService.new)
       ..registerLazySingleton<TimeService>(TimeService.new)
       ..registerLazySingleton<LocalCacheService>(LocalCacheService.new)

@@ -9,6 +9,7 @@ import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter
 import 'package:cabwire/presentation/driver/notification/presenter/notification_presenter.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_presenter.dart';
 import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_presenter.dart';
+import 'package:cabwire/presentation/passenger/auth/presenter/passenger_email_verify_presenter.dart';
 import 'package:cabwire/presentation/passenger/auth/presenter/passenger_login_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/presenter/passenger_history_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_notification/presenter/passenger_notification_presenter.dart';
@@ -30,9 +31,11 @@ class PresenterSetup implements SetupModule {
   PresenterSetup(this._serviceLocator);
 
   void _setupPassengerPresenters() {
-    _serviceLocator.registerFactory(
-      () => PassengerSignupPresenter(_serviceLocator()),
-    );
+    _serviceLocator
+      ..registerFactory(
+        () => loadPresenter(PassengerSignupPresenter((locate()))),
+      )
+      ..registerFactory(() => loadPresenter(PassengerEmailVerifyPresenter()));
   }
 
   @override

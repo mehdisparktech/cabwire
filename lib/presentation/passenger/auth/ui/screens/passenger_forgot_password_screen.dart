@@ -32,9 +32,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     // }
     Get.to(
       () => EmailVerificationScreen(
-        email: 'example@email.com',
-        onResendCode: () {},
-        onVerify: (code) {},
+        email: _emailController.text,
         isSignUp: false,
       ),
     );
