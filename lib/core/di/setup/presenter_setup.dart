@@ -23,10 +23,17 @@ import 'package:cabwire/presentation/passenger/main/presenter/passenger_main_pre
 import 'package:cabwire/presentation/driver/main/presenter/driver_main_presenter.dart';
 import 'package:cabwire/presentation/passenger/onboarding/presenter/passenger_onboarding_presenter.dart';
 import 'package:cabwire/presentation/driver/onboarding/presenter/driver_onboarding_presenter.dart';
+import 'package:cabwire/presentation/passenger/auth/presenter/passenger_signup_presenter.dart';
 
 class PresenterSetup implements SetupModule {
   final GetIt _serviceLocator;
   PresenterSetup(this._serviceLocator);
+
+  void _setupPassengerPresenters() {
+    _serviceLocator.registerFactory(
+      () => PassengerSignupPresenter(_serviceLocator()),
+    );
+  }
 
   @override
   Future<void> setup() async {
@@ -76,5 +83,6 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(
         () => loadPresenter(PassengerLoginPresenter(locate())),
       );
+    _setupPassengerPresenters();
   }
 }

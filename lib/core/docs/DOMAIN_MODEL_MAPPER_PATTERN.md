@@ -198,3 +198,4 @@ For more examples, check:
 - `lib/domain/entities/example_entity.dart`
 - `lib/data/models/example_model.dart`
 - `lib/data/mappers/example_mapper_template.dart` 
+- 
