@@ -1,10 +1,15 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/car_service_card.dart';
+import 'package:cabwire/presentation/common/components/loading_indicator.dart';
 import 'package:cabwire/presentation/common/components/payment_method_card.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/finding_rides_screen.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/passenger_category_list_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -13,9 +18,14 @@ class ChooseCarTypeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final PassengerCategoryListPresenter presenter =
+        locate<PassengerCategoryListPresenter>();
     return Scaffold(
       body: _buildMap(context),
-      bottomSheet: _buildBottomSheet(context),
+      bottomSheet: PresentableWidgetBuilder(
+        presenter: presenter,
+        builder: () => _buildBottomSheet(context, presenter),
+      ),
     );
   }
 
@@ -37,7 +47,11 @@ class ChooseCarTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomSheet(BuildContext context) {
+  Widget _buildBottomSheet(
+    BuildContext context,
+    PassengerCategoryListPresenter presenter,
+  ) {
+    final uiState = presenter.currentUiState;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
       decoration: BoxDecoration(
@@ -52,36 +66,53 @@ class ChooseCarTypeScreen extends StatelessWidget {
         children: [
           _buildAppBar(context),
           SizedBox(height: 16.px),
-          CarServiceCard(
-            service: CarService(
-              name: 'Economy Car',
-              description: 'Affordable Every Rides',
-              imageUrl: AppAssets.icEconomyCar,
-              imageBackground: AppAssets.icCarBackground,
-              price: 100,
+          if (uiState.isLoading)
+            Center(child: LoadingIndicator(theme: Theme.of(context))),
+          if (uiState.error != null) Center(child: Text(uiState.error!)),
+          if (uiState.categories.isNotEmpty)
+            ...uiState.categories.map(
+              (category) => CarServiceCard(
+                service: CarService(
+                  name: category.categoryName,
+                  description: category.categoryName,
+                  imageUrl: category.image,
+                  imageBackground: category.image,
+                  price: category.basePrice,
+                ),
+              ),
             ),
-          ),
-          SizedBox(height: 16.px),
-          CarServiceCard(
-            service: CarService(
-              name: 'Premium Car',
-              description: 'Affordable Every Rides',
-              imageUrl: AppAssets.icPremiumCar,
-              imageBackground: AppAssets.icCarBackground,
-              price: 100,
-            ),
-          ),
-          SizedBox(height: 16.px),
-          CarServiceCard(
-            service: CarService(
-              name: 'Luxury Car',
-              description: 'Affordable Every Rides',
-              imageUrl: AppAssets.icLuxuryCar,
-              imageBackground: AppAssets.icCarBackground,
-              price: 100,
-            ),
-          ),
+          if (uiState.categories.isEmpty)
+            Center(child: Text(AppStrings.noCategoriesAvailable)),
 
+          // CarServiceCard(
+          //   service: CarService(
+          //     name: 'Economy Car',
+          //     description: 'Affordable Every Rides',
+          //     imageUrl: AppAssets.icEconomyCar,
+          //     imageBackground: AppAssets.icCarBackground,
+          //     price: 100,
+          //   ),
+          // ),
+          // SizedBox(height: 16.px),
+          // CarServiceCard(
+          //   service: CarService(
+          //     name: 'Premium Car',
+          //     description: 'Affordable Every Rides',
+          //     imageUrl: AppAssets.icPremiumCar,
+          //     imageBackground: AppAssets.icCarBackground,
+          //     price: 100,
+          //   ),
+          // ),
+          // SizedBox(height: 16.px),
+          // CarServiceCard(
+          //   service: CarService(
+          //     name: 'Luxury Car',
+          //     description: 'Affordable Every Rides',
+          //     imageUrl: AppAssets.icLuxuryCar,
+          //     imageBackground: AppAssets.icCarBackground,
+          //     price: 100,
+          //   ),
+          // ),
           SizedBox(height: 16.px),
           PaymentMethodSelector(
             paymentMethods: [

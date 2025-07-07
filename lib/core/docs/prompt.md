@@ -1,19 +1,16 @@
-[FEATURE_NAME] = Passenger Service List Retrieval
+[FEATURE_NAME] = Passenger Category List Retrieval
 [HTTP_METHOD] = GET
-[API_ENDPOINT] = api/passenger/services
+[API_ENDPOINT] = /category
 
 [REQUEST_MODEL_NAME] = N/A
-[RESPONSE_MODEL_NAME] = PassengerServiceListResponseModel
-[ENTITY_NAME] = PassengerServiceEntity
-[MAPPER_NAME] = PassengerServiceMapper
-[DATASOURCE_NAME] = PassengerServiceRemoteDataSource
-[REPOSITORY_NAME] = PassengerServiceRepository
-[USECASE_NAME] = GetPassengerServicesUseCase
-[USECASE_PARAMS] = GetPassengerServicesParams
-[RETURN_TYPE] = List<PassengerServiceEntity>
-
-
-
+[RESPONSE_MODEL_NAME] = PassengerCategoryListResponseModel
+[ENTITY_NAME] = PassengerCategoryEntity
+[MAPPER_NAME] = PassengerCategoryMapper
+[DATASOURCE_NAME] = PassengerCategoryRemoteDataSource
+[REPOSITORY_NAME] = PassengerCategoryRepository
+[USECASE_NAME] = GetPassengerCategoriesUseCase
+[USECASE_PARAMS] = GetPassengerCategoriesParams
+[RETURN_TYPE] = List<PassengerCategoryEntity>
 
 Generate Dart code for a **[FEATURE_NAME]** feature in a Flutter project that follows Clean Architecture.
 
@@ -41,46 +38,20 @@ Implement an API call to [DESCRIBE_THE_FEATURE_PURPOSE].
     [RESPONSE_BODY_JSON]
     {
     "success": true,
-    "message": "Service retrieved successfully",
+    "message": "Categories retrieved successfully",
     "data": [
         {
-            "_id": "68691d6cb297b47bf772acd2",
-            "serviceName": "package",
-            "image": "/image/package-1751860027893.jpg",
-            "baseFare": 50,
-            "status": "active",
-            "createdAt": "2025-07-05T12:41:16.883Z",
-            "updatedAt": "2025-07-07T03:47:07.939Z",
-            "__v": 0
-        },
-        {
-            "_id": "68692c8d43a90930ff01d1cd",
-            "serviceName": "rental-car",
-            "image": "/image/car-1751860148471.png",
-            "baseFare": 50,
-            "status": "active",
-            "createdAt": "2025-07-05T13:45:49.518Z",
-            "updatedAt": "2025-07-07T03:49:08.520Z",
-            "__v": 0
-        },
-        {
-            "_id": "68692d75ab14ba0851a37c55",
-            "serviceName": "emergency-car",
-            "image": "/image/car-1751860193361.png",
-            "baseFare": 400,
-            "status": "active",
-            "createdAt": "2025-07-05T13:49:41.716Z",
-            "updatedAt": "2025-07-07T03:49:53.405Z",
-            "__v": 0
-        },
-        {
-            "_id": "686b425f8543d3c4a6701c32",
-            "serviceName": "car",
-            "image": "/image/car-1751859807910.png",
-            "baseFare": 50,
-            "status": "active",
-            "createdAt": "2025-07-07T03:43:27.955Z",
-            "updatedAt": "2025-07-07T03:43:27.955Z",
+            "_id": "686924e9a5be683b9cc60ff1",
+            "categoryName": "economy",
+            "image": "/image/economy-1751721419699.png",
+            "basePrice": 50,
+            "ratePerKm": 10,
+            "ratePerHour": 200,
+            "status": "block",
+            "isActive": true,
+            "isDeleted": false,
+            "createdAt": "2025-07-05T13:13:13.335Z",
+            "updatedAt": "2025-07-05T15:37:24.621Z",
             "__v": 0
         }
     ]}

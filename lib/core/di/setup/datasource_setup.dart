@@ -11,6 +11,7 @@ import 'package:cabwire/data/datasources/remote/driver_profile_remote_data_sourc
 import 'package:cabwire/data/datasources/remote/passenger_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/verify_email_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/passenger_service_remote_data_source.dart';
+import 'package:cabwire/data/datasources/remote/passenger_category_remote_data_source.dart';
 
 class DatasourceSetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -43,6 +44,9 @@ class DatasourceSetup implements SetupModule {
       )
       ..registerLazySingleton<PassengerServiceRemoteDataSource>(
         () => PassengerServiceRemoteDataSourceImpl(locate()),
+      )
+      ..registerLazySingleton<PassengerCategoryRemoteDataSource>(
+        () => PassengerCategoryRemoteDataSourceImpl(locate()),
       )
       ..registerLazySingleton<PassengerRemoteDataSource>(
         () => PassengerRemoteDataSourceImpl(locate()),

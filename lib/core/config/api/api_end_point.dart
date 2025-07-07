@@ -25,4 +25,5 @@ class ApiEndPoint {
   static const contact = "$baseUrl/contact";
   static const passengers = "$baseUrl/user";
   static const passengerServices = "$baseUrl/service";
+  static const passengerCategories = "$baseUrl/category";
 }

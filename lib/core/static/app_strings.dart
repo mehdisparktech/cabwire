@@ -190,4 +190,12 @@ class AppStrings {
   static const String passengerSignUpWithGoogle = "Sign Up with Google";
   static const String passengerSignUpWithFacebook = "Sign Up with Facebook";
   static const String passengerSignUpWithApple = "Sign Up with Apple";
+
+  //==============================================//
+  //============== Category Strings ===============//
+  //==============================================//
+  static const String selectCategory = "Select Category";
+  static const String retry = "Retry";
+  static const String noCategoriesAvailable = "No categories available";
+  static const String continueText = "Continue";
 }
