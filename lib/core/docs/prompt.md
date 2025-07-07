@@ -1,15 +1,17 @@
-[FEATURE_NAME] = Passenger Email Verification
-[HTTP_METHOD] = POST
-[API_ENDPOINT] = api/auth/verify-email
-[REQUEST_MODEL_NAME] = VerifyEmailModel
-[RESPONSE_MODEL_NAME] = VerifyEmailResponseModel
-[ENTITY_NAME] = VerifyEmailEntity
-[MAPPER_NAME] = VerifyEmailMapper
-[DATASOURCE_NAME] = VerifyEmailRemoteDataSource
-[REPOSITORY_NAME] = VerifyEmailRepository
-[USECASE_NAME] = VerifyEmailUseCase
-[USECASE_PARAMS] = VerifyEmailParams
-[RETURN_TYPE] = void
+[FEATURE_NAME] = Passenger Service List Retrieval
+[HTTP_METHOD] = GET
+[API_ENDPOINT] = api/passenger/services
+
+[REQUEST_MODEL_NAME] = N/A
+[RESPONSE_MODEL_NAME] = PassengerServiceListResponseModel
+[ENTITY_NAME] = PassengerServiceEntity
+[MAPPER_NAME] = PassengerServiceMapper
+[DATASOURCE_NAME] = PassengerServiceRemoteDataSource
+[REPOSITORY_NAME] = PassengerServiceRepository
+[USECASE_NAME] = GetPassengerServicesUseCase
+[USECASE_PARAMS] = GetPassengerServicesParams
+[RETURN_TYPE] = List<PassengerServiceEntity>
+
 
 
 
@@ -29,9 +31,7 @@ Implement an API call to [DESCRIBE_THE_FEATURE_PURPOSE].
     
     ```json
     [REQUEST_BODY_JSON]
-   {
-    "email": "zn.rabby@gmail.com",
-    "oneTimeCode": 1305 }
+   N/A
     ```
     
 - **Response:** Assume the API returns a 200 OK status on success.
@@ -41,8 +41,49 @@ Implement an API call to [DESCRIBE_THE_FEATURE_PURPOSE].
     [RESPONSE_BODY_JSON]
     {
     "success": true,
-    "message": "Email verify successfully",
-    "data": {}}
+    "message": "Service retrieved successfully",
+    "data": [
+        {
+            "_id": "68691d6cb297b47bf772acd2",
+            "serviceName": "package",
+            "image": "/image/package-1751860027893.jpg",
+            "baseFare": 50,
+            "status": "active",
+            "createdAt": "2025-07-05T12:41:16.883Z",
+            "updatedAt": "2025-07-07T03:47:07.939Z",
+            "__v": 0
+        },
+        {
+            "_id": "68692c8d43a90930ff01d1cd",
+            "serviceName": "rental-car",
+            "image": "/image/car-1751860148471.png",
+            "baseFare": 50,
+            "status": "active",
+            "createdAt": "2025-07-05T13:45:49.518Z",
+            "updatedAt": "2025-07-07T03:49:08.520Z",
+            "__v": 0
+        },
+        {
+            "_id": "68692d75ab14ba0851a37c55",
+            "serviceName": "emergency-car",
+            "image": "/image/car-1751860193361.png",
+            "baseFare": 400,
+            "status": "active",
+            "createdAt": "2025-07-05T13:49:41.716Z",
+            "updatedAt": "2025-07-07T03:49:53.405Z",
+            "__v": 0
+        },
+        {
+            "_id": "686b425f8543d3c4a6701c32",
+            "serviceName": "car",
+            "image": "/image/car-1751859807910.png",
+            "baseFare": 50,
+            "status": "active",
+            "createdAt": "2025-07-07T03:43:27.955Z",
+            "updatedAt": "2025-07-07T03:43:27.955Z",
+            "__v": 0
+        }
+    ]}
     ```
 
 ### **3. Project Flow & Folder Structure:**

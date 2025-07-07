@@ -22,6 +22,7 @@ import 'package:cabwire/domain/usecases/location/get_current_location_usecase.da
 import 'package:cabwire/domain/usecases/location/get_location_updates_usecase.dart';
 import 'package:cabwire/domain/usecases/location/request_location_permission_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/create_passenger_usecase.dart';
+import 'package:cabwire/domain/usecases/passenger/get_passenger_services_usecase.dart';
 
 class UsecaseSetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -61,13 +62,9 @@ class UsecaseSetup implements SetupModule {
         () => DriverResetPasswordUsecase(locate(), locate()),
       )
       ..registerLazySingleton(() => UpdateOnlineStatusUseCase(locate()))
-      ..registerLazySingleton(() => DriverContactUseCase(locate()));
-    _setupPassengerUseCases();
-  }
-
-  void _setupPassengerUseCases() {
-    _serviceLocator
-      ..registerLazySingleton(() => CreatePassengerUseCase(_serviceLocator()))
+      ..registerLazySingleton(() => DriverContactUseCase(locate()))
+      ..registerLazySingleton(() => GetPassengerServicesUseCase(locate()))
+      ..registerLazySingleton(() => CreatePassengerUseCase(locate()))
       ..registerLazySingleton(() => VerifyEmailUseCase(locate(), locate()));
   }
 }

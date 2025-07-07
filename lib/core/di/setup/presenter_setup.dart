@@ -79,7 +79,9 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(() => loadPresenter(RideHistoryPresenter()))
       //>>>>>>>>>>>>>>>>>>>>>>>>>> Passenger Presenters  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       ..registerLazySingleton(() => loadPresenter(PassengerHistoryPresenter()))
-      ..registerLazySingleton(() => loadPresenter(PassengerServicesPresenter()))
+      ..registerLazySingleton(
+        () => loadPresenter(PassengerServicesPresenter(locate())),
+      )
       ..registerLazySingleton(() => loadPresenter(PassengerProfilePresenter()))
       ..registerLazySingleton(
         () => loadPresenter(PassengerOnboardingPresenter()),

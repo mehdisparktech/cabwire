@@ -17,6 +17,8 @@ import 'package:cabwire/data/repositories/location_repository_impl.dart';
 import 'package:cabwire/domain/repositories/location_repository.dart';
 import 'package:cabwire/domain/repositories/passenger_repository.dart';
 import 'package:cabwire/domain/repositories/verify_email_repository.dart';
+import 'package:cabwire/data/repositories/passenger_service_repository_impl.dart';
+import 'package:cabwire/domain/repositories/passenger_service_repository.dart';
 
 class RepositorySetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -45,13 +47,12 @@ class RepositorySetup implements SetupModule {
       )
       ..registerLazySingleton<VerifyEmailRepository>(
         () => VerifyEmailRepositoryImpl(locate()),
+      )
+      ..registerLazySingleton<PassengerServiceRepository>(
+        () => PassengerServiceRepositoryImpl(locate()),
+      )
+      ..registerLazySingleton<PassengerRepository>(
+        () => PassengerRepositoryImpl(locate(), locate()),
       );
-    _setupPassengerRepositories();
-  }
-
-  void _setupPassengerRepositories() {
-    _serviceLocator.registerLazySingleton<PassengerRepository>(
-      () => PassengerRepositoryImpl(_serviceLocator(), _serviceLocator()),
-    );
   }
 }

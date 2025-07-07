@@ -1,19 +1,25 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/domain/entities/passenger/passenger_service_entity.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_services_card.dart';
+import 'package:cabwire/presentation/common/components/loading_indicator.dart';
 import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
 import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
+import 'package:cabwire/presentation/passenger/passenger_services/presenter/passenger_services_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/package_delivery/payment_method_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/rental_car_welcome_screen.dart';
-import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/ride_share/ride_share_car_type_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 
 class PassengerServicesPage extends StatelessWidget {
   const PassengerServicesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final PassengerServicesPresenter presenter =
+        locate<PassengerServicesPresenter>();
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Services',
@@ -26,81 +32,113 @@ class PassengerServicesPage extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
-        child: CustomServicesCard(
-          services: [
-            Service(
-              title: 'Car',
-              imageUrl: AppAssets.icServiceCar,
-              fontWeight: FontWeight.w600,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => const PassengerSearchDestinationScreen(),
-                  ),
-                );
-              },
-            ),
-            Service(
-              title: 'Emergency Car',
-              imageUrl: AppAssets.icServiceCar,
-              fontWeight: FontWeight.w400,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => const PassengerSearchDestinationScreen(),
-                  ),
-                );
-              },
-            ),
-            Service(
-              title: 'Rental Car',
-              imageUrl: AppAssets.icServiceCar,
-              fontWeight: FontWeight.w400,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RentalCarWelcomeScreen(),
-                  ),
-                );
-              },
-            ),
-            Service(
-              title: 'Cabwire Share',
-              imageUrl: AppAssets.icServiceCar,
-              fontWeight: FontWeight.w400,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => const PassengerSearchDestinationScreen(
-                          nextScreen: RideShareCarTypeScreen(),
-                        ),
-                  ),
-                );
-              },
-            ),
-            Service(
-              title: 'Package delivery',
-              imageUrl: AppAssets.icPackageDelivery,
-              fontWeight: FontWeight.w400,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PaymentMethodScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
+        child: PresentableWidgetBuilder(
+          presenter: presenter,
+          builder: () {
+            final uiState = presenter.currentUiState;
+
+            if (uiState.isLoading) {
+              return Center(child: LoadingIndicator(theme: Theme.of(context)));
+            }
+
+            if (uiState.error != null) {
+              return Center(
+                child: Text(
+                  uiState.error ?? 'Something went wrong',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              );
+            }
+
+            if (uiState.services.isEmpty) {
+              return const Center(child: Text('No services available'));
+            }
+
+            return CustomServicesCard(
+              services:
+                  uiState.services.map((service) {
+                    return Service(
+                      title: _formatServiceName(service.serviceName),
+                      imageUrl: _getServiceImage(service),
+                      fontWeight: FontWeight.w400,
+                      onTap: () => _navigateToService(context, service),
+                    );
+                  }).toList(),
+            );
+          },
         ),
       ),
     );
+  }
+
+  String _formatServiceName(String serviceName) {
+    // Convert 'service-name' to 'Service Name'
+    final words = serviceName.split('-');
+    return words
+        .map(
+          (word) =>
+              word.isNotEmpty
+                  ? '${word[0].toUpperCase()}${word.substring(1)}'
+                  : '',
+        )
+        .join(' ');
+  }
+
+  String _getServiceImage(PassengerServiceEntity service) {
+    // Map service type to an appropriate local asset if needed
+    switch (service.serviceName) {
+      case 'package':
+        return AppAssets.icPackageDelivery;
+      case 'rental-car':
+      case 'emergency-car':
+      case 'car':
+      default:
+        return AppAssets.icServiceCar;
+    }
+  }
+
+  void _navigateToService(
+    BuildContext context,
+    PassengerServiceEntity service,
+  ) {
+    switch (service.serviceName) {
+      case 'car':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PassengerSearchDestinationScreen(),
+          ),
+        );
+        break;
+      case 'emergency-car':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PassengerSearchDestinationScreen(),
+          ),
+        );
+        break;
+      case 'rental-car':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const RentalCarWelcomeScreen(),
+          ),
+        );
+        break;
+      case 'package':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PaymentMethodScreen()),
+        );
+        break;
+      default:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PassengerSearchDestinationScreen(),
+          ),
+        );
+    }
   }
 }

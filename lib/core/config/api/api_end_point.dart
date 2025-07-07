@@ -1,7 +1,7 @@
 class ApiEndPoint {
-  static const baseUrl = "http://10.0.60.114:5005/api/v1";
-  static const imageUrl = "http://10.0.60.114:3000";
-  static const socketUrl = "http://10.0.60.114:3001";
+  static const baseUrl = "http://10.10.7.109:5005/api/v1";
+  static const imageUrl = "http://10.10.7.109:5005";
+  static const socketUrl = "http://10.10.7.109:5005";
 
   static const signUp = "$baseUrl/user";
   static const verifyEmail = "$baseUrl/auth/verify-email";
@@ -24,4 +24,5 @@ class ApiEndPoint {
   static const updateOnlineStatus = "$baseUrl/user/update-online-status/";
   static const contact = "$baseUrl/contact";
   static const passengers = "$baseUrl/user";
+  static const passengerServices = "$baseUrl/service";
 }
