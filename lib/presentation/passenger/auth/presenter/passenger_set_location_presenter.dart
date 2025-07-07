@@ -17,10 +17,6 @@ class PassengerSetLocationPresenter
 
   PassengerSetLocationPresenter();
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   void setLocation() {
     if (formKey.currentState?.validate() ?? false) {

@@ -23,7 +23,7 @@ class ProfileResponseModel {
 }
 
 class ProfileModel extends ProfileEntity {
-  ProfileModel({
+  const ProfileModel({
     super.id,
     super.name,
     super.role,

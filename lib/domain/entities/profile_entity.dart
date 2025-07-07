@@ -15,7 +15,7 @@ class ProfileEntity extends Equatable {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  ProfileEntity({
+  const ProfileEntity({
     this.id,
     this.name,
     this.role,

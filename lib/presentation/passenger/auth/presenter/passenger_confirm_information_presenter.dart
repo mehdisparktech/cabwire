@@ -18,10 +18,6 @@ class PassengerConfirmInformationPresenter
 
   PassengerConfirmInformationPresenter();
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   void confirmInformation() {
     if (formKey.currentState?.validate() ?? false) {
