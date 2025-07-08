@@ -5,6 +5,15 @@ class PassengerCategoryListUiState extends BaseUiState {
   final List<PassengerCategoryEntity> categories;
   final String? error;
   final PassengerCategoryEntity? selectedCategory;
+  final bool isRideRequestSuccess;
+  final String? selectedService;
+  final double? pickupLat;
+  final double? pickupLng;
+  final String? pickupAddress;
+  final double? dropoffLat;
+  final double? dropoffLng;
+  final String? dropoffAddress;
+  final String? paymentMethod;
 
   const PassengerCategoryListUiState({
     required super.isLoading,
@@ -12,6 +21,15 @@ class PassengerCategoryListUiState extends BaseUiState {
     required this.categories,
     this.error,
     this.selectedCategory,
+    this.isRideRequestSuccess = false,
+    this.selectedService,
+    this.pickupLat,
+    this.pickupLng,
+    this.pickupAddress,
+    this.dropoffLat,
+    this.dropoffLng,
+    this.dropoffAddress,
+    this.paymentMethod,
   });
 
   factory PassengerCategoryListUiState.empty() {
@@ -21,6 +39,15 @@ class PassengerCategoryListUiState extends BaseUiState {
       categories: [],
       error: null,
       selectedCategory: null,
+      isRideRequestSuccess: false,
+      selectedService: null,
+      pickupLat: null,
+      pickupLng: null,
+      pickupAddress: null,
+      dropoffLat: null,
+      dropoffLng: null,
+      dropoffAddress: null,
+      paymentMethod: null,
     );
   }
 
@@ -31,6 +58,15 @@ class PassengerCategoryListUiState extends BaseUiState {
     categories,
     error,
     selectedCategory,
+    isRideRequestSuccess,
+    selectedService,
+    pickupLat,
+    pickupLng,
+    pickupAddress,
+    dropoffLat,
+    dropoffLng,
+    dropoffAddress,
+    paymentMethod,
   ];
 
   PassengerCategoryListUiState copyWith({
@@ -39,6 +75,15 @@ class PassengerCategoryListUiState extends BaseUiState {
     List<PassengerCategoryEntity>? categories,
     String? error,
     PassengerCategoryEntity? selectedCategory,
+    bool? isRideRequestSuccess,
+    String? selectedService,
+    double? pickupLat,
+    double? pickupLng,
+    String? pickupAddress,
+    double? dropoffLat,
+    double? dropoffLng,
+    String? dropoffAddress,
+    String? paymentMethod,
   }) {
     return PassengerCategoryListUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -46,6 +91,15 @@ class PassengerCategoryListUiState extends BaseUiState {
       categories: categories ?? this.categories,
       error: error ?? this.error,
       selectedCategory: selectedCategory ?? this.selectedCategory,
+      isRideRequestSuccess: isRideRequestSuccess ?? this.isRideRequestSuccess,
+      selectedService: selectedService ?? this.selectedService,
+      pickupLat: pickupLat ?? this.pickupLat,
+      pickupLng: pickupLng ?? this.pickupLng,
+      pickupAddress: pickupAddress ?? this.pickupAddress,
+      dropoffLat: dropoffLat ?? this.dropoffLat,
+      dropoffLng: dropoffLng ?? this.dropoffLng,
+      dropoffAddress: dropoffAddress ?? this.dropoffAddress,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
     );
   }
 }
