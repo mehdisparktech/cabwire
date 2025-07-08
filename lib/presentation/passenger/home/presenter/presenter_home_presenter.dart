@@ -1,21 +1,87 @@
 import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/get_passenger_services_usecase.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_ui_state.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
   final GetPassengerServicesUseCase _getPassengerServicesUseCase;
+  final GetCurrentLocationUsecase _getCurrentLocationUsecase;
+
   final Obs<PassengerHomeUiState> uiState = Obs<PassengerHomeUiState>(
     PassengerHomeUiState.empty(),
   );
-  PassengerHomeUiState get currentUiState => uiState.value;
 
-  PassengerHomePresenter(this._getPassengerServicesUseCase);
+  PassengerHomeUiState get currentUiState => uiState.value;
+  Set<Marker> _markers = {};
+
+  PassengerHomePresenter(
+    this._getPassengerServicesUseCase,
+    this._getCurrentLocationUsecase,
+  );
+
   @override
   void onInit() {
     super.onInit();
+    getCurrentLocation();
     loadPassengerServices();
+  }
+
+  void _addCurrentLocationMarker() {
+    if (currentUiState.currentLocation != null) {
+      final marker = Marker(
+        markerId: const MarkerId('current_location'),
+        position: currentUiState.currentLocation!,
+        infoWindow: const InfoWindow(title: 'Your Location'),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      );
+      _markers = {marker};
+    }
+  }
+
+  Set<Marker> get markers => _markers;
+
+  Future<void> getCurrentLocation() async {
+    try {
+      await toggleLoading(loading: true);
+      final result = await _getCurrentLocationUsecase.execute();
+
+      result.fold(
+        (error) {
+          uiState.value = currentUiState.copyWith(
+            isLoading: false,
+            error: error,
+          );
+          addUserMessage(
+            'Unable to get your location. Using default location.',
+          );
+        },
+        (locationEntity) {
+          final currentLatLng = LatLng(
+            locationEntity.latitude,
+            locationEntity.longitude,
+          );
+
+          uiState.value = currentUiState.copyWith(
+            isLoading: false,
+            currentLocation: currentLatLng,
+            selectedPickupLocation:
+                currentLatLng, // Set current location as initial pickup
+          );
+
+          // Add current location marker
+          _addCurrentLocationMarker();
+        },
+      );
+    } catch (e) {
+      uiState.value = currentUiState.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+      addUserMessage(e.toString());
+    }
   }
 
   Future<void> loadPassengerServices() async {
@@ -57,5 +123,26 @@ class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
   @override
   Future<void> toggleLoading({required bool loading}) async {
     uiState.value = currentUiState.copyWith(isLoading: loading);
+  }
+
+  // Method to update the pickup location data in the home presenter
+  void updatePickupLocationData(LatLng location, String address) {
+    uiState.value = currentUiState.copyWith(
+      selectedPickupLocation: location,
+      pickupAddress: address,
+    );
+
+    // Update markers
+    final marker = Marker(
+      markerId: const MarkerId('pickup_location'),
+      position: location,
+      infoWindow: InfoWindow(title: 'Pickup: $address'),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    );
+
+    // Merge with existing markers
+    final updatedMarkers = Set<Marker>.from(_markers);
+    updatedMarkers.add(marker);
+    _markers = updatedMarkers;
   }
 }

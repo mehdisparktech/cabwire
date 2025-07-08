@@ -1,83 +1,77 @@
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/choose_car_type_screen.dart';
+import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_presenter.dart';
+import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class PassengerSearchDestinationScreen extends StatefulWidget {
+class PassengerSearchDestinationScreen extends StatelessWidget {
   final Widget? nextScreen;
+
   const PassengerSearchDestinationScreen({super.key, this.nextScreen});
 
   @override
-  State<PassengerSearchDestinationScreen> createState() =>
-      _PassengerSearchDestinationScreenState();
-}
-
-class _PassengerSearchDestinationScreenState
-    extends State<PassengerSearchDestinationScreen> {
-  final TextEditingController _destinationController = TextEditingController();
-  final TextEditingController _fromController = TextEditingController();
-  late GoogleMapController mapController;
-
-  final LatLng _center = const LatLng(23.8103, 90.4125);
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
-
-  // Sample search history data
-  final List<SearchHistoryItem> _searchHistory = [
-    SearchHistoryItem(location: 'Block B, Banasree, Dhaka.', distance: '3.8mi'),
-    SearchHistoryItem(location: 'Block B, Banasree, Dhaka.', distance: '3.8mi'),
-    SearchHistoryItem(location: 'Block B, Banasree, Dhaka.', distance: '3.8mi'),
-    SearchHistoryItem(location: 'Block B, Banasree, Dhaka.', distance: '3.8mi'),
-    SearchHistoryItem(location: 'Block B, Banasree, Dhaka.', distance: '3.8mi'),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _destinationController.text = 'Block B, Banasree, Dhaka.';
-  }
-
-  @override
-  void dispose() {
-    _destinationController.dispose();
-    _fromController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.theme.colorScheme.surface,
-      body: Stack(children: [_buildMap(), _buildDestinationContainer()]),
-      bottomSheet: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: ActionButton(
-          borderRadius: 0,
-          isPrimary: true,
-          text: 'Continue',
-          onPressed: () {
-            Get.to(() => widget.nextScreen ?? const ChooseCarTypeScreen());
-          },
-        ),
-      ),
+    final PassengerDropLocationPresenter presenter =
+        locate<PassengerDropLocationPresenter>();
+
+    return PresentableWidgetBuilder(
+      presenter: presenter,
+      builder: () {
+        final state = presenter.currentUiState;
+
+        // Handle button press based on state
+        void handleContinuePress() {
+          if (state.destinationLocation != null) {
+            presenter.navigateToCarTypeSelection(context, nextScreen);
+          }
+        }
+
+        return Scaffold(
+          backgroundColor: context.theme.colorScheme.surface,
+          body: Stack(
+            children: [
+              _buildMap(context, presenter, state),
+              _buildDestinationContainer(context, presenter, state),
+              if (state.destinationLocation != null &&
+                  state.selectedPickupLocation != null)
+                _buildRouteVisualization(context, presenter, state),
+            ],
+          ),
+          bottomSheet: Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: ActionButton(
+              borderRadius: 0,
+              isPrimary: true,
+              text: 'Continue',
+              onPressed: handleContinuePress,
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildMap() {
+  Widget _buildMap(
+    BuildContext context,
+    PassengerDropLocationPresenter presenter,
+    PassengerDropLocationUiState state,
+  ) {
     return GoogleMap(
-      onMapCreated: _onMapCreated,
-      initialCameraPosition: CameraPosition(target: _center, zoom: 14.0),
+      onMapCreated: presenter.onDestinationMapCreated,
+      initialCameraPosition: CameraPosition(
+        target: state.currentLocation ?? LatLng(23.8103, 90.4125),
+        zoom: 14.0,
+      ),
       myLocationEnabled: true,
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
-      // Map interaction disable করা হয়েছে
       scrollGesturesEnabled: false,
       zoomGesturesEnabled: false,
       tiltGesturesEnabled: false,
@@ -85,34 +79,100 @@ class _PassengerSearchDestinationScreenState
     );
   }
 
-  Widget _buildDestinationContainer() {
+  Widget _buildRouteVisualization(
+    BuildContext context,
+    PassengerDropLocationPresenter presenter,
+    PassengerDropLocationUiState state,
+  ) {
+    // This would display route path between pickup and destination
+    return Positioned(
+      top: 90,
+      left: 10,
+      right: 10,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: Text(
+          'Route from ${state.pickupAddress?.split(',').first ?? 'Origin'} to ${state.fromController.text.split(',').first}',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.blue[800],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDestinationContainer(
+    BuildContext context,
+    PassengerDropLocationPresenter presenter,
+    PassengerDropLocationUiState state,
+  ) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: SizedBox(
         height: context.height * 0.9,
-        child: Stack(
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(px32),
-                  topRight: Radius.circular(px32),
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildAppBar(context),
-                  gapH20,
-                  _buildSearchInputs(),
-                  gapH20,
-                  _buildSearchHistory(),
-                ],
+        child: SingleChildScrollView(
+          physics: ClampingScrollPhysics(),
+          child: Container(
+            width: double.infinity,
+            constraints: BoxConstraints(minHeight: context.height),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(px32),
+                topRight: Radius.circular(px32),
               ),
             ),
-          ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildAppBar(context),
+                gapH20,
+                _buildSearchInputs(context, presenter, state),
+                if (state.routeDistance != null && state.routeDuration != null)
+                  _buildRouteInfo(context, state),
+                if (state.destinationSuggestions.isNotEmpty)
+                  _buildSuggestionList(
+                    context,
+                    presenter,
+                    state.destinationSuggestions,
+                    (suggestion) =>
+                        presenter.selectDestinationSuggestion(suggestion),
+                  ),
+                if (state.originSuggestions.isNotEmpty)
+                  _buildSuggestionList(
+                    context,
+                    presenter,
+                    state.originSuggestions,
+                    (suggestion) =>
+                        presenter.selectDestinationSuggestion(suggestion),
+                  ),
+                gapH20,
+                if (state.destinationSuggestions.isEmpty &&
+                    state.originSuggestions.isEmpty &&
+                    state.routeDistance == null)
+                  SizedBox(
+                    height: 300,
+                    child: _buildSearchHistory(context, presenter, state),
+                  ),
+                if (state.routeDistance != null && state.routeDuration != null)
+                  _buildAvailableCarsPreview(context, presenter, state),
+                // Add extra padding at bottom to ensure content isn't hidden behind the bottom sheet
+                SizedBox(height: 80),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -147,7 +207,11 @@ class _PassengerSearchDestinationScreenState
     );
   }
 
-  Widget _buildSearchInputs() {
+  Widget _buildSearchInputs(
+    BuildContext context,
+    PassengerDropLocationPresenter presenter,
+    PassengerDropLocationUiState state,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -166,24 +230,195 @@ class _PassengerSearchDestinationScreenState
       child: Column(
         children: [
           _buildSearchField(
-            controller: _destinationController,
-            hintText: 'Block B, Banasree, Dhaka.',
+            controller: state.fromController,
+            hintText: 'From',
             icon: Icons.location_on,
             iconColor: context.color.primaryBtn,
-            showVoiceIcon: true,
+            showCloseIcon: state.destinationController.text.isNotEmpty,
+            onClearPressed: () => presenter.clearDestination(),
+            onChanged: (_) {}, // This triggers the listener in the presenter
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Divider(color: context.color.strokePrimary),
           ),
           _buildSearchField(
-            controller: _fromController,
-            hintText: 'From',
+            controller: state.destinationController,
+            hintText: 'To',
             icon: Icons.location_on,
             iconColor: context.color.primaryBtn,
-            showCloseIcon: true,
+            showCloseIcon: state.fromController.text.isNotEmpty,
+            onClearPressed: () => presenter.clearDestination(),
+            onChanged: (_) {}, // This triggers the listener in the presenter
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRouteInfo(
+    BuildContext context,
+    PassengerDropLocationUiState state,
+  ) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.blue[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.blue[100]!),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Column(
+            children: [
+              Text(
+                'Distance',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.blue[800],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              gapH4,
+              Text(
+                state.routeDistance!,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.blue[900],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          Container(height: 30, width: 1, color: Colors.blue[200]),
+          Column(
+            children: [
+              Text(
+                'Duration',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.blue[800],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              gapH4,
+              Text(
+                state.routeDuration!,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.blue[900],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvailableCarsPreview(
+    BuildContext context,
+    PassengerDropLocationPresenter presenter,
+    PassengerDropLocationUiState state,
+  ) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.green[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.green[100]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Available Rides',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.green[800],
+            ),
+          ),
+          gapH12,
+          Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.green[700], size: 16),
+              gapW8,
+              Text(
+                'Found 5 rides near your location',
+                style: TextStyle(fontSize: 14, color: Colors.green[800]),
+              ),
+            ],
+          ),
+          gapH4,
+          Text(
+            'Continue to select your preferred ride',
+            style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSuggestionList(
+    BuildContext context,
+    PassengerDropLocationPresenter presenter,
+    List<String> suggestions,
+    Function(String) onSuggestionSelected,
+  ) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacityInt(0.1),
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      // Use intrinsic height to prevent empty size issues
+      child: IntrinsicHeight(
+        child: ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          itemCount: suggestions.length > 5 ? 5 : suggestions.length,
+          itemBuilder: (context, index) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (index > 0) Divider(height: 1, thickness: 1),
+                ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 0,
+                  ),
+                  minLeadingWidth: 20,
+                  leading: Icon(
+                    Icons.location_on,
+                    color: context.color.primaryBtn,
+                    size: 20,
+                  ),
+                  title: Text(
+                    suggestions[index],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  onTap: () => onSuggestionSelected(suggestions[index]),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -195,9 +430,12 @@ class _PassengerSearchDestinationScreenState
     required Color iconColor,
     bool showVoiceIcon = false,
     bool showCloseIcon = false,
+    VoidCallback? onClearPressed,
+    Function(String)? onChanged,
   }) {
     return TextField(
       controller: controller,
+      onChanged: onChanged,
       style: const TextStyle(fontSize: 16, color: Colors.black87),
       decoration: InputDecoration(
         hintText: hintText,
@@ -207,7 +445,10 @@ class _PassengerSearchDestinationScreenState
             showVoiceIcon
                 ? Icon(Icons.mic, color: Colors.grey[600], size: 22)
                 : showCloseIcon
-                ? Icon(Icons.close, color: Colors.grey[600], size: 22)
+                ? IconButton(
+                  icon: Icon(Icons.close, color: Colors.grey[600], size: 22),
+                  onPressed: onClearPressed,
+                )
                 : null,
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
@@ -220,79 +461,94 @@ class _PassengerSearchDestinationScreenState
     );
   }
 
-  Widget _buildSearchHistory() {
-    return Expanded(
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: px24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Search History',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
+  Widget _buildSearchHistory(
+    BuildContext context,
+    PassengerDropLocationPresenter presenter,
+    PassengerDropLocationUiState state,
+  ) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: px24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Search History',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
             ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView.separated(
-                itemCount: _searchHistory.length,
-                separatorBuilder: (context, index) => gapH20,
-                itemBuilder: (context, index) {
-                  final item = _searchHistory[index];
-                  return _buildHistoryItem(item);
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child:
+                state.searchHistory.isEmpty
+                    ? Center(
+                      child: Text(
+                        'No search history',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                    : ListView.separated(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      itemCount: state.searchHistory.length,
+                      separatorBuilder: (context, index) => gapH20,
+                      itemBuilder: (context, index) {
+                        final item = state.searchHistory[index];
+                        return _buildHistoryItem(context, presenter, item);
+                      },
+                    ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildHistoryItem(SearchHistoryItem item) {
-    return Row(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(Icons.location_on, color: context.color.primaryBtn, size: 18),
-            const SizedBox(height: 4),
-            Text(
-              item.distance,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-            ),
-          ],
-        ),
-        gapW20,
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+  Widget _buildHistoryItem(
+    BuildContext context,
+    PassengerDropLocationPresenter presenter,
+    SearchHistoryItem item,
+  ) {
+    return GestureDetector(
+      onTap: () => presenter.selectHistoryItem(item),
+      child: Row(
+        children: [
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                item.location,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w500,
-                ),
+              Icon(
+                Icons.location_on,
+                color: context.color.primaryBtn,
+                size: 18,
               ),
-              Divider(color: context.color.strokePrimary),
+              const SizedBox(height: 4),
+              Text(
+                item.distance,
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
             ],
           ),
-        ),
-      ],
+          gapW20,
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.location,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Divider(color: context.color.strokePrimary),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
-}
-
-// Data model for search history items
-class SearchHistoryItem {
-  final String location;
-  final String distance;
-
-  SearchHistoryItem({required this.location, required this.distance});
 }
