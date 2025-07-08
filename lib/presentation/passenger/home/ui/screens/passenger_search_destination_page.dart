@@ -20,6 +20,7 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
     final PassengerDropLocationPresenter presenter =
         locate<PassengerDropLocationPresenter>();
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         // Clean up resources before popping
@@ -46,18 +47,21 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
               children: [
                 _buildMap(context, presenter, state),
                 _buildDestinationContainer(context, presenter, state),
-                if (state.destinationLocation != null &&
-                    state.selectedPickupLocation != null)
-                  _buildRouteVisualization(context, presenter, state),
               ],
             ),
-            bottomSheet: Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: ActionButton(
-                borderRadius: 0,
-                isPrimary: true,
-                text: 'Continue',
-                onPressed: handleContinuePress,
+            bottomNavigationBar: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 16.0,
+                  left: 16.0,
+                  right: 16.0,
+                ),
+                child: ActionButton(
+                  borderRadius: 8.0,
+                  isPrimary: true,
+                  text: 'Continue',
+                  onPressed: handleContinuePress,
+                ),
               ),
             ),
           );
@@ -100,6 +104,7 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
       right: 10,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        margin: EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: Colors.white.withOpacityInt(0.9),
           borderRadius: BorderRadius.circular(8),
@@ -112,7 +117,7 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
           ],
         ),
         child: Text(
-          'Route from ${state.pickupAddress?.split(',').first ?? 'Origin'} to ${state.fromController.text.split(',').first}',
+          'Route from ${state.pickupAddress?.split(',').first ?? 'Origin'} to ${state.destinationController.text.split(',').first}',
           style: TextStyle(
             fontWeight: FontWeight.w600,
             color: Colors.blue[800],
@@ -129,13 +134,12 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
   ) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: SizedBox(
+      child: Container(
         height: context.height * 0.9,
         child: SingleChildScrollView(
           physics: ClampingScrollPhysics(),
           child: Container(
             width: double.infinity,
-            constraints: BoxConstraints(minHeight: context.height),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
@@ -149,8 +153,14 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
                 _buildAppBar(context),
                 gapH20,
                 _buildSearchInputs(context, presenter, state),
+                gapH20,
+                if (state.destinationLocation != null &&
+                    state.selectedPickupLocation != null)
+                  _buildRouteVisualization(context, presenter, state),
+                gapH20,
                 if (state.routeDistance != null && state.routeDuration != null)
                   _buildRouteInfo(context, state),
+
                 if (state.destinationSuggestions.isNotEmpty)
                   _buildSuggestionList(
                     context,
@@ -165,7 +175,7 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
                     presenter,
                     state.originSuggestions,
                     (suggestion) =>
-                        presenter.selectDestinationSuggestion(suggestion),
+                        presenter.selectOriginSuggestion(suggestion),
                   ),
                 gapH20,
                 if (state.destinationSuggestions.isEmpty &&
@@ -175,8 +185,6 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
                     height: 300,
                     child: _buildSearchHistory(context, presenter, state),
                   ),
-                if (state.routeDistance != null && state.routeDuration != null)
-                  _buildAvailableCarsPreview(context, presenter, state),
                 // Add extra padding at bottom to ensure content isn't hidden behind the bottom sheet
                 SizedBox(height: 80),
               ],
@@ -243,9 +251,9 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
             hintText: 'From',
             icon: Icons.location_on,
             iconColor: context.color.primaryBtn,
-            showCloseIcon: state.destinationController.text.isNotEmpty,
+            showCloseIcon: state.fromController.text.isNotEmpty,
             onClearPressed: () => presenter.clearDestination(),
-            onChanged: (_) {}, // This triggers the listener in the presenter
+            onChanged: (_) {},
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -256,9 +264,9 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
             hintText: 'To',
             icon: Icons.location_on,
             iconColor: context.color.primaryBtn,
-            showCloseIcon: state.fromController.text.isNotEmpty,
+            showCloseIcon: state.destinationController.text.isNotEmpty,
             onClearPressed: () => presenter.clearDestination(),
-            onChanged: (_) {}, // This triggers the listener in the presenter
+            onChanged: (_) {},
           ),
         ],
       ),
@@ -328,51 +336,6 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAvailableCarsPreview(
-    BuildContext context,
-    PassengerDropLocationPresenter presenter,
-    PassengerDropLocationUiState state,
-  ) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.green[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.green[100]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Available Rides',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.green[800],
-            ),
-          ),
-          gapH12,
-          Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green[700], size: 16),
-              gapW8,
-              Text(
-                'Found 5 rides near your location',
-                style: TextStyle(fontSize: 14, color: Colors.green[800]),
-              ),
-            ],
-          ),
-          gapH4,
-          Text(
-            'Continue to select your preferred ride',
-            style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSuggestionList(
     BuildContext context,
     PassengerDropLocationPresenter presenter,
@@ -392,42 +355,39 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
           ),
         ],
       ),
-      // Use intrinsic height to prevent empty size issues
-      child: IntrinsicHeight(
-        child: ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          itemCount: suggestions.length > 5 ? 5 : suggestions.length,
-          itemBuilder: (context, index) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (index > 0) Divider(height: 1, thickness: 1),
-                ListTile(
-                  dense: true,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 0,
-                  ),
-                  minLeadingWidth: 20,
-                  leading: Icon(
-                    Icons.location_on,
-                    color: context.color.primaryBtn,
-                    size: 20,
-                  ),
-                  title: Text(
-                    suggestions[index],
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  onTap: () => onSuggestionSelected(suggestions[index]),
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
+        itemCount: suggestions.length > 5 ? 5 : suggestions.length,
+        itemBuilder: (context, index) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (index > 0) Divider(height: 1, thickness: 1),
+              ListTile(
+                dense: true,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 0,
                 ),
-              ],
-            );
-          },
-        ),
+                minLeadingWidth: 20,
+                leading: Icon(
+                  Icons.location_on,
+                  color: context.color.primaryBtn,
+                  size: 20,
+                ),
+                title: Text(
+                  suggestions[index],
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 14),
+                ),
+                onTap: () => onSuggestionSelected(suggestions[index]),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -489,26 +449,26 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Expanded(
-            child:
-                state.searchHistory.isEmpty
-                    ? Center(
-                      child: Text(
-                        'No search history',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                    : ListView.separated(
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: state.searchHistory.length,
-                      separatorBuilder: (context, index) => gapH20,
-                      itemBuilder: (context, index) {
-                        final item = state.searchHistory[index];
-                        return _buildHistoryItem(context, presenter, item);
-                      },
-                    ),
-          ),
+          state.searchHistory.isEmpty
+              ? Center(
+                child: Text(
+                  'No search history',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              )
+              : SizedBox(
+                height: 250, // Fixed height for the list
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  itemCount: state.searchHistory.length,
+                  separatorBuilder: (context, index) => gapH20,
+                  itemBuilder: (context, index) {
+                    final item = state.searchHistory[index];
+                    return _buildHistoryItem(context, presenter, item);
+                  },
+                ),
+              ),
         ],
       ),
     );

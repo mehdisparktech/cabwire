@@ -24,6 +24,8 @@ class PassengerDropLocationUiState extends BaseUiState {
   final TextEditingController searchController;
   final TextEditingController destinationController;
   final List<String> originSuggestions;
+  final LatLng? originLocation;
+  final String? originAddress;
   const PassengerDropLocationUiState({
     required super.isLoading,
     required super.userMessage,
@@ -41,6 +43,8 @@ class PassengerDropLocationUiState extends BaseUiState {
     required this.searchController,
     required this.destinationController,
     this.originSuggestions = const [],
+    this.originLocation,
+    this.originAddress,
   });
 
   factory PassengerDropLocationUiState.empty() {
@@ -76,6 +80,8 @@ class PassengerDropLocationUiState extends BaseUiState {
       selectedPickupLocation: null,
       pickupAddress: null,
       originSuggestions: [],
+      originLocation: null,
+      originAddress: null,
     );
   }
 
@@ -97,6 +103,8 @@ class PassengerDropLocationUiState extends BaseUiState {
     selectedPickupLocation,
     pickupAddress,
     originSuggestions,
+    originLocation,
+    originAddress,
   ];
 
   PassengerDropLocationUiState copyWith({
@@ -116,6 +124,8 @@ class PassengerDropLocationUiState extends BaseUiState {
     LatLng? selectedPickupLocation,
     String? pickupAddress,
     List<String>? originSuggestions,
+    LatLng? originLocation,
+    String? originAddress,
   }) {
     return PassengerDropLocationUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -137,6 +147,8 @@ class PassengerDropLocationUiState extends BaseUiState {
           selectedPickupLocation ?? this.selectedPickupLocation,
       pickupAddress: pickupAddress ?? this.pickupAddress,
       originSuggestions: originSuggestions ?? this.originSuggestions,
+      originLocation: originLocation ?? this.originLocation,
+      originAddress: originAddress ?? this.originAddress,
     );
   }
 }

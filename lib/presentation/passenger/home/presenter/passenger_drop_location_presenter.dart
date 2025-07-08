@@ -29,6 +29,7 @@ class PassengerDropLocationPresenter
 
   // Listener callback
   VoidCallback? _fromListener;
+  VoidCallback? _destinationListener;
 
   PassengerDropLocationPresenter();
 
@@ -36,6 +37,7 @@ class PassengerDropLocationPresenter
   void onInit() {
     super.onInit();
     _setupFromListener();
+    _setupDestinationListener();
   }
 
   @override
@@ -46,6 +48,12 @@ class PassengerDropLocationPresenter
     // Remove all listeners from controllers
     if (_fromListener != null) {
       currentUiState.fromController.removeListener(_fromListener!);
+    }
+
+    if (_destinationListener != null) {
+      currentUiState.destinationController.removeListener(
+        _destinationListener!,
+      );
     }
 
     // Close HTTP client
@@ -76,6 +84,32 @@ class PassengerDropLocationPresenter
 
     // Add the listeners
     currentUiState.fromController.addListener(_fromListener!);
+  }
+
+  void _setupDestinationListener() {
+    // Remove any existing listeners first
+    if (_destinationListener != null) {
+      currentUiState.destinationController.removeListener(
+        _destinationListener!,
+      );
+    }
+
+    // Create and store the destination listener
+    _destinationListener = () {
+      final query = currentUiState.destinationController.text;
+      if (query.isNotEmpty && query.length > 2) {
+        if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
+        _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          searchOriginPlaces(query);
+        });
+      } else if (query.isEmpty) {
+        // Clear suggestions when field is empty
+        uiState.value = currentUiState.copyWith(originSuggestions: []);
+      }
+    };
+
+    // Add the listener
+    currentUiState.destinationController.addListener(_destinationListener!);
   }
 
   void setCurrentLocation(LatLng location) {
@@ -239,6 +273,109 @@ class PassengerDropLocationPresenter
     }
   }
 
+  Future<void> searchOriginPlaces(String query) async {
+    if (query.isEmpty || _isSearching) return;
+
+    _isSearching = true;
+    try {
+      final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json'
+        '?input=$query'
+        '&key=$_googleApiKey'
+        '&language=en'
+        '&components=country:bd',
+      );
+
+      final response = await _httpClient
+          .get(url)
+          .timeout(
+            const Duration(seconds: 5),
+            onTimeout: () => throw TimeoutException('API request timed out'),
+          );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['status'] == 'OK') {
+          final predictions = data['predictions'] as List;
+          final suggestions =
+              predictions.map((p) => p['description'].toString()).toList();
+
+          uiState.value = currentUiState.copyWith(
+            originSuggestions: suggestions,
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error searching origin places: $e');
+    } finally {
+      _isSearching = false;
+    }
+  }
+
+  Future<void> selectOriginSuggestion(String placeDescription) async {
+    try {
+      debugPrint(
+        "=== selectOriginSuggestion called with: $placeDescription ===",
+      );
+
+      // Clear suggestions immediately to improve UI responsiveness
+      uiState.value = currentUiState.copyWith(originSuggestions: []);
+
+      // Remove listener temporarily
+      if (_destinationListener != null) {
+        currentUiState.destinationController.removeListener(
+          _destinationListener!,
+        );
+      }
+
+      // Update the destinationController with the selected suggestion
+      currentUiState.destinationController.text = placeDescription;
+      debugPrint(
+        "=== Destination controller text set to: ${currentUiState.destinationController.text} ===",
+      );
+
+      // Re-add listener
+      if (_destinationListener != null) {
+        currentUiState.destinationController.addListener(_destinationListener!);
+      }
+
+      // Try to get coordinates for the selected location
+      final locations = await locationFromAddress(placeDescription);
+      debugPrint("=== Got locations: $locations ===");
+
+      if (locations.isNotEmpty) {
+        final location = locations.first;
+        final latLng = LatLng(location.latitude, location.longitude);
+        debugPrint("=== Setting origin location to: $latLng ===");
+
+        // Store origin coordinates for route calculation later
+        uiState.value = currentUiState.copyWith(
+          originLocation: latLng,
+          originAddress: placeDescription,
+          // Also update destination location since this is the destination field
+          destinationLocation: latLng,
+          destinationAddress: placeDescription,
+        );
+        debugPrint("=== Updated UI state with origin location ===");
+
+        // If we have pickup location (current location), calculate route
+        if (currentUiState.currentLocation != null) {
+          debugPrint("=== Calculating route distance ===");
+          calculateRouteDistance(currentUiState.currentLocation!, latLng);
+        } else {
+          debugPrint(
+            "=== No current location available for route calculation ===",
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint("=== Error selecting origin place: $e ===");
+      // Add error handling to show the user what went wrong
+      addUserMessage('Failed to get location data: ${e.toString()}');
+    }
+  }
+
   void navigateToCarTypeSelection(BuildContext context, Widget? nextScreen) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -250,25 +387,43 @@ class PassengerDropLocationPresenter
   void onDestinationMapCreated(GoogleMapController controller) {
     // Don't store this controller as it's not needed
     // Just ensure map settings are applied
+    // ignore: deprecated_member_use
     controller.setMapStyle(null); // Use default style
   }
 
   void clearDestination() {
-    // Remove listener temporarily
     if (_fromListener != null) {
       currentUiState.fromController.removeListener(_fromListener!);
     }
 
-    currentUiState.fromController.clear();
+    if (_destinationListener != null) {
+      currentUiState.destinationController.removeListener(
+        _destinationListener!,
+      );
+    }
 
-    // Re-add listener
+    // Clear appropriate field based on which one has focus
+    if (currentUiState.fromController.text.isNotEmpty) {
+      currentUiState.fromController.clear();
+    } else if (currentUiState.destinationController.text.isNotEmpty) {
+      currentUiState.destinationController.clear();
+    }
+
+    // Re-add listeners
     if (_fromListener != null) {
       currentUiState.fromController.addListener(_fromListener!);
     }
 
+    if (_destinationListener != null) {
+      currentUiState.destinationController.addListener(_destinationListener!);
+    }
+
     uiState.value = currentUiState.copyWith(
       destinationSuggestions: [],
+      originSuggestions: [],
       destinationLocation: null,
+      originLocation: null,
+      originAddress: null,
       routeDistance: null,
       routeDuration: null,
     );
@@ -327,7 +482,7 @@ class PassengerDropLocationPresenter
     // If there's already a destination set, calculate the route
     if (currentUiState.destinationLocation != null) {
       calculateRouteDistance(
-        pickupLocation,
+        currentUiState.selectedPickupLocation!,
         currentUiState.destinationLocation!,
       );
     }
