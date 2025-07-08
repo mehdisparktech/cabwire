@@ -1,6 +1,8 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/domain/entities/passenger/passenger_service_entity.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/common/components/custom_services_card.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_presenter.dart';
@@ -17,35 +19,46 @@ class PassengerHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
-            child: RideBookingWidget(),
-          ),
-          Expanded(
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 200.px, // Adjust based on services widget height
-                  bottom: 0.px, // 10px from bottom for overlap effect
-                  left: 0.px,
-                  right: 0.px,
-                  child: _buildMap(context),
+    return PresentableWidgetBuilder(
+      presenter: presenter,
+      builder: () {
+        return Scaffold(
+          appBar: _buildAppBar(context),
+          body: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16.px,
+                  vertical: 16.px,
                 ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: _buildServicesWidget(context),
+                child: RideBookingWidget(),
+              ),
+              Expanded(
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 200.px, // Adjust based on services widget height
+                      bottom: 0.px, // 10px from bottom for overlap effect
+                      left: 0.px,
+                      right: 0.px,
+                      child: _buildMap(context),
+                    ),
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: _buildServicesWidget(
+                        context,
+                        presenter.currentUiState.services,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -82,41 +95,65 @@ class PassengerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildServicesWidget(BuildContext context) {
+  Widget _buildServicesWidget(
+    BuildContext context,
+    List<PassengerServiceEntity> services,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.px),
       child: CustomServicesCard(
         showSeeAllButton: true,
-        services: [
-          Service(
-            title: 'Car',
-            imageUrl: AppAssets.icServiceCar,
-            fontWeight: FontWeight.w600,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => const PassengerSearchDestinationScreen(),
-                ),
-              );
-            },
-          ),
-          Service(
-            title: 'Emergency Car',
-            imageUrl: AppAssets.icServiceCar,
-            fontWeight: FontWeight.w400,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => const PassengerSearchDestinationScreen(),
-                ),
-              );
-            },
-          ),
-        ],
+        services:
+            services
+                .take(4)
+                .map(
+                  (service) => Service(
+                    title: service.serviceName,
+                    imageUrl: service.image,
+                    fontWeight: FontWeight.w600,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  const PassengerSearchDestinationScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                )
+                .toList(),
+        // services: [
+        //   Service(
+        //     title: 'Car',
+        //     imageUrl: AppAssets.icServiceCar,
+        //     fontWeight: FontWeight.w600,
+        //     onTap: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //           builder:
+        //               (context) => const PassengerSearchDestinationScreen(),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        //   Service(
+        //     title: 'Emergency Car',
+        //     imageUrl: AppAssets.icServiceCar,
+        //     fontWeight: FontWeight.w400,
+        //     onTap: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //           builder:
+        //               (context) => const PassengerSearchDestinationScreen(),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // ],
       ),
     );
   }

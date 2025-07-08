@@ -8,6 +8,7 @@ class CarService {
   final String imageUrl;
   final String imageBackground;
   final double price;
+  final String id; // Add id for identification
 
   const CarService({
     required this.name,
@@ -15,6 +16,7 @@ class CarService {
     required this.imageUrl,
     required this.imageBackground,
     required this.price,
+    this.id = '',
   });
 }
 
@@ -24,6 +26,7 @@ class CarServiceCard extends StatelessWidget {
   final VoidCallback? onTap;
   final double? width;
   final String currency;
+  final bool isSelected;
 
   const CarServiceCard({
     super.key,
@@ -31,6 +34,7 @@ class CarServiceCard extends StatelessWidget {
     this.onTap,
     this.width = 358,
     this.currency = '\$',
+    this.isSelected = false,
   });
 
   @override
@@ -59,6 +63,10 @@ class CarServiceCard extends StatelessWidget {
     return BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
+      border:
+          isSelected
+              ? Border.all(color: const Color(0xFF2196F3), width: 2.0)
+              : null,
       boxShadow: const [
         BoxShadow(
           color: Color(0x26000000), // 15% opacity for subtle shadow
@@ -72,6 +80,9 @@ class CarServiceCard extends StatelessWidget {
 
   // Builder method for car image with oval background and error handling
   Widget _buildCarImage() {
+    // Determine if the image URL is a network URL
+    final bool isNetworkImage = service.imageUrl.startsWith('http');
+
     return Padding(
       padding: const EdgeInsets.all(6), // Inner padding to create border effect
       child: Stack(
@@ -85,7 +96,7 @@ class CarServiceCard extends StatelessWidget {
           ),
           CommonImage(
             imageSrc: service.imageUrl,
-            imageType: ImageType.png,
+            imageType: isNetworkImage ? ImageType.network : ImageType.png,
             width: 78,
             height: 49,
           ),

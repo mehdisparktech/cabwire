@@ -150,7 +150,7 @@ class CustomServicesCard extends StatelessWidget {
           children: [
             CommonImage(
               imageSrc: imageUrl,
-              imageType: ImageType.png,
+              imageType: ImageType.network,
               width: _imageWidth,
               height: _imageHeight,
             ),

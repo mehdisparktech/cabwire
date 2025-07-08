@@ -50,7 +50,11 @@ class PassengerCategoryListPresenter
   }
 
   void selectCategory(PassengerCategoryEntity category) {
-    uiState.value = currentUiState.copyWith(selectedCategory: category);
+    if (currentUiState.selectedCategory?.id == category.id) {
+      uiState.value = currentUiState.copyWith(selectedCategory: null);
+    } else {
+      uiState.value = currentUiState.copyWith(selectedCategory: category);
+    }
   }
 
   @override

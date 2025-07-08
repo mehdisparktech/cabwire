@@ -71,48 +71,24 @@ class ChooseCarTypeScreen extends StatelessWidget {
           if (uiState.error != null) Center(child: Text(uiState.error!)),
           if (uiState.categories.isNotEmpty)
             ...uiState.categories.map(
-              (category) => CarServiceCard(
-                service: CarService(
-                  name: category.categoryName,
-                  description: category.categoryName,
-                  imageUrl: category.image,
-                  imageBackground: category.image,
-                  price: category.basePrice,
+              (category) => Padding(
+                padding: EdgeInsets.only(bottom: 16.px),
+                child: CarServiceCard(
+                  service: CarService(
+                    id: category.id,
+                    name: category.categoryName,
+                    description: category.categoryName,
+                    imageUrl: category.image,
+                    imageBackground: AppAssets.icCarBackground,
+                    price: category.basePrice,
+                  ),
+                  isSelected: uiState.selectedCategory?.id == category.id,
+                  onTap: () => presenter.selectCategory(category),
                 ),
               ),
             ),
           if (uiState.categories.isEmpty)
             Center(child: Text(AppStrings.noCategoriesAvailable)),
-
-          // CarServiceCard(
-          //   service: CarService(
-          //     name: 'Economy Car',
-          //     description: 'Affordable Every Rides',
-          //     imageUrl: AppAssets.icEconomyCar,
-          //     imageBackground: AppAssets.icCarBackground,
-          //     price: 100,
-          //   ),
-          // ),
-          // SizedBox(height: 16.px),
-          // CarServiceCard(
-          //   service: CarService(
-          //     name: 'Premium Car',
-          //     description: 'Affordable Every Rides',
-          //     imageUrl: AppAssets.icPremiumCar,
-          //     imageBackground: AppAssets.icCarBackground,
-          //     price: 100,
-          //   ),
-          // ),
-          // SizedBox(height: 16.px),
-          // CarServiceCard(
-          //   service: CarService(
-          //     name: 'Luxury Car',
-          //     description: 'Affordable Every Rides',
-          //     imageUrl: AppAssets.icLuxuryCar,
-          //     imageBackground: AppAssets.icCarBackground,
-          //     price: 100,
-          //   ),
-          // ),
           SizedBox(height: 16.px),
           PaymentMethodSelector(
             paymentMethods: [
@@ -134,9 +110,13 @@ class ChooseCarTypeScreen extends StatelessWidget {
             isPrimary: true,
             text: 'Find A Car',
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => FindingRidesScreen()),
-              );
+              if (uiState.selectedCategory != null) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => FindingRidesScreen()),
+                );
+              } else {
+                presenter.addUserMessage('Please select a car type');
+              }
             },
           ),
         ],

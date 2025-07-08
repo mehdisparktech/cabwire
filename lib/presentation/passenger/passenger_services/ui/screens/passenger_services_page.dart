@@ -1,4 +1,3 @@
-import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/domain/entities/passenger/passenger_service_entity.dart';
@@ -59,7 +58,7 @@ class PassengerServicesPage extends StatelessWidget {
                   uiState.services.map((service) {
                     return Service(
                       title: _formatServiceName(service.serviceName),
-                      imageUrl: _getServiceImage(service),
+                      imageUrl: service.image,
                       fontWeight: FontWeight.w400,
                       onTap: () => _navigateToService(context, service),
                     );
@@ -82,19 +81,6 @@ class PassengerServicesPage extends StatelessWidget {
                   : '',
         )
         .join(' ');
-  }
-
-  String _getServiceImage(PassengerServiceEntity service) {
-    // Map service type to an appropriate local asset if needed
-    switch (service.serviceName) {
-      case 'package':
-        return AppAssets.icPackageDelivery;
-      case 'rental-car':
-      case 'emergency-car':
-      case 'car':
-      default:
-        return AppAssets.icServiceCar;
-    }
   }
 
   void _navigateToService(
