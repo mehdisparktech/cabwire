@@ -1,16 +1,17 @@
-[FEATURE_NAME] = Passenger Category List Retrieval
-[HTTP_METHOD] = GET
-[API_ENDPOINT] = /category
+[FEATURE_NAME] = Ride Request Creation
+[HTTP_METHOD] = POST
+[API_ENDPOINT] = api/ride/create-ride
 
-[REQUEST_MODEL_NAME] = N/A
-[RESPONSE_MODEL_NAME] = PassengerCategoryListResponseModel
-[ENTITY_NAME] = PassengerCategoryEntity
-[MAPPER_NAME] = PassengerCategoryMapper
-[DATASOURCE_NAME] = PassengerCategoryRemoteDataSource
-[REPOSITORY_NAME] = PassengerCategoryRepository
-[USECASE_NAME] = GetPassengerCategoriesUseCase
-[USECASE_PARAMS] = GetPassengerCategoriesParams
-[RETURN_TYPE] = List<PassengerCategoryEntity>
+[REQUEST_MODEL_NAME] = CreateRideRequestModel
+[RESPONSE_MODEL_NAME] = RideResponseModel
+[ENTITY_NAME] = RideEntity
+[MAPPER_NAME] = RideMapper
+[DATASOURCE_NAME] = RideRemoteDataSource
+[REPOSITORY_NAME] = RideRepository
+[USECASE_NAME] = CreateRideRequestUseCase
+[USECASE_PARAMS] = CreateRideRequestParams
+[RETURN_TYPE] = void
+
 
 Generate Dart code for a **[FEATURE_NAME]** feature in a Flutter project that follows Clean Architecture.
 
@@ -28,7 +29,21 @@ Implement an API call to [DESCRIBE_THE_FEATURE_PURPOSE].
     
     ```json
     [REQUEST_BODY_JSON]
-   N/A
+   {
+    "service": "6852d20476efad465ae5578a",
+    "category": "683db540aa2a9734dbc067bc",
+    "pickupLocation": {
+        "lat": 23.8103,
+        "lng": 90.4125,
+        "address": "Dhaka, Bangladesh"
+    },
+    "dropoffLocation": {
+        "lat": 23.7522,
+        "lng": 90.3918,
+        "address": "Mirpur, Dhaka"
+    },
+    // "distance": 12.5,
+    "paymentMethod": "stripe"}
     ```
     
 - **Response:** Assume the API returns a 200 OK status on success.
@@ -38,23 +53,33 @@ Implement an API call to [DESCRIBE_THE_FEATURE_PURPOSE].
     [RESPONSE_BODY_JSON]
     {
     "success": true,
-    "message": "Categories retrieved successfully",
-    "data": [
-        {
-            "_id": "686924e9a5be683b9cc60ff1",
-            "categoryName": "economy",
-            "image": "/image/economy-1751721419699.png",
-            "basePrice": 50,
-            "ratePerKm": 10,
-            "ratePerHour": 200,
-            "status": "block",
-            "isActive": true,
-            "isDeleted": false,
-            "createdAt": "2025-07-05T13:13:13.335Z",
-            "updatedAt": "2025-07-05T15:37:24.621Z",
-            "__v": 0
-        }
-    ]}
+    "message": "Ride created successfully",
+    "data": {
+        "userId": "685a7b2a2e8c8fd76a0ed8fc",
+        "service": "6852d20476efad465ae5578a",
+        "category": "683db540aa2a9734dbc067bc",
+        "pickupLocation": {
+            "lat": 23.8103,
+            "lng": 90.4125,
+            "address": "Dhaka, Bangladesh"
+        },
+        "dropoffLocation": {
+            "lat": 23.7522,
+            "lng": 90.3918,
+            "address": "Mirpur, Dhaka"
+        },
+        "distance": 6.795114946577798,
+        "duration": 30,
+        "fare": 212.88,
+        "rideStatus": "requested",
+        "paymentMethod": "stripe",
+        "paymentStatus": "pending",
+        "rideType": "Car",
+        "_id": "685a7bdd2e8c8fd76a0ed912",
+        "createdAt": "2025-06-24T10:20:13.472Z",
+        "updatedAt": "2025-06-24T10:20:13.472Z",
+        "__v": 0
+    }}
     ```
 
 ### **3. Project Flow & Folder Structure:**

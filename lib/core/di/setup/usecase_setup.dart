@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cabwire/domain/usecases/create_ride_request_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_reset_password_usecase.dart';
@@ -67,6 +68,9 @@ class UsecaseSetup implements SetupModule {
       ..registerLazySingleton(() => GetPassengerServicesUseCase(locate()))
       ..registerLazySingleton(() => GetPassengerCategoriesUseCase(locate()))
       ..registerLazySingleton(() => CreatePassengerUseCase(locate()))
-      ..registerLazySingleton(() => VerifyEmailUseCase(locate(), locate()));
+      ..registerLazySingleton(() => VerifyEmailUseCase(locate(), locate()))
+      ..registerLazySingleton(
+        () => CreateRideRequestUseCase(locate(), locate()),
+      );
   }
 }

@@ -4,6 +4,7 @@ import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/usecases/create_ride_request_usecase.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/car_service_card.dart';
 import 'package:cabwire/presentation/common/components/loading_indicator.dart';
@@ -14,7 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ChooseCarTypeScreen extends StatelessWidget {
-  const ChooseCarTypeScreen({super.key});
+  final CreateRideRequestParams rideRequestParams;
+  const ChooseCarTypeScreen({super.key, required this.rideRequestParams});
 
   @override
   Widget build(BuildContext context) {

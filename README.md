@@ -151,3 +151,42 @@ Please generate all the necessary Dart code files with proper imports and class 
 - For GET requests, you may not need a request model.
 - For DELETE requests, you typically only need an ID parameter.
 - Customize the JSON structures according to your API specifications.
+
+## Ride Request Feature
+
+The app now includes a ride request creation feature that allows passengers to:
+
+1. Select a service type and category
+2. Specify pickup and dropoff locations
+3. Choose a payment method
+4. Request a ride
+
+### Architecture
+
+This feature follows the clean architecture approach:
+
+- **Domain Layer**:
+  - `RideEntity`: Represents the core business object with ride details
+  - `RideRepository`: Interface defining ride-related operations
+  - `CreateRideRequestUseCase`: Use case for creating a ride request
+
+- **Data Layer**:
+  - `CreateRideRequestModel` & `RideResponseModel`: Data models for API communication
+  - `RideMapper`: Converts between entities and data models
+  - `RideRemoteDataSource`: Handles API communication
+  - `RideRepositoryImpl`: Implements the repository interface
+
+- **Presentation Layer**:
+  - `CarBookingPresenter`: Manages the UI state and business logic
+  - `CarBookingUiState`: Represents the UI state
+  - `CarBookingScreen`: The user interface for booking a ride
+
+### Usage
+
+To use the ride request feature, navigate to the car booking screen and follow these steps:
+
+1. Select a service type (Standard/Premium)
+2. Select a category (Economy/Luxury)
+3. Enter pickup and dropoff locations
+4. Choose a payment method
+5. Tap "Request Ride" to create the ride request

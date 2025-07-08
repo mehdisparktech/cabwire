@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/usecases/create_ride_request_usecase.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/choose_car_type_screen.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_ui_state.dart';
 import 'package:flutter/material.dart';
@@ -379,7 +380,22 @@ class PassengerDropLocationPresenter
   void navigateToCarTypeSelection(BuildContext context, Widget? nextScreen) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => nextScreen ?? ChooseCarTypeScreen(),
+        builder:
+            (context) =>
+                nextScreen ??
+                ChooseCarTypeScreen(
+                  rideRequestParams: CreateRideRequestParams(
+                    service: '',
+                    category: '',
+                    pickupLat: currentUiState.currentLocation!.latitude,
+                    pickupLng: currentUiState.currentLocation!.longitude,
+                    pickupAddress: currentUiState.originAddress!,
+                    dropoffLat: currentUiState.destinationLocation!.latitude,
+                    dropoffLng: currentUiState.destinationLocation!.longitude,
+                    dropoffAddress: currentUiState.destinationAddress!,
+                    paymentMethod: 'stripe',
+                  ),
+                ),
       ),
     );
   }
