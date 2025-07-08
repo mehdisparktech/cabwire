@@ -20,40 +20,49 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
     final PassengerDropLocationPresenter presenter =
         locate<PassengerDropLocationPresenter>();
 
-    return PresentableWidgetBuilder(
-      presenter: presenter,
-      builder: () {
-        final state = presenter.currentUiState;
-
-        // Handle button press based on state
-        void handleContinuePress() {
-          if (state.destinationLocation != null) {
-            presenter.navigateToCarTypeSelection(context, nextScreen);
-          }
-        }
-
-        return Scaffold(
-          backgroundColor: context.theme.colorScheme.surface,
-          body: Stack(
-            children: [
-              _buildMap(context, presenter, state),
-              _buildDestinationContainer(context, presenter, state),
-              if (state.destinationLocation != null &&
-                  state.selectedPickupLocation != null)
-                _buildRouteVisualization(context, presenter, state),
-            ],
-          ),
-          bottomSheet: Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: ActionButton(
-              borderRadius: 0,
-              isPrimary: true,
-              text: 'Continue',
-              onPressed: handleContinuePress,
-            ),
-          ),
-        );
+    return WillPopScope(
+      onWillPop: () async {
+        // Clean up resources before popping
+        presenter.onClose();
+        // Properly remove the presenter instance from service locator
+        dislocate<PassengerDropLocationPresenter>();
+        return true;
       },
+      child: PresentableWidgetBuilder(
+        presenter: presenter,
+        builder: () {
+          final state = presenter.currentUiState;
+
+          // Handle button press based on state
+          void handleContinuePress() {
+            if (state.destinationLocation != null) {
+              presenter.navigateToCarTypeSelection(context, nextScreen);
+            }
+          }
+
+          return Scaffold(
+            backgroundColor: context.theme.colorScheme.surface,
+            body: Stack(
+              children: [
+                _buildMap(context, presenter, state),
+                _buildDestinationContainer(context, presenter, state),
+                if (state.destinationLocation != null &&
+                    state.selectedPickupLocation != null)
+                  _buildRouteVisualization(context, presenter, state),
+              ],
+            ),
+            bottomSheet: Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: ActionButton(
+                borderRadius: 0,
+                isPrimary: true,
+                text: 'Continue',
+                onPressed: handleContinuePress,
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -92,11 +101,11 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withOpacityInt(0.9),
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withOpacityInt(0.1),
               blurRadius: 4,
               spreadRadius: 1,
             ),
