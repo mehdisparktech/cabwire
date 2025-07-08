@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/choose_car_type_screen.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_ui_state.dart';
-import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -379,7 +379,7 @@ class PassengerDropLocationPresenter
   void navigateToCarTypeSelection(BuildContext context, Widget? nextScreen) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => nextScreen ?? PassengerMainPage(),
+        builder: (context) => nextScreen ?? ChooseCarTypeScreen(),
       ),
     );
   }
