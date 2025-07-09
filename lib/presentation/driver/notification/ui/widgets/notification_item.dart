@@ -27,7 +27,6 @@ class NotificationItem extends StatelessWidget {
         border: Border.all(color: context.theme.colorScheme.primary),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CircularIconButton(
@@ -35,9 +34,7 @@ class NotificationItem extends StatelessWidget {
             onTap: () {},
           ),
           gapW16,
-
-          SizedBox(
-            width: 255,
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -49,7 +46,6 @@ class NotificationItem extends StatelessWidget {
                   textAlign: TextAlign.start,
                   maxLines: 1,
                 ),
-
                 CommonText(
                   text: description,
                   fontSize: 14,
@@ -63,12 +59,12 @@ class NotificationItem extends StatelessWidget {
               ],
             ),
           ),
+          gapW8,
           CommonText(
             text: time,
             fontSize: 14,
             fontWeight: FontWeight.w500,
             textAlign: TextAlign.start,
-
             color: Colors.black,
             maxLines: 1,
           ),
