@@ -27,4 +27,5 @@ class ApiEndPoint {
   static const passengerServices = "$baseUrl/service";
   static const passengerCategories = "$baseUrl/category";
   static const createRide = "$baseUrl/ride/create-ride";
+  static const ridesAccept = "$baseUrl/ride/accept-ride-driver/";
 }

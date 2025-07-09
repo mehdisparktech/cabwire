@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/static/constants.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
+import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:cabwire/domain/entities/location_entity.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
@@ -24,6 +26,8 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   final GetCurrentLocationUsecase getCurrentLocationUsecase;
   final UpdateOnlineStatusUseCase updateOnlineStatusUseCase;
   final SocketService socketService;
+  final ApiService apiService;
+
   LocationEntity? location;
 
   final Obs<DriverHomeUiState> uiState = Obs<DriverHomeUiState>(
@@ -37,6 +41,7 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
     this.getCurrentLocationUsecase,
     this.updateOnlineStatusUseCase,
     this.socketService,
+    this.apiService,
   );
 
   @override
@@ -329,8 +334,9 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
     Get.to(() => NotificationScreen());
   }
 
-  void acceptRide(String rideId) {
+  Future<void> acceptRide(String rideId) async {
     // Find the ride in the list
+    debugPrint('Accepting ride: $rideId');
     RideRequestModel? requestedRide;
     for (var ride in currentUiState.rideRequests) {
       if (ride.id == rideId) {
@@ -341,7 +347,21 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
 
     if (requestedRide != null) {
       // Add ride details to navigation arguments
-      Get.to(() => RidesharePage(), arguments: {'rideRequest': requestedRide});
+      final result = await apiService.patch(ApiEndPoint.ridesAccept + rideId);
+      result.fold(
+        (error) {
+          debugPrint('Error accepting ride: $error');
+          addUserMessage('Failed to accept ride: $error');
+        },
+        (success) {
+          debugPrint('Ride accepted: $success');
+          addUserMessage('Ride accepted: $success');
+          Get.to(
+            () => RidesharePage(),
+            arguments: {'rideRequest': requestedRide},
+          );
+        },
+      );
     } else {
       debugPrint('Could not find ride with ID: $rideId');
     }
