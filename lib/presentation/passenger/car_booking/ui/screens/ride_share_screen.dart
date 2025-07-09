@@ -32,6 +32,6 @@ class RideShareScreen extends StatelessWidget {
   }
 
   Widget _buildBottomSheet(BuildContext context) {
-    return const RideshareBottomSheet();
+    return RideshareBottomSheet(rideId: '1');
   }
 }

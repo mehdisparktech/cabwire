@@ -1,4 +1,5 @@
 import 'package:cabwire/core/base/result.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/domain/repositories/ride_repository.dart';
 
 /// Parameters for the CompleteRideUseCase
@@ -18,8 +19,8 @@ class CompleteRideUseCase {
   /// Executes the use case to complete a ride
   ///
   /// Takes [CompleteRideParams] containing the rideId and OTP
-  /// Returns a [Result<void>] indicating success or failure
-  Future<Result<void>> call(CompleteRideParams params) async {
+  /// Returns a [Result<RideResponseModel>] indicating success or failure
+  Future<Result<RideResponseModel>> call(CompleteRideParams params) async {
     return await _repository.completeRide(params.rideId, params.otp);
   }
 }

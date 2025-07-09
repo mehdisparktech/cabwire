@@ -2,7 +2,7 @@ import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
 import 'package:cabwire/domain/usecases/complete_ride_usecase.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_trip_close_otp_ui_state.dart';
-import 'package:cabwire/presentation/driver/ride_history/ui/screens/ride_history_page.dart';
+import 'package:cabwire/presentation/driver/ride_history/ui/screens/ride_details_page.dart';
 import 'package:get/get.dart';
 
 class DriverTripCloseOtpPresenter
@@ -47,10 +47,10 @@ class DriverTripCloseOtpPresenter
           isCompleted: true,
         );
         CustomToast(
-          message: 'Trip closed successfully',
+          message: success.message,
           duration: const Duration(seconds: 2),
         );
-        Get.offAll(() => RideHistoryPage());
+        Get.offAll(() => RideDetailsScreen());
         toggleLoading(loading: false);
       },
     );

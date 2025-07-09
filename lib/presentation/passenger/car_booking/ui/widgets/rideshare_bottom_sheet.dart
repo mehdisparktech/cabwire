@@ -1,8 +1,12 @@
 import 'dart:async';
 
+import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/driver/chat/ui/screens/audio_call_page.dart';
@@ -20,13 +24,15 @@ import 'trip_stoppage_info_widget.dart'; // Adjust path as needed
 import 'payment_info_widget.dart'; // Adjust path as needed
 
 class RideshareBottomSheet extends StatefulWidget {
-  const RideshareBottomSheet({super.key});
+  final String rideId;
+  const RideshareBottomSheet({super.key, required this.rideId});
 
   @override
   State<RideshareBottomSheet> createState() => _RideshareBottomSheetState();
 }
 
 class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
+  final ApiService apiService = locate<ApiService>();
   bool isRideStart = false;
   int timerLeft = 5;
   bool isRideEnd = false;
@@ -66,6 +72,19 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
         isRideEnd = true;
       });
     });
+  }
+
+  Future<void> requestCloseRide(String rideId) async {
+    final result = await apiService.post(ApiEndPoint.requestCloseRide + rideId);
+    result.fold(
+      (error) {
+        CustomToast(message: error.message);
+      },
+      (success) {
+        CustomToast(message: success.message ?? '');
+        Get.to(() => PassengerTripCloseOtpPage());
+      },
+    );
   }
 
   @override
@@ -196,7 +215,7 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
                 onPressed: () {
                   // You can define specific onTap behavior here if needed
                   if (isRideEnd) {
-                    Get.to(() => PassengerTripCloseOtpPage());
+                    requestCloseRide(widget.rideId);
                   } else {
                     setState(() {
                       isRideProcessing = true;

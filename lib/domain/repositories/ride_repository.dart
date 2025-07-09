@@ -1,5 +1,6 @@
 import 'package:cabwire/core/base/result.dart';
 import 'package:cabwire/domain/entities/ride_entity.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 
 /// Interface for the Ride repository
 abstract class RideRepository {
@@ -13,5 +14,5 @@ abstract class RideRepository {
   ///
   /// Takes a [String] rideId and [int] otp for verification
   /// Returns a [Result<void>] indicating success or failure
-  Future<Result<void>> completeRide(String rideId, int otp);
+  Future<Result<RideResponseModel>> completeRide(String rideId, int otp);
 }

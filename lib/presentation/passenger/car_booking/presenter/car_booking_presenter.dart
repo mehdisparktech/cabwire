@@ -1,5 +1,6 @@
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/services/api_service.dart';
 import 'car_booking_ui_state.dart';
 
 class CarBookingPresenter extends BasePresenter<CarBookingUiState> {
@@ -9,7 +10,9 @@ class CarBookingPresenter extends BasePresenter<CarBookingUiState> {
 
   CarBookingUiState get currentUiState => uiState.value;
 
-  CarBookingPresenter();
+  final ApiService apiService;
+
+  CarBookingPresenter(this.apiService);
 
   @override
   Future<void> addUserMessage(String message) async {
