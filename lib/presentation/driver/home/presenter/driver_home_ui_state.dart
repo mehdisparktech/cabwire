@@ -1,4 +1,5 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
+import 'package:cabwire/data/models/ride/ride_request_model.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -14,7 +15,7 @@ class DriverHomeUiState extends BaseUiState {
   final BitmapDescriptor currentLocationIcon;
   final PolylinePoints polylinePoints;
   final List<LatLng>? polylineCoordinates;
-  final List<String> rideRequests;
+  final List<RideRequestModel> rideRequests;
   final String? driverEmail;
 
   const DriverHomeUiState({
@@ -51,7 +52,7 @@ class DriverHomeUiState extends BaseUiState {
       currentLocationIcon: BitmapDescriptor.defaultMarker,
       polylinePoints: PolylinePoints(),
       polylineCoordinates: null,
-      rideRequests: ['ride1', 'ride2', 'ride3'],
+      rideRequests: [],
       driverEmail: '',
     );
   }
@@ -89,7 +90,7 @@ class DriverHomeUiState extends BaseUiState {
     BitmapDescriptor? currentLocationIcon,
     PolylinePoints? polylinePoints,
     List<LatLng>? polylineCoordinates,
-    List<String>? rideRequests,
+    List<RideRequestModel>? rideRequests,
     String? driverEmail,
   }) {
     return DriverHomeUiState(

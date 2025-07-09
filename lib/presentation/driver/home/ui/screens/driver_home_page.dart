@@ -6,10 +6,12 @@ import 'package:cabwire/presentation/common/components/circular_icon_button.dart
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_ui_state.dart';
+import 'package:cabwire/data/models/ride/ride_request_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:intl/intl.dart';
 
 class DriverHomePage extends StatelessWidget {
   final DriverHomePresenter presenter = locate<DriverHomePresenter>();
@@ -153,17 +155,12 @@ class DriverHomePage extends StatelessWidget {
                     child: _rideCard(
                       context: context,
                       presenter: presenter,
-                      name: 'Passenger ${i + 1}',
-                      rideId: uiState.rideRequests[i],
-                      distance: '${3.3} km',
-                      pickupLocation:
-                          'Block ${String.fromCharCode(66 + i)}, ${['Banasree', 'Mirpur', 'Gulshan'][i]}, Dhaka.',
-                      profileImageUrl: AppAssets.icProfileImage,
-                      rating: i == 1 ? 4 : 5,
-                      ratingCount: [5, 12, 8][i],
+                      rideRequest: uiState.rideRequests[i],
+                      index: i,
                     ),
                   ),
                 ],
+                if (uiState.rideRequests.isEmpty) _noRideRequestsCard(context),
               ],
               if (!uiState.isOnline) ...[_rideOfflineCard(context, presenter)],
             ],
@@ -176,14 +173,30 @@ class DriverHomePage extends StatelessWidget {
   Widget _rideCard({
     required BuildContext context,
     required DriverHomePresenter presenter,
-    required String name,
-    required String rideId,
-    required String distance,
-    required String pickupLocation,
-    required String profileImageUrl,
-    required int rating,
-    required int ratingCount,
+    required RideRequestModel rideRequest,
+    required int index,
   }) {
+    // Format the distance to show 2 decimal places
+    final formattedDistance = rideRequest.distance.toStringAsFixed(2);
+
+    // Format the duration
+    final duration = "${rideRequest.duration} min";
+
+    // Format the fare
+    final formatCurrency = NumberFormat.currency(
+      locale: 'bn_BD',
+      symbol: '৳',
+      decimalDigits: 0,
+    );
+    final formattedFare = formatCurrency.format(rideRequest.fare);
+
+    // Calculate estimated rating (just for UI purposes, in real app would come from API)
+    final int rating = 4 + (index % 2);
+    final int ratingCount = 5 + index * 3;
+
+    // Get passenger name placeholder (in real app would come from API)
+    final passengerName = "Passenger ${index + 1}";
+
     return Container(
       width: MediaQuery.of(context).size.width * 0.85,
       padding: EdgeInsets.all(16.px),
@@ -201,7 +214,9 @@ class DriverHomePage extends StatelessWidget {
           gapH10,
           Row(
             children: [
-              CircleAvatar(backgroundImage: AssetImage(profileImageUrl)),
+              CircleAvatar(
+                backgroundImage: AssetImage(AppAssets.icProfileImage),
+              ),
               gapW12,
               Expanded(
                 child: Column(
@@ -210,8 +225,8 @@ class DriverHomePage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomText(name, fontWeight: FontWeight.bold),
-                        CustomText(distance),
+                        CustomText(passengerName, fontWeight: FontWeight.bold),
+                        CustomText("$formattedDistance km"),
                       ],
                     ),
                     Row(
@@ -240,7 +255,40 @@ class DriverHomePage extends StatelessWidget {
           gapH8,
           Divider(color: Colors.grey.shade300),
           CustomText('PICK UP', fontSize: 12.px, color: Colors.grey),
-          CustomText(pickupLocation, fontWeight: FontWeight.w500),
+          CustomText(rideRequest.pickupAddress, fontWeight: FontWeight.w500),
+          gapH8,
+          CustomText('DROP OFF', fontSize: 12.px, color: Colors.grey),
+          CustomText(rideRequest.dropoffAddress, fontWeight: FontWeight.w500),
+          gapH8,
+          Divider(color: Colors.grey.shade300),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    'ESTIMATED FARE',
+                    fontSize: 12.px,
+                    color: Colors.grey,
+                  ),
+                  CustomText(
+                    formattedFare,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.px,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText('DURATION', fontSize: 12.px, color: Colors.grey),
+                  CustomText(duration, fontWeight: FontWeight.w500),
+                ],
+              ),
+            ],
+          ),
           gapH8,
           Divider(color: Colors.grey.shade300),
           Row(
@@ -249,7 +297,7 @@ class DriverHomePage extends StatelessWidget {
                 child: ActionButton(
                   text: 'Decline',
                   onPressed: () {
-                    presenter.declineRide(rideId);
+                    presenter.declineRide(rideRequest.id);
                   },
                 ),
               ),
@@ -259,12 +307,44 @@ class DriverHomePage extends StatelessWidget {
                   text: 'Accept',
                   isPrimary: true,
                   onPressed: () {
-                    presenter.acceptRide(rideId);
+                    presenter.acceptRide(rideRequest.id);
                   },
                 ),
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _noRideRequestsCard(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.85,
+      padding: EdgeInsets.all(20.px),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.px),
+        boxShadow: const [
+          BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4)),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CustomText(
+            'No ride requests',
+            fontSize: 18.px,
+            fontWeight: FontWeight.w700,
+          ),
+          gapH10,
+          CustomText(
+            'You\'re online. Waiting for ride requests...',
+            fontWeight: FontWeight.w500,
+            textAlign: TextAlign.center,
+          ),
+          gapH12,
         ],
       ),
     );

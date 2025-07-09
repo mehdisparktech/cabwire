@@ -8,8 +8,10 @@ import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:cabwire/domain/entities/location_entity.dart';
+import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/domain/usecases/update_online_status_usecase.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_ui_state.dart';
+import 'package:cabwire/data/models/ride/ride_request_model.dart';
 import 'package:cabwire/presentation/driver/home/ui/screens/rideshare_page.dart';
 import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
 import 'package:cabwire/presentation/driver/notification/ui/screens/notification_page.dart';
@@ -21,6 +23,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   final GetCurrentLocationUsecase getCurrentLocationUsecase;
   final UpdateOnlineStatusUseCase updateOnlineStatusUseCase;
+  final SocketService socketService;
   LocationEntity? location;
 
   final Obs<DriverHomeUiState> uiState = Obs<DriverHomeUiState>(
@@ -33,6 +36,7 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   DriverHomePresenter(
     this.getCurrentLocationUsecase,
     this.updateOnlineStatusUseCase,
+    this.socketService,
   );
 
   @override
@@ -44,6 +48,82 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
     setCustomIcons();
     if (location != null) {
       await setPolyline();
+    }
+    // Initialize socket connection
+    _initializeSocketConnection();
+  }
+
+  void _initializeSocketConnection() {
+    if (!socketService.isConnected) {
+      debugPrint('Socket not connected. Connecting to socket...');
+      socketService.connectToSocket();
+    }
+
+    final String driverId = LocalStorage.userId;
+    if (driverId.isEmpty) {
+      debugPrint('Driver ID is empty, cannot listen to notifications');
+      return;
+    }
+
+    final String notificationEvent = 'notification::$driverId';
+    debugPrint('Setting up socket listener for event: $notificationEvent');
+
+    // First remove any existing listener to prevent duplicates
+    socketService.off(notificationEvent);
+
+    // Add the notification listener
+    socketService.on(notificationEvent, (data) {
+      debugPrint('=== Received notification data for driver: ===');
+      debugPrint('Event: $notificationEvent');
+      debugPrint('Data: $data');
+
+      if (data is Map<String, dynamic>) {
+        _processRideRequestData(data);
+      } else {
+        debugPrint('Received data is not a Map: ${data.runtimeType}');
+      }
+    });
+
+    debugPrint('Socket listener setup complete for: $notificationEvent');
+  }
+
+  void _processRideRequestData(Map<String, dynamic> data) {
+    try {
+      // Check if all required fields are present
+      if (data['_id'] != null &&
+          data['pickupLocation'] != null &&
+          data['dropoffLocation'] != null) {
+        // Create a RideRequestModel from the data
+        final RideRequestModel rideRequest = RideRequestModel.fromJson(data);
+
+        // Add to list of ride requests
+        final List<RideRequestModel> updatedRides = List.from(
+          currentUiState.rideRequests,
+        );
+
+        // Check if ride already exists to avoid duplicates
+        bool rideExists = false;
+        for (var ride in updatedRides) {
+          if (ride.id == rideRequest.id) {
+            rideExists = true;
+            break;
+          }
+        }
+
+        if (!rideExists) {
+          updatedRides.add(rideRequest);
+          uiState.value = currentUiState.copyWith(rideRequests: updatedRides);
+          debugPrint(
+            'Added ride request: ${rideRequest.id} to list. Total requests: ${updatedRides.length}',
+          );
+        } else {
+          debugPrint('Ride request already exists: ${rideRequest.id}');
+        }
+      } else {
+        debugPrint('Missing required fields in ride request data');
+      }
+    } catch (e) {
+      debugPrint('Error processing ride request data: $e');
     }
   }
 
@@ -250,14 +330,30 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   }
 
   void acceptRide(String rideId) {
-    Get.to(() => RidesharePage());
+    // Find the ride in the list
+    RideRequestModel? requestedRide;
+    for (var ride in currentUiState.rideRequests) {
+      if (ride.id == rideId) {
+        requestedRide = ride;
+        break;
+      }
+    }
+
+    if (requestedRide != null) {
+      // Add ride details to navigation arguments
+      Get.to(() => RidesharePage(), arguments: {'rideRequest': requestedRide});
+    } else {
+      debugPrint('Could not find ride with ID: $rideId');
+    }
   }
 
   void declineRide(String rideId) {
     // Remove the ride from the list
-    final List<String> updatedRides = List.from(currentUiState.rideRequests)
-      ..remove(rideId);
+    final List<RideRequestModel> updatedRides = List.from(
+      currentUiState.rideRequests,
+    )..removeWhere((ride) => ride.id == rideId);
     uiState.value = currentUiState.copyWith(rideRequests: updatedRides);
+    debugPrint('Removed ride: $rideId from list');
   }
 
   void handleNotNowPassenger(BuildContext context) {
@@ -287,6 +383,12 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   @override
   void dispose() {
     _mapController?.dispose();
+    // Remove socket listener when presenter is disposed
+    final String driverId = LocalStorage.userId;
+    if (driverId.isNotEmpty) {
+      socketService.off('notification::$driverId');
+      debugPrint('Removed socket listener for notification::$driverId');
+    }
     super.dispose();
   }
 }
