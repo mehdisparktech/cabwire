@@ -1,6 +1,7 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
 import 'package:cabwire/domain/entities/passenger/passenger_category_entity.dart';
 import 'package:cabwire/domain/entities/passenger/passenger_service_entity.dart';
+import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PassengerHomeUiState extends BaseUiState {
@@ -12,6 +13,7 @@ class PassengerHomeUiState extends BaseUiState {
   final LatLng? destinationLocation;
   final String? pickupAddress;
   final GoogleMapController? mapController;
+  final UserProfileData? userProfile;
 
   const PassengerHomeUiState({
     required super.isLoading,
@@ -24,6 +26,7 @@ class PassengerHomeUiState extends BaseUiState {
     this.destinationLocation,
     this.pickupAddress,
     this.mapController,
+    this.userProfile,
   });
 
   factory PassengerHomeUiState.empty() {
@@ -38,6 +41,7 @@ class PassengerHomeUiState extends BaseUiState {
       destinationLocation: null,
       pickupAddress: null,
       mapController: null,
+      userProfile: null,
     );
   }
 
@@ -53,6 +57,7 @@ class PassengerHomeUiState extends BaseUiState {
     destinationLocation,
     pickupAddress,
     mapController,
+    userProfile,
   ];
 
   PassengerHomeUiState copyWith({
@@ -66,6 +71,7 @@ class PassengerHomeUiState extends BaseUiState {
     LatLng? destinationLocation,
     String? pickupAddress,
     GoogleMapController? mapController,
+    UserProfileData? userProfile,
   }) {
     return PassengerHomeUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -79,6 +85,7 @@ class PassengerHomeUiState extends BaseUiState {
       destinationLocation: destinationLocation ?? this.destinationLocation,
       pickupAddress: pickupAddress ?? this.pickupAddress,
       mapController: mapController ?? this.mapController,
+      userProfile: userProfile ?? this.userProfile,
     );
   }
 }

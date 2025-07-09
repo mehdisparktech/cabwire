@@ -75,7 +75,7 @@ class PassengerHomeScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Hello Sabbir,',
+            'Hello ${presenter.currentUiState.userProfile?.name},',
             style: TextStyle(fontSize: 16.px, fontWeight: FontWeight.bold),
           ),
           Text(

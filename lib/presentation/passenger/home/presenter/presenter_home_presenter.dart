@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/data/models/profile_model.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/get_passenger_services_usecase.dart';
+import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_ui_state.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -27,6 +31,21 @@ class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
     super.onInit();
     getCurrentLocation();
     loadPassengerServices();
+    loadUserProfile();
+  }
+
+  Future<void> loadUserProfile() async {
+    final ProfileModel? profile = await LocalStorage.getDriverProfile();
+    uiState.value = currentUiState.copyWith(
+      userProfile: UserProfileData(
+        name: profile?.name ?? '',
+        email: profile?.email ?? '',
+        phoneNumber: '01625815151',
+        avatarUrl: AppAssets.icProfileImage,
+        dateOfBirth: '1990-01-01',
+        gender: 'Male',
+      ),
+    );
   }
 
   void _addCurrentLocationMarker() {
