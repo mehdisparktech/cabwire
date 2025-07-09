@@ -1,3 +1,4 @@
+import 'package:cabwire/data/services/socket/socket_service_impl.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +13,7 @@ import 'package:cabwire/data/services/notification/notification_service_impl.dar
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/services/error_message_handler.dart';
 import 'package:cabwire/domain/services/notification_service.dart';
+import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/domain/services/time_service.dart';
 import 'package:cabwire/data/services/location/location_service.dart';
 
@@ -31,7 +33,8 @@ class ServiceSetup implements SetupModule {
       ..registerLazySingleton<BackendAsAService>(BackendAsAService.new)
       ..registerLazySingleton<TimeService>(TimeService.new)
       ..registerLazySingleton<LocalCacheService>(LocalCacheService.new)
-      ..registerLazySingleton<LocationService>(() => LocationService());
+      ..registerLazySingleton<LocationService>(() => LocationService())
+      ..registerLazySingleton<SocketService>(() => SocketServiceImpl.instance);
 
     // await GetServerKey().getServerKeyToken();
     await LocalCacheService.setUp();

@@ -10,23 +10,17 @@ import 'package:get_it/get_it.dart';
 class CreateRideRequestParams {
   final String service;
   final String category;
-  final double pickupLat;
-  final double pickupLng;
-  final String pickupAddress;
-  final double dropoffLat;
-  final double dropoffLng;
-  final String dropoffAddress;
+  final Map<String, dynamic> pickupLocation;
+  final Map<String, dynamic> dropoffLocation;
+  final int duration;
   final String paymentMethod;
 
   CreateRideRequestParams({
     required this.service,
     required this.category,
-    required this.pickupLat,
-    required this.pickupLng,
-    required this.pickupAddress,
-    required this.dropoffLat,
-    required this.dropoffLng,
-    required this.dropoffAddress,
+    required this.pickupLocation,
+    required this.dropoffLocation,
+    required this.duration,
     required this.paymentMethod,
   });
 }
@@ -60,15 +54,16 @@ class CreateRideRequestUseCase extends BaseUseCase<void> {
         service: params.service,
         category: params.category,
         pickupLocation: LocationEntity(
-          lat: params.pickupLat,
-          lng: params.pickupLng,
-          address: params.pickupAddress,
+          lat: params.pickupLocation['lat'],
+          lng: params.pickupLocation['lng'],
+          address: params.pickupLocation['address'],
         ),
         dropoffLocation: LocationEntity(
-          lat: params.dropoffLat,
-          lng: params.dropoffLng,
-          address: params.dropoffAddress,
+          lat: params.dropoffLocation['lat'],
+          lng: params.dropoffLocation['lng'],
+          address: params.dropoffLocation['address'],
         ),
+        duration: params.duration,
         paymentMethod: params.paymentMethod,
       );
 

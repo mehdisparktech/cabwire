@@ -70,8 +70,8 @@ class PassengerCategoryListUiState extends BaseUiState {
   ];
 
   PassengerCategoryListUiState copyWith({
-    String? userMessage,
     bool? isLoading,
+    String? userMessage,
     List<PassengerCategoryEntity>? categories,
     String? error,
     PassengerCategoryEntity? selectedCategory,
@@ -89,7 +89,7 @@ class PassengerCategoryListUiState extends BaseUiState {
       isLoading: isLoading ?? this.isLoading,
       userMessage: userMessage ?? this.userMessage,
       categories: categories ?? this.categories,
-      error: error ?? this.error,
+      error: error,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       isRideRequestSuccess: isRideRequestSuccess ?? this.isRideRequestSuccess,
       selectedService: selectedService ?? this.selectedService,

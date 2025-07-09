@@ -31,6 +31,16 @@ class ChooseCarTypeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final PassengerCategoryListPresenter presenter =
         locate<PassengerCategoryListPresenter>();
+
+    // Initialize presenter with screen arguments
+    presenter.initializeWithArguments(
+      serviceId: serviceId,
+      pickupLocation: pickupLocation,
+      pickupAddress: pickupAddress,
+      dropoffLocation: dropoffLocation,
+      dropoffAddress: dropoffAddress,
+    );
+
     return Scaffold(
       body: _buildMap(context),
       bottomSheet: PresentableWidgetBuilder(
@@ -72,63 +82,65 @@ class ChooseCarTypeScreen extends StatelessWidget {
           topRight: Radius.circular(16.px),
         ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildAppBar(context),
-          SizedBox(height: 16.px),
-          if (uiState.isLoading)
-            Center(child: LoadingIndicator(theme: Theme.of(context))),
-          if (uiState.error != null) Center(child: Text(uiState.error!)),
-          if (uiState.categories.isNotEmpty)
-            ...uiState.categories.map(
-              (category) => Padding(
-                padding: EdgeInsets.only(bottom: 16.px),
-                child: CarServiceCard(
-                  service: CarService(
-                    id: category.id,
-                    name: category.categoryName,
-                    description: category.categoryName,
-                    imageUrl: category.image,
-                    imageBackground: AppAssets.icCarBackground,
-                    price: category.basePrice,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildAppBar(context),
+            SizedBox(height: 16.px),
+            if (uiState.isLoading)
+              Center(child: LoadingIndicator(theme: Theme.of(context))),
+            if (uiState.error != null) Center(child: Text(uiState.error!)),
+            if (uiState.categories.isNotEmpty)
+              ...uiState.categories.map(
+                (category) => Padding(
+                  padding: EdgeInsets.only(bottom: 16.px),
+                  child: CarServiceCard(
+                    service: CarService(
+                      id: category.id,
+                      name: category.categoryName,
+                      description: category.categoryName,
+                      imageUrl: category.image,
+                      imageBackground: AppAssets.icCarBackground,
+                      price: category.basePrice,
+                    ),
+                    isSelected: uiState.selectedCategory?.id == category.id,
+                    onTap: () => presenter.selectCategory(category),
                   ),
-                  isSelected: uiState.selectedCategory?.id == category.id,
-                  onTap: () => presenter.selectCategory(category),
                 ),
               ),
+            if (uiState.categories.isEmpty)
+              Center(child: Text(AppStrings.noCategoriesAvailable)),
+            SizedBox(height: 16.px),
+            PaymentMethodSelector(
+              paymentMethods: [
+                PaymentMethod(
+                  title: 'Online Payment',
+                  imageSrc: AppAssets.icOnlinePayment,
+                  isSelected: uiState.paymentMethod == 'stripe',
+                  isRecommended: true,
+                ),
+                PaymentMethod(
+                  title: 'Cash Payment',
+                  imageSrc: AppAssets.icCashPayment,
+                  isSelected: uiState.paymentMethod == 'offline',
+                ),
+              ],
+              onPaymentMethodSelected: (method) {
+                presenter.selectPaymentMethod(method.title);
+              },
             ),
-          if (uiState.categories.isEmpty)
-            Center(child: Text(AppStrings.noCategoriesAvailable)),
-          SizedBox(height: 16.px),
-          PaymentMethodSelector(
-            paymentMethods: [
-              PaymentMethod(
-                title: 'Online Payment',
-                imageSrc: AppAssets.icOnlinePayment,
-                isSelected: true, // Default selection
-                isRecommended: true, // Show as recommended option
-              ),
-              PaymentMethod(
-                title: 'Cash Payment',
-                imageSrc: AppAssets.icCashPayment,
-                isSelected: false,
-              ),
-            ],
-          ),
-          SizedBox(height: 16.px),
-          ActionButton(
-            isPrimary: true,
-            text: 'Find A Car',
-            onPressed: () {
-              if (uiState.selectedCategory != null) {
-                presenter.navigateToFindingRidesScreen(context);
-              } else {
-                presenter.addUserMessage('Please select a car type');
-              }
-            },
-          ),
-        ],
+            SizedBox(height: 16.px),
+            ActionButton(
+              isPrimary: true,
+              text: 'Find A Car',
+              onPressed: () {
+                presenter.createRideRequest(context);
+              },
+            ),
+            SizedBox(height: 8.px),
+          ],
+        ),
       ),
     );
   }

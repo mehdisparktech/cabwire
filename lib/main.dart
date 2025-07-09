@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/domain/usecases/determine_first_run_use_case.dart';
@@ -11,7 +12,6 @@ Future<void> main() async {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await _initializeApp();
-    // Wait for location permission check to complete before running the app
     await _checkLocationPermission();
     runApp(InitialApp(isFirstRun: await _checkFirstRun()));
     // _registerDevice();
@@ -22,6 +22,8 @@ Future<void> main() async {
 Future<void> _initializeApp() async {
   //await loadEnv();
   await ServiceLocator.setUp();
+  final socketService = locate<SocketService>();
+  socketService.connectToSocket();
 }
 
 /// Check if the app is first run

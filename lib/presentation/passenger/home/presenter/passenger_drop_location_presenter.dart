@@ -383,7 +383,7 @@ class PassengerDropLocationPresenter
             (context) =>
                 nextScreen ??
                 ChooseCarTypeScreen(
-                  serviceId: '686ce4b6edddf6930975f276',
+                  serviceId: '686e008a153fae6071f36f28',
                   pickupLocation: currentUiState.originLocation!,
                   pickupAddress: currentUiState.originAddress!,
                   dropoffLocation: currentUiState.destinationLocation!,

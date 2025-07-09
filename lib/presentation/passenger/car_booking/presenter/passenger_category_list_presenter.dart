@@ -5,6 +5,7 @@ import 'package:cabwire/domain/usecases/create_ride_request_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/get_passenger_categories_usecase.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/finding_rides_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'passenger_category_list_ui_state.dart';
 
 class PassengerCategoryListPresenter
@@ -21,10 +22,29 @@ class PassengerCategoryListPresenter
     this._createRideRequestUseCase,
   );
 
+  void initializeWithArguments({
+    required String serviceId,
+    required LatLng pickupLocation,
+    required String pickupAddress,
+    required LatLng dropoffLocation,
+    required String dropoffAddress,
+  }) {
+    uiState.value = currentUiState.copyWith(
+      selectedService: serviceId,
+      pickupLat: pickupLocation.latitude,
+      pickupLng: pickupLocation.longitude,
+      pickupAddress: pickupAddress,
+      dropoffLat: dropoffLocation.latitude,
+      dropoffLng: dropoffLocation.longitude,
+      dropoffAddress: dropoffAddress,
+      paymentMethod: 'offline', // Default payment method
+    );
+    loadPassengerCategories();
+  }
+
   @override
   void onInit() {
     super.onInit();
-    loadPassengerCategories();
   }
 
   Future<void> loadPassengerCategories() async {
@@ -65,49 +85,10 @@ class PassengerCategoryListPresenter
     }
   }
 
-  /// Updates the selected service
-  void updateSelectedService(String serviceId) {
-    uiState.value = currentUiState.copyWith(selectedService: serviceId);
-  }
-
-  /// Updates the selected category
-  void updateSelectedCategory(String categoryId) {
-    uiState.value = currentUiState.copyWith(
-      selectedCategory: currentUiState.categories.firstWhere(
-        (category) => category.id == categoryId,
-      ),
-    );
-  }
-
-  /// Updates the pickup location
-  void updatePickupLocation({
-    required double lat,
-    required double lng,
-    required String address,
-  }) {
-    uiState.value = currentUiState.copyWith(
-      pickupLat: lat,
-      pickupLng: lng,
-      pickupAddress: address,
-    );
-  }
-
-  /// Updates the dropoff location
-  void updateDropoffLocation({
-    required double lat,
-    required double lng,
-    required String address,
-  }) {
-    uiState.value = currentUiState.copyWith(
-      dropoffLat: lat,
-      dropoffLng: lng,
-      dropoffAddress: address,
-    );
-  }
-
-  /// Updates the payment method
-  void updatePaymentMethod(String method) {
-    uiState.value = currentUiState.copyWith(paymentMethod: method);
+  void selectPaymentMethod(String method) {
+    // Convert UI payment method names to API values
+    final apiPaymentMethod = method == 'Online Payment' ? 'stripe' : 'offline';
+    uiState.value = currentUiState.copyWith(paymentMethod: apiPaymentMethod);
   }
 
   /// Creates a ride request with the current parameters
@@ -125,14 +106,21 @@ class PassengerCategoryListPresenter
       final params = CreateRideRequestParams(
         service: currentUiState.selectedService!,
         category: currentUiState.selectedCategory!.id,
-        pickupLat: currentUiState.pickupLat!,
-        pickupLng: currentUiState.pickupLng!,
-        pickupAddress: currentUiState.pickupAddress!,
-        dropoffLat: currentUiState.dropoffLat!,
-        dropoffLng: currentUiState.dropoffLng!,
-        dropoffAddress: currentUiState.dropoffAddress!,
+        pickupLocation: {
+          'lat': currentUiState.pickupLat!,
+          'lng': currentUiState.pickupLng!,
+          'address': currentUiState.pickupAddress!,
+        },
+        dropoffLocation: {
+          'lat': currentUiState.dropoffLat!,
+          'lng': currentUiState.dropoffLng!,
+          'address': currentUiState.dropoffAddress!,
+        },
+        duration: 30, // Default duration in minutes
         paymentMethod: currentUiState.paymentMethod!,
       );
+
+      print(params);
 
       // Execute use case
       final result = await _createRideRequestUseCase.execute(params);
@@ -153,9 +141,9 @@ class PassengerCategoryListPresenter
             error: null,
           );
           showMessage(message: 'Ride request created successfully');
-          Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (context) => FindingRidesScreen()));
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => FindingRidesScreen()),
+          );
         },
       );
     } catch (e) {
@@ -202,10 +190,6 @@ class PassengerCategoryListPresenter
     }
 
     return true;
-  }
-
-  void navigateToFindingRidesScreen(BuildContext context) {
-    createRideRequest(context);
   }
 
   @override

@@ -17,6 +17,7 @@ class CreateRideRequestModel {
   final String category;
   final LocationModel pickupLocation;
   final LocationModel dropoffLocation;
+  final int duration;
   final String paymentMethod;
 
   const CreateRideRequestModel({
@@ -24,6 +25,7 @@ class CreateRideRequestModel {
     required this.category,
     required this.pickupLocation,
     required this.dropoffLocation,
+    required this.duration,
     required this.paymentMethod,
   });
 
@@ -32,6 +34,7 @@ class CreateRideRequestModel {
     'category': category,
     'pickupLocation': pickupLocation.toJson(),
     'dropoffLocation': dropoffLocation.toJson(),
+    'duration': duration,
     'paymentMethod': paymentMethod,
   };
 }

@@ -54,7 +54,7 @@ class RideDataModel {
   final String rideStatus;
   final String paymentMethod;
   final String paymentStatus;
-  final String rideType;
+  final String? rideType;
   final String id;
   final String createdAt;
   final String updatedAt;
@@ -94,7 +94,7 @@ class RideDataModel {
       rideStatus: json['rideStatus'] as String,
       paymentMethod: json['paymentMethod'] as String,
       paymentStatus: json['paymentStatus'] as String,
-      rideType: json['rideType'] as String,
+      rideType: json['rideType'] as String?,
       id: json['_id'] as String,
       createdAt: json['createdAt'] as String,
       updatedAt: json['updatedAt'] as String,
