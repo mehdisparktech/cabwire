@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/app_assets.dart'; // For default assets
 import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart'; // Import LocalStorage
 import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart'; // Import WelcomeScreen
 import 'package:cabwire/presentation/passenger/passenger_profile/ui/screens/passenger_contact_us_screen.dart';
@@ -57,12 +58,13 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     toggleLoading(loading: true);
     // Simulate fetching user profile and driving info
     await Future.delayed(const Duration(seconds: 1));
+    final ProfileModel? profile = await LocalStorage.getDriverProfile();
 
     // Populate with fetched data
     final fetchedPassengerProfile = PassengerProfileData(
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      phoneNumber: '1234567890',
+      name: profile?.name ?? '',
+      email: profile?.email ?? '',
+      phoneNumber: '01625815151',
       avatarUrl: AppAssets.icProfileImage, // Placeholder or actual URL
       dateOfBirth: '1990-01-01',
       gender: 'Male',

@@ -12,6 +12,7 @@ import 'package:cabwire/data/services/storage/storage_services.dart';
 
 class PassengerLoginPresenter extends BasePresenter<PassengerLoginUiState> {
   final SignInUsecase _signInUsecase;
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
