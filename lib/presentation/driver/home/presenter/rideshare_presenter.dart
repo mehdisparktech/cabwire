@@ -79,7 +79,9 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
   }
 
   void endRide() {
-    Get.off(() => DriverTripCloseOtpPage());
+    Get.off(
+      () => DriverTripCloseOtpPage(rideId: currentUiState.rideRequest!.rideId),
+    );
   }
 
   void navigateToChat() {

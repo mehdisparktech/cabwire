@@ -7,15 +7,48 @@ import 'package:cabwire/presentation/common/components/auth/app_logo_display.dar
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
-import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_presenter.dart';
+import 'package:cabwire/presentation/driver/home/presenter/driver_trip_close_otp_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-class DriverTripCloseOtpPage extends StatelessWidget {
-  DriverTripCloseOtpPage({super.key});
+class DriverTripCloseOtpPage extends StatefulWidget {
+  final String rideId;
+  const DriverTripCloseOtpPage({super.key, required this.rideId});
 
-  final RideHistoryPresenter presenter = locate<RideHistoryPresenter>();
+  @override
+  State<DriverTripCloseOtpPage> createState() => _DriverTripCloseOtpPageState();
+}
+
+class _DriverTripCloseOtpPageState extends State<DriverTripCloseOtpPage> {
+  final DriverTripCloseOtpPresenter presenter =
+      locate<DriverTripCloseOtpPresenter>();
+
+  final List<TextEditingController> otpControllers = List.generate(
+    4,
+    (index) => TextEditingController(),
+  );
+
+  final List<FocusNode> focusNodes = List.generate(4, (index) => FocusNode());
+
+  @override
+  void dispose() {
+    for (var controller in otpControllers) {
+      controller.dispose();
+    }
+    for (var node in focusNodes) {
+      node.dispose();
+    }
+    super.dispose();
+  }
+
+  int getOtpValue() {
+    String otpString = '';
+    for (var controller in otpControllers) {
+      otpString += controller.text;
+    }
+    return otpString.isEmpty ? 0 : int.parse(otpString);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +75,8 @@ class DriverTripCloseOtpPage extends StatelessWidget {
                   width: 40.px,
                   height: 50.px,
                   child: TextField(
+                    controller: otpControllers[index],
+                    focusNode: focusNodes[index],
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -74,6 +109,11 @@ class DriverTripCloseOtpPage extends StatelessWidget {
                       LengthLimitingTextInputFormatter(1),
                       FilteringTextInputFormatter.digitsOnly,
                     ],
+                    onChanged: (value) {
+                      if (value.isNotEmpty && index < 3) {
+                        focusNodes[index + 1].requestFocus();
+                      }
+                    },
                   ),
                 ),
               ),
@@ -96,7 +136,14 @@ class DriverTripCloseOtpPage extends StatelessWidget {
           isPrimary: true,
           text: 'Trip Closure',
           onPressed: () {
-            presenter.selectRideAndShowDetails('ride1');
+            final otp = getOtpValue();
+            if (otp > 0) {
+              presenter.completeRide(widget.rideId, otp);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please enter a valid OTP')),
+              );
+            }
           },
         ),
       ),

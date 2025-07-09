@@ -6,6 +6,7 @@ import 'package:cabwire/presentation/driver/chat/presenter/chat_presenter.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/create_post_presenter.dart';
 import 'package:cabwire/presentation/driver/earnings/presenter/earning_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
+import 'package:cabwire/presentation/driver/home/presenter/driver_trip_close_otp_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/rideshare_presenter.dart';
 import 'package:cabwire/presentation/driver/notification/presenter/notification_presenter.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_presenter.dart';
@@ -26,6 +27,7 @@ import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
+import 'package:cabwire/domain/usecases/complete_ride_usecase.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_presenter.dart';
 import 'package:cabwire/presentation/passenger/main/presenter/passenger_main_presenter.dart';
 import 'package:cabwire/presentation/driver/main/presenter/driver_main_presenter.dart';
@@ -85,6 +87,11 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(() => loadPresenter(ChatPresenter()))
       ..registerLazySingleton(() => loadPresenter(RideHistoryPresenter()))
       ..registerLazySingleton(() => loadPresenter(RidesharePresenter(locate())))
+      ..registerLazySingleton(
+        () => loadPresenter(
+          DriverTripCloseOtpPresenter(locate<CompleteRideUseCase>()),
+        ),
+      )
       //>>>>>>>>>>>>>>>>>>>>>>>>>> Passenger Presenters  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       ..registerLazySingleton(() => loadPresenter(PassengerHistoryPresenter()))
       ..registerLazySingleton(

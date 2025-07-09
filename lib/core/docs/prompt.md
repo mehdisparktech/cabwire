@@ -1,15 +1,15 @@
-[FEATURE_NAME] = Ride Request Creation
+[FEATURE_NAME] = Ride Completion
 [HTTP_METHOD] = POST
-[API_ENDPOINT] = api/ride/create-ride
+[API_ENDPOINT] = api/rides/complete
 
-[REQUEST_MODEL_NAME] = CreateRideRequestModel
+[REQUEST_MODEL_NAME] = CompleteRideModel
 [RESPONSE_MODEL_NAME] = RideResponseModel
 [ENTITY_NAME] = RideEntity
 [MAPPER_NAME] = RideMapper
 [DATASOURCE_NAME] = RideRemoteDataSource
 [REPOSITORY_NAME] = RideRepository
-[USECASE_NAME] = CreateRideRequestUseCase
-[USECASE_PARAMS] = CreateRideRequestParams
+[USECASE_NAME] = CompleteRideUseCase
+[USECASE_PARAMS] = CompleteRideParams
 [RETURN_TYPE] = void
 
 
@@ -26,38 +26,21 @@ Implement an API call to [DESCRIBE_THE_FEATURE_PURPOSE].
 - **Method:** [HTTP_METHOD]
 - **Example URL:** `[API_ENDPOINT]`
 - **Request Body (JSON):**
-    
     ```json
     [REQUEST_BODY_JSON]
    {
-    "service": "6852d20476efad465ae5578a",
-    "category": "683db540aa2a9734dbc067bc",
-    "pickupLocation": {
-        "lat": 23.8103,
-        "lng": 90.4125,
-        "address": "Dhaka, Bangladesh"
-    },
-    "dropoffLocation": {
-        "lat": 23.7522,
-        "lng": 90.3918,
-        "address": "Mirpur, Dhaka"
-    },
-    // "distance": 12.5,
-    "paymentMethod": "stripe"}
+  "rideId": "685a7b9e2e8c8fd76a0ed90b",
+  "otp": 6884}
+
     ```
-    
 - **Response:** Assume the API returns a 200 OK status on success.
 - **Response Body (JSON):**
-    
     ```json
     [RESPONSE_BODY_JSON]
-    {
+   {
     "success": true,
-    "message": "Ride created successfully",
+    "message": "Ride completed successfully",
     "data": {
-        "userId": "685a7b2a2e8c8fd76a0ed8fc",
-        "service": "6852d20476efad465ae5578a",
-        "category": "683db540aa2a9734dbc067bc",
         "pickupLocation": {
             "lat": 23.8103,
             "lng": 90.4125,
@@ -68,17 +51,21 @@ Implement an API call to [DESCRIBE_THE_FEATURE_PURPOSE].
             "lng": 90.3918,
             "address": "Mirpur, Dhaka"
         },
+        "_id": "685a7b9e2e8c8fd76a0ed90b",
+        "userId": "685a7b2a2e8c8fd76a0ed8fc",
+        "service": "6852d20476efad465ae5578a",
+        "category": "683db540aa2a9734dbc067bc",
         "distance": 6.795114946577798,
         "duration": 30,
-        "fare": 212.88,
-        "rideStatus": "requested",
+        "fare": 819.88,
+        "rideStatus": "completed",
         "paymentMethod": "stripe",
         "paymentStatus": "pending",
         "rideType": "Car",
-        "_id": "685a7bdd2e8c8fd76a0ed912",
-        "createdAt": "2025-06-24T10:20:13.472Z",
-        "updatedAt": "2025-06-24T10:20:13.472Z",
-        "__v": 0
+        "createdAt": "2025-06-24T10:19:10.723Z",
+        "updatedAt": "2025-06-24T10:56:05.885Z",
+        "__v": 0,
+        "driverId": "68528df7a19352787ce298c9"
     }}
     ```
 

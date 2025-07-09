@@ -25,4 +25,17 @@ class RideRepositoryImpl implements RideRepository {
       return left(e.toString());
     }
   }
+
+  @override
+  Future<Result<void>> completeRide(String rideId, int otp) async {
+    try {
+      // Call the remote data source
+      final result = await _remoteDataSource.completeRide(rideId, otp);
+
+      // Return the result, mapping success to void
+      return result.fold((error) => left(error), (_) => right(null));
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
 }
