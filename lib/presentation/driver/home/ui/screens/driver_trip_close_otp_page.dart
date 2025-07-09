@@ -134,6 +134,7 @@ class _DriverTripCloseOtpPageState extends State<DriverTripCloseOtpPage> {
         child: ActionButton(
           borderRadius: 0,
           isPrimary: true,
+          isLoading: presenter.currentUiState.isLoading,
           text: 'Trip Closure',
           onPressed: () {
             final otp = getOtpValue();

@@ -1,50 +1,58 @@
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
 import 'package:cabwire/domain/usecases/complete_ride_usecase.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_trip_close_otp_ui_state.dart';
+import 'package:cabwire/presentation/driver/ride_history/ui/screens/ride_history_page.dart';
+import 'package:get/get.dart';
 
 class DriverTripCloseOtpPresenter
     extends BasePresenter<DriverTripCloseOtpUiState> {
   final CompleteRideUseCase _completeRideUseCase;
-  final Obs<DriverTripCloseOtpUiState> _state = Obs<DriverTripCloseOtpUiState>(
+  final Obs<DriverTripCloseOtpUiState> uiState = Obs<DriverTripCloseOtpUiState>(
     DriverTripCloseOtpUiState.initial(),
   );
 
-  DriverTripCloseOtpUiState get state => _state.value;
+  DriverTripCloseOtpUiState get currentUiState => uiState.value;
 
   DriverTripCloseOtpPresenter(this._completeRideUseCase);
 
-  void _emit(DriverTripCloseOtpUiState state) {
-    _state.value = state;
-  }
-
   @override
   Future<void> toggleLoading({required bool loading}) async {
-    _emit(state.copyWith(isLoading: loading));
+    uiState.value = currentUiState.copyWith(isLoading: loading);
   }
 
   @override
   Future<void> addUserMessage(String message) async {
-    _emit(state.copyWith(userMessage: message));
+    uiState.value = currentUiState.copyWith(userMessage: message);
   }
 
   /// Completes a ride with the provided rideId and OTP
   Future<void> completeRide(String rideId, int otp) async {
-    _emit(state.copyWith(isLoading: true, userMessage: null));
-
+    toggleLoading(loading: true);
     final params = CompleteRideParams(rideId: rideId, otp: otp);
     final result = await _completeRideUseCase(params);
 
     result.fold(
-      (error) => _emit(
-        state.copyWith(
-          isLoading: false,
+      (error) {
+        uiState.value = currentUiState.copyWith(
           userMessage: error,
           isCompleted: false,
-        ),
-      ),
-      (_) => _emit(
-        state.copyWith(isLoading: false, userMessage: null, isCompleted: true),
-      ),
+        );
+        CustomToast(message: error, duration: const Duration(seconds: 2));
+        toggleLoading(loading: false);
+      },
+      (success) {
+        uiState.value = currentUiState.copyWith(
+          userMessage: null,
+          isCompleted: true,
+        );
+        CustomToast(
+          message: 'Trip closed successfully',
+          duration: const Duration(seconds: 2),
+        );
+        Get.offAll(() => RideHistoryPage());
+        toggleLoading(loading: false);
+      },
     );
   }
 }

@@ -33,5 +33,5 @@ class ApiEndPoint {
   static const createRide = "$baseUrl/ride/create-ride";
   static const ridesAccept = "$baseUrl/ride/accept-ride-driver/";
   static const startRide = "$baseUrl/ride/continue-ride-driver/";
-  static const closeTrip = "$baseUrl/ride/close-trip/";
+  static const closeTrip = "$baseUrl/ride/verify-ride-otp/";
 }
