@@ -3,12 +3,12 @@ import 'package:cabwire/data/models/ride/ride_request_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RideshareUiState extends BaseUiState {
-  final RideRequestModel rideRequest;
+  final RideRequestModel? rideRequest;
   final bool isRideStart;
   final bool isRideProcessing;
   final bool isRideEnd;
   final int timerLeft;
-  final LatLng mapCenter;
+  final LatLng? mapCenter;
   final GoogleMapController? mapController;
 
   const RideshareUiState({
@@ -23,16 +23,16 @@ class RideshareUiState extends BaseUiState {
     this.mapController,
   });
 
-  factory RideshareUiState.initial(RideRequestModel rideRequest) {
+  factory RideshareUiState.initial() {
     return RideshareUiState(
       isLoading: false,
       userMessage: null,
-      rideRequest: rideRequest,
+      rideRequest: null,
       isRideStart: false,
       isRideProcessing: false,
       isRideEnd: false,
       timerLeft: 5,
-      mapCenter: rideRequest.pickupLocation,
+      mapCenter: null,
       mapController: null,
     );
   }

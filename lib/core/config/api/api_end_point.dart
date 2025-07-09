@@ -1,7 +1,11 @@
 class ApiEndPoint {
-  static const baseUrl = "https://rabby3000.binarybards.online/api/v1";
-  static const imageUrl = "https://rabby3000.binarybards.online";
-  static const socketUrl = "https://rabby3000.binarybards.online";
+  // static const baseUrl = "https://rabby3000.binarybards.online/api/v1";
+  // static const imageUrl = "https://rabby3000.binarybards.online";
+  // static const socketUrl = "https://rabby3000.binarybards.online";
+
+  static const baseUrl = "http://10.10.7.109:5005/api/v1";
+  static const imageUrl = "http://10.10.7.109:5005";
+  static const socketUrl = "http://10.10.7.109:5005";
 
   static const signUp = "$baseUrl/user";
   static const verifyEmail = "$baseUrl/auth/verify-email";
@@ -28,4 +32,5 @@ class ApiEndPoint {
   static const passengerCategories = "$baseUrl/category";
   static const createRide = "$baseUrl/ride/create-ride";
   static const ridesAccept = "$baseUrl/ride/accept-ride-driver/";
+  static const startRide = "$baseUrl/ride/continue-ride-driver/";
 }

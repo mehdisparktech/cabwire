@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/config/api/api_end_point.dart';
+import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
 import 'package:cabwire/data/models/ride/ride_request_model.dart';
+import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/presentation/driver/chat/ui/screens/audio_call_page.dart';
 import 'package:cabwire/presentation/driver/chat/ui/screens/chat_page.dart';
 import 'package:cabwire/presentation/driver/home/presenter/rideshare_ui_state.dart';
@@ -9,18 +12,26 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RidesharePresenter extends BasePresenter<RideshareUiState> {
-  final Obs<RideshareUiState> uiState;
+  final ApiService apiService;
+  final Obs<RideshareUiState> uiState = Obs<RideshareUiState>(
+    RideshareUiState.initial(),
+  );
+  RideshareUiState get currentUiState => uiState.value;
   Timer? _rideStartTimer;
 
-  RidesharePresenter(RideRequestModel rideRequest)
-    : uiState = Obs<RideshareUiState>(RideshareUiState.initial(rideRequest)) {
+  RidesharePresenter(this.apiService) {
     _initialize();
   }
 
-  RideshareUiState get currentUiState => uiState.value;
-
   void _initialize() {
     _startRideTimer();
+  }
+
+  void setRideRequest(RideRequestModel rideRequest) {
+    uiState.value = currentUiState.copyWith(
+      rideRequest: rideRequest,
+      mapCenter: rideRequest.pickupLocation,
+    );
   }
 
   void _startRideTimer() {
@@ -36,15 +47,35 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
     controller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
-          target: currentUiState.rideRequest.pickupLocation,
+          target: currentUiState.rideRequest!.pickupLocation,
           zoom: 14.0,
         ),
       ),
     );
   }
 
-  void startRide() {
-    uiState.value = currentUiState.copyWith(isRideProcessing: true);
+  Future<void> startRide() async {
+    //uiState.value = currentUiState.copyWith(isRideProcessing: true);
+    final response = await apiService.patch(
+      ApiEndPoint.startRide + currentUiState.rideRequest!.rideId,
+    );
+    response.fold(
+      (failure) {
+        uiState.value = currentUiState.copyWith(
+          isRideProcessing: false,
+          userMessage: failure.message,
+        );
+        CustomToast(message: failure.message);
+      },
+      (success) {
+        uiState.value = currentUiState.copyWith(
+          isRideProcessing: true,
+          userMessage: success.message,
+          isRideStart: true,
+        );
+        CustomToast(message: success.message!);
+      },
+    );
   }
 
   void endRide() {

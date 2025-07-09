@@ -53,9 +53,10 @@ class RideshareBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             PassengerInfoWidget(
-              passengerName: uiState.rideRequest.userId,
-              passengerAddress: uiState.rideRequest.pickupAddress,
-              distance: '${uiState.rideRequest.distance.toStringAsFixed(2)} km',
+              passengerName: uiState.rideRequest!.userId,
+              passengerAddress: uiState.rideRequest!.pickupAddress,
+              distance:
+                  '${uiState.rideRequest!.distance.toStringAsFixed(2)} km',
             ),
             const SizedBox(height: 16),
             Row(
@@ -75,7 +76,7 @@ class RideshareBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             TripStoppageInfoWidget(
-              stoppageLocation: uiState.rideRequest.dropoffAddress,
+              stoppageLocation: uiState.rideRequest!.dropoffAddress,
             ),
             uiState.isRideStart
                 ? Padding(
@@ -95,7 +96,7 @@ class RideshareBottomSheet extends StatelessWidget {
                     },
                   ),
                 )
-                : PaymentInfoWidget(fare: uiState.rideRequest.fare),
+                : PaymentInfoWidget(fare: uiState.rideRequest!.fare),
           ],
         ),
       );
