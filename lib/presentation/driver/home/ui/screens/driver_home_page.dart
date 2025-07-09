@@ -184,8 +184,8 @@ class DriverHomePage extends StatelessWidget {
 
     // Format the fare
     final formatCurrency = NumberFormat.currency(
-      locale: 'bn_BD',
-      symbol: '৳',
+      locale: 'en_US',
+      symbol: '\$',
       decimalDigits: 0,
     );
     final formattedFare = formatCurrency.format(rideRequest.fare);
@@ -296,6 +296,7 @@ class DriverHomePage extends StatelessWidget {
               Expanded(
                 child: ActionButton(
                   text: 'Decline',
+                  isLoading: presenter.currentUiState.isLoading,
                   onPressed: () {
                     presenter.declineRide(rideRequest.id);
                   },
@@ -306,8 +307,9 @@ class DriverHomePage extends StatelessWidget {
                 child: ActionButton(
                   text: 'Accept',
                   isPrimary: true,
+                  isLoading: presenter.currentUiState.isLoading,
                   onPressed: () {
-                    presenter.acceptRide(rideRequest.id);
+                    presenter.acceptRide(rideRequest.rideId);
                   },
                 ),
               ),

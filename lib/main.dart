@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cabwire/domain/services/notification_service.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/di/service_locator.dart';
@@ -24,6 +25,8 @@ Future<void> _initializeApp() async {
   await ServiceLocator.setUp();
   final socketService = locate<SocketService>();
   socketService.connectToSocket();
+  final notificationService = locate<NotificationService>();
+  await notificationService.initLocalNotification();
 }
 
 /// Check if the app is first run

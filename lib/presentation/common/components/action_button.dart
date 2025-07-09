@@ -1,12 +1,14 @@
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ActionButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final bool isPrimary;
   final double? borderRadius;
+  final bool isLoading;
 
   const ActionButton({
     super.key,
@@ -14,6 +16,7 @@ class ActionButton extends StatelessWidget {
     required this.onPressed,
     this.isPrimary = false,
     this.borderRadius,
+    this.isLoading = false,
   });
 
   @override
@@ -42,13 +45,23 @@ class ActionButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(px8),
               ),
             ),
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+            child:
+                isLoading
+                    ? SizedBox(
+                      height: 3.h,
+                      width: 6.w,
+                      child: const CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                    : Text(
+                      text,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
           ),
         )
         : OutlinedButton(

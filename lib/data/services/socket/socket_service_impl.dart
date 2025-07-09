@@ -103,7 +103,7 @@ class SocketServiceImpl implements SocketService {
 
   void _setupNotificationListener() {
     if (LocalStorage.userId.isNotEmpty) {
-      _socket!.on("user-notification::${LocalStorage.userId}", (data) {
+      _socket!.on("notification::${LocalStorage.userId}", (data) {
         appLog("================> Received notification data: $data");
         notificationService.showNotification(data);
       });

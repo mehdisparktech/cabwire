@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
 import 'package:cabwire/core/static/constants.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
@@ -337,29 +338,34 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   Future<void> acceptRide(String rideId) async {
     // Find the ride in the list
     debugPrint('Accepting ride: $rideId');
-    RideRequestModel? requestedRide;
+    toggleLoading(loading: true);
+    RideRequestModel? rideRequest;
     for (var ride in currentUiState.rideRequests) {
-      if (ride.id == rideId) {
-        requestedRide = ride;
+      if (ride.rideId == rideId) {
+        rideRequest = ride;
         break;
       }
     }
-
-    if (requestedRide != null) {
+    if (rideRequest != null) {
       // Add ride details to navigation arguments
       final result = await apiService.patch(ApiEndPoint.ridesAccept + rideId);
       result.fold(
         (error) {
           debugPrint('Error accepting ride: $error');
           addUserMessage('Failed to accept ride: $error');
+          CustomToast(message: error.toString());
+          toggleLoading(loading: false);
         },
         (success) {
           debugPrint('Ride accepted: $success');
           addUserMessage('Ride accepted: $success');
-          Get.to(
-            () => RidesharePage(),
-            arguments: {'rideRequest': requestedRide},
-          );
+          final List<RideRequestModel> updatedRides = List.from(
+            currentUiState.rideRequests,
+          )..removeWhere((ride) => ride.rideId == rideId);
+          uiState.value = currentUiState.copyWith(rideRequests: updatedRides);
+          Get.to(() => RidesharePage(rideRequest: rideRequest!));
+          CustomToast(message: 'Ride accepted: $success');
+          toggleLoading(loading: false);
         },
       );
     } else {

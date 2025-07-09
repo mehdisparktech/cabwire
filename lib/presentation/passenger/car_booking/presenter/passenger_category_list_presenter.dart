@@ -42,10 +42,6 @@ class PassengerCategoryListPresenter
     loadPassengerCategories();
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   Future<void> loadPassengerCategories() async {
     try {

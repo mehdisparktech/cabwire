@@ -1,10 +1,12 @@
+import 'package:cabwire/data/models/ride/ride_request_model.dart';
 import 'package:cabwire/presentation/driver/home/ui/widgets/rideshare_bottom_sheet.dart';
 import 'package:cabwire/presentation/driver/home/ui/widgets/top_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RidesharePage extends StatefulWidget {
-  const RidesharePage({super.key});
+  final RideRequestModel rideRequest;
+  const RidesharePage({super.key, required this.rideRequest});
 
   @override
   State<RidesharePage> createState() => _RidesharePageState();

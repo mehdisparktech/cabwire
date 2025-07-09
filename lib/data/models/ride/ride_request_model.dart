@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class RideRequestModel {
   final String id;
   final String userId;
+  final String rideId;
   final LatLng pickupLocation;
   final LatLng dropoffLocation;
   final String pickupAddress;
@@ -15,6 +16,7 @@ class RideRequestModel {
   RideRequestModel({
     required this.id,
     required this.userId,
+    required this.rideId,
     required this.pickupLocation,
     required this.pickupAddress,
     required this.dropoffLocation,
@@ -33,6 +35,7 @@ class RideRequestModel {
     return RideRequestModel(
       id: json['_id'] as String? ?? '',
       userId: json['userId'] as String? ?? '',
+      rideId: json['rideId'] as String? ?? '',
       pickupLocation: LatLng(
         pickupLoc['lat'] as double? ?? 0.0,
         pickupLoc['lng'] as double? ?? 0.0,

@@ -134,7 +134,7 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
   ) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: Container(
+      child: SizedBox(
         height: context.height * 0.9,
         child: SingleChildScrollView(
           physics: ClampingScrollPhysics(),
