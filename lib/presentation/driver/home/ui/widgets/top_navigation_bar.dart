@@ -8,12 +8,15 @@ class TopNavigationBar extends StatelessWidget {
   final String subtitle;
   final String distance;
   final String address;
+  final VoidCallback? onBackPressed;
+
   const TopNavigationBar({
     super.key,
     required this.title,
     required this.subtitle,
     required this.distance,
     required this.address,
+    this.onBackPressed,
   });
 
   @override
@@ -24,7 +27,10 @@ class TopNavigationBar extends StatelessWidget {
         decoration: BoxDecoration(color: const Color(0xFFFFD5A9)),
         child: Row(
           children: [
-            const Icon(Icons.arrow_forward, size: 20),
+            GestureDetector(
+              onTap: onBackPressed,
+              child: const Icon(Icons.arrow_back, size: 20),
+            ),
             const SizedBox(width: 8),
             Text(
               distance,

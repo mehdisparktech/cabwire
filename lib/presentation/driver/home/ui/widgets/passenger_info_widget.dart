@@ -6,19 +6,16 @@ import 'package:flutter/material.dart';
 // import 'package:get/get.dart'; // Not directly using context.theme here, but could if colors were themed
 
 class PassengerInfoWidget extends StatelessWidget {
-  const PassengerInfoWidget({super.key});
-  // If passenger data was dynamic, you'd pass it here:
-  // final String passengerName;
-  // final String passengerAddress;
-  // final String distance;
-  // final String profileImageUrl; // Or AssetImage
-  // const PassengerInfoWidget({
-  //   super.key,
-  //   required this.passengerName,
-  //   required this.passengerAddress,
-  //   required this.distance,
-  //   required this.profileImageUrl,
-  // });
+  final String passengerName;
+  final String? passengerAddress;
+  final String? distance;
+
+  const PassengerInfoWidget({
+    super.key,
+    required this.passengerName,
+    this.passengerAddress = 'Block B, Banasree, Dhaka.',
+    this.distance = '3.3 km',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,25 +25,22 @@ class PassengerInfoWidget extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 20.px,
-            backgroundImage: AssetImage(
-              AppAssets.icProfileImage,
-            ), // Use passed data if dynamic
+            backgroundImage: AssetImage(AppAssets.icProfileImage),
           ),
           gapW12,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Use passed data if dynamic
                 CustomText(
-                  'Santiago Dslob',
+                  passengerName,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF1E1E1E),
                   fontSize: 14.px,
                 ),
                 gapH2,
                 CustomText(
-                  'Block B, Banasree, Dhaka.',
+                  passengerAddress ?? 'Unknown address',
                   fontWeight: FontWeight.w700,
                   fontSize: 14.px,
                 ),
@@ -54,8 +48,7 @@ class PassengerInfoWidget extends StatelessWidget {
             ),
           ),
           CustomText(
-            // Use passed data if dynamic
-            '3.3 km',
+            distance ?? '',
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 12.px,

@@ -75,7 +75,9 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
             isRideStart: isRideStart,
           ), // Use the new widget
           gapH16,
-          const PassengerInfoWidget(), // Use the new widget
+          const PassengerInfoWidget(
+            passengerName: 'John Doe',
+          ), // Use the new widget
           gapH16,
           Row(
             children: [
@@ -120,7 +122,7 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
                   }
                 },
               )
-              : const PaymentInfoWidget(),
+              : const PaymentInfoWidget(fare: 100),
         ],
       ),
     );

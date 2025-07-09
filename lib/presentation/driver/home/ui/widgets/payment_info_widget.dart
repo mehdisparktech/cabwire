@@ -8,17 +8,16 @@ import 'package:flutter/material.dart';
 // import 'package:get/get.dart'; // Not directly using context.theme here
 
 class PaymentInfoWidget extends StatelessWidget {
-  const PaymentInfoWidget({super.key});
-  // If paymentType, amount, and note were dynamic, pass them:
-  // final String paymentType;
-  // final String amount;
-  // final String note;
-  // const PaymentInfoWidget({
-  //   super.key,
-  //   required this.paymentType,
-  //   required this.amount,
-  //   required this.note,
-  // });
+  final double fare;
+  final String paymentType;
+  final String note;
+
+  const PaymentInfoWidget({
+    super.key,
+    required this.fare,
+    this.paymentType = 'Online Payment',
+    this.note = 'This is the estimated fare. This may vary.',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +36,14 @@ class PaymentInfoWidget extends StatelessWidget {
               ),
               gapW8,
               CustomText(
-                // Use passed data if dynamic
-                'Online Payment',
+                paymentType,
                 fontWeight: FontWeight.w700,
                 fontSize: 18.px,
                 color: Color(0xFF1E1E1E),
               ),
               const Spacer(),
               CustomText(
-                // Use passed data if dynamic
-                '\$100',
+                '\$${fare.toStringAsFixed(2)}',
                 fontWeight: FontWeight.bold,
                 fontSize: 18.px,
                 color: Colors.black.withOpacityInt(0.8),
@@ -55,12 +52,7 @@ class PaymentInfoWidget extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.only(top: 4.px, bottom: 24.px),
-            child: CustomText(
-              // Use passed data if dynamic
-              'This is the estimated fare. This may vary.',
-              fontSize: 12.px,
-              color: Colors.black54,
-            ),
+            child: CustomText(note, fontSize: 12.px, color: Colors.black54),
           ),
         ],
       ),
