@@ -26,6 +26,8 @@ class PassengerDropLocationUiState extends BaseUiState {
   final List<String> originSuggestions;
   final LatLng? originLocation;
   final String? originAddress;
+  final List<LatLng>? routePolylines;
+
   const PassengerDropLocationUiState({
     required super.isLoading,
     required super.userMessage,
@@ -45,6 +47,7 @@ class PassengerDropLocationUiState extends BaseUiState {
     this.originSuggestions = const [],
     this.originLocation,
     this.originAddress,
+    this.routePolylines,
   });
 
   factory PassengerDropLocationUiState.empty() {
@@ -82,6 +85,7 @@ class PassengerDropLocationUiState extends BaseUiState {
       originSuggestions: [],
       originLocation: null,
       originAddress: null,
+      routePolylines: null,
     );
   }
 
@@ -105,6 +109,7 @@ class PassengerDropLocationUiState extends BaseUiState {
     originSuggestions,
     originLocation,
     originAddress,
+    routePolylines,
   ];
 
   PassengerDropLocationUiState copyWith({
@@ -126,6 +131,7 @@ class PassengerDropLocationUiState extends BaseUiState {
     List<String>? originSuggestions,
     LatLng? originLocation,
     String? originAddress,
+    List<LatLng>? routePolylines,
   }) {
     return PassengerDropLocationUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -149,6 +155,7 @@ class PassengerDropLocationUiState extends BaseUiState {
       originSuggestions: originSuggestions ?? this.originSuggestions,
       originLocation: originLocation ?? this.originLocation,
       originAddress: originAddress ?? this.originAddress,
+      routePolylines: routePolylines ?? this.routePolylines,
     );
   }
 }

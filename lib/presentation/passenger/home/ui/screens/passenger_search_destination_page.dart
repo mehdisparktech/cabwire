@@ -35,9 +35,16 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
           final state = presenter.currentUiState;
           return Scaffold(
             backgroundColor: context.theme.colorScheme.surface,
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(kToolbarHeight),
+              child: _buildAppBar(context),
+            ),
             body: Stack(
               children: [
                 _buildMap(context, presenter, state),
+                if (state.routePolylines != null &&
+                    state.routePolylines!.isNotEmpty)
+                  _buildRouteVisualization(context, presenter, state),
                 _buildDestinationContainer(context, presenter, state),
               ],
             ),
@@ -68,20 +75,113 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
     PassengerDropLocationPresenter presenter,
     PassengerDropLocationUiState state,
   ) {
+    // Create markers set
+    Set<Marker> markers = {};
+
+    // Add origin marker if available (current/pickup location)
+    if (state.currentLocation != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('current_location'),
+          position: state.currentLocation!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueGreen,
+          ),
+          infoWindow: InfoWindow(
+            title: 'Current Location',
+            snippet: state.pickupAddress ?? 'Your Location',
+          ),
+        ),
+      );
+    }
+
+    // Add pickup marker if it's different from current location
+    if (state.selectedPickupLocation != null &&
+        (state.currentLocation == null ||
+            state.selectedPickupLocation!.latitude !=
+                state.currentLocation!.latitude ||
+            state.selectedPickupLocation!.longitude !=
+                state.currentLocation!.longitude)) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('pickup'),
+          position: state.selectedPickupLocation!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueAzure,
+          ),
+          infoWindow: InfoWindow(
+            title: 'Pickup',
+            snippet: state.pickupAddress ?? 'Starting Point',
+          ),
+        ),
+      );
+    }
+
+    // Add destination marker if available
+    if (state.destinationLocation != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('destination'),
+          position: state.destinationLocation!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+          infoWindow: InfoWindow(
+            title: 'Destination',
+            snippet: state.destinationAddress ?? 'End Point',
+          ),
+        ),
+      );
+    }
+
+    // Create polylines set
+    Set<Polyline> polylines = {};
+
+    // Add route polyline if available
+    if (state.routePolylines != null && state.routePolylines!.isNotEmpty) {
+      polylines.add(
+        Polyline(
+          polylineId: const PolylineId('route'),
+          points: state.routePolylines!,
+          color: Colors.blue,
+          width: 5,
+        ),
+      );
+    }
+
+    // Calculate camera position based on available points
+    CameraPosition initialCamera = CameraPosition(
+      target: state.currentLocation ?? const LatLng(23.8103, 90.4125),
+      zoom: 14.0,
+    );
+
     return GoogleMap(
-      onMapCreated: presenter.onDestinationMapCreated,
-      initialCameraPosition: CameraPosition(
-        target: state.currentLocation ?? LatLng(23.8103, 90.4125),
-        zoom: 14.0,
-      ),
+      onMapCreated: (controller) {
+        // Call the presenter's map created handler
+        presenter.onDestinationMapCreated(controller);
+
+        // Check if we need to show polylines
+        if (state.selectedPickupLocation != null &&
+            state.destinationLocation != null) {
+          // Ensure polylines are calculated and shown
+          Future.delayed(Duration(milliseconds: 500), () {
+            presenter.fetchRoutePolylines(
+              state.selectedPickupLocation!,
+              state.destinationLocation!,
+            );
+          });
+        }
+      },
+      initialCameraPosition: initialCamera,
       myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      zoomControlsEnabled: false,
-      mapToolbarEnabled: false,
-      scrollGesturesEnabled: false,
-      zoomGesturesEnabled: false,
+      myLocationButtonEnabled: true,
+      zoomControlsEnabled: true,
+      mapToolbarEnabled: true,
+      markers: markers,
+      polylines: polylines,
+      compassEnabled: true,
+      scrollGesturesEnabled: true,
+      zoomGesturesEnabled: true,
       tiltGesturesEnabled: false,
-      rotateGesturesEnabled: false,
+      rotateGesturesEnabled: true,
     );
   }
 
@@ -90,31 +190,52 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
     PassengerDropLocationPresenter presenter,
     PassengerDropLocationUiState state,
   ) {
-    // This would display route path between pickup and destination
     return Positioned(
       top: 90,
       left: 10,
       right: 10,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        margin: EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacityInt(0.9),
+          color: Colors.white.withOpacity(0.9),
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacityInt(0.1),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 4,
               spreadRadius: 1,
             ),
           ],
         ),
-        child: Text(
-          'Route from ${state.pickupAddress?.split(',').first ?? 'Origin'} to ${state.destinationController.text.split(',').first}',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.blue[800],
-          ),
+        child: Row(
+          children: [
+            const Icon(Icons.directions, color: Colors.blue),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Route from ${state.pickupAddress?.split(',').first ?? 'Origin'} to ${state.destinationAddress?.split(',').first ?? state.destinationController.text.split(',').first}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  if (state.routeDistance != null &&
+                      state.routeDuration != null)
+                    Text(
+                      '${state.routeDistance} • ${state.routeDuration}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black87,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -125,71 +246,95 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
     PassengerDropLocationPresenter presenter,
     PassengerDropLocationUiState state,
   ) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: SizedBox(
-        height: context.height * 0.9,
-        child: SingleChildScrollView(
-          physics: ClampingScrollPhysics(),
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(px32),
-                topRight: Radius.circular(px32),
+    return DraggableScrollableSheet(
+      initialChildSize: 0.4,
+      minChildSize: 0.05,
+      maxChildSize: 0.9,
+      snap: true,
+      snapSizes: const [0.4, 0.7, 0.9],
+      builder: (BuildContext context, ScrollController scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(px32),
+              topRight: Radius.circular(px32),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacityInt(0.1),
+                blurRadius: 10,
+                offset: Offset(0, -4),
               ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildAppBar(context),
-                gapH20,
-                _buildSearchInputs(context, presenter, state),
-                gapH20,
-                if (state.destinationLocation != null &&
-                    state.selectedPickupLocation != null)
-                  _buildRouteVisualization(context, presenter, state),
-                gapH20,
-                if (state.routeDistance != null && state.routeDuration != null)
-                  _buildRouteInfo(context, state),
-
-                if (state.destinationSuggestions.isNotEmpty)
-                  _buildSuggestionList(
-                    context,
-                    presenter,
-                    state.destinationSuggestions,
-                    (suggestion) =>
-                        presenter.selectDestinationSuggestion(suggestion),
-                  ),
-                if (state.originSuggestions.isNotEmpty)
-                  _buildSuggestionList(
-                    context,
-                    presenter,
-                    state.originSuggestions,
-                    (suggestion) =>
-                        presenter.selectOriginSuggestion(suggestion),
-                  ),
-                gapH20,
-                if (state.destinationSuggestions.isEmpty &&
-                    state.originSuggestions.isEmpty &&
-                    state.routeDistance == null)
-                  SizedBox(
-                    height: 300,
-                    child: _buildSearchHistory(context, presenter, state),
-                  ),
-                // Add extra padding at bottom to ensure content isn't hidden behind the bottom sheet
-                SizedBox(height: 80),
-              ],
-            ),
+            ],
           ),
-        ),
-      ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Drag handle
+              Container(
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                width: 40,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  physics: const ClampingScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      gapH20,
+                      _buildSearchInputs(context, presenter, state),
+                      gapH20,
+                      if (state.routeDistance != null &&
+                          state.routeDuration != null)
+                        _buildRouteInfo(context, state),
+
+                      if (state.destinationSuggestions.isNotEmpty)
+                        _buildSuggestionList(
+                          context,
+                          presenter,
+                          state.destinationSuggestions,
+                          (suggestion) =>
+                              presenter.selectDestinationSuggestion(suggestion),
+                        ),
+                      if (state.originSuggestions.isNotEmpty)
+                        _buildSuggestionList(
+                          context,
+                          presenter,
+                          state.originSuggestions,
+                          (suggestion) =>
+                              presenter.selectOriginSuggestion(suggestion),
+                        ),
+                      gapH20,
+                      if (state.destinationSuggestions.isEmpty &&
+                          state.originSuggestions.isEmpty &&
+                          state.routeDistance == null)
+                        SizedBox(
+                          height: 300,
+                          child: _buildSearchHistory(context, presenter, state),
+                        ),
+                      // Add extra padding at bottom to ensure content isn't hidden behind the bottom sheet
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
   Widget _buildAppBar(BuildContext context) {
     return AppBar(
+      backgroundColor: Colors.transparent,
       title: Text('Search Destination'),
       centerTitle: true,
       leading: IconButton(
@@ -198,7 +343,7 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
         },
         icon: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(100),
             boxShadow: [
               BoxShadow(
@@ -233,7 +378,7 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
           BoxShadow(
             color: Colors.grey[200]!,
             blurRadius: 10,
-            offset: Offset(5, 5),
+            offset: const Offset(5, 5),
           ),
         ],
       ),
@@ -244,7 +389,10 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
             hintText: 'From',
             icon: Icons.location_on,
             iconColor: context.color.primaryBtn,
-            onChanged: (_) {},
+            onChanged:
+                (_) => presenter.searchDestinationPlaces(
+                  state.fromController.text,
+                ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -257,7 +405,10 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
             iconColor: context.color.primaryBtn,
             showCloseIcon: state.destinationController.text.isNotEmpty,
             onClearPressed: () => presenter.clearDestination(),
-            onChanged: (_) {},
+            onChanged:
+                (_) => presenter.searchOriginPlaces(
+                  state.destinationController.text,
+                ),
           ),
         ],
       ),

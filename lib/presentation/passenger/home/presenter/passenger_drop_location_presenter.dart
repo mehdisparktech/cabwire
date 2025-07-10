@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/choose_car_type_screen.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_ui_state.dart';
@@ -31,6 +32,8 @@ class PassengerDropLocationPresenter
   VoidCallback? _fromListener;
   VoidCallback? _destinationListener;
 
+  GoogleMapController? _mapController;
+
   PassengerDropLocationPresenter();
 
   @override
@@ -38,6 +41,53 @@ class PassengerDropLocationPresenter
     super.onInit();
     _setupFromListener();
     _setupDestinationListener();
+
+    // Set current location as pickup location if available
+    if (currentUiState.currentLocation != null) {
+      uiState.value = currentUiState.copyWith(
+        selectedPickupLocation: currentUiState.currentLocation,
+      );
+
+      // Try to get address for current location
+      _getAddressFromLatLng(currentUiState.currentLocation!)
+          .then((address) {
+            if (address != null && address.isNotEmpty) {
+              // Update pickup address
+              //uiState.value = currentUiState.copyWith(pickupAddress: address);
+
+              // Update from controller text
+              if (_fromListener != null) {
+                currentUiState.fromController.removeListener(_fromListener!);
+              }
+              //currentUiState.fromController.text = address;
+              if (_fromListener != null) {
+                currentUiState.fromController.addListener(_fromListener!);
+              }
+            }
+          })
+          .catchError((error) {
+            debugPrint('Error getting address for current location: $error');
+          });
+    }
+  }
+
+  // Helper method to get address from coordinates
+  Future<String?> _getAddressFromLatLng(LatLng latLng) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        latLng.latitude,
+        latLng.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+        return '${place.name}, ${place.locality}, ${place.administrativeArea}';
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error getting address from coordinates: $e');
+      return null;
+    }
   }
 
   @override
@@ -181,15 +231,20 @@ class PassengerDropLocationPresenter
         final location = locations.first;
         final latLng = LatLng(location.latitude, location.longitude);
 
-        // Store destination coordinates for route calculation later
+        // Store pickup coordinates
         uiState.value = currentUiState.copyWith(
-          destinationLocation: latLng,
-          destinationAddress: placeDescription,
+          selectedPickupLocation: latLng,
+          pickupAddress: placeDescription,
         );
 
-        // If we have pickup location (from the main presenter), calculate route
-        if (currentUiState.currentLocation != null) {
-          calculateRouteDistance(currentUiState.currentLocation!, latLng);
+        // If we have destination location, calculate route
+        if (currentUiState.destinationLocation != null) {
+          calculateRouteDistance(latLng, currentUiState.destinationLocation!);
+          fetchRoutePolylines(latLng, currentUiState.destinationLocation!);
+          // Fit bounds to show both markers
+          if (_mapController != null) {
+            fitBoundsOnMap();
+          }
         }
       }
     } catch (e) {
@@ -315,10 +370,6 @@ class PassengerDropLocationPresenter
 
   Future<void> selectOriginSuggestion(String placeDescription) async {
     try {
-      debugPrint(
-        "=== selectOriginSuggestion called with: $placeDescription ===",
-      );
-
       // Clear suggestions immediately to improve UI responsiveness
       uiState.value = currentUiState.copyWith(originSuggestions: []);
 
@@ -331,9 +382,6 @@ class PassengerDropLocationPresenter
 
       // Update the destinationController with the selected suggestion
       currentUiState.destinationController.text = placeDescription;
-      debugPrint(
-        "=== Destination controller text set to: ${currentUiState.destinationController.text} ===",
-      );
 
       // Re-add listener
       if (_destinationListener != null) {
@@ -342,48 +390,53 @@ class PassengerDropLocationPresenter
 
       // Try to get coordinates for the selected location
       final locations = await locationFromAddress(placeDescription);
-      debugPrint("=== Got locations: $locations ===");
 
       if (locations.isNotEmpty) {
         final location = locations.first;
         final latLng = LatLng(location.latitude, location.longitude);
-        debugPrint("=== Setting origin location to: $latLng ===");
 
-        // Store origin coordinates for route calculation later
-        // FIXED: Only update originLocation and originAddress, not destinationLocation
+        // Store destination coordinates for route calculation
         uiState.value = currentUiState.copyWith(
-          originLocation: latLng,
-          originAddress: placeDescription,
+          destinationLocation: latLng,
+          destinationAddress: placeDescription,
         );
-        debugPrint("=== Updated UI state with origin location ===");
 
-        // If we have pickup location (current location), calculate route
-        if (currentUiState.currentLocation != null) {
-          debugPrint("=== Calculating route distance ===");
-          calculateRouteDistance(currentUiState.currentLocation!, latLng);
-        } else {
-          debugPrint(
-            "=== No current location available for route calculation ===",
+        // If we have pickup location, calculate route
+        if (currentUiState.selectedPickupLocation != null) {
+          calculateRouteDistance(
+            currentUiState.selectedPickupLocation!,
+            latLng,
           );
+          fetchRoutePolylines(currentUiState.selectedPickupLocation!, latLng);
+          // Fit bounds to show both markers
+          if (_mapController != null) {
+            fitBoundsOnMap();
+          }
+        } else if (currentUiState.currentLocation != null) {
+          // Use current location as pickup if no pickup was selected
+          calculateRouteDistance(currentUiState.currentLocation!, latLng);
+          fetchRoutePolylines(currentUiState.currentLocation!, latLng);
+          // Fit bounds to show both markers
+          if (_mapController != null) {
+            fitBoundsOnMap();
+          }
         }
       }
     } catch (e) {
-      debugPrint("=== Error selecting origin place: $e ===");
-      // Add error handling to show the user what went wrong
-      addUserMessage('Failed to get location data: ${e.toString()}');
+      debugPrint('Error selecting origin place: $e');
     }
   }
 
   void navigateToCarTypeSelection(BuildContext context, Widget? nextScreen) {
     // Validate that pickup and dropoff locations are different
-    if (currentUiState.originLocation != null &&
+    if (currentUiState.destinationLocation != null &&
         currentUiState.selectedPickupLocation != null) {
       // Check if pickup and dropoff locations are the same
       final pickupLocation = currentUiState.selectedPickupLocation!;
-      final originLocation = currentUiState.originLocation!;
+      final destinationLocation = currentUiState.destinationLocation!;
 
-      if (pickupLocation.latitude == originLocation.latitude &&
-          pickupLocation.longitude == originLocation.longitude) {
+      if (pickupLocation.latitude == destinationLocation.latitude &&
+          pickupLocation.longitude == destinationLocation.longitude) {
         showMessage(message: 'Pickup and dropoff locations cannot be the same');
         return;
       }
@@ -397,8 +450,8 @@ class PassengerDropLocationPresenter
                     serviceId: '686e008a153fae6071f36f28',
                     pickupLocation: currentUiState.selectedPickupLocation!,
                     pickupAddress: currentUiState.pickupAddress!,
-                    dropoffLocation: currentUiState.originLocation!,
-                    dropoffAddress: currentUiState.originAddress!,
+                    dropoffLocation: currentUiState.destinationLocation!,
+                    dropoffAddress: currentUiState.destinationAddress!,
                   ),
         ),
       );
@@ -408,66 +461,79 @@ class PassengerDropLocationPresenter
   }
 
   void onDestinationMapCreated(GoogleMapController controller) {
-    // Don't store this controller as it's not needed
-    // Just ensure map settings are applied
-    // ignore: deprecated_member_use
-    controller.setMapStyle(null); // Use default style
+    _mapController = controller;
+
+    // If we already have start and end points, fit bounds
+    if (currentUiState.currentLocation != null &&
+        currentUiState.destinationLocation != null) {
+      fitBoundsOnMap();
+    }
   }
 
   void clearDestination() {
-    // if (_fromListener != null) {
-    //   currentUiState.fromController.removeListener(_fromListener!);
-    // }
-
+    // Remove listener temporarily
     if (_destinationListener != null) {
       currentUiState.destinationController.removeListener(
         _destinationListener!,
       );
     }
 
-    // Clear appropriate field based on which one has focus
-    // if (currentUiState.fromController.text.isNotEmpty) {
-    //   currentUiState.fromController.clear();
-    // } else
-    if (currentUiState.destinationController.text.isNotEmpty) {
-      currentUiState.destinationController.clear();
+    // Clear destination text
+    currentUiState.destinationController.clear();
+
+    // Re-add listener
+    if (_destinationListener != null) {
+      currentUiState.destinationController.addListener(_destinationListener!);
     }
 
-    // Re-add listeners
-    // if (_fromListener != null) {
-    //   currentUiState.fromController.addListener(_fromListener!);
-    // }
+    // Clear destination-related data
+    uiState.value = currentUiState.copyWith(
+      originLocation: null,
+      originAddress: null,
+      originSuggestions: [],
+      routeDistance: null,
+      routeDuration: null,
+      routePolylines: null,
+    );
+  }
+
+  void selectHistoryItem(SearchHistoryItem item) {
+    // Fill in the destination controller with the location from history
+    if (_destinationListener != null) {
+      currentUiState.destinationController.removeListener(
+        _destinationListener!,
+      );
+    }
+
+    currentUiState.destinationController.text = item.location;
 
     if (_destinationListener != null) {
       currentUiState.destinationController.addListener(_destinationListener!);
     }
 
-    uiState.value = currentUiState.copyWith(
-      destinationSuggestions: [],
-      originSuggestions: [],
-      destinationLocation: null,
-      originLocation: null,
-      originAddress: null,
-      routeDistance: null,
-      routeDuration: null,
-    );
-  }
+    // Use geocoding to get coordinates for this location
+    locationFromAddress(item.location)
+        .then((locations) {
+          if (locations.isNotEmpty) {
+            final location = locations.first;
+            final latLng = LatLng(location.latitude, location.longitude);
 
-  void selectHistoryItem(SearchHistoryItem item) {
-    // Remove listener temporarily
-    if (_fromListener != null) {
-      currentUiState.fromController.removeListener(_fromListener!);
-    }
+            // Store as destination
+            uiState.value = currentUiState.copyWith(
+              originLocation: latLng,
+              originAddress: item.location,
+            );
 
-    currentUiState.fromController.text = item.location;
-
-    // Re-add listener
-    if (_fromListener != null) {
-      currentUiState.fromController.addListener(_fromListener!);
-    }
-
-    // If we already have coordinates for this location in history,
-    // we could retrieve them here and update the state
+            // Calculate route if we have origin/current location
+            if (currentUiState.currentLocation != null) {
+              calculateRouteDistance(currentUiState.currentLocation!, latLng);
+              fetchRoutePolylines(currentUiState.currentLocation!, latLng);
+            }
+          }
+        })
+        .catchError((e) {
+          debugPrint('Error getting coordinates for history item: $e');
+        });
   }
 
   @override
@@ -497,6 +563,11 @@ class PassengerDropLocationPresenter
     }
 
     currentUiState.fromController.text = address;
+    appLog('address: $address');
+    appLog('pickupLocation: ${pickupLocation.toString()}');
+    appLog(
+      'currentUiState.fromController.text: ${currentUiState.fromController.text}',
+    );
 
     // Re-add the listener
     if (_fromListener != null) {
@@ -519,7 +590,7 @@ class PassengerDropLocationPresenter
       return;
     }
 
-    if (currentUiState.originLocation == null) {
+    if (currentUiState.destinationLocation == null) {
       showMessage(message: 'Please select a dropoff location');
       return;
     }
@@ -527,5 +598,189 @@ class PassengerDropLocationPresenter
     // Locations should already be validated in navigateToCarTypeSelection,
     // but adding an extra check here for safety
     navigateToCarTypeSelection(context, nextScreen);
+  }
+
+  // Method to fit map bounds to show both markers
+  void fitBoundsOnMap() {
+    if (_mapController == null) {
+      debugPrint('Map controller is null, cannot fit bounds');
+      return;
+    }
+
+    // Determine which points to include in bounds
+    List<LatLng> points = [];
+
+    // Add current location if available
+    if (currentUiState.currentLocation != null) {
+      points.add(currentUiState.currentLocation!);
+    }
+
+    // Add pickup location if available and different from current
+    if (currentUiState.selectedPickupLocation != null) {
+      points.add(currentUiState.selectedPickupLocation!);
+    }
+
+    // Add destination location if available
+    if (currentUiState.destinationLocation != null) {
+      points.add(currentUiState.destinationLocation!);
+    }
+
+    // Need at least 2 points to create bounds
+    if (points.length < 2) {
+      debugPrint('Not enough points to create bounds: ${points.length}');
+      return;
+    }
+
+    // Find min and max coordinates
+    double minLat = points[0].latitude;
+    double maxLat = points[0].latitude;
+    double minLng = points[0].longitude;
+    double maxLng = points[0].longitude;
+
+    for (var point in points) {
+      if (point.latitude < minLat) minLat = point.latitude;
+      if (point.latitude > maxLat) maxLat = point.latitude;
+      if (point.longitude < minLng) minLng = point.longitude;
+      if (point.longitude > maxLng) maxLng = point.longitude;
+    }
+
+    // Create bounds
+    final bounds = LatLngBounds(
+      southwest: LatLng(minLat, minLng),
+      northeast: LatLng(maxLat, maxLng),
+    );
+
+    // Animate camera with padding
+    try {
+      _mapController!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
+      debugPrint('Camera animated to show bounds');
+    } catch (e) {
+      debugPrint('Error fitting bounds: $e');
+    }
+  }
+
+  // Method to fetch and decode polyline points
+  Future<void> fetchRoutePolylines(LatLng origin, LatLng destination) async {
+    debugPrint(
+      'Fetching route from ${origin.latitude},${origin.longitude} to ${destination.latitude},${destination.longitude}',
+    );
+
+    if (origin.latitude == destination.latitude &&
+        origin.longitude == destination.longitude) {
+      debugPrint('Origin and destination are the same, skipping route');
+      return;
+    }
+
+    if (_isSearching) {
+      debugPrint('Already searching for route, skipping');
+      return;
+    }
+
+    _isSearching = true;
+    try {
+      final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/directions/json'
+        '?origin=${origin.latitude},${origin.longitude}'
+        '&destination=${destination.latitude},${destination.longitude}'
+        '&key=$_googleApiKey'
+        '&mode=driving',
+      );
+
+      debugPrint('Calling Directions API: ${url.toString()}');
+
+      final response = await _httpClient
+          .get(url)
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => throw TimeoutException('API request timed out'),
+          );
+
+      debugPrint('Directions API response code: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        debugPrint('Directions API status: ${data['status']}');
+
+        if (data['status'] == 'OK') {
+          // Get route and decode polyline
+          final routes = data['routes'] as List;
+          if (routes.isNotEmpty) {
+            // Get overview polyline points
+            final points = routes[0]['overview_polyline']['points'];
+            debugPrint('Received polyline points: ${points.length} characters');
+
+            // Decode polyline points
+            final polylineCoordinates = _decodePolyline(points);
+            debugPrint('Decoded ${polylineCoordinates.length} polyline points');
+
+            if (polylineCoordinates.isEmpty) {
+              debugPrint('No polyline coordinates were decoded');
+              return;
+            }
+
+            // Update state with polyline coordinates
+            uiState.value = currentUiState.copyWith(
+              routePolylines: polylineCoordinates,
+            );
+
+            // Update the map to show the entire route after a short delay
+            // to ensure state is updated
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (_mapController != null) {
+                fitBoundsOnMap();
+              }
+            });
+          } else {
+            debugPrint('No routes found in the response');
+          }
+        } else if (data['status'] == 'ZERO_RESULTS') {
+          debugPrint('No route found between these points');
+        } else {
+          debugPrint('Directions API error: ${data['status']}');
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching route polylines: $e');
+    } finally {
+      _isSearching = false;
+    }
+  }
+
+  // Helper method to decode polyline string
+  List<LatLng> _decodePolyline(String encoded) {
+    List<LatLng> polylinePoints = [];
+    int index = 0, len = encoded.length;
+    int lat = 0, lng = 0;
+
+    while (index < len) {
+      int b, shift = 0, result = 0;
+
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+
+      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+
+      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lng += dlng;
+
+      final point = LatLng(lat / 1E5, lng / 1E5);
+
+      polylinePoints.add(point);
+    }
+
+    return polylinePoints;
   }
 }
