@@ -185,6 +185,13 @@ class PassengerCategoryListPresenter
       return false;
     }
 
+    // Check if pickup and dropoff locations are the same
+    if ((currentState.pickupLat == currentState.dropoffLat) &&
+        (currentState.pickupLng == currentState.dropoffLng)) {
+      showMessage(message: 'Pickup and dropoff locations cannot be the same');
+      return false;
+    }
+
     if (currentState.paymentMethod == null) {
       showMessage(message: 'Please select a payment method');
       return false;

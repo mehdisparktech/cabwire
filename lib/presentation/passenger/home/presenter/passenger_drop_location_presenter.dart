@@ -350,12 +350,10 @@ class PassengerDropLocationPresenter
         debugPrint("=== Setting origin location to: $latLng ===");
 
         // Store origin coordinates for route calculation later
+        // FIXED: Only update originLocation and originAddress, not destinationLocation
         uiState.value = currentUiState.copyWith(
           originLocation: latLng,
           originAddress: placeDescription,
-          // Also update destination location since this is the destination field
-          destinationLocation: latLng,
-          destinationAddress: placeDescription,
         );
         debugPrint("=== Updated UI state with origin location ===");
 
@@ -377,20 +375,36 @@ class PassengerDropLocationPresenter
   }
 
   void navigateToCarTypeSelection(BuildContext context, Widget? nextScreen) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder:
-            (context) =>
-                nextScreen ??
-                ChooseCarTypeScreen(
-                  serviceId: '686e008a153fae6071f36f28',
-                  pickupLocation: currentUiState.originLocation!,
-                  pickupAddress: currentUiState.originAddress!,
-                  dropoffLocation: currentUiState.destinationLocation!,
-                  dropoffAddress: currentUiState.destinationAddress!,
-                ),
-      ),
-    );
+    // Validate that pickup and dropoff locations are different
+    if (currentUiState.originLocation != null &&
+        currentUiState.selectedPickupLocation != null) {
+      // Check if pickup and dropoff locations are the same
+      final pickupLocation = currentUiState.selectedPickupLocation!;
+      final originLocation = currentUiState.originLocation!;
+
+      if (pickupLocation.latitude == originLocation.latitude &&
+          pickupLocation.longitude == originLocation.longitude) {
+        showMessage(message: 'Pickup and dropoff locations cannot be the same');
+        return;
+      }
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder:
+              (context) =>
+                  nextScreen ??
+                  ChooseCarTypeScreen(
+                    serviceId: '686e008a153fae6071f36f28',
+                    pickupLocation: currentUiState.selectedPickupLocation!,
+                    pickupAddress: currentUiState.pickupAddress!,
+                    dropoffLocation: currentUiState.originLocation!,
+                    dropoffAddress: currentUiState.originAddress!,
+                  ),
+        ),
+      );
+    } else {
+      showMessage(message: 'Please select both pickup and dropoff locations');
+    }
   }
 
   void onDestinationMapCreated(GoogleMapController controller) {
@@ -499,8 +513,19 @@ class PassengerDropLocationPresenter
   }
 
   void handleContinuePress(BuildContext context, Widget? nextScreen) {
-    if (currentUiState.destinationLocation != null) {
-      navigateToCarTypeSelection(context, nextScreen);
+    // Check if we have both origin and destination
+    if (currentUiState.selectedPickupLocation == null) {
+      showMessage(message: 'Please select a pickup location');
+      return;
     }
+
+    if (currentUiState.originLocation == null) {
+      showMessage(message: 'Please select a dropoff location');
+      return;
+    }
+
+    // Locations should already be validated in navigateToCarTypeSelection,
+    // but adding an extra check here for safety
+    navigateToCarTypeSelection(context, nextScreen);
   }
 }
