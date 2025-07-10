@@ -1,4 +1,5 @@
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/domain/entities/passenger/passenger_category_entity.dart';
 import 'package:cabwire/domain/usecases/create_ride_request_usecase.dart';
@@ -129,15 +130,20 @@ class PassengerCategoryListPresenter
           );
           showMessage(message: error);
         },
-        (_) {
+        (rideResponse) {
           uiState.value = currentUiState.copyWith(
             isRideRequestSuccess: true,
             isFindCarLoading: false,
             error: null,
+            rideResponse: rideResponse,
           );
           showMessage(message: 'Ride request created successfully');
+          appLog(rideResponse.toString());
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => FindingRidesScreen()),
+            MaterialPageRoute(
+              builder:
+                  (context) => FindingRidesScreen(rideResponse: rideResponse),
+            ),
           );
         },
       );

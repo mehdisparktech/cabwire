@@ -1,4 +1,5 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/domain/entities/passenger/passenger_category_entity.dart';
 
 class PassengerCategoryListUiState extends BaseUiState {
@@ -15,6 +16,7 @@ class PassengerCategoryListUiState extends BaseUiState {
   final String? dropoffAddress;
   final String? paymentMethod;
   final bool isFindCarLoading;
+  final RideResponseModel? rideResponse;
 
   const PassengerCategoryListUiState({
     required super.isLoading,
@@ -32,6 +34,7 @@ class PassengerCategoryListUiState extends BaseUiState {
     this.dropoffAddress,
     this.paymentMethod,
     this.isFindCarLoading = false,
+    this.rideResponse,
   });
 
   factory PassengerCategoryListUiState.empty() {
@@ -51,6 +54,7 @@ class PassengerCategoryListUiState extends BaseUiState {
       dropoffAddress: null,
       paymentMethod: null,
       isFindCarLoading: false,
+      rideResponse: null,
     );
   }
 
@@ -71,6 +75,7 @@ class PassengerCategoryListUiState extends BaseUiState {
     dropoffAddress,
     paymentMethod,
     isFindCarLoading,
+    rideResponse,
   ];
 
   PassengerCategoryListUiState copyWith({
@@ -89,6 +94,7 @@ class PassengerCategoryListUiState extends BaseUiState {
     double? dropoffLng,
     String? dropoffAddress,
     String? paymentMethod,
+    RideResponseModel? rideResponse,
   }) {
     return PassengerCategoryListUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -106,6 +112,7 @@ class PassengerCategoryListUiState extends BaseUiState {
       dropoffAddress: dropoffAddress ?? this.dropoffAddress,
       paymentMethod: paymentMethod ?? this.paymentMethod,
       isFindCarLoading: isFindCarLoading ?? this.isFindCarLoading,
+      rideResponse: rideResponse ?? this.rideResponse,
     );
   }
 }

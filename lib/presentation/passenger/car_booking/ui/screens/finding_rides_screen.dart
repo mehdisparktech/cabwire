@@ -1,9 +1,11 @@
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/widgets/finding_rideshare_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FindingRidesScreen extends StatelessWidget {
-  const FindingRidesScreen({super.key});
+  final RideResponseModel rideResponse;
+  const FindingRidesScreen({super.key, required this.rideResponse});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

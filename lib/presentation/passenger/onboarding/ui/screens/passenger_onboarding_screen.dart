@@ -79,10 +79,10 @@ class PassengerOnboardingScreen extends StatelessWidget {
     final String title = pageData['title'];
     final String subtitle = pageData['subtitle'];
 
-    return Column(
-      children: [
-        Expanded(
-          child: Padding(
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -92,11 +92,11 @@ class PassengerOnboardingScreen extends StatelessWidget {
                   child: CommonImage(
                     imageSrc: image,
                     fill: BoxFit.contain,
-                    height: 350,
-                    width: 350,
+                    height: MediaQuery.of(context).size.height * 0.35,
+                    width: MediaQuery.of(context).size.width * 0.8,
                   ),
                 ),
-                gapH50,
+                gapH30,
                 Text(
                   title,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -104,7 +104,7 @@ class PassengerOnboardingScreen extends StatelessWidget {
                     color: context.color.secondaryTextColor,
                   ),
                 ),
-                gapH30,
+                gapH20,
                 Text(
                   subtitle,
                   style: TextStyle(
@@ -119,8 +119,8 @@ class PassengerOnboardingScreen extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

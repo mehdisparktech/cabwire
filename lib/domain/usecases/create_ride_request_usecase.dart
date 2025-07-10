@@ -1,10 +1,9 @@
 import 'package:cabwire/core/base/base_use_case.dart';
 import 'package:cabwire/core/base/result.dart';
-import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/domain/entities/ride_entity.dart';
 import 'package:cabwire/domain/repositories/ride_repository.dart';
 import 'package:cabwire/domain/services/error_message_handler.dart';
-import 'package:get_it/get_it.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 
 /// Parameters for the [CreateRideRequestUseCase]
 class CreateRideRequestParams {
@@ -26,7 +25,7 @@ class CreateRideRequestParams {
 }
 
 /// Use case for creating a ride request
-class CreateRideRequestUseCase extends BaseUseCase<void> {
+class CreateRideRequestUseCase extends BaseUseCase<RideResponseModel> {
   final RideRepository _repository;
 
   CreateRideRequestUseCase(
@@ -35,19 +34,19 @@ class CreateRideRequestUseCase extends BaseUseCase<void> {
   ) : super(errorMessageHandler);
 
   /// Setup for service locator
-  static void setupDependencies(GetIt serviceLocator) {
-    if (!serviceLocator.isRegistered<CreateRideRequestUseCase>()) {
-      serviceLocator.registerLazySingleton<CreateRideRequestUseCase>(
-        () => CreateRideRequestUseCase(
-          locate<RideRepository>(),
-          locate<ErrorMessageHandler>(),
-        ),
-      );
-    }
-  }
+  // static void setupDependencies(GetIt serviceLocator) {
+  //   if (!serviceLocator.isRegistered<CreateRideRequestUseCase>()) {
+  //     serviceLocator.registerLazySingleton<CreateRideRequestUseCase>(
+  //       () => CreateRideRequestUseCase(
+  //         locate<RideRepository>(),
+  //         locate<ErrorMessageHandler>(),
+  //       ),
+  //     );
+  //   }
+  // }
 
   /// Executes the use case with the given [params]
-  Future<Result<void>> execute(CreateRideRequestParams params) {
+  Future<Result<RideResponseModel>> execute(CreateRideRequestParams params) {
     return mapResultToEither(() async {
       // Create ride entity from params
       final rideEntity = RideEntity(

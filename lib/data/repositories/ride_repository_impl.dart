@@ -12,7 +12,7 @@ class RideRepositoryImpl implements RideRepository {
   RideRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<Result<void>> createRideRequest(RideEntity ride) async {
+  Future<Result<RideResponseModel>> createRideRequest(RideEntity ride) async {
     try {
       // Convert entity to model
       final requestModel = RideMapper.toRequestModel(ride);
@@ -21,7 +21,7 @@ class RideRepositoryImpl implements RideRepository {
       final result = await _remoteDataSource.createRide(requestModel);
 
       // Return the result, mapping success to void
-      return result.fold((error) => left(error), (_) => right(null));
+      return result.fold((error) => left(error), (success) => right(success));
     } catch (e) {
       return left(e.toString());
     }

@@ -7,8 +7,8 @@ abstract class RideRepository {
   /// Creates a new ride request
   ///
   /// Takes a [RideEntity] with all the required ride information
-  /// Returns a [Result<void>] indicating success or failure
-  Future<Result<void>> createRideRequest(RideEntity ride);
+  /// Returns a [Result<RideResponseModel>] indicating success or failure
+  Future<Result<RideResponseModel>> createRideRequest(RideEntity ride);
 
   /// Completes a ride with the provided rideId and OTP
   ///
