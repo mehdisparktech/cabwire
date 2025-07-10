@@ -6,6 +6,7 @@ import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
@@ -25,7 +26,12 @@ import 'payment_info_widget.dart'; // Adjust path as needed
 
 class RideshareBottomSheet extends StatefulWidget {
   final String rideId;
-  const RideshareBottomSheet({super.key, required this.rideId});
+  final RideResponseModel rideResponse;
+  const RideshareBottomSheet({
+    super.key,
+    required this.rideId,
+    required this.rideResponse,
+  });
 
   @override
   State<RideshareBottomSheet> createState() => _RideshareBottomSheetState();
@@ -204,7 +210,10 @@ class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
             stoppageLocation: 'Green Road, Dhanmondi, Dhaka.',
           ), // Use the new widget
           const SizedBox(height: 16),
-          const PaymentInfoWidget(),
+          PaymentInfoWidget(
+            paymentType: widget.rideResponse.data.paymentMethod,
+            amount: widget.rideResponse.data.fare.toString(),
+          ),
           // Use the new widget
           if (isRideProcessing || isRideEnd)
             Padding(

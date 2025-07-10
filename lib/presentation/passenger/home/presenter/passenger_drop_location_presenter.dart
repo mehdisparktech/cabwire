@@ -401,9 +401,9 @@ class PassengerDropLocationPresenter
   }
 
   void clearDestination() {
-    if (_fromListener != null) {
-      currentUiState.fromController.removeListener(_fromListener!);
-    }
+    // if (_fromListener != null) {
+    //   currentUiState.fromController.removeListener(_fromListener!);
+    // }
 
     if (_destinationListener != null) {
       currentUiState.destinationController.removeListener(
@@ -412,16 +412,17 @@ class PassengerDropLocationPresenter
     }
 
     // Clear appropriate field based on which one has focus
-    if (currentUiState.fromController.text.isNotEmpty) {
-      currentUiState.fromController.clear();
-    } else if (currentUiState.destinationController.text.isNotEmpty) {
+    // if (currentUiState.fromController.text.isNotEmpty) {
+    //   currentUiState.fromController.clear();
+    // } else
+    if (currentUiState.destinationController.text.isNotEmpty) {
       currentUiState.destinationController.clear();
     }
 
     // Re-add listeners
-    if (_fromListener != null) {
-      currentUiState.fromController.addListener(_fromListener!);
-    }
+    // if (_fromListener != null) {
+    //   currentUiState.fromController.addListener(_fromListener!);
+    // }
 
     if (_destinationListener != null) {
       currentUiState.destinationController.addListener(_destinationListener!);

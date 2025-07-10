@@ -244,8 +244,6 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
             hintText: 'From',
             icon: Icons.location_on,
             iconColor: context.color.primaryBtn,
-            showCloseIcon: state.fromController.text.isNotEmpty,
-            onClearPressed: () => presenter.clearDestination(),
             onChanged: (_) {},
           ),
           Padding(

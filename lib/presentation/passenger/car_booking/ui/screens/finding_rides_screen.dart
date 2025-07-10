@@ -1,4 +1,6 @@
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/finding_rides_presenter.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/widgets/finding_rideshare_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -8,9 +10,10 @@ class FindingRidesScreen extends StatelessWidget {
   const FindingRidesScreen({super.key, required this.rideResponse});
   @override
   Widget build(BuildContext context) {
+    final FindingRidesPresenter presenter = locate<FindingRidesPresenter>();
     return Scaffold(
       body: _buildMap(context),
-      bottomSheet: _buildBottomSheet(context),
+      bottomSheet: _buildBottomSheet(context, presenter),
     );
   }
 
@@ -32,7 +35,14 @@ class FindingRidesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomSheet(BuildContext context) {
-    return const FindingRideshareBottomSheet();
+  Widget _buildBottomSheet(
+    BuildContext context,
+    FindingRidesPresenter presenter,
+  ) {
+    return FindingRideshareBottomSheet(
+      rideId: rideResponse.data.id,
+      rideResponse: rideResponse,
+      presenter: presenter,
+    );
   }
 }

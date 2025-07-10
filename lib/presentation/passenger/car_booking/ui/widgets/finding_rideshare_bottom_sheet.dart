@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:cabwire/core/config/app_color.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/finding_rides_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
 import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/passenger_route_information_widget.dart';
@@ -15,7 +14,16 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'payment_info_widget.dart'; // Adjust path as needed
 
 class FindingRideshareBottomSheet extends StatefulWidget {
-  const FindingRideshareBottomSheet({super.key});
+  final String rideId;
+  final RideResponseModel rideResponse;
+  final FindingRidesPresenter presenter;
+
+  const FindingRideshareBottomSheet({
+    super.key,
+    required this.rideId,
+    required this.rideResponse,
+    required this.presenter,
+  });
 
   @override
   State<FindingRideshareBottomSheet> createState() =>
@@ -28,29 +36,31 @@ class _FindingRideshareBottomSheetState
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  bool isRiderFound = false;
   @override
   void initState() {
     super.initState();
     _initializeAnimation();
-    _onRideStart();
+    _listenToRideUpdates();
   }
 
-  void _onRideStart() async {
-    Duration duration = const Duration(seconds: 15);
-    await Future.delayed(duration, () {
-      Navigator.push(
-        // ignore: use_build_context_synchronously
-        context,
-        MaterialPageRoute(builder: (context) => const RideShareScreen()),
-      );
+  void _listenToRideUpdates() {
+    // Use the presenter's observable state to listen for changes
+    widget.presenter.uiState.listen((state) {
+      // If a driver accepts the ride, navigate to the RideShareScreen
+      if (state.isRideAccepted) {
+        widget.presenter.navigateToRideShareScreen(
+          context,
+          widget.rideId,
+          widget.rideResponse,
+        );
+      }
     });
   }
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -121,15 +131,20 @@ class _FindingRideshareBottomSheetState
                 ),
                 const SizedBox(height: 10),
                 PassengerRouteInformationWidget(
-                  pickupLocation: 'Green Road, Dhanmondi, Dhaka.',
-                  dropoffLocation: 'Green Road, Dhanmondi, Dhaka.',
+                  pickupLocation:
+                      widget.rideResponse.data.pickupLocation.address,
+                  dropoffLocation:
+                      widget.rideResponse.data.dropoffLocation.address,
                 ),
               ],
             ),
           ),
           // Use the new widget
           SizedBox(height: 16.px),
-          const PaymentInfoWidget(),
+          PaymentInfoWidget(
+            paymentType: widget.rideResponse.data.paymentMethod,
+            amount: widget.rideResponse.data.fare.toString(),
+          ),
           SizedBox(height: 16.px),
           _buildCancelButton(),
           SizedBox(height: 16.px),
@@ -272,7 +287,6 @@ class _FindingRideshareBottomSheetState
             children: [
               GestureDetector(
                 onTap: () {
-                  // Add your onTap logic here
                   showDialog(
                     context: context,
                     builder:
@@ -301,6 +315,7 @@ class _FindingRideshareBottomSheetState
                                   isPrimary: true,
                                   text: 'Yes',
                                   onPressed: () {
+                                    widget.presenter.cancelRideRequest();
                                     Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(

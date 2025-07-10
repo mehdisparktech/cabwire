@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/payment_method_card.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
@@ -77,7 +78,38 @@ class PaymentMethodScreen extends StatelessWidget {
                 MaterialPageRoute(
                   builder:
                       (context) => PassengerSearchDestinationScreen(
-                        nextScreen: const RideShareScreen(),
+                        nextScreen: RideShareScreen(
+                          rideId: '1',
+                          rideResponse: RideResponseModel(
+                            data: RideDataModel(
+                              paymentMethod: 'Cash',
+                              fare: 100,
+                              userId: '1',
+                              service: '1',
+                              category: '1',
+                              pickupLocation: LocationModel(
+                                address: '123 Main St',
+                                lat: 100,
+                                lng: 100,
+                              ),
+                              dropoffLocation: LocationModel(
+                                address: '123 Main St',
+                                lat: 100,
+                                lng: 100,
+                              ),
+                              distance: 100,
+                              duration: 100,
+                              rideStatus: '1',
+                              paymentStatus: '1',
+                              rideType: '1',
+                              id: '1',
+                              createdAt: '1',
+                              updatedAt: '1',
+                            ),
+                            success: true,
+                            message: 'success',
+                          ),
+                        ),
                       ),
                 ),
               );

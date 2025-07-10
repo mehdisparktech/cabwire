@@ -1,9 +1,17 @@
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/widgets/rideshare_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RideShareScreen extends StatelessWidget {
-  const RideShareScreen({super.key});
+  final String rideId;
+  final RideResponseModel rideResponse;
+
+  const RideShareScreen({
+    super.key,
+    required this.rideId,
+    required this.rideResponse,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +40,6 @@ class RideShareScreen extends StatelessWidget {
   }
 
   Widget _buildBottomSheet(BuildContext context) {
-    return RideshareBottomSheet(rideId: '1');
+    return RideshareBottomSheet(rideId: rideId, rideResponse: rideResponse);
   }
 }

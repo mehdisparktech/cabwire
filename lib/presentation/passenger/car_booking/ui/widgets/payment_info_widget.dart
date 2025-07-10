@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 // import 'package:get/get.dart'; // Not directly using context.theme here
 
 class PaymentInfoWidget extends StatelessWidget {
-  const PaymentInfoWidget({super.key});
+  const PaymentInfoWidget({
+    super.key,
+    required this.paymentType,
+    required this.amount,
+  });
   // If paymentType, amount, and note were dynamic, pass them:
-  // final String paymentType;
-  // final String amount;
+  final String paymentType;
+  final String amount;
   // final String note;
   // const PaymentInfoWidget({
   //   super.key,
@@ -33,9 +37,9 @@ class PaymentInfoWidget extends StatelessWidget {
                 width: 24,
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 // Use passed data if dynamic
-                'Online Payment',
+                paymentType,
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 18,
@@ -45,7 +49,7 @@ class PaymentInfoWidget extends StatelessWidget {
               const Spacer(),
               Text(
                 // Use passed data if dynamic
-                '\$100',
+                amount,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
