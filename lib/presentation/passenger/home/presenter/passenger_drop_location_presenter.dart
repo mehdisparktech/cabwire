@@ -496,4 +496,10 @@ class PassengerDropLocationPresenter
       );
     }
   }
+
+  void handleContinuePress(BuildContext context, Widget? nextScreen) {
+    if (currentUiState.destinationLocation != null) {
+      navigateToCarTypeSelection(context, nextScreen);
+    }
+  }
 }

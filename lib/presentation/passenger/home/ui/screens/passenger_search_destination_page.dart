@@ -33,14 +33,6 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
         presenter: presenter,
         builder: () {
           final state = presenter.currentUiState;
-
-          // Handle button press based on state
-          void handleContinuePress() {
-            if (state.destinationLocation != null) {
-              presenter.navigateToCarTypeSelection(context, nextScreen);
-            }
-          }
-
           return Scaffold(
             backgroundColor: context.theme.colorScheme.surface,
             body: Stack(
@@ -60,7 +52,8 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
                   borderRadius: 8.0,
                   isPrimary: true,
                   text: 'Continue',
-                  onPressed: handleContinuePress,
+                  onPressed:
+                      () => presenter.handleContinuePress(context, nextScreen),
                 ),
               ),
             ),

@@ -131,13 +131,15 @@ class ChooseCarTypeScreen extends StatelessWidget {
               },
             ),
             SizedBox(height: 16.px),
-            ActionButton(
-              isPrimary: true,
-              text: 'Find A Car',
-              onPressed: () {
-                presenter.createRideRequest(context);
-              },
-            ),
+            uiState.isLoading
+                ? LoadingIndicator(theme: Theme.of(context))
+                : ActionButton(
+                  isPrimary: true,
+                  text: 'Find A Car',
+                  onPressed: () {
+                    presenter.createRideRequest(context);
+                  },
+                ),
             SizedBox(height: 8.px),
           ],
         ),

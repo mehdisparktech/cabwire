@@ -42,7 +42,6 @@ class PassengerCategoryListPresenter
     loadPassengerCategories();
   }
 
-
   Future<void> loadPassengerCategories() async {
     try {
       await toggleLoading(loading: true);
@@ -96,7 +95,7 @@ class PassengerCategoryListPresenter
       }
 
       // Show loading indicator
-      toggleLoading(loading: true);
+      uiState.value = currentUiState.copyWith(isFindCarLoading: true);
 
       // Create parameters for use case
       final params = CreateRideRequestParams(
@@ -126,14 +125,14 @@ class PassengerCategoryListPresenter
         (error) {
           uiState.value = currentUiState.copyWith(
             error: error,
-            isLoading: false,
+            isFindCarLoading: false,
           );
           showMessage(message: error);
         },
         (_) {
           uiState.value = currentUiState.copyWith(
             isRideRequestSuccess: true,
-            isLoading: false,
+            isFindCarLoading: false,
             error: null,
           );
           showMessage(message: 'Ride request created successfully');
@@ -145,7 +144,7 @@ class PassengerCategoryListPresenter
     } catch (e) {
       uiState.value = currentUiState.copyWith(
         error: e.toString(),
-        isLoading: false,
+        isFindCarLoading: false,
         isRideRequestSuccess: false,
       );
       showMessage(message: e.toString());

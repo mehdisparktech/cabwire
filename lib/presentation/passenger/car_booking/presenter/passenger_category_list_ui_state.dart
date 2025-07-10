@@ -14,6 +14,7 @@ class PassengerCategoryListUiState extends BaseUiState {
   final double? dropoffLng;
   final String? dropoffAddress;
   final String? paymentMethod;
+  final bool isFindCarLoading;
 
   const PassengerCategoryListUiState({
     required super.isLoading,
@@ -30,6 +31,7 @@ class PassengerCategoryListUiState extends BaseUiState {
     this.dropoffLng,
     this.dropoffAddress,
     this.paymentMethod,
+    this.isFindCarLoading = false,
   });
 
   factory PassengerCategoryListUiState.empty() {
@@ -48,6 +50,7 @@ class PassengerCategoryListUiState extends BaseUiState {
       dropoffLng: null,
       dropoffAddress: null,
       paymentMethod: null,
+      isFindCarLoading: false,
     );
   }
 
@@ -67,10 +70,12 @@ class PassengerCategoryListUiState extends BaseUiState {
     dropoffLng,
     dropoffAddress,
     paymentMethod,
+    isFindCarLoading,
   ];
 
   PassengerCategoryListUiState copyWith({
     bool? isLoading,
+    bool? isFindCarLoading,
     String? userMessage,
     List<PassengerCategoryEntity>? categories,
     String? error,
@@ -100,6 +105,7 @@ class PassengerCategoryListUiState extends BaseUiState {
       dropoffLng: dropoffLng ?? this.dropoffLng,
       dropoffAddress: dropoffAddress ?? this.dropoffAddress,
       paymentMethod: paymentMethod ?? this.paymentMethod,
+      isFindCarLoading: isFindCarLoading ?? this.isFindCarLoading,
     );
   }
 }
