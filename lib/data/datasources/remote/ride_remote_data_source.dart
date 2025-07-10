@@ -15,6 +15,10 @@ abstract class RideRemoteDataSource {
   /// Completes a ride with the provided rideId and OTP
   ///
   Future<Result<RideResponseModel>> completeRide(String rideId, int otp);
+
+  /// Cancels a ride with the provided rideId
+  ///
+  Future<Result<String>> cancelRide(String rideId);
 }
 
 class RideRemoteDataSourceImpl implements RideRemoteDataSource {
@@ -62,6 +66,27 @@ class RideRemoteDataSourceImpl implements RideRemoteDataSource {
       return response.fold(
         (failure) => left(failure.message),
         (success) => right(RideResponseModel.fromJson(success.data)),
+      );
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
+
+  @override
+  Future<Result<String>> cancelRide(String rideId) async {
+    try {
+      final response = await _apiService.patch(
+        ApiEndPoint.cancelRide + rideId,
+        body: {},
+        header: {
+          'Authorization': 'Bearer ${LocalStorage.token}',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      return response.fold(
+        (failure) => left(failure.message),
+        (success) => right(success.data['message']),
       );
     } catch (e) {
       return left(e.toString());

@@ -4,7 +4,6 @@ import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/passenger/car_booking/presenter/finding_rides_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
-import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/passenger_route_information_widget.dart';
 import 'package:flutter/material.dart';
 // For context.theme in RideshareBottomSheet itself
@@ -315,14 +314,9 @@ class _FindingRideshareBottomSheetState
                                   isPrimary: true,
                                   text: 'Yes',
                                   onPressed: () {
-                                    widget.presenter.cancelRideRequest();
-                                    Navigator.pushAndRemoveUntil(
+                                    widget.presenter.cancelRideRequest(
                                       context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => PassengerMainPage(),
-                                      ),
-                                      (route) => false,
+                                      widget.rideId,
                                     );
                                   },
                                 ),

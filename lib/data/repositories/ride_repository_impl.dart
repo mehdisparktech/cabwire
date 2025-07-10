@@ -39,4 +39,15 @@ class RideRepositoryImpl implements RideRepository {
       return left(e.toString());
     }
   }
+
+  @override
+  Future<Result<String>> cancelRide(String rideId) async {
+    try {
+      final result = await _remoteDataSource.cancelRide(rideId);
+
+      return result.fold((error) => left(error), (success) => right(success));
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
 }

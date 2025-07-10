@@ -15,4 +15,10 @@ abstract class RideRepository {
   /// Takes a [String] rideId and [int] otp for verification
   /// Returns a [Result<void>] indicating success or failure
   Future<Result<RideResponseModel>> completeRide(String rideId, int otp);
+
+  /// Cancels a ride with the provided rideId
+  ///
+  /// Takes a [String] rideId
+  /// Returns a [Result<RideResponseModel>] indicating success or failure
+  Future<Result<String>> cancelRide(String rideId);
 }

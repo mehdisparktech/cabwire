@@ -11,6 +11,7 @@ class FindingRidesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FindingRidesPresenter presenter = locate<FindingRidesPresenter>();
+    presenter.initialize(rideResponse.data.id);
     return Scaffold(
       body: _buildMap(context),
       bottomSheet: _buildBottomSheet(context, presenter),
