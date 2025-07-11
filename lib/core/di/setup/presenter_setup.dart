@@ -83,7 +83,9 @@ class PresenterSetup implements SetupModule {
           DriverForgotPasswordPresenter(locate(), locate(), locate(), locate()),
         ),
       )
-      ..registerLazySingleton(() => loadPresenter(NotificationPresenter()))
+      ..registerLazySingleton(
+        () => loadPresenter(NotificationPresenter(locate())),
+      )
       ..registerLazySingleton(() => loadPresenter(CreatePostPresenter()))
       ..registerLazySingleton(() => loadPresenter(EarningsPresenter()))
       ..registerLazySingleton(() => loadPresenter(ChatPresenter()))
@@ -126,7 +128,7 @@ class PresenterSetup implements SetupModule {
         () => loadPresenter(PassengerDropLocationPresenter()),
       )
       ..registerLazySingleton(
-        () => loadPresenter(PassengerNotificationPresenter()),
+        () => loadPresenter(PassengerNotificationPresenter(locate())),
       )
       ..registerLazySingleton(
         () => loadPresenter(PassengerLoginPresenter(locate())),

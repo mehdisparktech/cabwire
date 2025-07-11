@@ -94,6 +94,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
         // Handle ride processing event
         else if (data.containsKey('rideProgress') &&
             data['rideProgress'] == true) {
+          appLog("Ride processing event received: $data");
           _handleRideProcessing(data);
         }
         // Handle ride end event
@@ -132,7 +133,10 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
   void _handleRideProcessing(Map<String, dynamic> data) {
     appLog("Ride processing event received: $data");
-    uiState.value = currentUiState.copyWith(isRideProcessing: true);
+    uiState.value = currentUiState.copyWith(
+      isRideProcessing: true,
+      isRideStart: false,
+    );
 
     // Show message if available
     if (data.containsKey('message')) {
@@ -197,8 +201,9 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
   Future<void> requestCloseRide() async {
     toggleLoading(loading: true);
-    final result = await _apiService.post(
-      ApiEndPoint.requestCloseRide + currentUiState.rideId,
+    final result = await _apiService.patch(
+      ApiEndPoint.requestCloseRide +
+          (currentUiState.rideResponse?.data.id ?? ''),
     );
     toggleLoading(loading: false);
 
@@ -208,7 +213,12 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       },
       (success) {
         CustomToast(message: success.message ?? '');
-        Get.to(() => PassengerTripCloseOtpPage());
+        // Extract the OTP value from the nested data structure
+        final otpData = success.data;
+        appLog("OTP data: $otpData");
+        final otp = otpData['otp'].toString();
+        appLog("OTP: $otp");
+        Get.to(() => PassengerTripCloseOtpPage(otp: otp));
       },
     );
   }
@@ -217,6 +227,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     if (currentUiState.isRideEnd) {
       requestCloseRide();
     } else {
+      requestCloseRide();
       uiState.value = currentUiState.copyWith(isRideProcessing: true);
     }
   }

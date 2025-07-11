@@ -1,5 +1,6 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
@@ -36,7 +37,7 @@ class RideshareBottomSheet extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
+              color: Colors.black.withOpacityInt(0.12),
               blurRadius: 10,
               spreadRadius: 0,
             ),

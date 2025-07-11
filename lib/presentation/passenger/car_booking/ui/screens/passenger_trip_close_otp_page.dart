@@ -9,7 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class PassengerTripCloseOtpPage extends StatefulWidget {
-  const PassengerTripCloseOtpPage({super.key});
+  final String otp;
+  const PassengerTripCloseOtpPage({super.key, required this.otp});
 
   @override
   State<PassengerTripCloseOtpPage> createState() =>
@@ -17,12 +18,27 @@ class PassengerTripCloseOtpPage extends StatefulWidget {
 }
 
 class _PassengerTripCloseOtpPageState extends State<PassengerTripCloseOtpPage> {
-  final otpController = TextEditingController()..text = '1';
+  late final List<TextEditingController> otpControllers;
 
   @override
   void initState() {
     super.initState();
+    otpControllers = List.generate(4, (index) => TextEditingController());
+
+    // Set each controller with the corresponding digit
+    for (int i = 0; i < widget.otp.length && i < 4; i++) {
+      otpControllers[i].text = widget.otp[i];
+    }
+
     _onForwardPressed();
+  }
+
+  @override
+  void dispose() {
+    for (var controller in otpControllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   Future<void> _onForwardPressed() async {
@@ -61,7 +77,8 @@ class _PassengerTripCloseOtpPageState extends State<PassengerTripCloseOtpPage> {
                   width: 40,
                   height: 50,
                   child: TextField(
-                    controller: otpController,
+                    readOnly: true,
+                    controller: otpControllers[index],
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     style: const TextStyle(

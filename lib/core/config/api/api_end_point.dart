@@ -36,4 +36,5 @@ class ApiEndPoint {
   static const closeTrip = "$baseUrl/ride/verify-ride-otp/";
   static const requestCloseRide = "$baseUrl/ride/request-close-ride/";
   static const cancelRide = "$baseUrl/ride/cancel-ride/";
+  static const notification = "$baseUrl/notification";
 }

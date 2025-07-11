@@ -1,3 +1,5 @@
+import 'package:cabwire/data/repositories/notifications_repository_impl.dart';
+import 'package:cabwire/domain/repositories/notifications_repository.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
@@ -63,6 +65,9 @@ class RepositorySetup implements SetupModule {
       )
       ..registerLazySingleton<RideRepository>(
         () => RideRepositoryImpl(locate()),
+      )
+      ..registerLazySingleton<NotificationsRepository>(
+        () => NotificationsRepositoryImpl(locate()),
       );
   }
 }

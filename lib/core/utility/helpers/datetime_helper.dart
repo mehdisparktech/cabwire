@@ -47,4 +47,28 @@ class DateTimeHelper {
     return "${time.hour > 12 ? (time.hour - 12).toString().padLeft(2, '0') : (time.hour == 0 ? 12 : time.hour).toString().padLeft(2, '0')}:"
         "${time.minute.toString().padLeft(2, '0')} ${time.hour >= 12 ? "PM" : "AM"}";
   }
+
+  /// Format a DateTime into a relative time string like "5m ago" or "2d ago"
+  static String timeAgo(DateTime? dateTime) {
+    if (dateTime == null) return 'Unknown';
+
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inSeconds < 60) {
+      return 'Just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inDays < 30) {
+      return '${(difference.inDays / 7).floor()}w ago';
+    } else if (difference.inDays < 365) {
+      return '${(difference.inDays / 30).floor()}mo ago';
+    } else {
+      return '${(difference.inDays / 365).floor()}y ago';
+    }
+  }
 }

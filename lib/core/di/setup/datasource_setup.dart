@@ -1,3 +1,4 @@
+import 'package:cabwire/data/datasources/remote/notification_remote_data_source.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
@@ -54,6 +55,9 @@ class DatasourceSetup implements SetupModule {
       )
       ..registerLazySingleton<RideRemoteDataSource>(
         () => RideRemoteDataSourceImpl(locate()),
+      )
+      ..registerLazySingleton<NotificationRemoteDataSource>(
+        () => NotificationRemoteDataSourceImpl(locate()),
       );
   }
 }
