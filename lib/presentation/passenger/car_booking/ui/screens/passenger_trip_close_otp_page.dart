@@ -1,8 +1,10 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_presenter.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/car_booking_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +20,7 @@ class PassengerTripCloseOtpPage extends StatefulWidget {
 }
 
 class _PassengerTripCloseOtpPageState extends State<PassengerTripCloseOtpPage> {
+  final RideSharePresenter _presenter = locate<RideSharePresenter>();
   late final List<TextEditingController> otpControllers;
 
   @override
@@ -42,13 +45,18 @@ class _PassengerTripCloseOtpPageState extends State<PassengerTripCloseOtpPage> {
   }
 
   Future<void> _onForwardPressed() async {
-    await Future.delayed(const Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 20));
 
     if (context.mounted) {
       Navigator.push(
         // ignore: use_build_context_synchronously
         context,
-        MaterialPageRoute(builder: (context) => CarBookingDetailsScreen()),
+        MaterialPageRoute(
+          builder:
+              (context) => CarBookingDetailsScreen(
+                rideResponse: _presenter.currentUiState.rideResponse!,
+              ),
+        ),
       );
     }
   }

@@ -3,6 +3,7 @@
 // ensure it uses presenter.currentUiState.selectedRideDetails)
 
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
@@ -13,7 +14,8 @@ import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/pass
 import 'package:flutter/material.dart';
 
 class CarBookingDetailsScreen extends StatelessWidget {
-  const CarBookingDetailsScreen({super.key});
+  final RideResponseModel rideResponse;
+  const CarBookingDetailsScreen({super.key, required this.rideResponse});
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +84,8 @@ class CarBookingDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   PassengerRouteInformationWidget(
-                    pickupLocation: '123 Main St, Anytown, USA',
-                    dropoffLocation: '123 Main St, Anytown, USA',
+                    pickupLocation: rideResponse.data.pickupLocation.address,
+                    dropoffLocation: rideResponse.data.dropoffLocation.address,
                   ),
                 ],
               ),
@@ -97,7 +99,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                   CustomText(
-                    '100 km',
+                    '${rideResponse.data.distance} km',
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -113,7 +115,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                   CustomText(
-                    '100 km',
+                    '${rideResponse.data.duration} min',
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -146,7 +148,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          '\$100',
+                          '\$ ${rideResponse.data.fare.toStringAsFixed(2)}',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
