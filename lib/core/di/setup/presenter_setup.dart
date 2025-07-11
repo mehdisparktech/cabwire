@@ -24,6 +24,7 @@ import 'package:cabwire/presentation/passenger/passenger_history/presenter/passe
 import 'package:cabwire/presentation/passenger/passenger_notification/presenter/passenger_notification_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_profile/presenter/passenger_profile_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/presenter/passenger_services_presenter.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_presenter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/di/service_locator.dart';
@@ -104,6 +105,7 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(
         () => loadPresenter(CarBookingPresenter(locate())),
       )
+      ..registerLazySingleton(() => loadPresenter(RideSharePresenter()))
       ..registerLazySingleton(
         () => loadPresenter(FindingRidesPresenter(locate(), locate())),
       )

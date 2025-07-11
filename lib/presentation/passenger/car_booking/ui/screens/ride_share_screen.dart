@@ -1,4 +1,6 @@
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_presenter.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/widgets/rideshare_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,15 +17,20 @@ class RideShareScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final presenter = locate<RideSharePresenter>();
+    if (presenter.currentUiState.rideId.isEmpty) {
+      presenter.init(rideId: rideId, rideResponse: rideResponse);
+    }
+
     return Scaffold(
-      body: _buildMap(context),
-      bottomSheet: _buildBottomSheet(context),
+      body: _buildMap(presenter),
+      bottomSheet: _buildBottomSheet(presenter),
     );
   }
 
-  Widget _buildMap(BuildContext context) {
+  Widget _buildMap(RideSharePresenter presenter) {
     return GoogleMap(
-      onMapCreated: (controller) {}, // Use presenter's method
+      onMapCreated: presenter.onMapCreated,
       initialCameraPosition: CameraPosition(
         target: LatLng(23.8103, 90.4125),
         zoom: 14.0,
@@ -39,7 +46,7 @@ class RideShareScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomSheet(BuildContext context) {
-    return RideshareBottomSheet(rideId: rideId, rideResponse: rideResponse);
+  Widget _buildBottomSheet(RideSharePresenter presenter) {
+    return RideshareBottomSheet(presenter: presenter);
   }
 }

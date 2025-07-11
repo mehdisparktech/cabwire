@@ -1,240 +1,148 @@
-import 'dart:async';
-
-import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
-import 'package:cabwire/core/di/service_locator.dart';
-import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
-import 'package:cabwire/core/utility/utility.dart';
-import 'package:cabwire/data/models/ride/ride_response_model.dart';
-import 'package:cabwire/domain/services/api_service.dart';
+import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/driver/chat/ui/screens/audio_call_page.dart';
 import 'package:cabwire/presentation/driver/chat/ui/screens/chat_page.dart';
-import 'package:cabwire/presentation/common/components/action_button.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_trip_close_otp_page.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_presenter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart'; // For context.theme in RideshareBottomSheet itself
+import 'package:get/get.dart';
 
-// --- Import your new widget files ---
-import 'pickup_info_widget.dart'; // Adjust path as needed
-import 'passenger_info_widget.dart'; // Adjust path as needed
-import 'message_button_widget.dart'; // Adjust path as needed
-import 'trip_stoppage_info_widget.dart'; // Adjust path as needed
-import 'payment_info_widget.dart'; // Adjust path as needed
+// --- Import widget files ---
+import 'pickup_info_widget.dart';
+import 'passenger_info_widget.dart';
+import 'message_button_widget.dart';
+import 'trip_stoppage_info_widget.dart';
+import 'payment_info_widget.dart';
 
-class RideshareBottomSheet extends StatefulWidget {
-  final String rideId;
-  final RideResponseModel rideResponse;
-  const RideshareBottomSheet({
-    super.key,
-    required this.rideId,
-    required this.rideResponse,
-  });
+class RideshareBottomSheet extends StatelessWidget {
+  final RideSharePresenter presenter;
 
-  @override
-  State<RideshareBottomSheet> createState() => _RideshareBottomSheetState();
-}
-
-class _RideshareBottomSheetState extends State<RideshareBottomSheet> {
-  final ApiService apiService = locate<ApiService>();
-  bool isRideStart = false;
-  int timerLeft = 5;
-  bool isRideEnd = false;
-  bool isRideProcessing = false;
-  Timer? _timer;
-  @override
-  void initState() {
-    super.initState();
-    _onRideStart();
-    _onRideProcessing();
-    _onRideEnd();
-  }
-
-  void _onRideStart() async {
-    Duration duration = const Duration(seconds: 5);
-    await Future.delayed(duration, () {
-      setState(() {
-        isRideStart = true;
-      });
-    });
-  }
-
-  void _onRideProcessing() async {
-    Duration duration = const Duration(seconds: 10);
-    _timer = Timer(duration, () {
-      setState(() {
-        isRideProcessing = true;
-      });
-    });
-  }
-
-  void _onRideEnd() async {
-    Duration duration = const Duration(seconds: 15);
-    _timer = Timer(duration, () {
-      setState(() {
-        isRideProcessing = false;
-        isRideEnd = true;
-      });
-    });
-  }
-
-  Future<void> requestCloseRide(String rideId) async {
-    final result = await apiService.post(ApiEndPoint.requestCloseRide + rideId);
-    result.fold(
-      (error) {
-        CustomToast(message: error.message);
-      },
-      (success) {
-        CustomToast(message: success.message ?? '');
-        Get.to(() => PassengerTripCloseOtpPage());
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _timer?.cancel();
-    _timer = null;
-  }
+  const RideshareBottomSheet({super.key, required this.presenter});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacityInt(0.12),
-            blurRadius: 10,
-            spreadRadius: 0,
+    return Obx(() {
+      final uiState = presenter.currentUiState;
+
+      return Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 12),
-          PickupInfoWidget(
-            timerLeft: timerLeft,
-            pickupText:
-                !isRideStart
-                    ? 'Driver is on the way to pickup.'
-                    : isRideProcessing
-                    ? 'Your Trip Is Completed With-in'
-                    : isRideEnd
-                    ? 'Your Trip Is Completed'
-                    : 'Ready To Start The Ride',
-            isRideStart: isRideStart,
-            isRideProcessing: isRideProcessing,
-          ), // Use the new widget
-          SizedBox(height: 16.px),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 10,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            PickupInfoWidget(
+              timerLeft: uiState.timerLeft,
+              pickupText:
+                  !uiState.isRideStart
+                      ? 'Driver is on the way to pickup.'
+                      : uiState.isRideProcessing
+                      ? 'Your Trip Is Completed With-in'
+                      : uiState.isRideEnd
+                      ? 'Your Trip Is Completed'
+                      : 'Ready To Start The Ride',
+              isRideStart: uiState.isRideStart,
+              isRideProcessing: uiState.isRideProcessing,
+            ),
+            SizedBox(height: 16.px),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'DHK METRO HA 64-8549',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Volvo XC90',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  CommonImage(
+                    imageSrc: AppAssets.icCarImage,
+                    imageType: ImageType.png,
+                    height: 40,
+                    width: 100,
+                    fill: BoxFit.contain,
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+            const PassengerInfoWidget(),
+            const SizedBox(height: 16),
+            Row(
               children: [
                 Expanded(
-                  // Added Expanded for long vehicle numbers
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'DHK METRO HA 64-8549',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Volvo XC90',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
+                  flex: 5,
+                  child: MessageButtonWidget(
+                    onTap: () => Get.to(() => ChatPage()),
                   ),
                 ),
-                const SizedBox(width: 10), // Spacing
-                CommonImage(
-                  imageSrc: AppAssets.icCarImage,
-                  imageType: ImageType.png,
-                  height: 40,
-                  width: 100,
-                  fill: BoxFit.contain, // Ensure image fits
+                Expanded(
+                  flex: 1,
+                  child: CircularIconButton(
+                    icon: Icons.phone,
+                    onTap: () => Get.to(() => const AudioCallScreen()),
+                  ),
                 ),
               ],
             ),
-          ),
-
-          const SizedBox(height: 16),
-          const PassengerInfoWidget(), // Use the new widget
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                flex: 5,
-                child: MessageButtonWidget(
-                  // Use the new widget
-                  onTap: () {
-                    // You can define specific onTap behavior here if needed
-                    Get.to(() => ChatPage());
-                  },
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: CircularIconButton(
-                  icon: Icons.phone,
-                  onTap: () {
-                    Get.to(() => const AudioCallScreen());
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          const TripStoppageInfoWidget(
-            stoppageLocation: 'Green Road, Dhanmondi, Dhaka.',
-          ), // Use the new widget
-          const SizedBox(height: 16),
-          PaymentInfoWidget(
-            paymentType: widget.rideResponse.data.paymentMethod,
-            amount: widget.rideResponse.data.fare.toString(),
-          ),
-          // Use the new widget
-          if (isRideProcessing || isRideEnd)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: ActionButton(
-                isPrimary: true,
-                text: 'Trip Closure',
-                onPressed: () {
-                  // You can define specific onTap behavior here if needed
-                  if (isRideEnd) {
-                    requestCloseRide(widget.rideId);
-                  } else {
-                    setState(() {
-                      isRideProcessing = true;
-                    });
-                  }
-                },
-              ),
+            const SizedBox(height: 16),
+            const TripStoppageInfoWidget(
+              stoppageLocation: 'Green Road, Dhanmondi, Dhaka.',
             ),
-        ],
-      ),
-    );
+            const SizedBox(height: 16),
+            PaymentInfoWidget(
+              paymentType: uiState.rideResponse?.data.paymentMethod ?? '',
+              amount: uiState.rideResponse?.data.fare.toString() ?? '',
+            ),
+            if (uiState.isRideProcessing || uiState.isRideEnd)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: ActionButton(
+                  isPrimary: true,
+                  text: 'Trip Closure',
+                  onPressed: presenter.handleTripClosureButtonPress,
+                ),
+              ),
+          ],
+        ),
+      );
+    });
   }
 }
