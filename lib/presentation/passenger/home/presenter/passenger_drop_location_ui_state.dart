@@ -1,4 +1,5 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
+import 'package:cabwire/core/enum/service_type.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -27,6 +28,7 @@ class PassengerDropLocationUiState extends BaseUiState {
   final LatLng? originLocation;
   final String? originAddress;
   final List<LatLng>? routePolylines;
+  final ServiceType serviceType;
 
   const PassengerDropLocationUiState({
     required super.isLoading,
@@ -48,6 +50,7 @@ class PassengerDropLocationUiState extends BaseUiState {
     this.originLocation,
     this.originAddress,
     this.routePolylines,
+    this.serviceType = ServiceType.none,
   });
 
   factory PassengerDropLocationUiState.empty() {
@@ -86,6 +89,7 @@ class PassengerDropLocationUiState extends BaseUiState {
       originLocation: null,
       originAddress: null,
       routePolylines: null,
+      serviceType: ServiceType.none,
     );
   }
 
@@ -110,6 +114,7 @@ class PassengerDropLocationUiState extends BaseUiState {
     originLocation,
     originAddress,
     routePolylines,
+    serviceType,
   ];
 
   PassengerDropLocationUiState copyWith({
@@ -132,6 +137,7 @@ class PassengerDropLocationUiState extends BaseUiState {
     LatLng? originLocation,
     String? originAddress,
     List<LatLng>? routePolylines,
+    ServiceType? serviceType,
   }) {
     return PassengerDropLocationUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -156,6 +162,7 @@ class PassengerDropLocationUiState extends BaseUiState {
       originLocation: originLocation ?? this.originLocation,
       originAddress: originAddress ?? this.originAddress,
       routePolylines: routePolylines ?? this.routePolylines,
+      serviceType: serviceType ?? this.serviceType,
     );
   }
 }

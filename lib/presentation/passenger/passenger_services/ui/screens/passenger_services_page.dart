@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/enum/service_type.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/domain/entities/passenger/passenger_service_entity.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
@@ -92,7 +93,10 @@ class PassengerServicesPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const PassengerSearchDestinationScreen(),
+            builder:
+                (context) => PassengerSearchDestinationScreen(
+                  serviceType: ServiceType.carBooking,
+                ),
           ),
         );
         break;
@@ -100,7 +104,10 @@ class PassengerServicesPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const PassengerSearchDestinationScreen(),
+            builder:
+                (context) => PassengerSearchDestinationScreen(
+                  serviceType: ServiceType.emergencyCar,
+                ),
           ),
         );
         break;
@@ -116,6 +123,17 @@ class PassengerServicesPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const PaymentMethodScreen()),
+        );
+        break;
+      case 'cabwire-share':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => PassengerSearchDestinationScreen(
+                  serviceType: ServiceType.cabwireShare,
+                ),
+          ),
         );
         break;
       default:

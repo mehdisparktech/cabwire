@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/enum/service_type.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/choose_car_type_screen.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_ui_state.dart';
+import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/ride_share/ride_share_car_type_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -69,6 +71,10 @@ class PassengerDropLocationPresenter
             debugPrint('Error getting address for current location: $error');
           });
     }
+  }
+
+  void setServiceType(ServiceType serviceType) {
+    uiState.value = currentUiState.copyWith(serviceType: serviceType);
   }
 
   // Helper method to get address from coordinates
@@ -444,15 +450,26 @@ class PassengerDropLocationPresenter
       Navigator.of(context).push(
         MaterialPageRoute(
           builder:
-              (context) =>
-                  nextScreen ??
-                  ChooseCarTypeScreen(
-                    serviceId: '686e008a153fae6071f36f28',
-                    pickupLocation: currentUiState.selectedPickupLocation!,
-                    pickupAddress: currentUiState.pickupAddress!,
-                    dropoffLocation: currentUiState.destinationLocation!,
-                    dropoffAddress: currentUiState.destinationAddress!,
-                  ),
+              (context) => switch (currentUiState.serviceType) {
+                ServiceType.cabwireShare => RideShareCarTypeScreen(),
+                ServiceType.carBooking => ChooseCarTypeScreen(
+                  serviceId: '686e008a153fae6071f36f28',
+                  pickupLocation: currentUiState.selectedPickupLocation!,
+                  pickupAddress: currentUiState.pickupAddress!,
+                  dropoffLocation: currentUiState.destinationLocation!,
+                  dropoffAddress: currentUiState.destinationAddress!,
+                ),
+                ServiceType.packageDelivery => throw UnimplementedError(),
+                ServiceType.rentalCar => throw UnimplementedError(),
+                ServiceType.emergencyCar => throw UnimplementedError(),
+                ServiceType.none => ChooseCarTypeScreen(
+                  serviceId: '686e008a153fae6071f36f28',
+                  pickupLocation: currentUiState.selectedPickupLocation!,
+                  pickupAddress: currentUiState.pickupAddress!,
+                  dropoffLocation: currentUiState.destinationLocation!,
+                  dropoffAddress: currentUiState.destinationAddress!,
+                ),
+              },
         ),
       );
     } else {

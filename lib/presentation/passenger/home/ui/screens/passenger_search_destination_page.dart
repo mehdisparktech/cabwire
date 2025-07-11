@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/enum/service_type.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
@@ -12,13 +13,20 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PassengerSearchDestinationScreen extends StatelessWidget {
   final Widget? nextScreen;
+  final ServiceType serviceType;
 
-  const PassengerSearchDestinationScreen({super.key, this.nextScreen});
+  const PassengerSearchDestinationScreen({
+    super.key,
+    this.nextScreen,
+    this.serviceType = ServiceType.none,
+  });
 
   @override
   Widget build(BuildContext context) {
     final PassengerDropLocationPresenter presenter =
         locate<PassengerDropLocationPresenter>();
+
+    presenter.setServiceType(serviceType);
 
     // ignore: deprecated_member_use
     return WillPopScope(
