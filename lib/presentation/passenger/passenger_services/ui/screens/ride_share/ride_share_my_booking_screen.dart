@@ -11,8 +11,8 @@ import 'package:cabwire/presentation/driver/chat/ui/screens/audio_call_page.dart
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/ui/screens/passenger_details_page.dart';
 import 'package:cabwire/presentation/driver/ride_history/ui/widgets/driver_profile_widget.dart';
-import 'package:cabwire/presentation/driver/ride_history/ui/widgets/route_information_widget.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
+import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/passenger_route_information_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -179,7 +179,7 @@ class _RideShareMyBookingScreenState extends State<RideShareMyBookingScreen> {
           style: TextStyle(fontSize: px16, fontWeight: FontWeight.bold),
         ),
         gapH10,
-        RouteInformationWidget(
+        PassengerRouteInformationWidget(
           pickupLocation: rideData?.pickupLocation ?? '',
           dropoffLocation: rideData?.dropoffLocation ?? '',
           dropoffLocation2: rideData?.dropoffLocation ?? '',

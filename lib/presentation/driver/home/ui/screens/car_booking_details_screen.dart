@@ -1,21 +1,15 @@
-// ride_details_page.dart
-// (No significant changes from the previous combined presenter version for this file,
-// ensure it uses presenter.currentUiState.selectedRideDetails)
-
 import 'package:cabwire/core/config/app_assets.dart';
-import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
+import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
-import 'package:cabwire/presentation/common/components/common_image.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/sucessfull_screen.dart';
-import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/passenger_profile_widget.dart';
-import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/passenger_route_information_widget.dart';
+import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
+import 'package:cabwire/presentation/driver/ride_history/ui/widgets/driver_profile_widget.dart';
+import 'package:cabwire/presentation/driver/ride_history/ui/widgets/route_information_widget.dart';
 import 'package:flutter/material.dart';
 
 class CarBookingDetailsScreen extends StatelessWidget {
-  final RideResponseModel rideResponse;
-  const CarBookingDetailsScreen({super.key, required this.rideResponse});
+  const CarBookingDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +25,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PassengerProfileWidget(
+              DriverProfileWidget(
                 name: 'John Doe',
                 address: '123 Main St, Anytown, USA',
               ),
@@ -83,9 +77,9 @@ class CarBookingDetailsScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  PassengerRouteInformationWidget(
-                    pickupLocation: rideResponse.data.pickupLocation.address,
-                    dropoffLocation: rideResponse.data.dropoffLocation.address,
+                  DriverRouteInformationWidget(
+                    pickupLocation: '',
+                    dropoffLocation: '',
                   ),
                 ],
               ),
@@ -98,11 +92,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
-                  CustomText(
-                    '${rideResponse.data.distance.toStringAsFixed(2)} km',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  CustomText('', fontSize: 14, fontWeight: FontWeight.w700),
                 ],
               ),
               const SizedBox(height: 12),
@@ -114,11 +104,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
-                  CustomText(
-                    '${rideResponse.data.duration} min',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  CustomText('', fontSize: 14, fontWeight: FontWeight.w700),
                 ],
               ),
               const SizedBox(height: 24),
@@ -148,7 +134,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          '\$ ${rideResponse.data.fare.toStringAsFixed(2)}',
+                          '\$ ',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -159,59 +145,19 @@ class CarBookingDetailsScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
-              TextField(
-                controller: TextEditingController(),
-                readOnly: false,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Color(0xFF001C60)),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Color(0xFF001C60)),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Color(0xFF001C60)),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  hintText: 'Enter your valuable feedback',
-                  hintStyle: const TextStyle(color: Colors.black45),
-                ),
-                maxLines: 4,
-              ),
-
-              const SizedBox(height: 40),
-
-              // if (uiState.viewMode == PassengerHistoryViewMode.details &&
-              //     details != null &&
-              //     (details.existingFeedback == null ||
-              //         details.existingFeedback!.isEmpty))
-              //   ActionButton(
-              //     text: 'Add Feedback',
-              //     onPressed: presenter.showFeedbackFormForSelectedRide,
-              //   ),
-
-              // if (uiState.viewMode == PassengerHistoryViewMode.feedback)
-              //   ActionButton(
-              //     isPrimary: true,
-              //     text: 'Submit Feedback',
-              //     onPressed: presenter.submitFeedback,
-              //   ),
-              ActionButton(
-                isPrimary: true,
-                text: 'Submit Feedback',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SucessfullScreen()),
-                  );
-                },
-              ),
             ],
           ),
         ),
+      ),
+      bottomSheet: ActionButton(
+        isPrimary: true,
+        text: 'Trip Completed',
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DriverMainPage()),
+          );
+        },
       ),
     );
   }

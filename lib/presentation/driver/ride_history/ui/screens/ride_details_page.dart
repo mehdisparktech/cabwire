@@ -118,7 +118,7 @@ class RideDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        RouteInformationWidget(
+                        DriverRouteInformationWidget(
                           pickupLocation: details.pickupLocation,
                           dropoffLocation: details.dropoffLocation,
                         ),

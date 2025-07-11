@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class RouteInformationWidget extends StatelessWidget {
+class DriverRouteInformationWidget extends StatelessWidget {
   final String pickupLocation;
   final String dropoffLocation;
   final String? dropoffLocation2;
 
-  const RouteInformationWidget({
+  const DriverRouteInformationWidget({
     super.key,
     required this.pickupLocation,
     required this.dropoffLocation,

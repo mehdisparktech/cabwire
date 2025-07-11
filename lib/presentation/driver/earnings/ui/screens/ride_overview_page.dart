@@ -133,7 +133,7 @@ class RideOverviewScreen extends StatelessWidget {
           style: TextStyle(fontSize: 16.px, fontWeight: FontWeight.bold),
         ),
         gapH10,
-        RouteInformationWidget(
+        DriverRouteInformationWidget(
           pickupLocation: rideData?.pickupLocation ?? '',
           dropoffLocation: rideData?.dropoffLocation ?? '',
           dropoffLocation2: rideData?.dropoffLocation ?? '',

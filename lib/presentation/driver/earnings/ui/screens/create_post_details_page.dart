@@ -142,7 +142,7 @@ class CreatePostDetailsScreen extends StatelessWidget {
           style: TextStyle(fontSize: px16, fontWeight: FontWeight.bold),
         ),
         gapH10,
-        RouteInformationWidget(
+        DriverRouteInformationWidget(
           pickupLocation: rideData?.pickupLocation ?? '',
           dropoffLocation: rideData?.dropoffLocation ?? '',
           dropoffLocation2: rideData?.dropoffLocation ?? '',

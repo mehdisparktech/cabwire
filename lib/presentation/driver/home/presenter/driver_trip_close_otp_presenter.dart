@@ -1,8 +1,9 @@
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
+import 'package:cabwire/data/models/ride/ride_request_model.dart';
 import 'package:cabwire/domain/usecases/complete_ride_usecase.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_trip_close_otp_ui_state.dart';
-import 'package:cabwire/presentation/driver/ride_history/ui/screens/ride_details_page.dart';
+import 'package:cabwire/presentation/driver/home/ui/screens/car_booking_details_screen.dart';
 import 'package:get/get.dart';
 
 class DriverTripCloseOtpPresenter
@@ -11,6 +12,10 @@ class DriverTripCloseOtpPresenter
   final Obs<DriverTripCloseOtpUiState> uiState = Obs<DriverTripCloseOtpUiState>(
     DriverTripCloseOtpUiState.initial(),
   );
+
+  void inital(RideRequestModel rideResponse) {
+    uiState.value = currentUiState.copyWith(rideResponse: rideResponse);
+  }
 
   DriverTripCloseOtpUiState get currentUiState => uiState.value;
 
@@ -50,7 +55,7 @@ class DriverTripCloseOtpPresenter
           message: success.message,
           duration: const Duration(seconds: 2),
         );
-        Get.offAll(() => RideDetailsScreen());
+        Get.offAll(() => CarBookingDetailsScreen());
         toggleLoading(loading: false);
       },
     );
