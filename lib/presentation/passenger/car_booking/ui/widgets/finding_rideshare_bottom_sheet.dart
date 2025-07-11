@@ -1,16 +1,14 @@
 import 'package:cabwire/core/config/app_color.dart';
-import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/passenger/car_booking/presenter/finding_rides_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/passenger_route_information_widget.dart';
 import 'package:flutter/material.dart';
-// For context.theme in RideshareBottomSheet itself
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'dart:async';
 
-// Adjust path as needed
-import 'payment_info_widget.dart'; // Adjust path as needed
+import 'payment_info_widget.dart';
 
 class FindingRideshareBottomSheet extends StatefulWidget {
   final String rideId;
@@ -34,6 +32,7 @@ class _FindingRideshareBottomSheetState
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  StreamSubscription? _uiStateSubscription;
 
   @override
   void initState() {
@@ -43,15 +42,20 @@ class _FindingRideshareBottomSheetState
   }
 
   void _listenToRideUpdates() {
-    // Use the presenter's observable state to listen for changes
-    widget.presenter.uiState.listen((state) {
-      // If a driver accepts the ride or ride is started, navigate to the RideShareScreen
-      if (state.isRideAccepted || state.isRideStarted) {
-        widget.presenter.navigateToRideShareScreen(
-          context,
-          widget.rideId,
-          widget.rideResponse,
-        );
+    // Cancel existing subscription
+    _uiStateSubscription?.cancel();
+
+    // Listen to UI state changes
+    _uiStateSubscription = widget.presenter.uiState.stream.listen((state) {
+      if (mounted) {
+        // If a driver accepts the ride or ride is started, navigate to the RideShareScreen
+        if (state.isRideAccepted || state.isRideStarted) {
+          widget.presenter.navigateToRideShareScreen(
+            context,
+            widget.rideId,
+            widget.rideResponse,
+          );
+        }
       }
     });
   }
@@ -59,6 +63,7 @@ class _FindingRideshareBottomSheetState
   @override
   void dispose() {
     _controller.dispose();
+    _uiStateSubscription?.cancel();
     super.dispose();
   }
 
@@ -74,7 +79,7 @@ class _FindingRideshareBottomSheetState
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacityInt(0.12),
+            color: Colors.black.withOpacity(0.12),
             blurRadius: 10,
             spreadRadius: 0,
           ),
@@ -108,7 +113,6 @@ class _FindingRideshareBottomSheetState
                     ),
                     InkWell(
                       onTap: () {
-                        // Add your onTap logic here
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -138,7 +142,6 @@ class _FindingRideshareBottomSheetState
               ],
             ),
           ),
-          // Use the new widget
           SizedBox(height: 16.px),
           PaymentInfoWidget(
             paymentType: widget.rideResponse.data.paymentMethod,

@@ -11,7 +11,7 @@ class FindingRidesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FindingRidesPresenter presenter = locate<FindingRidesPresenter>();
-    presenter.initialize(rideResponse.data.id);
+    presenter.initialize(rideResponse.data.userId);
     return Scaffold(
       body: Stack(
         children: [
@@ -28,20 +28,24 @@ class FindingRidesScreen extends StatelessWidget {
   }
 
   Widget _buildMap(BuildContext context) {
-    return GoogleMap(
-      onMapCreated: (controller) {}, // Use presenter's method
-      initialCameraPosition: CameraPosition(
-        target: LatLng(23.8103, 90.4125),
-        zoom: 14.0,
-      ),
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      zoomControlsEnabled: false,
-      mapToolbarEnabled: false,
-      scrollGesturesEnabled: true,
-      zoomGesturesEnabled: true,
-      tiltGesturesEnabled: true,
-      rotateGesturesEnabled: true,
+    return Builder(
+      builder: (context) {
+        return GoogleMap(
+          onMapCreated: (controller) {}, // Use presenter's method
+          initialCameraPosition: CameraPosition(
+            target: LatLng(23.8103, 90.4125),
+            zoom: 14.0,
+          ),
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: false,
+          mapToolbarEnabled: false,
+          scrollGesturesEnabled: true,
+          zoomGesturesEnabled: true,
+          tiltGesturesEnabled: true,
+          rotateGesturesEnabled: true,
+        );
+      },
     );
   }
 

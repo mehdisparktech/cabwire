@@ -20,14 +20,19 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
   FindingRidesUiState get currentUiState => uiState.value;
   String? rideId;
   Timer? _reconnectTimer;
-  bool _isListeningToSocket = false;
 
   FindingRidesPresenter(this._socketService, this._cancelRideUseCase);
 
   void initialize(String rideId) {
     this.rideId = rideId;
+    appLog("Initializing with rideId: $rideId");
     _ensureSocketConnection();
-    _setupSocketListeners();
+
+    // Add a small delay to ensure socket is connected before setting up listeners
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _setupSocketListeners();
+    });
+
     _startReconnectMonitor();
   }
 
@@ -46,9 +51,8 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
       if (!_socketService.isConnected) {
         appLog("Socket disconnected. Attempting to reconnect...");
         _socketService.connectToSocket();
-        if (!_isListeningToSocket) {
-          _setupSocketListeners();
-        }
+        // Re-setup listeners after reconnection
+        _setupSocketListeners();
       }
     });
   }
@@ -57,11 +61,13 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     appLog("Setting up socket listeners...");
     if (rideId == null) return;
 
-    appLog("Setting up socket listeners for event: notification::$rideId");
-
-    _isListeningToSocket = true;
     final eventName = 'notification::$rideId';
     appLog("Setting up socket listeners for event: $eventName");
+
+    // First, remove any existing listeners to avoid duplicates
+    _socketService.off(eventName);
+
+    // Setup fresh listener
 
     // Listen for general notifications
     _socketService.on(eventName, (data) {
@@ -70,17 +76,18 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
 
       // Handle different types of notifications based on data content
       if (data is Map<String, dynamic>) {
-        // Handle driver acceptance
-        if (data.containsKey('driverId') && data.containsKey('driverName')) {
+        // Check for ride acceptance first (this is the main condition)
+        if (data.containsKey('rideAccept') && data['rideAccept'] == true) {
+          _handleRideAcceptance(data);
+        }
+        // Handle driver acceptance (if driver details are present)
+        else if (data.containsKey('driverId') &&
+            data.containsKey('driverName')) {
           _handleDriverAcceptance(data);
         }
         // Handle driver location updates
         else if (data.containsKey('lat') && data.containsKey('lng')) {
           _handleDriverLocationUpdate(data);
-        }
-        // Handle ride status changes
-        else if (data.containsKey('rideAccept')) {
-          _handleRideStatusChange(data);
         }
         // Handle general messages
         else if (data.containsKey('message')) {
@@ -88,7 +95,30 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
         }
       }
     });
-    appLog("Socket listeners setup complete");
+    appLog("Socket listeners setup complete for event: $eventName");
+  }
+
+  void _handleRideAcceptance(Map<String, dynamic> data) {
+    appLog("Ride accepted event received: $data");
+
+    // Update UI state to indicate ride has been accepted
+    uiState.value = currentUiState.copyWith(
+      isRideAccepted: true,
+      driverId: data['driverId']?.toString(),
+      // Extract other driver details if available
+      driverName: data['driverName']?.toString(),
+      driverPhone: data['driverPhone']?.toString(),
+      driverPhoto: data['driverPhoto']?.toString(),
+      driverVehicle: data['driverVehicle']?.toString(),
+    );
+
+    // Show success message
+    String message = data['text']?.toString() ?? 'Ride accepted successfully!';
+    showMessage(message: message);
+
+    appLog(
+      "Updated UI state - isRideAccepted: ${currentUiState.isRideAccepted}",
+    );
   }
 
   void _handleDriverAcceptance(Map<String, dynamic> data) {
@@ -118,6 +148,7 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     _updateDriverMarker(LatLng(driverLat, driverLng));
   }
 
+  // ignore: unused_element
   void _handleRideStatusChange(Map<String, dynamic> data) {
     appLog("Ride status changed: $data");
     final status = data['rideAccept'];
@@ -140,6 +171,7 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     String rideId,
     RideResponseModel rideResponse,
   ) {
+    appLog("Navigating to RideShareScreen...");
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder:
@@ -178,13 +210,22 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
 
   @override
   void dispose() {
+    appLog("Disposing FindingRidesPresenter...");
+
+    // Cancel reconnect timer
     _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+
+    // Remove socket listeners
     if (rideId != null) {
       final eventName = 'notification::$rideId';
       _socketService.off(eventName);
-      _isListeningToSocket = false;
       appLog("Socket listener removed for event: $eventName");
     }
+
+    // Clear rideId
+    rideId = null;
+
     super.dispose();
   }
 
