@@ -45,8 +45,8 @@ class _FindingRideshareBottomSheetState
   void _listenToRideUpdates() {
     // Use the presenter's observable state to listen for changes
     widget.presenter.uiState.listen((state) {
-      // If a driver accepts the ride, navigate to the RideShareScreen
-      if (state.isRideAccepted) {
+      // If a driver accepts the ride or ride is started, navigate to the RideShareScreen
+      if (state.isRideAccepted || state.isRideStarted) {
         widget.presenter.navigateToRideShareScreen(
           context,
           widget.rideId,

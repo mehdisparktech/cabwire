@@ -247,7 +247,7 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
     PassengerDropLocationUiState state,
   ) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.4,
+      initialChildSize: 0.8,
       minChildSize: 0.05,
       maxChildSize: 0.9,
       snap: true,

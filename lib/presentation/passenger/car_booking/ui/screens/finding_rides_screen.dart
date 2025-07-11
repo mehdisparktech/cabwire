@@ -13,8 +13,17 @@ class FindingRidesScreen extends StatelessWidget {
     final FindingRidesPresenter presenter = locate<FindingRidesPresenter>();
     presenter.initialize(rideResponse.data.id);
     return Scaffold(
-      body: _buildMap(context),
-      bottomSheet: _buildBottomSheet(context, presenter),
+      body: Stack(
+        children: [
+          _buildMap(context),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _buildBottomSheet(context, presenter),
+          ),
+        ],
+      ),
     );
   }
 

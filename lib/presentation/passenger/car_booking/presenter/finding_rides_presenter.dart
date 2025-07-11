@@ -79,7 +79,7 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
           _handleDriverLocationUpdate(data);
         }
         // Handle ride status changes
-        else if (data.containsKey('status')) {
+        else if (data.containsKey('rideAccept')) {
           _handleRideStatusChange(data);
         }
         // Handle general messages
@@ -120,9 +120,9 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
 
   void _handleRideStatusChange(Map<String, dynamic> data) {
     appLog("Ride status changed: $data");
-    final status = data['status'];
+    final status = data['rideAccept'];
 
-    if (status == 'started') {
+    if (status) {
       uiState.value = currentUiState.copyWith(isRideStarted: true);
       showMessage(message: 'Your ride has started!');
     }
