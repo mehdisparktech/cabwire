@@ -51,7 +51,7 @@ class RideshareBottomSheet extends StatelessWidget {
             PickupInfoWidget(
               timerLeft: uiState.timerLeft,
               pickupText:
-                  !uiState.isRideStart
+                  uiState.isRideStart
                       ? 'Driver is on the way to pickup.'
                       : uiState.isRideProcessing
                       ? 'Your Trip Is Completed With-in'
@@ -124,8 +124,9 @@ class RideshareBottomSheet extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            const TripStoppageInfoWidget(
-              stoppageLocation: 'Green Road, Dhanmondi, Dhaka.',
+            TripStoppageInfoWidget(
+              stoppageLocation:
+                  uiState.rideResponse?.data.dropoffLocation.address ?? '',
             ),
             const SizedBox(height: 16),
             PaymentInfoWidget(

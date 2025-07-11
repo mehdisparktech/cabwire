@@ -41,23 +41,23 @@ class PickupInfoWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          if (!isRideStart)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: context.theme.colorScheme.primary,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '$timerLeft min',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
 
+          // if (!isRideStart)
+          //   Container(
+          //     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          //     decoration: BoxDecoration(
+          //       color: context.theme.colorScheme.primary,
+          //       borderRadius: BorderRadius.circular(8),
+          //     ),
+          //     child: Text(
+          //       '$timerLeft min',
+          //       style: const TextStyle(
+          //         color: Colors.white,
+          //         fontSize: 12,
+          //         fontWeight: FontWeight.bold,
+          //       ),
+          //     ),
+          //   ),
           if (isRideProcessing)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

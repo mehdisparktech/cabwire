@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'dart:async';
 
 import 'package:cabwire/core/base/base_presenter.dart';
@@ -85,33 +87,38 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       appLog("Socket connected: ${_socketService.isConnected}");
       appLog("Notification received: $data");
 
-      // Handle different types of notifications based on data content
-      if (data is Map<String, dynamic>) {
-        // Handle ride start event
-        if (data.containsKey('rideStart') && data['rideStart'] == true) {
-          _handleRideStart(data);
-        }
-        // Handle ride processing event
-        else if (data.containsKey('rideProgress') &&
-            data['rideProgress'] == true) {
-          appLog("Ride processing event received: $data");
-          _handleRideProcessing(data);
-        }
-        // Handle ride end event
-        else if (data.containsKey('rideEnd') && data['rideEnd'] == true) {
-          _handleRideEnd(data);
-        }
-        // Handle driver location updates
-        else if (data.containsKey('lat') && data.containsKey('lng')) {
-          _handleDriverLocationUpdate(data);
-        }
-        // Handle general messages
-        else if (data.containsKey('message') || data.containsKey('text')) {
-          String message =
-              data.containsKey('text') ? data['text'] : data['message'];
-          showMessage(message: message);
-        }
+      if (data.containsKey('rideProgress') && data['rideProgress'] == true) {
+        appLog("Ride processing event received: $data");
+        _handleRideProcessing(data);
       }
+
+      // Handle different types of notifications based on data content
+      // if (data is Map<String, dynamic>) {
+      //   // Handle ride start event
+      //   if (data.containsKey('rideStart') && data['rideStart'] == true) {
+      //     _handleRideStart(data);
+      //   }
+      //   // Handle ride processing event
+      //   else if (data.containsKey('rideProgress') &&
+      //       data['rideProgress'] == true) {
+      //     appLog("Ride processing event received: $data");
+      //     _handleRideProcessing(data);
+      //   }
+      //   // Handle ride end event
+      //   else if (data.containsKey('rideEnd') && data['rideEnd'] == true) {
+      //     _handleRideEnd(data);
+      //   }
+      //   // Handle driver location updates
+      //   else if (data.containsKey('lat') && data.containsKey('lng')) {
+      //     _handleDriverLocationUpdate(data);
+      //   }
+      //   // Handle general messages
+      //   else if (data.containsKey('message') || data.containsKey('text')) {
+      //     String message =
+      //         data.containsKey('text') ? data['text'] : data['message'];
+      //     showMessage(message: message);
+      //   }
+      // }
     });
 
     appLog("Socket listeners setup complete for event: $eventName");
@@ -139,8 +146,10 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     );
 
     // Show message if available
-    if (data.containsKey('message')) {
-      showMessage(message: data['message']);
+    if (data.containsKey('message') || data.containsKey('text')) {
+      String message =
+          data.containsKey('text') ? data['text'] : data['message'];
+      showMessage(message: message);
     }
   }
 
@@ -216,7 +225,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
         // Extract the OTP value from the nested data structure
         final otpData = success.data;
         appLog("OTP data: $otpData");
-        final otp = otpData['otp'].toString();
+        final otp = otpData['data']['otp'].toString();
         appLog("OTP: $otp");
         Get.to(() => PassengerTripCloseOtpPage(otp: otp));
       },
