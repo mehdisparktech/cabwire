@@ -11,6 +11,7 @@ class RideShareUiState extends BaseUiState {
   final GoogleMapController? mapController;
   final RideResponseModel? rideResponse;
   final String rideId;
+  final LatLng? driverLocation;
 
   const RideShareUiState({
     required super.isLoading,
@@ -23,6 +24,7 @@ class RideShareUiState extends BaseUiState {
     this.mapController,
     required this.rideResponse,
     required this.rideId,
+    this.driverLocation,
   });
 
   factory RideShareUiState.empty({
@@ -40,6 +42,7 @@ class RideShareUiState extends BaseUiState {
       mapController: null,
       rideResponse: rideResponse,
       rideId: rideId,
+      driverLocation: null,
     );
   }
 
@@ -55,6 +58,7 @@ class RideShareUiState extends BaseUiState {
     mapController,
     rideResponse,
     rideId,
+    driverLocation,
   ];
 
   RideShareUiState copyWith({
@@ -68,6 +72,7 @@ class RideShareUiState extends BaseUiState {
     GoogleMapController? mapController,
     RideResponseModel? rideResponse,
     String? rideId,
+    LatLng? driverLocation,
   }) {
     return RideShareUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -80,6 +85,7 @@ class RideShareUiState extends BaseUiState {
       mapController: mapController ?? this.mapController,
       rideResponse: rideResponse ?? this.rideResponse,
       rideId: rideId ?? this.rideId,
+      driverLocation: driverLocation ?? this.driverLocation,
     );
   }
 }

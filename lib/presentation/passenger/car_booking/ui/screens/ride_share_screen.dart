@@ -19,7 +19,10 @@ class RideShareScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final presenter = locate<RideSharePresenter>();
     if (presenter.currentUiState.rideId.isEmpty) {
-      presenter.init(rideId: rideId, rideResponse: rideResponse);
+      presenter.init(
+        rideId: rideResponse.data.userId,
+        rideResponse: rideResponse,
+      );
     }
 
     return Scaffold(
