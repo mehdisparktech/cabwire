@@ -12,12 +12,15 @@ class RideShareUiState extends BaseUiState {
   final RideResponseModel? rideResponse;
   final String rideId;
   final LatLng? driverLocation;
+  final LatLng? currentUserLocation;
+  final double userHeading;
   final List<LatLng>? polylineCoordinates;
   final LatLng sourceMapCoordinates;
   final LatLng destinationMapCoordinates;
   final BitmapDescriptor sourceIcon;
   final BitmapDescriptor destinationIcon;
   final BitmapDescriptor driverIcon;
+  final BitmapDescriptor userLocationIcon;
 
   const RideShareUiState({
     required super.isLoading,
@@ -31,12 +34,15 @@ class RideShareUiState extends BaseUiState {
     required this.rideResponse,
     required this.rideId,
     this.driverLocation,
+    this.currentUserLocation,
+    this.userHeading = 0.0,
     this.polylineCoordinates,
     required this.sourceMapCoordinates,
     required this.destinationMapCoordinates,
     required this.sourceIcon,
     required this.destinationIcon,
     required this.driverIcon,
+    required this.userLocationIcon,
   });
 
   factory RideShareUiState.empty({
@@ -55,6 +61,8 @@ class RideShareUiState extends BaseUiState {
       rideResponse: rideResponse,
       rideId: rideId,
       driverLocation: null,
+      currentUserLocation: null,
+      userHeading: 0.0,
       polylineCoordinates: null,
       // Default location in Dhaka
       sourceMapCoordinates: const LatLng(23.759112, 90.429365),
@@ -62,6 +70,7 @@ class RideShareUiState extends BaseUiState {
       sourceIcon: BitmapDescriptor.defaultMarker,
       destinationIcon: BitmapDescriptor.defaultMarker,
       driverIcon: BitmapDescriptor.defaultMarker,
+      userLocationIcon: BitmapDescriptor.defaultMarker,
     );
   }
 
@@ -78,12 +87,15 @@ class RideShareUiState extends BaseUiState {
     rideResponse,
     rideId,
     driverLocation,
+    currentUserLocation,
+    userHeading,
     polylineCoordinates,
     sourceMapCoordinates,
     destinationMapCoordinates,
     sourceIcon,
     destinationIcon,
     driverIcon,
+    userLocationIcon,
   ];
 
   RideShareUiState copyWith({
@@ -98,12 +110,15 @@ class RideShareUiState extends BaseUiState {
     RideResponseModel? rideResponse,
     String? rideId,
     LatLng? driverLocation,
+    LatLng? currentUserLocation,
+    double? userHeading,
     List<LatLng>? polylineCoordinates,
     LatLng? sourceMapCoordinates,
     LatLng? destinationMapCoordinates,
     BitmapDescriptor? sourceIcon,
     BitmapDescriptor? destinationIcon,
     BitmapDescriptor? driverIcon,
+    BitmapDescriptor? userLocationIcon,
   }) {
     return RideShareUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -117,6 +132,8 @@ class RideShareUiState extends BaseUiState {
       rideResponse: rideResponse ?? this.rideResponse,
       rideId: rideId ?? this.rideId,
       driverLocation: driverLocation ?? this.driverLocation,
+      currentUserLocation: currentUserLocation ?? this.currentUserLocation,
+      userHeading: userHeading ?? this.userHeading,
       polylineCoordinates: polylineCoordinates ?? this.polylineCoordinates,
       sourceMapCoordinates: sourceMapCoordinates ?? this.sourceMapCoordinates,
       destinationMapCoordinates:
@@ -124,6 +141,7 @@ class RideShareUiState extends BaseUiState {
       sourceIcon: sourceIcon ?? this.sourceIcon,
       destinationIcon: destinationIcon ?? this.destinationIcon,
       driverIcon: driverIcon ?? this.driverIcon,
+      userLocationIcon: userLocationIcon ?? this.userLocationIcon,
     );
   }
 }

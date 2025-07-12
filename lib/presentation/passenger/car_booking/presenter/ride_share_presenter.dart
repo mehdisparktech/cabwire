@@ -1,6 +1,7 @@
 // ignore_for_file: unused_element
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/api/api_end_point.dart';
@@ -12,6 +13,8 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
+import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
+import 'package:cabwire/domain/usecases/location/get_location_updates_usecase.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_trip_close_otp_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -22,8 +25,13 @@ import 'ride_share_ui_state.dart';
 class RideSharePresenter extends BasePresenter<RideShareUiState> {
   final ApiService _apiService = locate<ApiService>();
   final SocketService _socketService = locate<SocketService>();
+  final GetCurrentLocationUsecase _getCurrentLocationUsecase =
+      locate<GetCurrentLocationUsecase>();
+  final GetLocationUpdatesUsecase _getLocationUpdatesUsecase =
+      locate<GetLocationUpdatesUsecase>();
   Timer? _reconnectTimer;
   final PolylinePoints _polylinePoints = PolylinePoints();
+  StreamSubscription? _locationSubscription;
 
   final Obs<RideShareUiState> uiState;
   RideShareUiState get currentUiState => uiState.value;
@@ -35,6 +43,23 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     if (rideId.isNotEmpty && rideResponse != null) {
       _initialize();
     }
+  }
+
+  @override
+  void onClose() {
+    _locationSubscription?.cancel();
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+
+    // Remove socket listeners
+    if (currentUiState.rideId.isNotEmpty) {
+      final eventName = 'notification::${currentUiState.rideId}';
+      _socketService.off(eventName);
+      appLog("Socket listener removed for event: $eventName");
+    }
+
+    currentUiState.mapController?.dispose();
+    super.onClose();
   }
 
   void init({required String rideId, required rideResponse}) {
@@ -49,6 +74,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     _ensureSocketConnection();
     _setCustomIcons();
     _initializeLocations();
+    _getCurrentUserLocation();
+    _startLocationUpdates();
 
     // Add a small delay to ensure socket is connected before setting up listeners
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -56,6 +83,57 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     });
 
     _startReconnectMonitor();
+  }
+
+  Future<void> _getCurrentUserLocation() async {
+    final result = await _getCurrentLocationUsecase.execute();
+    result.fold(
+      (error) {
+        appLog("Error getting current location: $error");
+      },
+      (location) {
+        final currentLatLng = LatLng(location.latitude, location.longitude);
+        uiState.value = currentUiState.copyWith(
+          currentUserLocation: currentLatLng,
+        );
+        _setMapMarkers();
+      },
+    );
+  }
+
+  void _startLocationUpdates() {
+    _locationSubscription?.cancel();
+    _locationSubscription = _getLocationUpdatesUsecase.execute().listen(
+      (result) {
+        result.fold(
+          (error) {
+            appLog("Location update error: $error");
+          },
+          (location) {
+            final newLocation = LatLng(location.latitude, location.longitude);
+
+            // Calculate heading if we have a previous location
+            double heading = currentUiState.userHeading;
+            if (currentUiState.currentUserLocation != null) {
+              heading = _calculateBearing(
+                currentUiState.currentUserLocation!,
+                newLocation,
+              );
+            }
+
+            uiState.value = currentUiState.copyWith(
+              currentUserLocation: newLocation,
+              userHeading: heading,
+            );
+
+            _setMapMarkers();
+          },
+        );
+      },
+      onError: (e) {
+        appLog("Error in location subscription: $e");
+      },
+    );
   }
 
   void _initializeLocations() {
@@ -85,7 +163,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   Future<void> _setCustomIcons() async {
     try {
       // Set pickup location icon
-      await BitmapDescriptor.fromAssetImage(
+      await BitmapDescriptor.asset(
         const ImageConfiguration(size: Size(50, 50)),
         AppAssets.icLocationActive,
       ).then((value) {
@@ -93,7 +171,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       });
 
       // Set dropoff location icon
-      await BitmapDescriptor.fromAssetImage(
+      await BitmapDescriptor.asset(
         const ImageConfiguration(size: Size(50, 50)),
         AppAssets.icLocationActive,
       ).then((value) {
@@ -101,11 +179,19 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       });
 
       // Set driver icon
-      await BitmapDescriptor.fromAssetImage(
+      await BitmapDescriptor.asset(
         const ImageConfiguration(size: Size(50, 80)),
         AppAssets.icMyCar,
       ).then((value) {
         uiState.value = currentUiState.copyWith(driverIcon: value);
+      });
+
+      // Set user location icon
+      await BitmapDescriptor.asset(
+        ImageConfiguration(size: Size(50, 80)),
+        AppAssets.icMyCar,
+      ).then((value) {
+        uiState.value = currentUiState.copyWith(userLocationIcon: value);
       });
 
       // Update markers with the custom icons
@@ -154,6 +240,21 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
           position: currentUiState.driverLocation!,
           icon: currentUiState.driverIcon,
           infoWindow: const InfoWindow(title: 'Driver Location'),
+        ),
+      );
+    }
+
+    // Add user's current location marker if available
+    if (currentUiState.currentUserLocation != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('user_location'),
+          position: currentUiState.currentUserLocation!,
+          icon: currentUiState.userLocationIcon,
+          flat: true,
+          anchor: const Offset(0.5, 0.5),
+          rotation: currentUiState.userHeading,
+          infoWindow: const InfoWindow(title: 'Your Location'),
         ),
       );
     }
@@ -433,19 +534,23 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     uiState.value = currentUiState.copyWith(isLoading: loading);
   }
 
-  @override
-  void onClose() {
-    _reconnectTimer?.cancel();
-    _reconnectTimer = null;
+  // Calculate the bearing/heading angle between two locations
+  double _calculateBearing(LatLng start, LatLng end) {
+    final startLat = start.latitude * (math.pi / 180.0);
+    final startLng = start.longitude * (math.pi / 180.0);
+    final endLat = end.latitude * (math.pi / 180.0);
+    final endLng = end.longitude * (math.pi / 180.0);
 
-    // Remove socket listeners
-    if (currentUiState.rideId.isNotEmpty) {
-      final eventName = 'notification::${currentUiState.rideId}';
-      _socketService.off(eventName);
-      appLog("Socket listener removed for event: $eventName");
-    }
+    final dLng = endLng - startLng;
 
-    currentUiState.mapController?.dispose();
-    super.onClose();
+    final y = math.sin(dLng) * math.cos(endLat);
+    final x =
+        math.cos(startLat) * math.sin(endLat) -
+        math.sin(startLat) * math.cos(endLat) * math.cos(dLng);
+
+    final bearing = math.atan2(y, x);
+
+    // Convert from radians to degrees
+    return (((bearing * 180.0 / math.pi) + 360.0) % 360.0);
   }
 }

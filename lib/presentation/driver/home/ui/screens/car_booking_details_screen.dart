@@ -102,7 +102,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                   CustomText(
-                    '${rideCompletedResponse.data?.distance.toString()} km',
+                    '${rideCompletedResponse.data!.distance?.toStringAsFixed(2)} km',
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
