@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RentalCarWelcomeScreen extends StatelessWidget {
-  const RentalCarWelcomeScreen({super.key});
+  final String? serviceId;
+  const RentalCarWelcomeScreen({super.key, this.serviceId});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,7 @@ class RentalCarWelcomeScreen extends StatelessWidget {
               text: 'Get Started',
               isPrimary: true,
               onPressed: () {
-                Get.to(() => const RentalInfoScreen());
+                Get.to(() => RentalInfoScreen(serviceId: serviceId));
               },
             ),
           ),

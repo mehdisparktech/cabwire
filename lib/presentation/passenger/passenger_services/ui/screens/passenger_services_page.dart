@@ -117,7 +117,7 @@ class PassengerServicesPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const RentalCarWelcomeScreen(),
+            builder: (context) => RentalCarWelcomeScreen(serviceId: service.id),
           ),
         );
         break;

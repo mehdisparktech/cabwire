@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RentalInfoScreen extends StatefulWidget {
-  const RentalInfoScreen({super.key});
+  final String? serviceId;
+  const RentalInfoScreen({super.key, this.serviceId});
 
   @override
   State<RentalInfoScreen> createState() => _RentalInfoScreenState();
@@ -104,7 +105,9 @@ class _RentalInfoScreenState extends State<RentalInfoScreen> {
                   context,
                   MaterialPageRoute(
                     builder:
-                        (context) => const PassengerSearchDestinationScreen(),
+                        (context) => PassengerSearchDestinationScreen(
+                          serviceId: widget.serviceId,
+                        ),
                   ),
                 );
               },
