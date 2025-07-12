@@ -14,11 +14,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class PassengerSearchDestinationScreen extends StatelessWidget {
   final Widget? nextScreen;
   final ServiceType serviceType;
+  final String? serviceId;
 
   const PassengerSearchDestinationScreen({
     super.key,
     this.nextScreen,
     this.serviceType = ServiceType.none,
+    this.serviceId,
   });
 
   @override
@@ -27,7 +29,7 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
         locate<PassengerDropLocationPresenter>();
 
     presenter.setServiceType(serviceType);
-
+    presenter.setServiceId(serviceId);
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {

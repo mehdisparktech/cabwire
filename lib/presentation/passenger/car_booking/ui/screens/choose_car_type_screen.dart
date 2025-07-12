@@ -131,7 +131,7 @@ class ChooseCarTypeScreen extends StatelessWidget {
               },
             ),
             SizedBox(height: 16.px),
-            uiState.isLoading
+            uiState.isFindCarLoading
                 ? LoadingIndicator(theme: Theme.of(context))
                 : ActionButton(
                   isPrimary: true,

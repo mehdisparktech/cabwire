@@ -1,5 +1,6 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
 import 'package:cabwire/core/enum/service_type.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -29,7 +30,8 @@ class PassengerDropLocationUiState extends BaseUiState {
   final String? originAddress;
   final List<LatLng>? routePolylines;
   final ServiceType serviceType;
-
+  final RideResponseModel? rideResponse;
+  final String? serviceId;
   const PassengerDropLocationUiState({
     required super.isLoading,
     required super.userMessage,
@@ -51,6 +53,8 @@ class PassengerDropLocationUiState extends BaseUiState {
     this.originAddress,
     this.routePolylines,
     this.serviceType = ServiceType.none,
+    this.rideResponse,
+    this.serviceId,
   });
 
   factory PassengerDropLocationUiState.empty() {
@@ -90,6 +94,8 @@ class PassengerDropLocationUiState extends BaseUiState {
       originAddress: null,
       routePolylines: null,
       serviceType: ServiceType.none,
+      rideResponse: null,
+      serviceId: null,
     );
   }
 
@@ -115,6 +121,8 @@ class PassengerDropLocationUiState extends BaseUiState {
     originAddress,
     routePolylines,
     serviceType,
+    rideResponse,
+    serviceId,
   ];
 
   PassengerDropLocationUiState copyWith({
@@ -138,6 +146,8 @@ class PassengerDropLocationUiState extends BaseUiState {
     String? originAddress,
     List<LatLng>? routePolylines,
     ServiceType? serviceType,
+    RideResponseModel? rideResponse,
+    String? serviceId,
   }) {
     return PassengerDropLocationUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -163,6 +173,8 @@ class PassengerDropLocationUiState extends BaseUiState {
       originAddress: originAddress ?? this.originAddress,
       routePolylines: routePolylines ?? this.routePolylines,
       serviceType: serviceType ?? this.serviceType,
+      rideResponse: rideResponse ?? this.rideResponse,
+      serviceId: serviceId ?? this.serviceId,
     );
   }
 }

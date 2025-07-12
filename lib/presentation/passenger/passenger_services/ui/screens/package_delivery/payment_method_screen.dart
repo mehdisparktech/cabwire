@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/enum/service_type.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
@@ -13,7 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PackagePaymentMethodScreen extends StatelessWidget {
-  const PackagePaymentMethodScreen({super.key});
+  final String? serviceId;
+  const PackagePaymentMethodScreen({super.key, this.serviceId});
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +104,7 @@ class PackagePaymentMethodScreen extends StatelessWidget {
                 MaterialPageRoute(
                   builder:
                       (context) => PassengerSearchDestinationScreen(
+                        serviceType: ServiceType.packageDelivery,
                         nextScreen: RideShareScreen(
                           rideId: '1',
                           rideResponse: RideResponseModel(

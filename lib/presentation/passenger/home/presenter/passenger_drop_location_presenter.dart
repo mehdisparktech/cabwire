@@ -1,10 +1,16 @@
 import 'dart:async';
 
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/config/api/api_end_point.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/enum/service_type.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
+import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/choose_car_type_screen.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/finding_rides_screen.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_ui_state.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/ride_share/ride_share_car_type_screen.dart';
 import 'package:flutter/material.dart';
@@ -75,6 +81,10 @@ class PassengerDropLocationPresenter
 
   void setServiceType(ServiceType serviceType) {
     uiState.value = currentUiState.copyWith(serviceType: serviceType);
+  }
+
+  void setServiceId(String? serviceId) {
+    uiState.value = currentUiState.copyWith(serviceId: serviceId);
   }
 
   // Helper method to get address from coordinates
@@ -453,17 +463,19 @@ class PassengerDropLocationPresenter
               (context) => switch (currentUiState.serviceType) {
                 ServiceType.cabwireShare => RideShareCarTypeScreen(),
                 ServiceType.carBooking => ChooseCarTypeScreen(
-                  serviceId: '686e008a153fae6071f36f28',
+                  serviceId: currentUiState.serviceId!,
                   pickupLocation: currentUiState.selectedPickupLocation!,
                   pickupAddress: currentUiState.pickupAddress!,
                   dropoffLocation: currentUiState.destinationLocation!,
                   dropoffAddress: currentUiState.destinationAddress!,
                 ),
-                ServiceType.packageDelivery => throw UnimplementedError(),
+                ServiceType.packageDelivery => FindingRidesScreen(
+                  rideResponse: currentUiState.rideResponse!,
+                ),
                 ServiceType.rentalCar => throw UnimplementedError(),
                 ServiceType.emergencyCar => throw UnimplementedError(),
                 ServiceType.none => ChooseCarTypeScreen(
-                  serviceId: '686e008a153fae6071f36f28',
+                  serviceId: currentUiState.serviceId!,
                   pickupLocation: currentUiState.selectedPickupLocation!,
                   pickupAddress: currentUiState.pickupAddress!,
                   dropoffLocation: currentUiState.destinationLocation!,
@@ -475,6 +487,92 @@ class PassengerDropLocationPresenter
     } else {
       showMessage(message: 'Please select both pickup and dropoff locations');
     }
+  }
+
+  // Package delivery methods
+
+  Future<void> navigateToPackageDelivery(BuildContext context) async {
+    final apiService = locate<ApiService>();
+    final body = {
+      'pickupLocation': {
+        'lat': currentUiState.selectedPickupLocation?.latitude,
+        'lng': currentUiState.selectedPickupLocation?.longitude,
+        'address': currentUiState.pickupAddress,
+      },
+      'dropoffLocation': {
+        'lat': currentUiState.destinationLocation?.latitude,
+        'lng': currentUiState.destinationLocation?.longitude,
+        'address': currentUiState.destinationAddress,
+      },
+      'paymentMethod': 'stripe',
+    };
+    final response = await apiService.post(
+      ApiEndPoint.createPackage,
+      header: {'Authorization': 'Bearer ${LocalStorage.token}'},
+      body: body,
+    );
+
+    response.fold(
+      (error) {
+        showMessage(message: error.message);
+      },
+      (data) {
+        try {
+          // Log the exact structure of the response
+          appLog('Full API response: ${data.data}');
+
+          // Package delivery API returns a different structure than what RideResponseModel expects
+          // We need to create a compatible structure
+          final packageData = data.data['data'];
+
+          // Create a wrapped structure to match RideResponseModel's expectations
+          final wrappedData = {
+            'success': true,
+            'message': 'Package created successfully',
+            'data': {
+              'userId': packageData['userId'],
+              'service': 'packageDelivery', // Add default service
+              'category': 'package', // Add default category
+              'pickupLocation': packageData['pickupLocation'],
+              'dropoffLocation': packageData['dropoffLocation'],
+              'distance': packageData['distance'],
+              'duration': 0, // Package delivery may not have duration
+              'fare': packageData['fare'],
+              'rideStatus': packageData['packageStatus'] ?? 'requested',
+              'paymentMethod': packageData['paymentMethod'],
+              'paymentStatus': packageData['paymentStatus'],
+              'rideType': 'package',
+              '_id': packageData['_id'],
+              'createdAt': packageData['createdAt'],
+              'updatedAt': packageData['updatedAt'],
+            },
+          };
+
+          appLog('Wrapped data for RideResponseModel: $wrappedData');
+
+          // Now pass the properly structured data to RideResponseModel
+          uiState.value = currentUiState.copyWith(
+            rideResponse: RideResponseModel.fromJson(wrappedData),
+          );
+
+          showMessage(message: 'Package created successfully');
+
+          // Navigate to the next screen
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) => FindingRidesScreen(
+                    rideResponse: currentUiState.rideResponse!,
+                  ),
+            ),
+          );
+        } catch (e) {
+          appLog('Error parsing ride response: $e');
+          appLog('Error stack trace: ${StackTrace.current}');
+          showMessage(message: 'Error processing ride data');
+        }
+      },
+    );
   }
 
   void onDestinationMapCreated(GoogleMapController controller) {
@@ -614,7 +712,11 @@ class PassengerDropLocationPresenter
 
     // Locations should already be validated in navigateToCarTypeSelection,
     // but adding an extra check here for safety
-    navigateToCarTypeSelection(context, nextScreen);
+    if (currentUiState.serviceType == ServiceType.packageDelivery) {
+      navigateToPackageDelivery(context);
+    } else {
+      navigateToCarTypeSelection(context, nextScreen);
+    }
   }
 
   // Method to fit map bounds to show both markers

@@ -144,7 +144,10 @@ class _FindingRideshareBottomSheetState
           ),
           SizedBox(height: 16.px),
           PaymentInfoWidget(
-            paymentType: widget.rideResponse.data.paymentMethod,
+            paymentType:
+                widget.rideResponse.data.paymentMethod == 'offline'
+                    ? 'Cash Payment'
+                    : 'Online Payment',
             amount: widget.rideResponse.data.fare.toString(),
           ),
           SizedBox(height: 16.px),

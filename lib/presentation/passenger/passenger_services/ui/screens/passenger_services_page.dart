@@ -96,6 +96,7 @@ class PassengerServicesPage extends StatelessWidget {
             builder:
                 (context) => PassengerSearchDestinationScreen(
                   serviceType: ServiceType.carBooking,
+                  serviceId: service.id,
                 ),
           ),
         );
@@ -107,6 +108,7 @@ class PassengerServicesPage extends StatelessWidget {
             builder:
                 (context) => PassengerSearchDestinationScreen(
                   serviceType: ServiceType.emergencyCar,
+                  serviceId: service.id,
                 ),
           ),
         );
@@ -123,7 +125,8 @@ class PassengerServicesPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const PackagePaymentMethodScreen(),
+            builder:
+                (context) => PackagePaymentMethodScreen(serviceId: service.id),
           ),
         );
         break;
@@ -134,6 +137,7 @@ class PassengerServicesPage extends StatelessWidget {
             builder:
                 (context) => PassengerSearchDestinationScreen(
                   serviceType: ServiceType.cabwireShare,
+                  serviceId: service.id,
                 ),
           ),
         );
@@ -142,7 +146,9 @@ class PassengerServicesPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const PassengerSearchDestinationScreen(),
+            builder:
+                (context) =>
+                    PassengerSearchDestinationScreen(serviceId: service.id),
           ),
         );
     }
