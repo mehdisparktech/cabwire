@@ -8,8 +8,15 @@ import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/rid
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class RideShareCarTypeScreen extends StatelessWidget {
+class RideShareCarTypeScreen extends StatefulWidget {
   const RideShareCarTypeScreen({super.key});
+
+  @override
+  State<RideShareCarTypeScreen> createState() => _RideShareCarTypeScreenState();
+}
+
+class _RideShareCarTypeScreenState extends State<RideShareCarTypeScreen> {
+  int _selectedCardIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +64,11 @@ class RideShareCarTypeScreen extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return _buildCarServiceCard(context, index == 0);
+                return _buildCarServiceCard(
+                  context,
+                  index == _selectedCardIndex,
+                  index,
+                );
               },
               separatorBuilder: (context, index) => SizedBox(height: 12.px),
               itemCount: 4,
@@ -109,9 +120,17 @@ class RideShareCarTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCarServiceCard(BuildContext context, bool isSelected) {
+  Widget _buildCarServiceCard(
+    BuildContext context,
+    bool isSelected,
+    int index,
+  ) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        setState(() {
+          _selectedCardIndex = index;
+        });
+      },
       child: Container(
         width: 343.px,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),

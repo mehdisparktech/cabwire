@@ -49,7 +49,7 @@ class _RentalInfoScreenState extends State<RentalInfoScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildRoundedIconButton(Icons.add, incrementHours),
+              _buildRoundedIconButton(Icons.remove, decrementHours),
               gapW20,
               CustomText(
                 '$hours hours',
@@ -59,7 +59,7 @@ class _RentalInfoScreenState extends State<RentalInfoScreen> {
                 ),
               ),
               gapW20,
-              _buildRoundedIconButton(Icons.remove, decrementHours),
+              _buildRoundedIconButton(Icons.add, incrementHours),
             ],
           ),
           CustomText('$hourlyRate \$ per hour'),
@@ -90,7 +90,7 @@ class _RentalInfoScreenState extends State<RentalInfoScreen> {
                   fontWeight: FontWeight.bold,
                 ),
                 CustomText(
-                  '\$${totalAmount}',
+                  '\$ $totalAmount',
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
