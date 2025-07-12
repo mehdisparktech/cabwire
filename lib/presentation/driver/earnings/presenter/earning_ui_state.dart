@@ -1,5 +1,21 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
 
+class DailyEarningItem {
+  final DateTime date;
+  final double todayEarning;
+  final double cashPayment;
+  final double onlinePayment;
+  final double walletAmount;
+
+  const DailyEarningItem({
+    required this.date,
+    required this.todayEarning,
+    required this.cashPayment,
+    required this.onlinePayment,
+    required this.walletAmount,
+  });
+}
+
 class EarningsData {
   final double totalEarnings;
   final double availableEarnings;
@@ -8,6 +24,7 @@ class EarningsData {
   final double cashPayment;
   final double onlinePayment;
   final double walletAmount;
+  final List<DailyEarningItem> dailyEarnings;
 
   const EarningsData({
     required this.totalEarnings,
@@ -17,6 +34,7 @@ class EarningsData {
     required this.cashPayment,
     required this.onlinePayment,
     required this.walletAmount,
+    this.dailyEarnings = const [],
   });
 }
 

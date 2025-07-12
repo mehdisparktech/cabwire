@@ -37,4 +37,5 @@ class ApiEndPoint {
   static const requestCloseRide = "$baseUrl/ride/request-close-ride/";
   static const cancelRide = "$baseUrl/ride/cancel-ride/";
   static const notification = "$baseUrl/notification";
+  static const driverEarnings = "$baseUrl/payment/";
 }

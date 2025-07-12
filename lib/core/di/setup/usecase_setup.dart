@@ -6,6 +6,7 @@ import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_reset_password_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/forget_password_usecase.dart';
+import 'package:cabwire/domain/usecases/driver/get_driver_earnings_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/resent_code_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/sign_in_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_sign_up_usecase.dart';
@@ -77,6 +78,7 @@ class UsecaseSetup implements SetupModule {
       )
       ..registerLazySingleton(() => CompleteRideUseCase(locate()))
       ..registerLazySingleton(() => CancelRideUseCase(locate(), locate()))
-      ..registerLazySingleton(() => NotificationsUseCase(locate(), locate()));
+      ..registerLazySingleton(() => NotificationsUseCase(locate(), locate()))
+      ..registerLazySingleton(() => GetDriverEarningsUseCase(locate()));
   }
 }

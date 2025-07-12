@@ -25,6 +25,8 @@ import 'package:cabwire/data/repositories/passenger_service_repository_impl.dart
 import 'package:cabwire/domain/repositories/passenger_service_repository.dart';
 import 'package:cabwire/data/repositories/passenger_category_repository_impl.dart';
 import 'package:cabwire/domain/repositories/passenger_category_repository.dart';
+import 'package:cabwire/domain/repositories/driver_earnings_repository.dart';
+import 'package:cabwire/data/repositories/driver_earnings_repository_impl.dart';
 
 class RepositorySetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -68,6 +70,9 @@ class RepositorySetup implements SetupModule {
       )
       ..registerLazySingleton<NotificationsRepository>(
         () => NotificationsRepositoryImpl(locate()),
+      )
+      ..registerLazySingleton<DriverEarningsRepository>(
+        () => DriverEarningsRepositoryImpl(locate()),
       );
   }
 }

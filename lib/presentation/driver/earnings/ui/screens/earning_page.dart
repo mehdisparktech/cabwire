@@ -53,14 +53,8 @@ class EarningsPage extends StatelessWidget {
                     availableEarnings: data.availableEarnings,
                   ),
                   gapH20,
-                  DailyEarningsCard(
-                    date: data.currentDate,
-                    todayEarning: data.todayEarning,
-                    cashPayment: data.cashPayment,
-                    onlinePayment: data.onlinePayment,
-                    walletAmount: data.walletAmount,
-                  ),
-                  gapH60,
+                  _buildEarningsContent(uiState),
+                  gapH20,
                   CustomButton(
                     text: 'Withdraw Amount',
                     onPressed: presenter.withdrawAmount,
@@ -73,6 +67,51 @@ class EarningsPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Widget _buildEarningsContent(EarningsUiState uiState) {
+    final data = uiState.earningsData;
+
+    // For today filter, show a single card
+    if (uiState.selectedFilter == EarningsFilter.today) {
+      return DailyEarningsCard(
+        date: data.currentDate,
+        todayEarning: data.todayEarning,
+        cashPayment: data.cashPayment,
+        onlinePayment: data.onlinePayment,
+        walletAmount: data.walletAmount,
+      );
+    }
+    // For week/month filters, show a list of cards
+    else {
+      // If no daily data available, show a message
+      if (data.dailyEarnings.isEmpty) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Text('No earnings data available for this period'),
+          ),
+        );
+      }
+
+      // Show the list of daily cards
+      return Expanded(
+        child: ListView.separated(
+          itemCount: data.dailyEarnings.length,
+          separatorBuilder: (context, index) => gapH10,
+          itemBuilder: (context, index) {
+            final daily = data.dailyEarnings[index];
+            return DailyEarningsCard(
+              date: daily.date,
+              todayEarning: daily.todayEarning,
+              cashPayment: daily.cashPayment,
+              onlinePayment: daily.onlinePayment,
+              walletAmount: daily.walletAmount,
+            );
+          },
+        ),
+      );
+    }
   }
 
   AppBar _buildAppBar(BuildContext context, EarningsPresenter presenter) {

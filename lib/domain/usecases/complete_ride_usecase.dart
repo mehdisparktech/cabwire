@@ -1,5 +1,4 @@
 import 'package:cabwire/core/base/result.dart';
-import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/data/models/ride_completed_response_model.dart';
 import 'package:cabwire/domain/repositories/ride_repository.dart';
 
