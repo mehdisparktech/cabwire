@@ -3,6 +3,7 @@ import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/data/models/ride/complete_ride_model.dart';
 import 'package:cabwire/data/models/ride/create_ride_request_model.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
+import 'package:cabwire/data/models/ride_completed_response_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:fpdart/fpdart.dart';
@@ -14,7 +15,10 @@ abstract class RideRemoteDataSource {
 
   /// Completes a ride with the provided rideId and OTP
   ///
-  Future<Result<RideResponseModel>> completeRide(String rideId, int otp);
+  Future<Result<RideCompletedResponseModel>> completeRide(
+    String rideId,
+    int otp,
+  );
 
   /// Cancels a ride with the provided rideId
   ///
@@ -50,7 +54,10 @@ class RideRemoteDataSourceImpl implements RideRemoteDataSource {
   }
 
   @override
-  Future<Result<RideResponseModel>> completeRide(String rideId, int otp) async {
+  Future<Result<RideCompletedResponseModel>> completeRide(
+    String rideId,
+    int otp,
+  ) async {
     try {
       final request = CompleteRideModel(rideId: rideId, otp: otp);
 
@@ -65,7 +72,7 @@ class RideRemoteDataSourceImpl implements RideRemoteDataSource {
 
       return response.fold(
         (failure) => left(failure.message),
-        (success) => right(RideResponseModel.fromJson(success.data)),
+        (success) => right(RideCompletedResponseModel.fromJson(success.data)),
       );
     } catch (e) {
       return left(e.toString());

@@ -1,4 +1,5 @@
 import 'package:cabwire/core/base/result.dart';
+import 'package:cabwire/data/models/ride_completed_response_model.dart';
 import 'package:cabwire/domain/entities/ride_entity.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
 
@@ -14,7 +15,10 @@ abstract class RideRepository {
   ///
   /// Takes a [String] rideId and [int] otp for verification
   /// Returns a [Result<void>] indicating success or failure
-  Future<Result<RideResponseModel>> completeRide(String rideId, int otp);
+  Future<Result<RideCompletedResponseModel>> completeRide(
+    String rideId,
+    int otp,
+  );
 
   /// Cancels a ride with the provided rideId
   ///

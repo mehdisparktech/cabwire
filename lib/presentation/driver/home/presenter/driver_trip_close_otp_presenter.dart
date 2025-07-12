@@ -50,12 +50,15 @@ class DriverTripCloseOtpPresenter
         uiState.value = currentUiState.copyWith(
           userMessage: null,
           isCompleted: true,
+          rideCompletedResponse: success,
         );
         CustomToast(
-          message: success.message,
+          message: success.message ?? '',
           duration: const Duration(seconds: 2),
         );
-        Get.offAll(() => CarBookingDetailsScreen());
+        Get.offAll(
+          () => CarBookingDetailsScreen(rideCompletedResponse: success),
+        );
         toggleLoading(loading: false);
       },
     );

@@ -2,6 +2,7 @@ import 'package:cabwire/core/base/result.dart';
 import 'package:cabwire/data/datasources/remote/ride_remote_data_source.dart';
 import 'package:cabwire/data/mappers/ride_mapper.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
+import 'package:cabwire/data/models/ride_completed_response_model.dart';
 import 'package:cabwire/domain/entities/ride_entity.dart';
 import 'package:cabwire/domain/repositories/ride_repository.dart';
 import 'package:fpdart/fpdart.dart';
@@ -28,7 +29,10 @@ class RideRepositoryImpl implements RideRepository {
   }
 
   @override
-  Future<Result<RideResponseModel>> completeRide(String rideId, int otp) async {
+  Future<Result<RideCompletedResponseModel>> completeRide(
+    String rideId,
+    int otp,
+  ) async {
     try {
       // Call the remote data source
       final result = await _remoteDataSource.completeRide(rideId, otp);
