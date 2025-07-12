@@ -4,13 +4,17 @@ import 'dart:async';
 
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/api/api_end_point.dart';
+import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
+import 'package:cabwire/core/static/constants.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_trip_close_otp_page.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'ride_share_ui_state.dart';
@@ -19,6 +23,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   final ApiService _apiService = locate<ApiService>();
   final SocketService _socketService = locate<SocketService>();
   Timer? _reconnectTimer;
+  final PolylinePoints _polylinePoints = PolylinePoints();
 
   final Obs<RideShareUiState> uiState;
   RideShareUiState get currentUiState => uiState.value;
@@ -42,6 +47,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
   void _initialize() {
     _ensureSocketConnection();
+    _setCustomIcons();
+    _initializeLocations();
 
     // Add a small delay to ensure socket is connected before setting up listeners
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -49,6 +56,157 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     });
 
     _startReconnectMonitor();
+  }
+
+  void _initializeLocations() {
+    if (currentUiState.rideResponse == null) return;
+
+    try {
+      final pickupLocation = currentUiState.rideResponse!.data.pickupLocation;
+      final dropoffLocation = currentUiState.rideResponse!.data.dropoffLocation;
+
+      final pickupLatLng = LatLng(pickupLocation.lat, pickupLocation.lng);
+
+      final dropoffLatLng = LatLng(dropoffLocation.lat, dropoffLocation.lng);
+
+      uiState.value = currentUiState.copyWith(
+        sourceMapCoordinates: pickupLatLng,
+        destinationMapCoordinates: dropoffLatLng,
+      );
+
+      // Initialize markers and polyline
+      _setMapMarkers();
+      _generatePolyline();
+    } catch (e) {
+      appLog("Error initializing locations: $e");
+    }
+  }
+
+  Future<void> _setCustomIcons() async {
+    try {
+      // Set pickup location icon
+      await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(50, 50)),
+        AppAssets.icLocationActive,
+      ).then((value) {
+        uiState.value = currentUiState.copyWith(sourceIcon: value);
+      });
+
+      // Set dropoff location icon
+      await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(50, 50)),
+        AppAssets.icLocationActive,
+      ).then((value) {
+        uiState.value = currentUiState.copyWith(destinationIcon: value);
+      });
+
+      // Set driver icon
+      await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(50, 80)),
+        AppAssets.icMyCar,
+      ).then((value) {
+        uiState.value = currentUiState.copyWith(driverIcon: value);
+      });
+
+      // Update markers with the custom icons
+      _setMapMarkers();
+    } catch (e) {
+      appLog("Error setting custom icons: $e");
+    }
+  }
+
+  void _setMapMarkers() {
+    final Set<Marker> markers = {};
+
+    // Add pickup marker
+    markers.add(
+      Marker(
+        markerId: const MarkerId('pickup'),
+        position: currentUiState.sourceMapCoordinates,
+        icon: currentUiState.sourceIcon,
+        infoWindow: InfoWindow(
+          title: 'Pickup Location',
+          snippet:
+              currentUiState.rideResponse?.data.pickupLocation.address ?? '',
+        ),
+      ),
+    );
+
+    // Add dropoff marker
+    markers.add(
+      Marker(
+        markerId: const MarkerId('dropoff'),
+        position: currentUiState.destinationMapCoordinates,
+        icon: currentUiState.destinationIcon,
+        infoWindow: InfoWindow(
+          title: 'Dropoff Location',
+          snippet:
+              currentUiState.rideResponse?.data.dropoffLocation.address ?? '',
+        ),
+      ),
+    );
+
+    // Add driver marker if available
+    if (currentUiState.driverLocation != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('driver'),
+          position: currentUiState.driverLocation!,
+          icon: currentUiState.driverIcon,
+          infoWindow: const InfoWindow(title: 'Driver Location'),
+        ),
+      );
+    }
+
+    uiState.value = currentUiState.copyWith(markers: markers);
+  }
+
+  Future<void> _generatePolyline() async {
+    try {
+      final polylineResult = await _polylinePoints.getRouteBetweenCoordinates(
+        googleApiKey: googleApiKey,
+        request: PolylineRequest(
+          origin: PointLatLng(
+            currentUiState.sourceMapCoordinates.latitude,
+            currentUiState.sourceMapCoordinates.longitude,
+          ),
+          destination: PointLatLng(
+            currentUiState.destinationMapCoordinates.latitude,
+            currentUiState.destinationMapCoordinates.longitude,
+          ),
+          mode: TravelMode.driving,
+        ),
+      );
+
+      if (polylineResult.points.isEmpty) {
+        appLog("No route points returned from API");
+
+        // If no route is available, create a straight line
+        uiState.value = currentUiState.copyWith(
+          polylineCoordinates: [
+            currentUiState.sourceMapCoordinates,
+            currentUiState.destinationMapCoordinates,
+          ],
+        );
+        return;
+      }
+
+      // Convert points to LatLng list
+      final List<LatLng> polylineCoordinates =
+          polylineResult.points
+              .map((point) => LatLng(point.latitude, point.longitude))
+              .toList();
+
+      uiState.value = currentUiState.copyWith(
+        polylineCoordinates: polylineCoordinates,
+      );
+
+      appLog(
+        "Successfully generated polyline with ${polylineCoordinates.length} points",
+      );
+    } catch (e) {
+      appLog("Error generating polyline: $e");
+    }
   }
 
   void _ensureSocketConnection() {
@@ -173,28 +331,11 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     final driverLng = data['lng'] as double;
     final driverLocation = LatLng(driverLat, driverLng);
 
-    // Create or update driver marker
-    final driverMarker = Marker(
-      markerId: const MarkerId('driver_marker'),
-      position: driverLocation,
-      infoWindow: const InfoWindow(title: 'Driver Location'),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-    );
+    // Update the driver location in the state
+    uiState.value = currentUiState.copyWith(driverLocation: driverLocation);
 
-    // Create a new set with the updated driver marker
-    final updatedMarkers = Set<Marker>.from(currentUiState.markers);
-
-    // Remove any existing driver marker and add the new one
-    updatedMarkers.removeWhere(
-      (marker) => marker.markerId.value == 'driver_marker',
-    );
-    updatedMarkers.add(driverMarker);
-
-    // Update the state
-    uiState.value = currentUiState.copyWith(
-      driverLocation: driverLocation,
-      markers: updatedMarkers,
-    );
+    // Update the map markers with the new driver location
+    _setMapMarkers();
 
     // Update map view if controller is available
     if (currentUiState.mapController != null) {
@@ -206,6 +347,46 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
   void onMapCreated(GoogleMapController controller) {
     uiState.value = currentUiState.copyWith(mapController: controller);
+
+    // Move camera to show both pickup and dropoff locations
+    _fitMapToBounds();
+  }
+
+  void _fitMapToBounds() {
+    if (currentUiState.mapController == null) return;
+
+    try {
+      // Create a bounds that includes both pickup and dropoff locations
+      final bounds = LatLngBounds(
+        southwest: LatLng(
+          currentUiState.sourceMapCoordinates.latitude <
+                  currentUiState.destinationMapCoordinates.latitude
+              ? currentUiState.sourceMapCoordinates.latitude
+              : currentUiState.destinationMapCoordinates.latitude,
+          currentUiState.sourceMapCoordinates.longitude <
+                  currentUiState.destinationMapCoordinates.longitude
+              ? currentUiState.sourceMapCoordinates.longitude
+              : currentUiState.destinationMapCoordinates.longitude,
+        ),
+        northeast: LatLng(
+          currentUiState.sourceMapCoordinates.latitude >
+                  currentUiState.destinationMapCoordinates.latitude
+              ? currentUiState.sourceMapCoordinates.latitude
+              : currentUiState.destinationMapCoordinates.latitude,
+          currentUiState.sourceMapCoordinates.longitude >
+                  currentUiState.destinationMapCoordinates.longitude
+              ? currentUiState.sourceMapCoordinates.longitude
+              : currentUiState.destinationMapCoordinates.longitude,
+        ),
+      );
+
+      // Add some padding
+      currentUiState.mapController!.animateCamera(
+        CameraUpdate.newLatLngBounds(bounds, 80),
+      );
+    } catch (e) {
+      appLog("Error fitting map to bounds: $e");
+    }
   }
 
   Future<void> requestCloseRide() async {

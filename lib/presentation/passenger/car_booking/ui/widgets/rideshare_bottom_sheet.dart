@@ -57,7 +57,7 @@ class RideshareBottomSheet extends StatelessWidget {
                       ? 'Your Trip Is Completed With-in'
                       : uiState.isRideEnd
                       ? 'Your Trip Is Completed'
-                      : 'Ready To Start The Ride',
+                      : 'Driver is on the way to pickup',
               isRideStart: uiState.isRideStart,
               isRideProcessing: uiState.isRideProcessing,
             ),

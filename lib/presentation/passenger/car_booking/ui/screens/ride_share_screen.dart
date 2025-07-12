@@ -4,6 +4,7 @@ import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_
 import 'package:cabwire/presentation/passenger/car_booking/ui/widgets/rideshare_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:get/get.dart';
 
 class RideShareScreen extends StatelessWidget {
   final String rideId;
@@ -26,30 +27,58 @@ class RideShareScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      body: _buildMap(presenter),
-      bottomSheet: _buildBottomSheet(presenter),
+      body: Stack(
+        children: [_buildMap(presenter), _buildBottomSheet(presenter)],
+      ),
     );
   }
 
   Widget _buildMap(RideSharePresenter presenter) {
-    return GoogleMap(
-      onMapCreated: presenter.onMapCreated,
-      initialCameraPosition: CameraPosition(
-        target: LatLng(23.8103, 90.4125),
-        zoom: 14.0,
-      ),
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      zoomControlsEnabled: false,
-      mapToolbarEnabled: false,
-      scrollGesturesEnabled: true,
-      zoomGesturesEnabled: true,
-      tiltGesturesEnabled: true,
-      rotateGesturesEnabled: true,
-    );
+    return Obx(() {
+      final uiState = presenter.currentUiState;
+
+      return GoogleMap(
+        onMapCreated: presenter.onMapCreated,
+        initialCameraPosition: CameraPosition(
+          target: LatLng(23.8103, 90.4125),
+          zoom: 14.0,
+        ),
+        myLocationEnabled: true,
+        myLocationButtonEnabled: false,
+        zoomControlsEnabled: false,
+        mapToolbarEnabled: false,
+        scrollGesturesEnabled: true,
+        zoomGesturesEnabled: true,
+        tiltGesturesEnabled: true,
+        rotateGesturesEnabled: true,
+        markers: uiState.markers,
+        polylines: {
+          if (uiState.polylineCoordinates != null)
+            Polyline(
+              polylineId: const PolylineId('route'),
+              points: uiState.polylineCoordinates!,
+              color: Colors.blue,
+              width: 5,
+              patterns: [PatternItem.dash(20), PatternItem.gap(5)],
+              endCap: Cap.roundCap,
+              startCap: Cap.roundCap,
+            ),
+        },
+      );
+    });
   }
 
   Widget _buildBottomSheet(RideSharePresenter presenter) {
-    return RideshareBottomSheet(presenter: presenter);
+    return DraggableScrollableSheet(
+      initialChildSize: 0.5, // Initially opens at 50% of screen height
+      minChildSize: 0.3, // Minimum height when collapsed
+      maxChildSize: 0.5, // Maximum height when expanded
+      builder: (context, scrollController) {
+        return SingleChildScrollView(
+          controller: scrollController,
+          child: RideshareBottomSheet(presenter: presenter),
+        );
+      },
+    );
   }
 }
