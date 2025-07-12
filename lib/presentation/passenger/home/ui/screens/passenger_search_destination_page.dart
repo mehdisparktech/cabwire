@@ -149,17 +149,43 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
         Polyline(
           polylineId: const PolylineId('route'),
           points: state.routePolylines!,
-          color: Colors.blue,
-          width: 5,
+          color: Colors.blue.shade700,
+          width: 6,
+          patterns: [PatternItem.dash(20), PatternItem.gap(5)],
+          endCap: Cap.roundCap,
+          startCap: Cap.roundCap,
+          geodesic: true,
+          visible: true,
+          consumeTapEvents: false,
         ),
       );
     }
 
     // Calculate camera position based on available points
-    CameraPosition initialCamera = CameraPosition(
-      target: state.currentLocation ?? const LatLng(23.8103, 90.4125),
-      zoom: 14.0,
-    );
+    CameraPosition initialCamera;
+
+    // If we have both pickup and destination locations, fit the map to show both
+    if (state.selectedPickupLocation != null &&
+        state.destinationLocation != null) {
+      // We'll set initial position to midpoint between pickup and destination
+      initialCamera = CameraPosition(
+        target: LatLng(
+          (state.selectedPickupLocation!.latitude +
+                  state.destinationLocation!.latitude) /
+              2,
+          (state.selectedPickupLocation!.longitude +
+                  state.destinationLocation!.longitude) /
+              2,
+        ),
+        zoom: 13.0, // Slightly zoomed out to show more of the route
+      );
+    } else {
+      // Otherwise use current location or default
+      initialCamera = CameraPosition(
+        target: state.currentLocation ?? const LatLng(23.8103, 90.4125),
+        zoom: 14.0,
+      );
+    }
 
     return GoogleMap(
       onMapCreated: (controller) {
@@ -169,12 +195,18 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
         // Check if we need to show polylines
         if (state.selectedPickupLocation != null &&
             state.destinationLocation != null) {
-          // Ensure polylines are calculated and shown
-          Future.delayed(Duration(milliseconds: 500), () {
+          // Use a slight delay to ensure the map is fully initialized
+          Future.delayed(const Duration(milliseconds: 500), () {
+            // This explicit call ensures polylines are generated
             presenter.fetchRoutePolylines(
               state.selectedPickupLocation!,
               state.destinationLocation!,
             );
+
+            // After a bit more delay to ensure polylines are loaded, fit bounds
+            Future.delayed(const Duration(milliseconds: 800), () {
+              presenter.fitBoundsOnMap();
+            });
           });
         }
       },
@@ -193,11 +225,17 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
     );
   }
 
+  // Helper method to fit map to show both markers with padding
+
   Widget _buildRouteVisualization(
     BuildContext context,
     PassengerDropLocationPresenter presenter,
     PassengerDropLocationUiState state,
   ) {
+    if (state.routePolylines == null || state.routePolylines!.isEmpty) {
+      return const SizedBox.shrink(); // Don't show anything if no route
+    }
+
     return Positioned(
       top: 90,
       left: 10,

@@ -700,7 +700,8 @@ class PassengerDropLocationPresenter
         '?origin=${origin.latitude},${origin.longitude}'
         '&destination=${destination.latitude},${destination.longitude}'
         '&key=$_googleApiKey'
-        '&mode=driving',
+        '&mode=driving'
+        '&alternatives=false',
       );
 
       debugPrint('Calling Directions API: ${url.toString()}');
@@ -732,7 +733,10 @@ class PassengerDropLocationPresenter
 
             if (polylineCoordinates.isEmpty) {
               debugPrint('No polyline coordinates were decoded');
-              return;
+              // If no polyline coordinates are available, create a direct line
+              polylineCoordinates.add(origin);
+              polylineCoordinates.add(destination);
+              debugPrint('Created direct line with 2 points as fallback');
             }
 
             // Update state with polyline coordinates
@@ -740,8 +744,7 @@ class PassengerDropLocationPresenter
               routePolylines: polylineCoordinates,
             );
 
-            // Update the map to show the entire route after a short delay
-            // to ensure state is updated
+            // Update the map to show the entire route
             Future.delayed(const Duration(milliseconds: 300), () {
               if (_mapController != null) {
                 fitBoundsOnMap();
@@ -749,18 +752,43 @@ class PassengerDropLocationPresenter
             });
           } else {
             debugPrint('No routes found in the response');
+            // Fallback: create a direct line
+            _createFallbackRoute(origin, destination);
           }
         } else if (data['status'] == 'ZERO_RESULTS') {
           debugPrint('No route found between these points');
+          // Fallback: create a direct line
+          _createFallbackRoute(origin, destination);
         } else {
           debugPrint('Directions API error: ${data['status']}');
+          // Fallback: create a direct line
+          _createFallbackRoute(origin, destination);
         }
+      } else {
+        debugPrint('HTTP error: ${response.statusCode}');
+        // Fallback: create a direct line
+        _createFallbackRoute(origin, destination);
       }
     } catch (e) {
       debugPrint('Error fetching route polylines: $e');
+      // Fallback: create a direct line
+      _createFallbackRoute(origin, destination);
     } finally {
       _isSearching = false;
     }
+  }
+
+  // Helper method to create a direct line between two points as fallback
+  void _createFallbackRoute(LatLng origin, LatLng destination) {
+    final List<LatLng> directRoute = [origin, destination];
+    uiState.value = currentUiState.copyWith(routePolylines: directRoute);
+
+    // Update the map to show this direct route
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (_mapController != null) {
+        fitBoundsOnMap();
+      }
+    });
   }
 
   // Helper method to decode polyline string
