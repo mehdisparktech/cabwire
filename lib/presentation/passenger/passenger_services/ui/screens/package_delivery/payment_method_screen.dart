@@ -1,22 +1,32 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/payment_method_card.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
 import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
+import 'package:cabwire/presentation/passenger/passenger_services/presenter/package_payment_method_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class PaymentMethodScreen extends StatelessWidget {
-  const PaymentMethodScreen({super.key});
+class PackagePaymentMethodScreen extends StatelessWidget {
+  const PackagePaymentMethodScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildMap(context),
-      bottomSheet: _buildBottomSheet(context),
+    final PackagePaymentMethodPresenter presenter =
+        locate<PackagePaymentMethodPresenter>();
+    return PresentableWidgetBuilder(
+      presenter: presenter,
+      builder: () {
+        return Scaffold(
+          body: _buildMap(context),
+          bottomSheet: _buildBottomSheet(context, presenter),
+        );
+      },
     );
   }
 
@@ -38,7 +48,10 @@ class PaymentMethodScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomSheet(BuildContext context) {
+  Widget _buildBottomSheet(
+    BuildContext context,
+    PackagePaymentMethodPresenter presenter,
+  ) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
       decoration: BoxDecoration(
@@ -54,20 +67,31 @@ class PaymentMethodScreen extends StatelessWidget {
           _buildAppBar(context),
           SizedBox(height: 16.px),
           PaymentMethodSelector(
-            isIWillPay: true,
+            isIWillPay: presenter.currentUiState.isIWillPay,
+            isIWillPaySelected: presenter.currentUiState.isIWillPaySelected,
+            onIWillPayChanged: (value) {
+              presenter.onIWillPayChanged(value);
+            },
             paymentMethods: [
               PaymentMethod(
                 title: 'Online Payment',
                 imageSrc: AppAssets.icOnlinePayment,
-                isSelected: true, // Default selection
+                isSelected:
+                    presenter.currentUiState.selectedPaymentMethod ==
+                    'Online Payment',
                 isRecommended: true, // Show as recommended option
               ),
               PaymentMethod(
                 title: 'Cash Payment',
                 imageSrc: AppAssets.icCashPayment,
-                isSelected: false,
+                isSelected:
+                    presenter.currentUiState.selectedPaymentMethod ==
+                    'Cash Payment',
               ),
             ],
+            onPaymentMethodSelected: (method) {
+              presenter.onPaymentMethodSelected(method.title);
+            },
           ),
           SizedBox(height: 16.px),
           ActionButton(

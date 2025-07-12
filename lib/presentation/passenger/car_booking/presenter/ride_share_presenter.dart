@@ -15,6 +15,7 @@ import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:cabwire/domain/usecases/location/get_location_updates_usecase.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/car_booking_details_screen.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_trip_close_otp_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -425,6 +426,15 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     } else {
       showMessage(message: 'Your ride has ended!');
     }
+
+    // Check if we need to automatically navigate to the next page
+    if (data.containsKey('rideComplete') && data['rideComplete'] == true) {
+      // Automatically navigate to next page if rideComplete is true
+      Get.offAll(
+        () =>
+            CarBookingDetailsScreen(rideResponse: currentUiState.rideResponse!),
+      );
+    }
   }
 
   void _handleDriverLocationUpdate(Map<String, dynamic> data) {
@@ -552,5 +562,41 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
     // Convert from radians to degrees
     return (((bearing * 180.0 / math.pi) + 360.0) % 360.0);
+  }
+
+  Future<void> onForwardPressed(BuildContext context) async {
+    if (currentUiState.isRideEnd) {
+      if (context.mounted) {
+        Navigator.push(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => CarBookingDetailsScreen(
+                  rideResponse: currentUiState.rideResponse!,
+                ),
+          ),
+        );
+      }
+    } else {
+      // Setup socket listener for automatic navigation if notification comes
+      final eventName = 'notification::${currentUiState.rideId}';
+      appLog(
+        "Setting up additional socket listener for navigation on: $eventName",
+      );
+
+      _socketService.on(eventName, (data) {
+        if (data.containsKey('rideComplete') && data['rideComplete'] == true) {
+          appLog(
+            "Ride complete notification received, navigating to details screen",
+          );
+          Get.offAll(
+            () => CarBookingDetailsScreen(
+              rideResponse: currentUiState.rideResponse!,
+            ),
+          );
+        }
+      });
+    }
   }
 }

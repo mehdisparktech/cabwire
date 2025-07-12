@@ -42,7 +42,8 @@ class PaymentMethodSelector extends StatefulWidget {
   final double? width;
   final EdgeInsets? padding;
   final bool isIWillPay;
-
+  final Function(bool)? onIWillPayChanged;
+  final bool isIWillPaySelected;
   const PaymentMethodSelector({
     super.key,
     required this.paymentMethods,
@@ -50,6 +51,8 @@ class PaymentMethodSelector extends StatefulWidget {
     this.width,
     this.padding = const EdgeInsets.symmetric(vertical: 15),
     this.isIWillPay = false,
+    this.onIWillPayChanged,
+    this.isIWillPaySelected = false,
   });
 
   @override
@@ -249,8 +252,12 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
         children: [
           Radio(
             value: true,
-            groupValue: true,
-            onChanged: (value) {},
+            groupValue: widget.isIWillPaySelected,
+            onChanged: (value) {
+              if (value != null) {
+                widget.onIWillPayChanged?.call(value);
+              }
+            },
             activeColor: AppColor.passengerPrimaryColor,
           ),
           gapW10,
@@ -258,8 +265,12 @@ class _PaymentMethodSelectorState extends State<PaymentMethodSelector> {
           gapW10,
           Radio(
             value: false,
-            groupValue: false,
-            onChanged: (value) {},
+            groupValue: widget.isIWillPaySelected,
+            onChanged: (value) {
+              if (value != null) {
+                widget.onIWillPayChanged?.call(value);
+              }
+            },
             activeColor: AppColor.passengerPrimaryColor,
           ),
           gapW10,

@@ -8,8 +8,34 @@ import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class RentalInfoScreen extends StatelessWidget {
+class RentalInfoScreen extends StatefulWidget {
   const RentalInfoScreen({super.key});
+
+  @override
+  State<RentalInfoScreen> createState() => _RentalInfoScreenState();
+}
+
+class _RentalInfoScreenState extends State<RentalInfoScreen> {
+  int hours = 0;
+  final int hourlyRate = 100;
+
+  void incrementHours() {
+    setState(() {
+      hours++;
+      // Assuming 1 hour = 1 km for simplicity, adjust as needed
+    });
+  }
+
+  void decrementHours() {
+    if (hours > 1) {
+      setState(() {
+        hours--;
+        // Assuming 1 hour = 1 km for simplicity, adjust as needed
+      });
+    }
+  }
+
+  int get totalAmount => hours * hourlyRate;
 
   @override
   Widget build(BuildContext context) {
@@ -22,20 +48,20 @@ class RentalInfoScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildRoundedIconButton(Icons.add, () {}),
+              _buildRoundedIconButton(Icons.add, incrementHours),
               gapW20,
               CustomText(
-                '20 hours',
+                '$hours hours',
                 style: context.theme.textTheme.titleLarge?.copyWith(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               gapW20,
-              _buildRoundedIconButton(Icons.remove, () {}),
+              _buildRoundedIconButton(Icons.remove, decrementHours),
             ],
           ),
-          CustomText('20 km'),
+          CustomText('$hourlyRate \$ per hour'),
         ],
       ),
       bottomNavigationBar: Container(
@@ -62,7 +88,11 @@ class RentalInfoScreen extends StatelessWidget {
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
-                CustomText('\$2000', fontSize: 16, fontWeight: FontWeight.bold),
+                CustomText(
+                  '\$${totalAmount}',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ],
             ),
             gapH20,

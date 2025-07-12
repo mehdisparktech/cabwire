@@ -79,6 +79,12 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
   }
 
   void endRide() {
+    uiState.value = currentUiState.copyWith(
+      isRideEnd: true,
+      isRideProcessing: false,
+      isRideStart: false,
+    );
+
     Get.off(
       () => DriverTripCloseOtpPage(rideId: currentUiState.rideRequest!.rideId),
     );

@@ -122,7 +122,9 @@ class PassengerServicesPage extends StatelessWidget {
       case 'package':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const PaymentMethodScreen()),
+          MaterialPageRoute(
+            builder: (context) => const PackagePaymentMethodScreen(),
+          ),
         );
         break;
       case 'cabwire-share':
