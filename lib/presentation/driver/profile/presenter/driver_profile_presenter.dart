@@ -4,6 +4,7 @@ import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/app_assets.dart'; // For default assets
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
@@ -296,6 +297,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       isLoading: false,
     );
     addUserMessage("Profile updated successfully!");
+    showMessage(message: 'Profile updated successfully!');
     Get.back(); // Go back from edit screen
   }
 
@@ -338,6 +340,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       isLoading: false,
     );
     addUserMessage("Driving information updated successfully!");
+    showMessage(message: 'Driving information updated successfully!');
     Get.back();
   }
 

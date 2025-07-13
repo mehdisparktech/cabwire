@@ -7,7 +7,6 @@ import 'package:cabwire/core/static/constants.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
-import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';

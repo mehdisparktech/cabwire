@@ -502,7 +502,19 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
       );
 
       await result.fold(
-        (errorMessage) async => await addUserMessage(errorMessage),
+        (errorMessage) async {
+          await addUserMessage(errorMessage);
+          await showMessage(message: 'Sign up Successfully');
+          currentUiState.copyWith(isRegistered: true);
+          clearControllers();
+          if (context.mounted) {
+            _navigation.navigateWithFadeTransition(
+              context,
+              const DriverAuthNavigatorScreen(),
+              clearStack: true,
+            );
+          }
+        },
         (user) async {
           currentUiState.copyWith(isRegistered: true);
           clearControllers();
