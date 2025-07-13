@@ -35,7 +35,7 @@ class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
   }
 
   Future<void> loadUserProfile() async {
-    final ProfileModel? profile = await LocalStorage.getDriverProfile();
+    final ProfileModel? profile = await LocalStorage.getPassengerProfile();
     uiState.value = currentUiState.copyWith(
       userProfile: UserProfileData(
         name: profile?.name ?? '',

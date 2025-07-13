@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cabwire/core/enum/user_type.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/local_cache_service.dart';
 import 'package:flutter/material.dart';
@@ -171,9 +172,17 @@ class LocalStorage {
     );
   }
 
-  static Future<ProfileModel?> getDriverProfile() async {
+  static Future<DriverProfileModel?> getDriverProfile() async {
     final localStorage = await _getStorage();
     final profile = localStorage.getString(CacheKeys.driverProfile);
+    return profile != null
+        ? DriverProfileModel.fromJson(json.decode(profile))
+        : null;
+  }
+
+  static Future<ProfileModel?> getPassengerProfile() async {
+    final localStorage = await _getStorage();
+    final profile = localStorage.getString(CacheKeys.passengerProfile);
     return profile != null ? ProfileModel.fromJson(json.decode(profile)) : null;
   }
 

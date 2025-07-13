@@ -4,7 +4,7 @@ import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/app_assets.dart'; // For default assets
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
-import 'package:cabwire/data/models/profile_model.dart';
+import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
@@ -84,16 +84,16 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
 
   Future<void> loadDriverProfile() async {
     try {
-      final ProfileModel? profile = await LocalStorage.getDriverProfile();
+      final DriverProfileModel? profile = await LocalStorage.getDriverProfile();
       if (profile != null) {
         uiState.value = currentUiState.copyWith(
           userProfile: UserProfileData(
             name: profile.name ?? '',
             email: profile.email ?? '',
-            phoneNumber: '01625815151',
+            phoneNumber: profile.contact ?? '',
             avatarUrl: AppAssets.icProfileImage,
-            dateOfBirth: '1990-01-01',
-            gender: 'Male',
+            dateOfBirth: profile.dateOfBirth ?? '',
+            gender: profile.gender ?? '',
           ),
         );
       }
@@ -106,6 +106,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     toggleLoading(loading: true);
     // Simulate fetching user profile and driving info
     await Future.delayed(const Duration(seconds: 1));
+    final DriverProfileModel? profile = await LocalStorage.getDriverProfile();
 
     // Populate with fetched data
     // final fetchedUserProfile = UserProfileData(
@@ -118,15 +119,18 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     // );
 
     final fetchedDrivingInfo = DrivingInfoData(
-      licenseNumber: 'DL12345XYZ',
-      licenseExpiryDate: '2028-12-31',
-      licenseIssueDate: '2018-01-01',
-      vehiclesRegistrationNumber: '1234567890',
-      vehiclesInsuranceNumber: '1234567890',
-      vehiclesMake: 'Toyota',
-      vehiclesModel: 'Corolla',
-      vehiclesYear: '2020',
-      vehiclesCategory: 'Car',
+      licenseNumber: profile?.driverLicense?.licenseNumber.toString() ?? '',
+      licenseExpiryDate:
+          profile?.driverLicense?.licenseExpiryDate.toString() ?? '',
+      licenseIssueDate: '2023-01-01',
+      vehiclesRegistrationNumber:
+          profile?.driverVehicles?.vehiclesRegistrationNumber.toString() ?? '',
+      vehiclesInsuranceNumber:
+          profile?.driverVehicles?.vehiclesInsuranceNumber.toString() ?? '',
+      vehiclesMake: profile?.driverVehicles?.vehiclesMake ?? '',
+      vehiclesModel: profile?.driverVehicles?.vehiclesModel ?? '',
+      vehiclesYear: profile?.driverVehicles?.vehiclesYear ?? '',
+      vehiclesCategory: profile?.driverVehicles?.vehiclesCategory ?? '',
     );
 
     uiState.value = currentUiState.copyWith(

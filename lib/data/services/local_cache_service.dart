@@ -115,4 +115,5 @@ class CacheKeys {
   static const String launchCount = "launch_count_key";
   static const String location = "location_key";
   static const String driverProfile = "driver_profile_key";
+  static const String passengerProfile = "passenger_profile_key";
 }

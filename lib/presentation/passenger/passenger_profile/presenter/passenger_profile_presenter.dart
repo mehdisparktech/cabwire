@@ -58,7 +58,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     toggleLoading(loading: true);
     // Simulate fetching user profile and driving info
     await Future.delayed(const Duration(seconds: 1));
-    final ProfileModel? profile = await LocalStorage.getDriverProfile();
+    final ProfileModel? profile = await LocalStorage.getPassengerProfile();
 
     // Populate with fetched data
     final fetchedPassengerProfile = PassengerProfileData(

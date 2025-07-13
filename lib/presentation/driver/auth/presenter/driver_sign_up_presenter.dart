@@ -492,7 +492,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           vehiclesInsuranceNumber: int.parse(
             vehiclesInsuranceNumberController.text.trim(),
           ),
-          vehiclesCategory: 1,
+          vehiclesCategory: vehicleCategoryController.text.trim(),
           vehiclesPicture: vehicleImagePath,
         ),
       );
