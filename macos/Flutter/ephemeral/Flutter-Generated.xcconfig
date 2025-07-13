@@ -1,11 +1,12 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=C:\Users\mehdihassan\fvm\versions\stable
-FLUTTER_APPLICATION_PATH=C:\Users\mehdihassan\Documents\GitHub\cabwire
+FLUTTER_ROOT=/Users/mehdi/fvm/versions/3.29.0
+FLUTTER_APPLICATION_PATH=/Users/mehdi/Documents/GitHub/cabwire
 COCOAPODS_PARALLEL_CODE_SIGN=true
+FLUTTER_TARGET=/Users/mehdi/Documents/GitHub/cabwire/lib/main.dart
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=1.0.0
 FLUTTER_BUILD_NUMBER=1
 DART_OBFUSCATION=false
 TRACK_WIDGET_CREATION=true
 TREE_SHAKE_ICONS=false
-PACKAGE_CONFIG=.dart_tool/package_config.json
+PACKAGE_CONFIG=/Users/mehdi/Documents/GitHub/cabwire/.dart_tool/package_config.json

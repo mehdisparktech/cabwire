@@ -7,6 +7,7 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 import '../../../../common/components/auth/custom_text_form_field.dart';
 import '../../../../common/components/auth/custom_button.dart';
 import '../../../../common/components/auth/auth_screen_wrapper.dart';
@@ -80,8 +81,27 @@ class DriverLicenseInformationScreen extends StatelessWidget {
         hintText: AppStrings.driverLicenseFront,
         readOnly: true,
         suffixIcon: Icon(Icons.add_a_photo_outlined, size: px20),
-        onTap: () => presenter.selectLicenseImage(),
+        onTap: () => presenter.selectLicenseImage(context),
       ),
+      gapH20,
+      // License image preview
+      if (presenter.licenseImagePath != null)
+        Container(
+          width: double.infinity,
+          height: 180,
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.file(
+              File(presenter.licenseImagePath!),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
       gapH20,
     ];
   }

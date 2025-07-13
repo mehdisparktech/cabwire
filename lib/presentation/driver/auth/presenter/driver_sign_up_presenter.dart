@@ -15,6 +15,7 @@ import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigato
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_password_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
@@ -311,12 +312,146 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
       );
 
   // Image selection methods
-  void uploadProfilePicture() =>
-      _controllers.setProfileImage('dummy_profile_path');
-  void selectLicenseImage() =>
-      _controllers.setLicenseImage('dummy_license_path');
-  void selectVehicleImage() =>
-      _controllers.setVehicleImage('dummy_vehicle_path');
+  Future<void> uploadProfilePicture(BuildContext context) async {
+    final ImageSource? source = await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: const Text('Gallery'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.gallery);
+                  },
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  child: const Text('Camera'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.camera);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (source != null) {
+      try {
+        final pickedFile = await ImagePicker().pickImage(
+          source: source,
+          imageQuality: 70,
+        );
+
+        if (pickedFile != null) {
+          _controllers.setProfileImage(pickedFile.path);
+          uiState.value = currentUiState.copyWith();
+        }
+      } catch (e) {
+        debugPrint('Error picking image: $e');
+        await showMessage(message: 'Failed to pick image: $e');
+      }
+    }
+  }
+
+  Future<void> selectLicenseImage(BuildContext context) async {
+    final ImageSource? source = await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: const Text('Gallery'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.gallery);
+                  },
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  child: const Text('Camera'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.camera);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (source != null) {
+      try {
+        final pickedFile = await ImagePicker().pickImage(
+          source: source,
+          imageQuality: 70,
+        );
+
+        if (pickedFile != null) {
+          _controllers.setLicenseImage(pickedFile.path);
+          uiState.value = currentUiState.copyWith();
+        }
+      } catch (e) {
+        debugPrint('Error picking image: $e');
+        await showMessage(message: 'Failed to pick image: $e');
+      }
+    }
+  }
+
+  Future<void> selectVehicleImage(BuildContext context) async {
+    final ImageSource? source = await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: const Text('Gallery'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.gallery);
+                  },
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  child: const Text('Camera'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.camera);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (source != null) {
+      try {
+        final pickedFile = await ImagePicker().pickImage(
+          source: source,
+          imageQuality: 70,
+        );
+
+        if (pickedFile != null) {
+          _controllers.setVehicleImage(pickedFile.path);
+          uiState.value = currentUiState.copyWith();
+        }
+      } catch (e) {
+        debugPrint('Error picking image: $e');
+        await showMessage(message: 'Failed to pick image: $e');
+      }
+    }
+  }
 
   // Registration completion
   Future<void> completeRegistration(BuildContext context) async {

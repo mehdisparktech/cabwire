@@ -11,6 +11,7 @@ import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_screen_wrapper.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_form_container.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_validators.dart';
+import 'dart:io';
 
 /// Screen for confirming driver's personal information
 ///
@@ -32,7 +33,7 @@ class ConfirmInformationScreen extends StatelessWidget {
           // Profile Picture Upload
           Center(
             child: GestureDetector(
-              onTap: () => presenter.uploadProfilePicture(),
+              onTap: () => presenter.uploadProfilePicture(context),
               child: Stack(
                 children: [
                   Container(
@@ -45,10 +46,11 @@ class ConfirmInformationScreen extends StatelessWidget {
                     child:
                         presenter.profileImagePath != null
                             ? ClipOval(
-                              child: Icon(
-                                Icons.person,
-                                size: px60,
-                                color: Colors.white,
+                              child: Image.file(
+                                File(presenter.profileImagePath!),
+                                width: px120,
+                                height: px120,
+                                fit: BoxFit.cover,
                               ),
                             )
                             : Icon(

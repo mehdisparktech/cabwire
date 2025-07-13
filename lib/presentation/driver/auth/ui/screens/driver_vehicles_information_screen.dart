@@ -1,6 +1,7 @@
 // ignore_for_file: unused_import
 
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
@@ -10,6 +11,7 @@ import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presen
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_login_screen.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 import '../../../../common/components/auth/custom_text_form_field.dart';
 import '../../../../common/components/auth/custom_button.dart';
 import '../../../../common/components/auth/auth_screen_wrapper.dart';
@@ -110,8 +112,27 @@ class VehiclesInformationScreen extends StatelessWidget {
         hintText: 'Upload Your Vehicles Picture',
         readOnly: true,
         suffixIcon: const Icon(Icons.add_a_photo_outlined),
-        onTap: () => presenter.selectVehicleImage(),
+        onTap: () => presenter.selectVehicleImage(context),
       ),
+      gapH20,
+      // Vehicle image preview
+      if (presenter.vehicleImagePath != null)
+        Container(
+          width: double.infinity,
+          height: px180,
+          margin: EdgeInsets.symmetric(vertical: px10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(px8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(px8),
+            child: Image.file(
+              File(presenter.vehicleImagePath!),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
       gapH20,
       CustomTextFormField(
         controller: presenter.vehicleCategoryController,
