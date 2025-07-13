@@ -56,6 +56,15 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       TextEditingController();
   final TextEditingController drivingLicenseIssuingDateController =
       TextEditingController();
+  final TextEditingController vehiclesRegistrationNumberController =
+      TextEditingController();
+  final TextEditingController vehiclesInsuranceNumberController =
+      TextEditingController();
+  final TextEditingController vehiclesMakeController = TextEditingController();
+  final TextEditingController vehiclesModelController = TextEditingController();
+  final TextEditingController vehiclesYearController = TextEditingController();
+  final TextEditingController vehiclesCategoryController =
+      TextEditingController();
   // Add controllers for other driving info fields if any
 
   // Contact Us
@@ -112,6 +121,12 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       licenseNumber: 'DL12345XYZ',
       licenseExpiryDate: '2028-12-31',
       licenseIssueDate: '2018-01-01',
+      vehiclesRegistrationNumber: '1234567890',
+      vehiclesInsuranceNumber: '1234567890',
+      vehiclesMake: 'Toyota',
+      vehiclesModel: 'Corolla',
+      vehiclesYear: '2020',
+      vehiclesCategory: 'Car',
     );
 
     uiState.value = currentUiState.copyWith(
@@ -138,6 +153,12 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     drivingLicenseNumberController.text = info.licenseNumber;
     drivingLicenseExpiryDateController.text = info.licenseExpiryDate;
     drivingLicenseIssuingDateController.text = info.licenseIssueDate;
+    vehiclesRegistrationNumberController.text = info.vehiclesRegistrationNumber;
+    vehiclesInsuranceNumberController.text = info.vehiclesInsuranceNumber;
+    vehiclesMakeController.text = info.vehiclesMake;
+    vehiclesModelController.text = info.vehiclesModel;
+    vehiclesYearController.text = info.vehiclesYear;
+    vehiclesCategoryController.text = info.vehiclesCategory;
   }
 
   @override

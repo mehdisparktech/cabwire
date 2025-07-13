@@ -62,12 +62,24 @@ class DrivingInfoData {
   final String licenseNumber;
   final String licenseExpiryDate;
   final String licenseIssueDate;
+  final String vehiclesRegistrationNumber;
+  final String vehiclesInsuranceNumber;
+  final String vehiclesMake;
+  final String vehiclesModel;
+  final String vehiclesYear;
+  final String vehiclesCategory;
   // Add other driving-specific fields
 
   const DrivingInfoData({
     required this.licenseNumber,
     required this.licenseExpiryDate,
     required this.licenseIssueDate,
+    required this.vehiclesRegistrationNumber,
+    required this.vehiclesInsuranceNumber,
+    required this.vehiclesMake,
+    required this.vehiclesModel,
+    required this.vehiclesYear,
+    required this.vehiclesCategory,
   });
 
   factory DrivingInfoData.empty() {
@@ -75,6 +87,12 @@ class DrivingInfoData {
       licenseNumber: '',
       licenseExpiryDate: '',
       licenseIssueDate: '',
+      vehiclesRegistrationNumber: '',
+      vehiclesInsuranceNumber: '',
+      vehiclesMake: '',
+      vehiclesModel: '',
+      vehiclesYear: '',
+      vehiclesCategory: '',
     );
   }
 
@@ -82,11 +100,25 @@ class DrivingInfoData {
     String? licenseNumber,
     String? licenseExpiryDate,
     String? licenseIssueDate,
+    String? vehiclesRegistrationNumber,
+    String? vehiclesInsuranceNumber,
+    String? vehiclesMake,
+    String? vehiclesModel,
+    String? vehiclesYear,
+    String? vehiclesCategory,
   }) {
     return DrivingInfoData(
       licenseNumber: licenseNumber ?? this.licenseNumber,
       licenseExpiryDate: licenseExpiryDate ?? this.licenseExpiryDate,
       licenseIssueDate: licenseIssueDate ?? this.licenseIssueDate,
+      vehiclesRegistrationNumber:
+          vehiclesRegistrationNumber ?? this.vehiclesRegistrationNumber,
+      vehiclesInsuranceNumber:
+          vehiclesInsuranceNumber ?? this.vehiclesInsuranceNumber,
+      vehiclesMake: vehiclesMake ?? this.vehiclesMake,
+      vehiclesModel: vehiclesModel ?? this.vehiclesModel,
+      vehiclesYear: vehiclesYear ?? this.vehiclesYear,
+      vehiclesCategory: vehiclesCategory ?? this.vehiclesCategory,
     );
   }
 }

@@ -67,9 +67,45 @@ class EditDrivingInfoScreen extends StatelessWidget {
                         ),
                         // Add more fields as needed, your original code had duplicates
                         // For example:
-                        // gapH20,
-                        // CommonText(text: 'Vehicle Registration Number'), gapH10,
-                        // CustomTextFormField(hintText: 'Enter Vehicle Reg. No.', controller: presenter.vehicleRegNoController),
+                        gapH20,
+                        CommonText(text: 'Vehicle Registration Number'), gapH10,
+                        CustomTextFormField(
+                          hintText: 'Enter Vehicle Reg. No.',
+                          controller:
+                              presenter.vehiclesRegistrationNumberController,
+                        ),
+                        gapH20,
+                        CommonText(text: 'Vehicle Insurance Number'), gapH10,
+                        CustomTextFormField(
+                          hintText: 'Enter Vehicle Insurance No.',
+                          controller:
+                              presenter.vehiclesInsuranceNumberController,
+                        ),
+                        gapH20,
+                        CommonText(text: 'Vehicle Make'), gapH10,
+                        CustomTextFormField(
+                          hintText: 'Enter Vehicle Make',
+                          controller: presenter.vehiclesMakeController,
+                        ),
+                        gapH20,
+                        CommonText(text: 'Vehicle Model'), gapH10,
+                        CustomTextFormField(
+                          hintText: 'Enter Vehicle Model',
+                          controller: presenter.vehiclesModelController,
+                        ),
+                        gapH20,
+                        CommonText(text: 'Vehicle Year'), gapH10,
+                        CustomTextFormField(
+                          hintText: 'Enter Vehicle Year',
+                          controller: presenter.vehiclesYearController,
+                        ),
+                        gapH20,
+                        CommonText(text: 'Vehicle Category'), gapH10,
+                        CustomTextFormField(
+                          hintText: 'Enter Vehicle Category',
+                          controller: presenter.vehiclesCategoryController,
+                        ),
+                        gapH20,
                       ],
                     ),
                   ),
