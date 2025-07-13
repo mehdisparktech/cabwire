@@ -91,10 +91,10 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
           userProfile: UserProfileData(
             name: profile.name ?? '',
             email: profile.email ?? '',
-            phoneNumber: profile.contact ?? '',
+            phoneNumber: profile.contact ?? '01823450011',
             avatarUrl: AppAssets.icProfileImage,
-            dateOfBirth: profile.dateOfBirth ?? '',
-            gender: profile.gender ?? '',
+            dateOfBirth: profile.dateOfBirth ?? '1994-11-15',
+            gender: profile.gender ?? 'Male',
           ),
         );
       }
@@ -120,18 +120,21 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     // );
 
     final fetchedDrivingInfo = DrivingInfoData(
-      licenseNumber: profile?.driverLicense?.licenseNumber.toString() ?? '',
+      licenseNumber:
+          profile?.driverLicense?.licenseNumber.toString() ?? '22222222',
       licenseExpiryDate:
-          profile?.driverLicense?.licenseExpiryDate.toString() ?? '',
+          profile?.driverLicense?.licenseExpiryDate.toString() ?? '2025-01-01',
       licenseIssueDate: '2023-01-01',
       vehiclesRegistrationNumber:
-          profile?.driverVehicles?.vehiclesRegistrationNumber.toString() ?? '',
+          profile?.driverVehicles?.vehiclesRegistrationNumber.toString() ??
+          '123456789',
       vehiclesInsuranceNumber:
-          profile?.driverVehicles?.vehiclesInsuranceNumber.toString() ?? '',
-      vehiclesMake: profile?.driverVehicles?.vehiclesMake ?? '',
-      vehiclesModel: profile?.driverVehicles?.vehiclesModel ?? '',
-      vehiclesYear: profile?.driverVehicles?.vehiclesYear ?? '',
-      vehiclesCategory: profile?.driverVehicles?.vehiclesCategory ?? '',
+          profile?.driverVehicles?.vehiclesInsuranceNumber.toString() ??
+          '333333333',
+      vehiclesMake: profile?.driverVehicles?.vehiclesMake ?? 'Toyota',
+      vehiclesModel: profile?.driverVehicles?.vehiclesModel ?? 'Civic',
+      vehiclesYear: profile?.driverVehicles?.vehiclesYear ?? '2020',
+      vehiclesCategory: profile?.driverVehicles?.vehiclesCategory ?? 'Sedan',
     );
 
     uiState.value = currentUiState.copyWith(
