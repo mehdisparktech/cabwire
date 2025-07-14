@@ -1,8 +1,10 @@
 import 'package:cabwire/data/repositories/driver/driver_auth_repository_impl.dart';
 import 'package:cabwire/data/repositories/notifications_repository_impl.dart';
 import 'package:cabwire/data/repositories/passenger/passenger_auth_repository_impl.dart';
+import 'package:cabwire/data/repositories/passenger/reset_password_repository_impl.dart';
 import 'package:cabwire/domain/repositories/notifications_repository.dart';
 import 'package:cabwire/domain/repositories/passenger/passenger_auth_repository.dart';
+import 'package:cabwire/domain/repositories/passenger/reset_password_repository.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
@@ -78,6 +80,9 @@ class RepositorySetup implements SetupModule {
       )
       ..registerLazySingleton<DriverEarningsRepository>(
         () => DriverEarningsRepositoryImpl(locate()),
+      )
+      ..registerLazySingleton<ResetPasswordRepository>(
+        () => ResetPasswordRepositoryImpl(locate(), locate()),
       );
   }
 }

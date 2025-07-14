@@ -1,6 +1,7 @@
 import 'package:cabwire/data/datasources/remote/driver/driver_earnings_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/notification_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/passenger/passenger_auth_remote_data_source.dart';
+import 'package:cabwire/data/datasources/remote/passenger/reset_password_remote_data_source.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
@@ -66,6 +67,9 @@ class DatasourceSetup implements SetupModule {
       )
       ..registerLazySingleton<DriverEarningsRemoteDataSource>(
         () => DriverEarningsRemoteDataSourceImpl(),
+      )
+      ..registerLazySingleton<ResetPasswordRemoteDataSource>(
+        () => ResetPasswordRemoteDataSourceImpl(locate()),
       );
   }
 }

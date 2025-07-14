@@ -1,12 +1,14 @@
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/usecases/passenger/reset_password_usecase.dart';
 import 'package:cabwire/presentation/passenger/passenger_profile/presenter/passenger_edit_password_ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PassengerEditPasswordPresenter
     extends BasePresenter<PassengerEditPasswordUiState> {
-  //final ResetPasswordUseCase _resetPasswordUseCase;
+  final ResetPasswordUseCase _resetPasswordUseCase;
 
   final Obs<PassengerEditPasswordUiState> uiState =
       Obs<PassengerEditPasswordUiState>(PassengerEditPasswordUiState.empty());
@@ -19,7 +21,7 @@ class PassengerEditPasswordPresenter
   final TextEditingController confirmNewPasswordController =
       TextEditingController();
 
-  PassengerEditPasswordPresenter();
+  PassengerEditPasswordPresenter(this._resetPasswordUseCase);
 
   Future<void> savePassword() async {
     if (newPasswordController.text != confirmNewPasswordController.text) {
@@ -30,16 +32,33 @@ class PassengerEditPasswordPresenter
       addUserMessage("New password must be at least 6 characters.");
       return;
     }
+
     toggleLoading(loading: true);
-    // Simulate API call
+
+    final params = ResetPasswordParams(
+      currentPassword: currentPasswordController.text,
+      newPassword: newPasswordController.text,
+      confirmPassword: confirmNewPasswordController.text,
+    );
+
     appLog(
       "Changing password. Old: ${currentPasswordController.text}, New: ${newPasswordController.text}",
     );
-    await Future.delayed(const Duration(seconds: 2));
-    // Assume success
-    toggleLoading(loading: false);
-    addUserMessage("Password changed successfully!");
-    Get.back();
+
+    final result = await _resetPasswordUseCase.execute(params);
+
+    result.fold(
+      (error) {
+        toggleLoading(loading: false);
+        addUserMessage(error);
+      },
+      (_) {
+        toggleLoading(loading: false);
+        addUserMessage("Password changed successfully!");
+        showMessage(message: uiState.value.userMessage);
+        Get.back();
+      },
+    );
   }
 
   @override

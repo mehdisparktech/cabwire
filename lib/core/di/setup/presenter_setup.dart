@@ -139,7 +139,7 @@ class PresenterSetup implements SetupModule {
         () => loadPresenter(PackagePaymentMethodPresenter()),
       )
       ..registerLazySingleton(
-        () => loadPresenter(PassengerEditPasswordPresenter()),
+        () => loadPresenter(PassengerEditPasswordPresenter(locate())),
       );
     _setupPassengerPresenters();
   }
