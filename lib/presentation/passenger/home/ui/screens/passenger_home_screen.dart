@@ -78,8 +78,9 @@ class PassengerHomeScreen extends StatelessWidget {
             'Hello ${presenter.currentUiState.userProfile?.name},',
             style: TextStyle(fontSize: 16.px, fontWeight: FontWeight.bold),
           ),
+          SizedBox(height: 4.px),
           Text(
-            '36 East 8th Street, New York, NY 10003, United States.',
+            presenter.currentUiState.currentAddress ?? 'Loading...',
             style: TextStyle(fontSize: 12.px),
             maxLines: 2,
           ),

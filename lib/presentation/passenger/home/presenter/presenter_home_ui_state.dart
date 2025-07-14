@@ -9,6 +9,7 @@ class PassengerHomeUiState extends BaseUiState {
   final String? error;
   final PassengerCategoryEntity? selectedCategory;
   final LatLng? currentLocation;
+  final String? currentAddress;
   final LatLng? selectedPickupLocation;
   final LatLng? destinationLocation;
   final String? pickupAddress;
@@ -22,6 +23,7 @@ class PassengerHomeUiState extends BaseUiState {
     this.error,
     this.selectedCategory,
     this.currentLocation,
+    this.currentAddress,
     this.selectedPickupLocation,
     this.destinationLocation,
     this.pickupAddress,
@@ -53,6 +55,7 @@ class PassengerHomeUiState extends BaseUiState {
     error,
     selectedCategory,
     currentLocation,
+    currentAddress,
     selectedPickupLocation,
     destinationLocation,
     pickupAddress,
@@ -67,6 +70,7 @@ class PassengerHomeUiState extends BaseUiState {
     String? error,
     PassengerCategoryEntity? selectedCategory,
     LatLng? currentLocation,
+    String? currentAddress,
     LatLng? selectedPickupLocation,
     LatLng? destinationLocation,
     String? pickupAddress,
@@ -80,6 +84,7 @@ class PassengerHomeUiState extends BaseUiState {
       error: error ?? this.error,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       currentLocation: currentLocation ?? this.currentLocation,
+      currentAddress: currentAddress ?? this.currentAddress,
       selectedPickupLocation:
           selectedPickupLocation ?? this.selectedPickupLocation,
       destinationLocation: destinationLocation ?? this.destinationLocation,

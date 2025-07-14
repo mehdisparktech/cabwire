@@ -9,6 +9,8 @@ import 'package:cabwire/domain/usecases/passenger/get_passenger_services_usecase
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_ui_state.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 
 class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
   final GetPassengerServicesUseCase _getPassengerServicesUseCase;
@@ -62,6 +64,25 @@ class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
 
   Set<Marker> get markers => _markers;
 
+  // Helper method to get address from coordinates
+  Future<String> getAddressFromLatLng(LatLng latLng) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        latLng.latitude,
+        latLng.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        final place = placemarks[0];
+        return '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}';
+      }
+      return 'Address not found';
+    } catch (e) {
+      debugPrint('Error getting address: $e');
+      return 'Unable to get address';
+    }
+  }
+
   Future<void> getCurrentLocation() async {
     try {
       await toggleLoading(loading: true);
@@ -77,15 +98,19 @@ class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
             'Unable to get your location. Using default location.',
           );
         },
-        (locationEntity) {
+        (locationEntity) async {
           final currentLatLng = LatLng(
             locationEntity.latitude,
             locationEntity.longitude,
           );
 
+          // Get address string from coordinates
+          final addressString = await getAddressFromLatLng(currentLatLng);
+
           uiState.value = currentUiState.copyWith(
             isLoading: false,
             currentLocation: currentLatLng,
+            currentAddress: addressString,
             selectedPickupLocation:
                 currentLatLng, // Set current location as initial pickup
           );
