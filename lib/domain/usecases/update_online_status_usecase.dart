@@ -1,5 +1,5 @@
 import 'package:cabwire/core/base/result.dart';
-import 'package:cabwire/domain/repositories/driver_repository.dart';
+import 'package:cabwire/domain/repositories/driver/driver_repository.dart';
 import 'package:equatable/equatable.dart';
 
 class UpdateStatusParams extends Equatable {

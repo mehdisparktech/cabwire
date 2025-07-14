@@ -42,7 +42,7 @@ class PaymentEntity extends BaseEntity {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  PaymentEntity({
+  const PaymentEntity({
     this.id,
     this.rideId,
     this.userId,

@@ -111,7 +111,7 @@ class PassengerProfileScreen extends StatelessWidget {
                               text:
                                   profile.name.isNotEmpty
                                       ? profile.name
-                                      : "Passenger Name",
+                                      : "Mehdi Hasan",
                             ),
                             CommonText(
                               fontSize: 16.px,

@@ -1,6 +1,6 @@
 import 'package:cabwire/core/base/result.dart';
 import 'package:cabwire/domain/entities/contact_us_entity.dart';
-import 'package:cabwire/domain/repositories/driver_profile_repository.dart';
+import 'package:cabwire/domain/repositories/driver/driver_profile_repository.dart';
 import 'package:equatable/equatable.dart';
 
 class DriverContactParams extends Equatable {

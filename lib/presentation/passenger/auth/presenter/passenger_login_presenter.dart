@@ -2,16 +2,16 @@ import 'package:cabwire/core/config/themes.dart';
 import 'package:cabwire/core/enum/user_type.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/usecases/passenger_sign_in_usecase.dart';
 import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/presentation/passenger/auth/presenter/passenger_login_ui_state.dart';
-import 'package:cabwire/domain/usecases/driver/sign_in_usecase.dart';
 import 'package:get/get.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 
 class PassengerLoginPresenter extends BasePresenter<PassengerLoginUiState> {
-  final SignInUsecase _signInUsecase;
+  final PassengerSignInUsecase _signInUsecase;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
@@ -20,7 +20,6 @@ class PassengerLoginPresenter extends BasePresenter<PassengerLoginUiState> {
   final Obs<PassengerLoginUiState> uiState = Obs(PassengerLoginUiState.empty());
   PassengerLoginUiState get currentUiState => uiState.value;
 
-  // final LoginUseCase _loginUseCase;
   PassengerLoginPresenter(this._signInUsecase);
 
   @override

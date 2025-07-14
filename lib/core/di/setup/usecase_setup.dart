@@ -14,6 +14,7 @@ import 'package:cabwire/domain/usecases/driver/verify_email_usecase.dart';
 import 'package:cabwire/domain/usecases/notifications_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/cencel_ride_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/verify_email_usecase.dart';
+import 'package:cabwire/domain/usecases/passenger_sign_in_usecase.dart';
 import 'package:cabwire/domain/usecases/update_online_status_usecase.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/service_locator.dart';
@@ -79,6 +80,7 @@ class UsecaseSetup implements SetupModule {
       ..registerLazySingleton(() => CompleteRideUseCase(locate()))
       ..registerLazySingleton(() => CancelRideUseCase(locate(), locate()))
       ..registerLazySingleton(() => NotificationsUseCase(locate(), locate()))
-      ..registerLazySingleton(() => GetDriverEarningsUseCase(locate()));
+      ..registerLazySingleton(() => GetDriverEarningsUseCase(locate()))
+      ..registerLazySingleton(() => PassengerSignInUsecase(locate()));
   }
 }

@@ -164,10 +164,18 @@ class LocalStorage {
     await localStorage.setInt(key, value);
   }
 
-  static Future<void> saveDriverProfile(ProfileModel profile) async {
+  static Future<void> saveDriverProfile(DriverProfileModel profile) async {
     final localStorage = await _getStorage();
     await localStorage.setString(
       CacheKeys.driverProfile,
+      json.encode(profile.toJson()),
+    );
+  }
+
+  static Future<void> savePassengerProfile(ProfileModel profile) async {
+    final localStorage = await _getStorage();
+    await localStorage.setString(
+      CacheKeys.passengerProfile,
       json.encode(profile.toJson()),
     );
   }
@@ -189,5 +197,10 @@ class LocalStorage {
   static Future<void> removeDriverProfile() async {
     final localStorage = await _getStorage();
     await localStorage.remove(CacheKeys.driverProfile);
+  }
+
+  static Future<void> removePassengerProfile() async {
+    final localStorage = await _getStorage();
+    await localStorage.remove(CacheKeys.passengerProfile);
   }
 }

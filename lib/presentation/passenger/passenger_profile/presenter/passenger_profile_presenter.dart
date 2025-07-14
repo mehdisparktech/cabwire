@@ -62,7 +62,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
 
     // Populate with fetched data
     final fetchedPassengerProfile = PassengerProfileData(
-      name: profile?.name ?? '',
+      name: profile?.name ?? 'Mehdi Hasan',
       email: profile?.email ?? '',
       phoneNumber: '01682015735',
       avatarUrl: AppAssets.icProfileImage, // Placeholder or actual URL

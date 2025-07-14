@@ -1,6 +1,6 @@
 import 'package:cabwire/core/base/result.dart';
 import 'package:cabwire/domain/entities/signin_response_entity.dart';
-import 'package:cabwire/domain/repositories/driver_auth_repository.dart';
+import 'package:cabwire/domain/repositories/driver/driver_auth_repository.dart';
 
 class SignInUsecase {
   final DriverAuthRepository repository;

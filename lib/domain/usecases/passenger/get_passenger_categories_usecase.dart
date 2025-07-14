@@ -1,6 +1,6 @@
 import 'package:cabwire/data/services/api/api_failure.dart';
 import 'package:cabwire/domain/entities/passenger/passenger_category_entity.dart';
-import 'package:cabwire/domain/repositories/passenger_category_repository.dart';
+import 'package:cabwire/domain/repositories/passenger/passenger_category_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
 class GetPassengerCategoriesUseCase {

@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:cabwire/domain/repositories/passenger_repository.dart';
+import 'package:cabwire/domain/repositories/passenger/passenger_repository.dart';
 
 class CreatePassengerUseCase {
   final PassengerRepository _repository;
