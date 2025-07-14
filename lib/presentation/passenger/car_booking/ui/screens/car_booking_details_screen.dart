@@ -3,12 +3,13 @@
 // ensure it uses presenter.currentUiState.selectedRideDetails)
 
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/sucessfull_screen.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/passenger_profile_widget.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/ui/widgets/passenger_route_information_widget.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final presenter = locate<RideSharePresenter>();
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Trip Details',
@@ -161,7 +163,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               TextField(
-                controller: TextEditingController(),
+                controller: presenter.commentController,
                 readOnly: false,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -203,10 +205,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                 isPrimary: true,
                 text: 'Submit Feedback',
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SucessfullScreen()),
-                  );
+                  presenter.submitFeedback();
                 },
               ),
             ],

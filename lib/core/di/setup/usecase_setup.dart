@@ -17,6 +17,7 @@ import 'package:cabwire/domain/usecases/passenger/reset_password_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/verify_email_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger_sign_in_usecase.dart';
 import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
+import 'package:cabwire/domain/usecases/submit_review_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
 import 'package:cabwire/domain/usecases/update_online_status_usecase.dart';
 import 'package:get_it/get_it.dart';
@@ -87,6 +88,7 @@ class UsecaseSetup implements SetupModule {
       ..registerLazySingleton(() => PassengerSignInUsecase(locate()))
       ..registerLazySingleton(() => ResetPasswordUseCase(locate()))
       ..registerLazySingleton(() => TermsAndConditionsUsecase(locate()))
-      ..registerLazySingleton(() => PrivacyAndPolicyUsecase(locate()));
+      ..registerLazySingleton(() => PrivacyAndPolicyUsecase(locate()))
+      ..registerLazySingleton(() => SubmitReviewUseCase(locate()));
   }
 }

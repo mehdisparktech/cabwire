@@ -15,8 +15,11 @@ import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:cabwire/domain/usecases/location/get_location_updates_usecase.dart';
+import 'package:cabwire/domain/usecases/submit_review_usecase.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/car_booking_details_screen.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_trip_close_otp_page.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/sucessfull_screen.dart'
+    show SucessfullScreen;
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
@@ -30,6 +33,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       locate<GetCurrentLocationUsecase>();
   final GetLocationUpdatesUsecase _getLocationUpdatesUsecase =
       locate<GetLocationUpdatesUsecase>();
+  final SubmitReviewUseCase submitReviewUseCase;
   Timer? _reconnectTimer;
   Timer? _timeUpdateTimer; // Timer for updating the remaining time
   final PolylinePoints _polylinePoints = PolylinePoints();
@@ -38,10 +42,16 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   final Obs<RideShareUiState> uiState;
   RideShareUiState get currentUiState => uiState.value;
 
-  RideSharePresenter({String rideId = '', rideResponse})
-    : uiState = Obs<RideShareUiState>(
-        RideShareUiState.empty(rideId: rideId, rideResponse: rideResponse),
-      ) {
+  final TextEditingController commentController = TextEditingController();
+  final TextEditingController ratingController = TextEditingController();
+
+  RideSharePresenter({
+    String rideId = '',
+    rideResponse,
+    required this.submitReviewUseCase,
+  }) : uiState = Obs<RideShareUiState>(
+         RideShareUiState.empty(rideId: rideId, rideResponse: rideResponse),
+       ) {
     if (rideId.isNotEmpty && rideResponse != null) {
       _initialize();
     }
@@ -768,6 +778,35 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
           );
         }
       });
+    }
+  }
+
+  Future<void> submitFeedback() async {
+    toggleLoading(loading: true);
+    final comment = commentController.text;
+    final rating = 4;
+    try {
+      final result = await submitReviewUseCase.execute(
+        SubmitReviewParams(
+          serviceType: 'Cabwire',
+          serviceId: currentUiState.rideResponse?.data.id ?? '',
+          comment: comment,
+          rating: rating,
+        ),
+      );
+      result.fold(
+        (error) {
+          CustomToast(message: error);
+        },
+        (success) {
+          CustomToast(message: success);
+          Get.offAll(() => SucessfullScreen());
+        },
+      );
+    } catch (e) {
+      CustomToast(message: e.toString());
+    } finally {
+      toggleLoading(loading: false);
     }
   }
 }
