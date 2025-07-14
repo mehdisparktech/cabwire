@@ -89,6 +89,7 @@ class LocationService {
       return LocationModel(
         latitude: position.latitude,
         longitude: position.longitude,
+        speed: position.speed, // Include speed data from Position
       );
     } catch (e) {
       debugPrint('Error getting current location: $e');
@@ -115,6 +116,7 @@ class LocationService {
         final locationModel = LocationModel(
           latitude: position.latitude,
           longitude: position.longitude,
+          speed: position.speed, // Include speed data from Position
         );
         _locationController.add(locationModel);
       },

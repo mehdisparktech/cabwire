@@ -15,6 +15,7 @@ class RideShareUiState extends BaseUiState {
   final LatLng? driverLocation;
   final LatLng? currentUserLocation;
   final double userHeading;
+  final double? currentSpeed; // Current speed in m/s from GPS
   final List<LatLng>? polylineCoordinates;
   final LatLng sourceMapCoordinates;
   final LatLng destinationMapCoordinates;
@@ -38,6 +39,7 @@ class RideShareUiState extends BaseUiState {
     this.driverLocation,
     this.currentUserLocation,
     this.userHeading = 0.0,
+    this.currentSpeed, // Current speed parameter
     this.polylineCoordinates,
     required this.sourceMapCoordinates,
     required this.destinationMapCoordinates,
@@ -66,6 +68,7 @@ class RideShareUiState extends BaseUiState {
       driverLocation: null,
       currentUserLocation: null,
       userHeading: 0.0,
+      currentSpeed: null, // Initialize with no speed
       polylineCoordinates: null,
       // Default location in Dhaka
       sourceMapCoordinates: const LatLng(23.759112, 90.429365),
@@ -93,6 +96,7 @@ class RideShareUiState extends BaseUiState {
     driverLocation,
     currentUserLocation,
     userHeading,
+    currentSpeed,
     polylineCoordinates,
     sourceMapCoordinates,
     destinationMapCoordinates,
@@ -117,6 +121,7 @@ class RideShareUiState extends BaseUiState {
     LatLng? driverLocation,
     LatLng? currentUserLocation,
     double? userHeading,
+    double? currentSpeed,
     List<LatLng>? polylineCoordinates,
     LatLng? sourceMapCoordinates,
     LatLng? destinationMapCoordinates,
@@ -141,6 +146,7 @@ class RideShareUiState extends BaseUiState {
       driverLocation: driverLocation ?? this.driverLocation,
       currentUserLocation: currentUserLocation ?? this.currentUserLocation,
       userHeading: userHeading ?? this.userHeading,
+      currentSpeed: currentSpeed ?? this.currentSpeed,
       polylineCoordinates: polylineCoordinates ?? this.polylineCoordinates,
       sourceMapCoordinates: sourceMapCoordinates ?? this.sourceMapCoordinates,
       destinationMapCoordinates:

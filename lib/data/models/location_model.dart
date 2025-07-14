@@ -8,12 +8,14 @@ class LocationModel {
   final double longitude;
   final String? address;
   final bool isDefault;
+  final double? speed; // Speed in meters per second
 
   const LocationModel({
     required this.latitude,
     required this.longitude,
     this.address,
     this.isDefault = false,
+    this.speed, // Speed is optional
   });
 
   /// Create from JSON map
@@ -23,6 +25,7 @@ class LocationModel {
       longitude: (json['longitude'] ?? json['lng'] ?? 0.0) as double,
       address: json['address'] as String?,
       isDefault: json['isDefault'] as bool? ?? false,
+      speed: json['speed'] as double?,
     );
   }
 
@@ -33,6 +36,7 @@ class LocationModel {
       'longitude': longitude,
       if (address != null) 'address': address,
       'isDefault': isDefault,
+      if (speed != null) 'speed': speed,
     };
   }
 
@@ -43,6 +47,7 @@ class LocationModel {
       longitude: entity.longitude,
       address: entity.address,
       isDefault: entity.isDefault,
+      speed: entity.speed,
     );
   }
 
@@ -53,6 +58,7 @@ class LocationModel {
       longitude: longitude,
       address: address,
       isDefault: isDefault,
+      speed: speed,
     );
   }
 
@@ -62,12 +68,14 @@ class LocationModel {
     double? longitude,
     String? address,
     bool? isDefault,
+    double? speed,
   }) {
     return LocationModel(
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       address: address ?? this.address,
       isDefault: isDefault ?? this.isDefault,
+      speed: speed ?? this.speed,
     );
   }
 }

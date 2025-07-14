@@ -93,7 +93,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   // Start the timer to update the remaining time
   void _startTimeUpdates() {
     _timeUpdateTimer?.cancel();
-    _timeUpdateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _timeUpdateTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       _updateEstimatedTimeRemaining();
     });
   }
@@ -101,9 +101,10 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   // Calculate the estimated time based on the current location and destination
   void _updateEstimatedTimeRemaining() {
     // Skip if we don't have driver location
-    if (currentUiState.driverLocation == null) {
-      return;
-    }
+    appLog("Current location: ${currentUiState.currentUserLocation}");
+    // if (currentUiState.driverLocation == null) {
+    //   return;
+    // }
 
     LatLng targetLocation;
     double averageSpeedMps;
@@ -112,15 +113,41 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     if (currentUiState.isRideStart) {
       // Skip if we don't have source coordinates
       targetLocation = currentUiState.sourceMapCoordinates;
-      // Assume slower speed (25 km/h) when heading to pickup
-      averageSpeedMps = 6.94; // 25 km/h in m/s
+
+      // Use real-time speed if available, otherwise use default
+      if (currentUiState.currentSpeed != null &&
+          currentUiState.currentSpeed! > 0) {
+        averageSpeedMps = currentUiState.currentSpeed!;
+        appLog(
+          "Using real-time speed for calculations: ${averageSpeedMps.toStringAsFixed(2)} m/s",
+        );
+      } else {
+        // Fallback to default speed (25 km/h) when heading to pickup
+        averageSpeedMps = 6.94; // 25 km/h in m/s
+        appLog(
+          "Using default speed for pickup: ${averageSpeedMps.toStringAsFixed(2)} m/s",
+        );
+      }
     }
     // If ride is in progress, calculate time to destination
     else if (currentUiState.isRideProcessing) {
       // Skip if we don't have destination coordinates
       targetLocation = currentUiState.destinationMapCoordinates;
-      // Assume average speed of 30 km/h when in ride
-      averageSpeedMps = 8.33; // 30 km/h in m/s
+
+      // Use real-time speed if available, otherwise use default
+      if (currentUiState.currentSpeed != null &&
+          currentUiState.currentSpeed! > 0) {
+        averageSpeedMps = currentUiState.currentSpeed!;
+        appLog(
+          "Using real-time speed for calculations: ${averageSpeedMps.toStringAsFixed(2)} m/s",
+        );
+      } else {
+        // Fallback to default speed (30 km/h) when in ride
+        averageSpeedMps = 8.33; // 30 km/h in m/s
+        appLog(
+          "Using default speed for ride: ${averageSpeedMps.toStringAsFixed(2)} m/s",
+        );
+      }
     }
     // Neither in start nor processing state
     else {
@@ -129,9 +156,11 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
     // Get the distance between driver and target location
     final distanceInMeters = _calculateDistance(
-      currentUiState.driverLocation!,
+      currentUiState.currentUserLocation!,
       targetLocation,
     );
+
+    appLog("Distance in meters: $distanceInMeters");
 
     // Calculate estimated time
     final estimatedTimeInSeconds = (distanceInMeters / averageSpeedMps).round();
@@ -208,10 +237,20 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
               );
             }
 
+            // Get speed from location entity (in m/s)
+            final speed = location.speed;
+            appLog(
+              "Current speed: ${speed != null ? '${speed.toStringAsFixed(2)} m/s' : 'unavailable'}",
+            );
+
             uiState.value = currentUiState.copyWith(
               currentUserLocation: newLocation,
               userHeading: heading,
+              currentSpeed: speed,
             );
+
+            // Update time estimates with new speed
+            _updateEstimatedTimeRemaining();
 
             _setMapMarkers();
           },
