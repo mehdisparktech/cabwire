@@ -16,6 +16,17 @@ class PickupInfoWidget extends StatelessWidget {
     this.isRideEnd = false,
   });
 
+  // Format the time to show as hours and minutes or just minutes
+  String _formatTime(int minutes) {
+    if (minutes >= 60) {
+      final hours = minutes ~/ 60;
+      final mins = minutes % 60;
+      return '$hours h ${mins > 0 ? '$mins min' : ''}';
+    } else {
+      return '$minutes min';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -42,23 +53,8 @@ class PickupInfoWidget extends StatelessWidget {
           ),
           const SizedBox(width: 8),
 
-          // if (!isRideStart)
-          //   Container(
-          //     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          //     decoration: BoxDecoration(
-          //       color: context.theme.colorScheme.primary,
-          //       borderRadius: BorderRadius.circular(8),
-          //     ),
-          //     child: Text(
-          //       '$timerLeft min',
-          //       style: const TextStyle(
-          //         color: Colors.white,
-          //         fontSize: 12,
-          //         fontWeight: FontWeight.bold,
-          //       ),
-          //     ),
-          //   ),
-          if (isRideProcessing)
+          // Display timer for both ride start and ride processing
+          if (isRideStart || isRideProcessing)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
@@ -66,7 +62,7 @@ class PickupInfoWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                '$timerLeft min',
+                _formatTime(timerLeft),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,

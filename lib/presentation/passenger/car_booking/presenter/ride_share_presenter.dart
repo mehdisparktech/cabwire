@@ -31,6 +31,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   final GetLocationUpdatesUsecase _getLocationUpdatesUsecase =
       locate<GetLocationUpdatesUsecase>();
   Timer? _reconnectTimer;
+  Timer? _timeUpdateTimer; // Timer for updating the remaining time
   final PolylinePoints _polylinePoints = PolylinePoints();
   StreamSubscription? _locationSubscription;
 
@@ -50,7 +51,9 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   void onClose() {
     _locationSubscription?.cancel();
     _reconnectTimer?.cancel();
+    _timeUpdateTimer?.cancel(); // Cancel the timer update timer
     _reconnectTimer = null;
+    _timeUpdateTimer = null;
 
     // Remove socket listeners
     if (currentUiState.rideId.isNotEmpty) {
@@ -77,6 +80,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     _initializeLocations();
     _getCurrentUserLocation();
     _startLocationUpdates();
+    _startTimeUpdates(); // Start updating the time estimates
 
     // Add a small delay to ensure socket is connected before setting up listeners
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -84,6 +88,88 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     });
 
     _startReconnectMonitor();
+  }
+
+  // Start the timer to update the remaining time
+  void _startTimeUpdates() {
+    _timeUpdateTimer?.cancel();
+    _timeUpdateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _updateEstimatedTimeRemaining();
+    });
+  }
+
+  // Calculate the estimated time based on the current location and destination
+  void _updateEstimatedTimeRemaining() {
+    // Skip if we don't have driver location
+    if (currentUiState.driverLocation == null) {
+      return;
+    }
+
+    LatLng targetLocation;
+    double averageSpeedMps;
+
+    // If ride is starting, calculate time to pickup
+    if (currentUiState.isRideStart) {
+      // Skip if we don't have source coordinates
+      targetLocation = currentUiState.sourceMapCoordinates;
+      // Assume slower speed (25 km/h) when heading to pickup
+      averageSpeedMps = 6.94; // 25 km/h in m/s
+    }
+    // If ride is in progress, calculate time to destination
+    else if (currentUiState.isRideProcessing) {
+      // Skip if we don't have destination coordinates
+      targetLocation = currentUiState.destinationMapCoordinates;
+      // Assume average speed of 30 km/h when in ride
+      averageSpeedMps = 8.33; // 30 km/h in m/s
+    }
+    // Neither in start nor processing state
+    else {
+      return;
+    }
+
+    // Get the distance between driver and target location
+    final distanceInMeters = _calculateDistance(
+      currentUiState.driverLocation!,
+      targetLocation,
+    );
+
+    // Calculate estimated time
+    final estimatedTimeInSeconds = (distanceInMeters / averageSpeedMps).round();
+    final estimatedTimeInMinutes = (estimatedTimeInSeconds / 60).ceil();
+
+    // Update the state with new estimated time
+    if (estimatedTimeInMinutes != currentUiState.timerLeft ||
+        estimatedTimeInSeconds != currentUiState.estimatedTimeInSeconds) {
+      uiState.value = currentUiState.copyWith(
+        timerLeft: estimatedTimeInMinutes,
+        estimatedTimeInSeconds: estimatedTimeInSeconds,
+      );
+    }
+  }
+
+  // Calculate the distance between two points in meters
+  double _calculateDistance(LatLng point1, LatLng point2) {
+    const double earthRadius = 6371000; // Earth radius in meters
+
+    // Convert degrees to radians
+    final lat1 = point1.latitude * math.pi / 180;
+    final lng1 = point1.longitude * math.pi / 180;
+    final lat2 = point2.latitude * math.pi / 180;
+    final lng2 = point2.longitude * math.pi / 180;
+
+    // Haversine formula
+    final dLat = lat2 - lat1;
+    final dLng = lng2 - lng1;
+    final a =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(lat1) *
+            math.cos(lat2) *
+            math.sin(dLng / 2) *
+            math.sin(dLng / 2);
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+    final distance = earthRadius * c;
+
+    return distance;
   }
 
   Future<void> _getCurrentUserLocation() async {
@@ -145,12 +231,26 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       final dropoffLocation = currentUiState.rideResponse!.data.dropoffLocation;
 
       final pickupLatLng = LatLng(pickupLocation.lat, pickupLocation.lng);
-
       final dropoffLatLng = LatLng(dropoffLocation.lat, dropoffLocation.lng);
+
+      // Calculate initial estimated time based on the distance between pickup and dropoff
+      final distanceInMeters = _calculateDistance(pickupLatLng, dropoffLatLng);
+
+      // Calculate estimated time - assume average speed of 30 km/h (8.33 m/s)
+      const averageSpeedMps = 8.33;
+      final estimatedTimeInSeconds =
+          (distanceInMeters / averageSpeedMps).round();
+      final estimatedTimeInMinutes = (estimatedTimeInSeconds / 60).ceil();
+
+      appLog(
+        "Initial distance: $distanceInMeters meters, estimated time: $estimatedTimeInMinutes minutes",
+      );
 
       uiState.value = currentUiState.copyWith(
         sourceMapCoordinates: pickupLatLng,
         destinationMapCoordinates: dropoffLatLng,
+        timerLeft: estimatedTimeInMinutes,
+        estimatedTimeInSeconds: estimatedTimeInSeconds,
       );
 
       // Initialize markers and polyline
@@ -388,6 +488,30 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     appLog("Ride start event received: $data");
     uiState.value = currentUiState.copyWith(isRideStart: true);
 
+    // Calculate initial time estimate if we have the driver's location
+    if (currentUiState.driverLocation != null) {
+      // Calculate distance from driver to pickup location
+      final distanceInMeters = _calculateDistance(
+        currentUiState.driverLocation!,
+        currentUiState.sourceMapCoordinates,
+      );
+
+      // Calculate estimated time - assume slower speed of 25 km/h (6.94 m/s) in pickup areas
+      const averageSpeedMps = 6.94;
+      final estimatedTimeInSeconds =
+          (distanceInMeters / averageSpeedMps).round();
+      final estimatedTimeInMinutes = (estimatedTimeInSeconds / 60).ceil();
+
+      appLog(
+        "Distance to pickup: $distanceInMeters meters, estimated time: $estimatedTimeInMinutes minutes",
+      );
+
+      uiState.value = currentUiState.copyWith(
+        timerLeft: estimatedTimeInMinutes,
+        estimatedTimeInSeconds: estimatedTimeInSeconds,
+      );
+    }
+
     // Show message if available
     if (data.containsKey('text')) {
       showMessage(message: data['text']);
@@ -404,6 +528,11 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       isRideProcessing: true,
       isRideStart: false,
     );
+
+    // Calculate initial time estimate based on current positions
+    if (currentUiState.driverLocation != null) {
+      _updateEstimatedTimeRemaining();
+    }
 
     // Show message if available
     if (data.containsKey('message') || data.containsKey('text')) {
@@ -447,6 +576,9 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
     // Update the map markers with the new driver location
     _setMapMarkers();
+
+    // Recalculate the estimated time remaining
+    _updateEstimatedTimeRemaining();
 
     // Update map view if controller is available
     if (currentUiState.mapController != null) {

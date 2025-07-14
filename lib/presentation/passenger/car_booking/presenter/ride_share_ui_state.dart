@@ -7,6 +7,7 @@ class RideShareUiState extends BaseUiState {
   final bool isRideProcessing;
   final bool isRideEnd;
   final int timerLeft;
+  final int estimatedTimeInSeconds; // Added property to track time in seconds
   final Set<Marker> markers;
   final GoogleMapController? mapController;
   final RideResponseModel? rideResponse;
@@ -29,6 +30,7 @@ class RideShareUiState extends BaseUiState {
     required this.isRideProcessing,
     required this.isRideEnd,
     required this.timerLeft,
+    required this.estimatedTimeInSeconds, // Added parameter
     required this.markers,
     this.mapController,
     required this.rideResponse,
@@ -56,6 +58,7 @@ class RideShareUiState extends BaseUiState {
       isRideProcessing: false,
       isRideEnd: false,
       timerLeft: 5,
+      estimatedTimeInSeconds: 5 * 60, // Initialize with 5 minutes in seconds
       markers: {},
       mapController: null,
       rideResponse: rideResponse,
@@ -82,6 +85,7 @@ class RideShareUiState extends BaseUiState {
     isRideProcessing,
     isRideEnd,
     timerLeft,
+    estimatedTimeInSeconds,
     markers,
     mapController,
     rideResponse,
@@ -105,6 +109,7 @@ class RideShareUiState extends BaseUiState {
     bool? isRideProcessing,
     bool? isRideEnd,
     int? timerLeft,
+    int? estimatedTimeInSeconds,
     Set<Marker>? markers,
     GoogleMapController? mapController,
     RideResponseModel? rideResponse,
@@ -127,6 +132,8 @@ class RideShareUiState extends BaseUiState {
       isRideProcessing: isRideProcessing ?? this.isRideProcessing,
       isRideEnd: isRideEnd ?? this.isRideEnd,
       timerLeft: timerLeft ?? this.timerLeft,
+      estimatedTimeInSeconds:
+          estimatedTimeInSeconds ?? this.estimatedTimeInSeconds,
       markers: markers ?? this.markers,
       mapController: mapController ?? this.mapController,
       rideResponse: rideResponse ?? this.rideResponse,
