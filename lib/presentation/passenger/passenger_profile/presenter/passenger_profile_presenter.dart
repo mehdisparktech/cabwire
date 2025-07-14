@@ -325,9 +325,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   }
 
   Future<void> getTermsAndConditions() async {
-    final result = await _termsAndConditionsUsecase.execute(
-      forType: 'passenger',
-    );
+    final result = await _termsAndConditionsUsecase.execute(forType: 'user');
     result.fold(
       (error) {
         addUserMessage(
