@@ -17,6 +17,7 @@ import 'package:cabwire/presentation/passenger/passenger_profile/presenter/passe
 // import 'package:cabwire/features/auth/ui/login_screen.dart'; // For navigation after logout/delete
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 // import 'package:image_picker/image_picker.dart'; // If you implement image picking
 
 class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
@@ -171,17 +172,19 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   // --- Actions ---
   Future<void> pickProfileImage() async {
     // // Using image_picker package
-    // final ImagePicker picker = ImagePicker();
-    // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    // if (image != null) {
-    //   selectedProfileImageFile = File(image.path);
-    //   // To show preview immediately, you might need a separate observable for the image file in UI state
-    //   // or trigger a rebuild of the EditProfileInfoScreen if it's designed to show the selected file.
-    //   // For simplicity, let's assume the presenter holds it and it's passed during save.
-    //   addUserMessage("Image selected. Press Save to upload.");
-    //   // Force a small state update to make PresentableWidgetBuilder rebuild if EditProfileInfoScreen uses it
-    //   uiState.value = currentUiState.copyWith(userMessage: uiState.value.userMessage);
-    // }
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      selectedProfileImageFile = File(image.path);
+      // To show preview immediately, you might need a separate observable for the image file in UI state
+      // or trigger a rebuild of the EditProfileInfoScreen if it's designed to show the selected file.
+      // For simplicity, let's assume the presenter holds it and it's passed during save.
+      addUserMessage("Image selected. Press Save to upload.");
+      // Force a small state update to make PresentableWidgetBuilder rebuild if EditProfileInfoScreen uses it
+      uiState.value = currentUiState.copyWith(
+        userMessage: uiState.value.userMessage,
+      );
+    }
     addUserMessage("Image picking not implemented in this example.");
   }
 
