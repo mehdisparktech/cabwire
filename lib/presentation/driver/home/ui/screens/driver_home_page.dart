@@ -107,16 +107,16 @@ class DriverHomePage extends StatelessWidget {
       mapToolbarEnabled: false,
       mapType: MapType.normal,
       markers: {
-        Marker(
-          markerId: MarkerId('source'),
-          position: uiState.sourceMapCoordinates,
-          icon: uiState.sourceIcon,
-        ),
-        Marker(
-          markerId: MarkerId('destination'),
-          position: uiState.destinationMapCoordinates,
-          icon: uiState.destinationIcon,
-        ),
+        // Marker(
+        //   markerId: MarkerId('source'),
+        //   position: uiState.sourceMapCoordinates,
+        //   icon: uiState.sourceIcon,
+        // ),
+        // Marker(
+        //   markerId: MarkerId('destination'),
+        //   position: uiState.destinationMapCoordinates,
+        //   icon: uiState.destinationIcon,
+        // ),
         if (uiState.currentLocation != null)
           Marker(
             markerId: MarkerId('currentLocation'),
@@ -124,14 +124,14 @@ class DriverHomePage extends StatelessWidget {
             icon: uiState.currentLocationIcon,
           ),
       },
-      polylines: {
-        Polyline(
-          polylineId: PolylineId('polyline'),
-          points: uiState.polylineCoordinates ?? [],
-          color: Colors.black,
-          width: 3,
-        ),
-      },
+      // polylines: {
+      //   Polyline(
+      //     polylineId: PolylineId('polyline'),
+      //     points: uiState.polylineCoordinates ?? [],
+      //     color: Colors.black,
+      //     width: 3,
+      //   ),
+      // },
     );
   }
 
