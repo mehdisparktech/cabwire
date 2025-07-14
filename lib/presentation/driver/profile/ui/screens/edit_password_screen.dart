@@ -6,11 +6,12 @@ import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_text_form_field.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/common_text.dart';
-import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_presenter.dart';
+import 'package:cabwire/presentation/driver/profile/presenter/driver_edit_password_presenter.dart';
 import 'package:flutter/material.dart';
 
 class EditPasswordScreen extends StatelessWidget {
-  final DriverProfilePresenter presenter = locate<DriverProfilePresenter>();
+  final DriverEditPasswordPresenter presenter =
+      locate<DriverEditPasswordPresenter>();
 
   EditPasswordScreen({super.key});
 
@@ -63,7 +64,7 @@ class EditPasswordScreen extends StatelessWidget {
                     const CommonText(text: 'Old Password'), gapH10,
                     CustomTextFormField(
                       hintText: 'Enter Old Password',
-                      controller: presenter.oldPasswordController,
+                      controller: presenter.currentPasswordController,
                       obscureTextValue: true,
                     ),
                     gapH10,
