@@ -22,6 +22,7 @@ import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_loc
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_pickup_location_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/presenter/passenger_history_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_notification/presenter/passenger_notification_presenter.dart';
+import 'package:cabwire/presentation/passenger/passenger_profile/presenter/passenger_edit_password_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_profile/presenter/passenger_profile_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/presenter/package_payment_method_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/presenter/passenger_services_presenter.dart';
@@ -136,6 +137,9 @@ class PresenterSetup implements SetupModule {
       )
       ..registerLazySingleton(
         () => loadPresenter(PackagePaymentMethodPresenter()),
+      )
+      ..registerLazySingleton(
+        () => loadPresenter(PassengerEditPasswordPresenter()),
       );
     _setupPassengerPresenters();
   }

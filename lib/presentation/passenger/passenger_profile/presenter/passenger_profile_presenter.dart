@@ -223,30 +223,6 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     Get.back(); // Go back from edit screen
   }
 
-  Future<void> savePassword() async {
-    if (newPasswordController.text != confirmNewPasswordController.text) {
-      addUserMessage("New passwords do not match.", isError: true);
-      return;
-    }
-    if (newPasswordController.text.length < 6) {
-      addUserMessage(
-        "New password must be at least 6 characters.",
-        isError: true,
-      );
-      return;
-    }
-    toggleLoading(loading: true);
-    // Simulate API call
-    appLog(
-      "Changing password. Old: ${oldPasswordController.text}, New: ${newPasswordController.text}",
-    );
-    await Future.delayed(const Duration(seconds: 2));
-    // Assume success
-    toggleLoading(loading: false);
-    addUserMessage("Password changed successfully!");
-    Get.back();
-  }
-
   Future<void> savePassengerInfo() async {
     toggleLoading(loading: true);
     // Simulate API call

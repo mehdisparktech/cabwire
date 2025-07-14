@@ -7,12 +7,12 @@ import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_text_form_field.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/common_text.dart';
-import 'package:cabwire/presentation/passenger/passenger_profile/presenter/passenger_profile_presenter.dart';
+import 'package:cabwire/presentation/passenger/passenger_profile/presenter/passenger_edit_password_presenter.dart';
 import 'package:flutter/material.dart';
 
 class PassengerEditPasswordScreen extends StatelessWidget {
-  final PassengerProfilePresenter presenter =
-      locate<PassengerProfilePresenter>();
+  final PassengerEditPasswordPresenter presenter =
+      locate<PassengerEditPasswordPresenter>();
 
   PassengerEditPasswordScreen({super.key});
 
@@ -65,7 +65,7 @@ class PassengerEditPasswordScreen extends StatelessWidget {
                     const CommonText(text: 'Old Password'), gapH10,
                     CustomTextFormField(
                       hintText: 'Enter Old Password',
-                      controller: presenter.oldPasswordController,
+                      controller: presenter.currentPasswordController,
                       obscureTextValue: true,
                     ),
                     gapH10,
