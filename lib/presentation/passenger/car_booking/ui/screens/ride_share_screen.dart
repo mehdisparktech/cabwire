@@ -70,7 +70,7 @@ class RideShareScreen extends StatelessWidget {
 
   Widget _buildBottomSheet(RideSharePresenter presenter) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.5, // Initially opens at 50% of screen height
+      initialChildSize: 0.3, // Initially opens at 50% of screen height
       minChildSize: 0.3, // Minimum height when collapsed
       maxChildSize: 0.5, // Maximum height when expanded
       builder: (context, scrollController) {

@@ -84,7 +84,13 @@ class PassengerDropLocationPresenter
   }
 
   void setServiceId(String? serviceId) {
-    uiState.value = currentUiState.copyWith(serviceId: serviceId);
+    if (serviceId == null) {
+      uiState.value = currentUiState.copyWith(
+        serviceId: "686e008a153fae6071f36f28",
+      );
+    } else {
+      uiState.value = currentUiState.copyWith(serviceId: serviceId);
+    }
   }
 
   // Helper method to get address from coordinates
