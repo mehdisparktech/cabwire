@@ -169,11 +169,15 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
         ApiEndPoint.getProfile,
         header: {'Authorization': token, 'Content-Type': 'application/json'},
       );
+      appLog(
+        'getDriverProfile result: ${result.fold((l) => l.message, (r) => r.data)}',
+      );
       return result.fold(
         (l) => left(l.message),
-        (r) => right(DriverProfileModel.fromJson(r.data)),
+        (r) => right(DriverProfileModel.fromJson(r.data['data'])),
       );
     } catch (e) {
+      appLog('getDriverProfile error: ${e.toString()}');
       return left(e.toString());
     }
   }

@@ -6,7 +6,7 @@ import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
 import 'package:cabwire/core/static/constants.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
-import 'package:cabwire/data/models/profile_model.dart';
+import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
@@ -135,7 +135,7 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
 
   Future<void> loadDriverProfile() async {
     try {
-      final ProfileModel? profile = await LocalStorage.getPassengerProfile();
+      final DriverProfileModel? profile = await LocalStorage.getDriverProfile();
       if (profile != null) {
         uiState.value = currentUiState.copyWith(userName: profile.name ?? '');
         uiState.value = currentUiState.copyWith(

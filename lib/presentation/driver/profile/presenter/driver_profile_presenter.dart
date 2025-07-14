@@ -109,21 +109,12 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     await Future.delayed(const Duration(seconds: 1));
     final DriverProfileModel? profile = await LocalStorage.getDriverProfile();
 
-    // Populate with fetched data
-    // final fetchedUserProfile = UserProfileData(
-    //   name: 'John Doe',
-    //   email: 'john.doe@example.com',
-    //   phoneNumber: '1234567890',
-    //   avatarUrl: AppAssets.icProfileImage, // Placeholder or actual URL
-    //   dateOfBirth: '1990-01-01',
-    //   gender: 'Male',
-    // );
-
     final fetchedDrivingInfo = DrivingInfoData(
       licenseNumber:
           profile?.driverLicense?.licenseNumber.toString() ?? '22222222',
       licenseExpiryDate:
-          profile?.driverLicense?.licenseExpiryDate.toString() ?? '2025-01-01',
+          profile?.driverLicense?.licenseExpiryDate.toString().split('T')[0] ??
+          '2025-01-01',
       licenseIssueDate: '2023-01-01',
       vehiclesRegistrationNumber:
           profile?.driverVehicles?.vehiclesRegistrationNumber.toString() ??
@@ -133,14 +124,13 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
           '333333333',
       vehiclesMake: profile?.driverVehicles?.vehiclesMake ?? 'Toyota',
       vehiclesModel: profile?.driverVehicles?.vehiclesModel ?? 'Civic',
-      vehiclesYear: profile?.driverVehicles?.vehiclesYear ?? '2020',
+      vehiclesYear:
+          profile?.driverVehicles?.vehiclesYear.toString().split('T')[0] ??
+          '2020',
       vehiclesCategory: profile?.driverVehicles?.vehiclesCategory ?? 'Sedan',
     );
 
-    uiState.value = currentUiState.copyWith(
-      //userProfile: fetchedUserProfile,
-      drivingInfo: fetchedDrivingInfo,
-    );
+    uiState.value = currentUiState.copyWith(drivingInfo: fetchedDrivingInfo);
 
     // Initialize controllers for edit forms with fetched data
     _populateEditProfileControllers(currentUiState.userProfile);

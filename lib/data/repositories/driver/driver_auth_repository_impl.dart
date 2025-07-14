@@ -1,4 +1,5 @@
 import 'package:cabwire/core/base/result.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/data/datasources/remote/driver/driver_auth_remote_data_source.dart';
 import 'package:cabwire/data/mappers/signin_response_mapper.dart';
 import 'package:cabwire/data/mappers/signup_response_mapper.dart';
@@ -31,6 +32,7 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
       final profileResult = await _authDataSource.getDriverProfile(
         'Bearer ${result.fold((l) => l, (r) => r.data?.token ?? '')}',
       );
+      appLog('profileResult: $profileResult');
       if (profileResult.isRight()) {
         final profileData = profileResult.fold((l) => l, (r) => r);
         final profileModel = profileData as DriverProfileModel;
