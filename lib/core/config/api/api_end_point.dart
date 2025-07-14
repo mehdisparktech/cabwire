@@ -24,6 +24,7 @@ class ApiEndPoint {
   static const notifications = "$baseUrl/notifications";
   static const privacyPolicies = "$baseUrl/privacy-policies";
   static const termsOfServices = "$baseUrl/rule/terms-and-conditions";
+  static const privacyPolicy = "$baseUrl/rule/privacy-policy";
   static const chats = "$baseUrl/chats";
   static const messages = "$baseUrl/messages";
   static const resetCode = "$baseUrl/auth/forget-password";

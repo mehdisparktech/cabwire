@@ -1,6 +1,5 @@
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
-import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/domain/usecases/passenger/reset_password_usecase.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_edit_password_ui_state.dart';
 import 'package:flutter/material.dart';
@@ -52,11 +51,11 @@ class DriverEditPasswordPresenter
       (error) {
         toggleLoading(loading: false);
         addUserMessage(error);
+        //showMessage(message: uiState.value.userMessage);
       },
       (_) {
         toggleLoading(loading: false);
         addUserMessage("Password changed successfully!");
-        showMessage(message: uiState.value.userMessage);
         Get.back();
       },
     );

@@ -1,7 +1,7 @@
-import 'package:fpdart/fpdart.dart';
+import 'package:cabwire/core/base/result.dart';
 
 abstract class ResetPasswordRepository {
-  Future<Either<String, void>> resetPassword({
+  Future<Result<String>> resetPassword({
     required String currentPassword,
     required String newPassword,
     required String confirmPassword,

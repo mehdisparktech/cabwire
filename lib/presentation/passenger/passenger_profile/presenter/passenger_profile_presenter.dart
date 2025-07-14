@@ -5,6 +5,7 @@ import 'package:cabwire/core/config/app_assets.dart'; // For default assets
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart'; // Import LocalStorage
+import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
 import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart'; // Import WelcomeScreen
 import 'package:cabwire/presentation/passenger/passenger_profile/ui/screens/passenger_contact_us_screen.dart';
@@ -23,6 +24,7 @@ import 'package:image_picker/image_picker.dart';
 
 class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   final TermsAndConditionsUsecase _termsAndConditionsUsecase;
+  final PrivacyAndPolicyUsecase _privacyAndPolicyUsecase;
   final Obs<PassengerProfileUiState> uiState = Obs<PassengerProfileUiState>(
     PassengerProfileUiState.initial(),
   );
@@ -53,9 +55,13 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   final TextEditingController contactMessageController =
       TextEditingController();
 
-  PassengerProfilePresenter(this._termsAndConditionsUsecase) {
+  PassengerProfilePresenter(
+    this._termsAndConditionsUsecase,
+    this._privacyAndPolicyUsecase,
+  ) {
     _loadInitialData();
     getTermsAndConditions();
+    getPrivacyPolicy();
   }
 
   Future<void> _loadInitialData() async {
@@ -333,6 +339,19 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
         uiState.value = currentUiState.copyWith(
           termsAndConditions: termsAndConditions,
         );
+      },
+    );
+  }
+
+  Future<void> getPrivacyPolicy() async {
+    final result = await _privacyAndPolicyUsecase.execute(forType: 'user');
+    result.fold(
+      (error) {
+        addUserMessage("Failed to get privacy policy: $error", isError: true);
+      },
+      (privacyPolicy) {
+        appLog("Privacy policy: $privacyPolicy");
+        uiState.value = currentUiState.copyWith(privacyPolicy: privacyPolicy);
       },
     );
   }

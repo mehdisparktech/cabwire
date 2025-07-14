@@ -2,6 +2,7 @@ import 'package:cabwire/data/datasources/remote/passenger/reset_password_remote_
 import 'package:cabwire/data/models/reset_password_model.dart';
 import 'package:cabwire/domain/repositories/passenger/reset_password_repository.dart';
 import 'package:cabwire/domain/services/error_message_handler.dart';
+import 'package:cabwire/core/base/result.dart';
 import 'package:fpdart/fpdart.dart';
 
 class ResetPasswordRepositoryImpl implements ResetPasswordRepository {
@@ -14,7 +15,7 @@ class ResetPasswordRepositoryImpl implements ResetPasswordRepository {
   );
 
   @override
-  Future<Either<String, void>> resetPassword({
+  Future<Result<String>> resetPassword({
     required String currentPassword,
     required String newPassword,
     required String confirmPassword,
@@ -32,7 +33,7 @@ class ResetPasswordRepositoryImpl implements ResetPasswordRepository {
 
       return result.fold(
         (failure) => left(_errorMessageHandler.generateErrorMessage(failure)),
-        (success) => right(null),
+        (success) => right(success),
       );
     } catch (e) {
       return left(e.toString());

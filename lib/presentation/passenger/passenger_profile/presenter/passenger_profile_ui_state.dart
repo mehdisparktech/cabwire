@@ -61,6 +61,7 @@ class PassengerProfileData {
 class PassengerProfileUiState extends BaseUiState {
   final PassengerProfileData passengerProfile;
   final String? termsAndConditions;
+  final String? privacyPolicy;
   // For forms - keeping it simple, presenter will manage controllers directly for now
   // Or you can store form field values here if you prefer not to pass controllers around.
   // final String editProfileName;
@@ -72,6 +73,7 @@ class PassengerProfileUiState extends BaseUiState {
     required super.userMessage,
     required this.passengerProfile,
     this.termsAndConditions,
+    this.privacyPolicy,
   });
 
   factory PassengerProfileUiState.initial() {
@@ -81,6 +83,7 @@ class PassengerProfileUiState extends BaseUiState {
       passengerProfile:
           PassengerProfileData.empty(), // Load actual data in presenter
       termsAndConditions: null,
+      privacyPolicy: null,
     );
   }
 
@@ -90,6 +93,7 @@ class PassengerProfileUiState extends BaseUiState {
     userMessage,
     passengerProfile,
     termsAndConditions,
+    privacyPolicy,
   ];
 
   PassengerProfileUiState copyWith({
@@ -97,12 +101,14 @@ class PassengerProfileUiState extends BaseUiState {
     String? userMessage,
     PassengerProfileData? passengerProfile,
     String? termsAndConditions,
+    String? privacyPolicy,
   }) {
     return PassengerProfileUiState(
       isLoading: isLoading ?? this.isLoading,
       userMessage: userMessage ?? this.userMessage,
       passengerProfile: passengerProfile ?? this.passengerProfile,
       termsAndConditions: termsAndConditions ?? this.termsAndConditions,
+      privacyPolicy: privacyPolicy ?? this.privacyPolicy,
     );
   }
 }

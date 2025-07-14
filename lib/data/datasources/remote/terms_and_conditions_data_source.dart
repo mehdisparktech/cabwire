@@ -6,6 +6,7 @@ import 'package:fpdart/fpdart.dart';
 
 abstract class TermsAndConditionsRemoteDataSource {
   Future<Result<String>> getTermsAndConditions({required String forType});
+  Future<Result<String>> getPrivacyPolicy({required String forType});
 }
 
 class TermsAndConditionsRemoteDataSourceImpl
@@ -31,6 +32,28 @@ class TermsAndConditionsRemoteDataSourceImpl
         final content =
             contentData?['content']?.toString() ??
             'Terms and conditions not available';
+        return right(content);
+      });
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
+
+  @override
+  Future<Result<String>> getPrivacyPolicy({required String forType}) async {
+    try {
+      final result = await apiService.get(
+        ApiEndPoint.privacyPolicy,
+        query: {'for': forType},
+      );
+      appLog(
+        " PrivacyPolicyRemoteDataSourceImpl ${result.fold((l) => l, (r) => r)}",
+      );
+      return result.fold((l) => left(l.message), (r) {
+        final contentData = r.data['data'] as Map<String, dynamic>?;
+        final content =
+            contentData?['content']?.toString() ??
+            'Privacy policy not available';
         return right(content);
       });
     } catch (e) {

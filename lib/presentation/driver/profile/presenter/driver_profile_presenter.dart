@@ -7,6 +7,7 @@ import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
+import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
@@ -27,6 +28,7 @@ import 'package:cabwire/data/services/storage/storage_services.dart';
 
 class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   final TermsAndConditionsUsecase _termsAndConditionsUsecase;
+  final PrivacyAndPolicyUsecase _privacyAndPolicyUsecase;
   final Obs<DriverProfileUiState> uiState = Obs<DriverProfileUiState>(
     DriverProfileUiState.initial(),
   );
@@ -83,10 +85,12 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   DriverProfilePresenter(
     this._driverContactUseCase,
     this._termsAndConditionsUsecase,
+    this._privacyAndPolicyUsecase,
   ) {
     loadDriverProfile();
     _loadInitialData();
     getTermsAndConditions();
+    getPrivacyPolicy();
   }
 
   Future<void> loadDriverProfile() async {
@@ -442,6 +446,19 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
         uiState.value = currentUiState.copyWith(
           termsAndConditions: termsAndConditions,
         );
+      },
+    );
+  }
+
+  Future<void> getPrivacyPolicy() async {
+    final result = await _privacyAndPolicyUsecase.execute(forType: 'driver');
+    result.fold(
+      (error) {
+        addUserMessage("Failed to get privacy policy: $error", isError: true);
+      },
+      (privacyPolicy) {
+        appLog("Privacy policy: $privacyPolicy");
+        uiState.value = currentUiState.copyWith(privacyPolicy: privacyPolicy);
       },
     );
   }

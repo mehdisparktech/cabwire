@@ -20,4 +20,10 @@ class TermsAndConditionsRepositoryImpl extends TermsAndConditionsRepository {
     );
     return result;
   }
+
+  @override
+  Future<Result<String>> getPrivacyPolicy({required String forType}) async {
+    final result = await _remoteDataSource.getPrivacyPolicy(forType: forType);
+    return result;
+  }
 }
