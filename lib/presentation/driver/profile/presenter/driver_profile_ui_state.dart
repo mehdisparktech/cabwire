@@ -126,6 +126,7 @@ class DrivingInfoData {
 class DriverProfileUiState extends BaseUiState {
   final UserProfileData userProfile;
   final DrivingInfoData drivingInfo;
+  final String? termsAndConditions;
 
   // For forms - keeping it simple, presenter will manage controllers directly for now
   // Or you can store form field values here if you prefer not to pass controllers around.
@@ -138,6 +139,7 @@ class DriverProfileUiState extends BaseUiState {
     required super.userMessage,
     required this.userProfile,
     required this.drivingInfo,
+    this.termsAndConditions,
   });
 
   factory DriverProfileUiState.initial() {
@@ -146,23 +148,32 @@ class DriverProfileUiState extends BaseUiState {
       userMessage: '',
       userProfile: UserProfileData.empty(), // Load actual data in presenter
       drivingInfo: DrivingInfoData.empty(), // Load actual data in presenter
+      termsAndConditions: null,
     );
   }
 
   @override
-  List<Object?> get props => [isLoading, userMessage, userProfile, drivingInfo];
+  List<Object?> get props => [
+    isLoading,
+    userMessage,
+    userProfile,
+    drivingInfo,
+    termsAndConditions,
+  ];
 
   DriverProfileUiState copyWith({
     bool? isLoading,
     String? userMessage,
     UserProfileData? userProfile,
     DrivingInfoData? drivingInfo,
+    String? termsAndConditions,
   }) {
     return DriverProfileUiState(
       isLoading: isLoading ?? this.isLoading,
       userMessage: userMessage ?? this.userMessage,
       userProfile: userProfile ?? this.userProfile,
       drivingInfo: drivingInfo ?? this.drivingInfo,
+      termsAndConditions: termsAndConditions ?? this.termsAndConditions,
     );
   }
 }

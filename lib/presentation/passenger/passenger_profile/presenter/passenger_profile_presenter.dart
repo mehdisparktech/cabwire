@@ -5,6 +5,7 @@ import 'package:cabwire/core/config/app_assets.dart'; // For default assets
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart'; // Import LocalStorage
+import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
 import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart'; // Import WelcomeScreen
 import 'package:cabwire/presentation/passenger/passenger_profile/ui/screens/passenger_contact_us_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_profile/ui/screens/passenger_edit_password_screen.dart';
@@ -21,6 +22,7 @@ import 'package:image_picker/image_picker.dart';
 // import 'package:image_picker/image_picker.dart'; // If you implement image picking
 
 class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
+  final TermsAndConditionsUsecase _termsAndConditionsUsecase;
   final Obs<PassengerProfileUiState> uiState = Obs<PassengerProfileUiState>(
     PassengerProfileUiState.initial(),
   );
@@ -51,8 +53,9 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   final TextEditingController contactMessageController =
       TextEditingController();
 
-  PassengerProfilePresenter() {
+  PassengerProfilePresenter(this._termsAndConditionsUsecase) {
     _loadInitialData();
+    getTermsAndConditions();
   }
 
   Future<void> _loadInitialData() async {
@@ -313,6 +316,25 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
 
   void goBack() {
     Get.back();
+  }
+
+  Future<void> getTermsAndConditions() async {
+    final result = await _termsAndConditionsUsecase.execute(
+      forType: 'passenger',
+    );
+    result.fold(
+      (error) {
+        addUserMessage(
+          "Failed to get terms and conditions: $error",
+          isError: true,
+        );
+      },
+      (termsAndConditions) {
+        uiState.value = currentUiState.copyWith(
+          termsAndConditions: termsAndConditions,
+        );
+      },
+    );
   }
 
   @override

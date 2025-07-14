@@ -71,7 +71,7 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(() => loadPresenter(DriverOnboardingPresenter()))
       ..registerLazySingleton(() => loadPresenter(WelcomePresenter(locate())))
       ..registerLazySingleton(
-        () => loadPresenter(DriverProfilePresenter(locate())),
+        () => loadPresenter(DriverProfilePresenter(locate(), locate())),
       )
       ..registerLazySingleton(
         () => loadPresenter(
@@ -114,7 +114,9 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(
         () => loadPresenter(FindingRidesPresenter(locate(), locate())),
       )
-      ..registerLazySingleton(() => loadPresenter(PassengerProfilePresenter()))
+      ..registerLazySingleton(
+        () => loadPresenter(PassengerProfilePresenter(locate())),
+      )
       ..registerLazySingleton(
         () => loadPresenter(PassengerOnboardingPresenter()),
       )

@@ -7,6 +7,7 @@ import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
+import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
 import 'package:cabwire/presentation/driver/profile/ui/screens/contact_us_screen.dart';
@@ -25,6 +26,7 @@ import 'package:cabwire/data/services/storage/storage_services.dart';
 // import 'package:image_picker/image_picker.dart'; // If you implement image picking
 
 class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
+  final TermsAndConditionsUsecase _termsAndConditionsUsecase;
   final Obs<DriverProfileUiState> uiState = Obs<DriverProfileUiState>(
     DriverProfileUiState.initial(),
   );
@@ -78,9 +80,13 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   final TextEditingController contactSubjectController =
       TextEditingController();
 
-  DriverProfilePresenter(this._driverContactUseCase) {
+  DriverProfilePresenter(
+    this._driverContactUseCase,
+    this._termsAndConditionsUsecase,
+  ) {
     loadDriverProfile();
     _loadInitialData();
+    getTermsAndConditions();
   }
 
   Future<void> loadDriverProfile() async {
@@ -420,6 +426,24 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
 
   void goBack() {
     Get.back();
+  }
+
+  Future<void> getTermsAndConditions() async {
+    final result = await _termsAndConditionsUsecase.execute(forType: 'driver');
+    result.fold(
+      (error) {
+        addUserMessage(
+          "Failed to get terms and conditions: $error",
+          isError: true,
+        );
+      },
+      (termsAndConditions) {
+        appLog("Terms and conditions: $termsAndConditions");
+        uiState.value = currentUiState.copyWith(
+          termsAndConditions: termsAndConditions,
+        );
+      },
+    );
   }
 
   @override

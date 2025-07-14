@@ -38,7 +38,8 @@ class ApiServiceImpl implements ApiService {
   Future<Either<ApiFailure, ApiSuccess<Map<String, dynamic>>>> get(
     String url, {
     Map<String, String>? header,
-  }) => _request(url, "GET", header: header);
+    Map<String, String>? query,
+  }) => _request(url, "GET", header: header, query: query);
 
   @override
   Future<Either<ApiFailure, ApiSuccess<Map<String, dynamic>>>> put(
@@ -166,11 +167,13 @@ class ApiServiceImpl implements ApiService {
     String method, {
     dynamic body,
     Map<String, String>? header,
+    Map<String, String>? query,
   }) async {
     try {
       final response = await _dio.request(
         url,
         data: body,
+        queryParameters: query,
         options: Options(method: method, headers: header),
       );
       return _handleResponse(response);
