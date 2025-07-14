@@ -46,4 +46,5 @@ class ApiEndPoint {
   static const notification = "$baseUrl/notification";
   static const driverEarnings = "$baseUrl/payment/";
   static const createPackage = "$baseUrl/package/create-package";
+  static const deleteMyAccount = "$baseUrl/user/delete-my-account";
 }
