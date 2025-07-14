@@ -54,7 +54,7 @@ class PickupInfoWidget extends StatelessWidget {
           const SizedBox(width: 8),
 
           // Display timer for both ride start and ride processing
-          if (isRideStart || isRideProcessing)
+          if (isRideStart || isRideProcessing && timerLeft > 0)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
