@@ -35,6 +35,7 @@ import 'package:cabwire/domain/usecases/location/request_location_permission_use
 import 'package:cabwire/domain/usecases/passenger/create_passenger_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/get_passenger_services_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/get_passenger_categories_usecase.dart';
+import 'package:cabwire/domain/usecases/chat/send_message_usecase.dart';
 
 class UsecaseSetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -93,6 +94,7 @@ class UsecaseSetup implements SetupModule {
       ..registerLazySingleton(() => SubmitReviewUseCase(locate()))
       ..registerLazySingleton(
         () => GetMessagesByChatIdUseCase(locate(), locate()),
-      );
+      )
+      ..registerLazySingleton(() => SendMessageUseCase(locate(), locate()));
   }
 }

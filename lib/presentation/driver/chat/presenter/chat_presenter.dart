@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/domain/usecases/chat/get_messages_by_chat_id_usecase.dart';
+import 'package:cabwire/domain/usecases/chat/send_message_usecase.dart';
 import 'package:cabwire/presentation/driver/chat/presenter/chat_ui_state.dart';
 import 'package:cabwire/presentation/driver/chat/ui/screens/audio_call_page.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import '../../../../data/services/storage/storage_services.dart';
 
 class ChatPresenter extends BasePresenter<ChatUiState> {
   final GetMessagesByChatIdUseCase _getMessagesByChatIdUseCase;
+  final SendMessageUseCase _sendMessageUseCase;
   final Obs<ChatUiState> uiState = Obs<ChatUiState>(ChatUiState.initial());
   ChatUiState get currentUiState => uiState.value;
 
@@ -18,7 +20,7 @@ class ChatPresenter extends BasePresenter<ChatUiState> {
 
   final ScrollController scrollController = ScrollController();
 
-  ChatPresenter(this._getMessagesByChatIdUseCase) {
+  ChatPresenter(this._getMessagesByChatIdUseCase, this._sendMessageUseCase) {
     _loadInitialMessages();
   }
 
@@ -61,7 +63,7 @@ class ChatPresenter extends BasePresenter<ChatUiState> {
     // _chatService.sendTypingEvent(isTyping: text.isNotEmpty);
   }
 
-  void sendMessage() {
+  Future<void> sendMessage() async {
     final text = messageController.text.trim();
     if (text.isEmpty) return;
 
@@ -80,7 +82,13 @@ class ChatPresenter extends BasePresenter<ChatUiState> {
     );
     messageController.clear();
 
-    // _chatService.sendMessage(text);
+    final result = await _sendMessageUseCase.execute(
+      SendMessageParams(chatId: '123', text: text),
+    );
+    result.fold(
+      (failure) => showMessage(message: failure.toString()),
+      (message) => _addReceivedMessage(message.text, message.sender),
+    );
     _scrollToBottom();
   }
 

@@ -20,6 +20,7 @@ import 'package:cabwire/data/datasources/remote/ride_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/verify_email_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/passenger/passenger_service_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/passenger/passenger_category_remote_data_source.dart';
+import 'package:cabwire/data/datasources/remote/send_message_remote_data_source.dart';
 
 class DatasourceSetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -82,6 +83,9 @@ class DatasourceSetup implements SetupModule {
       )
       ..registerLazySingleton<ChatMessageRemoteDataSource>(
         () => ChatMessageRemoteDataSourceImpl(locate()),
+      )
+      ..registerLazySingleton<SendMessageRemoteDataSource>(
+        () => SendMessageRemoteDataSourceImpl(locate()),
       );
   }
 }

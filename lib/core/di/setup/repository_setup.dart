@@ -37,6 +37,8 @@ import 'package:cabwire/data/repositories/passenger/passenger_category_repositor
 import 'package:cabwire/domain/repositories/passenger/passenger_category_repository.dart';
 import 'package:cabwire/domain/repositories/driver/driver_earnings_repository.dart';
 import 'package:cabwire/data/repositories/driver/driver_earnings_repository_impl.dart';
+import 'package:cabwire/data/repositories/send_message_repository_impl.dart';
+import 'package:cabwire/domain/repositories/send_message_repository.dart';
 
 class RepositorySetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -92,6 +94,9 @@ class RepositorySetup implements SetupModule {
       )
       ..registerLazySingleton<ChatMessageRepository>(
         () => ChatMessageRepositoryImpl(locate()),
+      )
+      ..registerLazySingleton<SendMessageRepository>(
+        () => SendMessageRepositoryImpl(locate()),
       )
       ..registerLazySingleton<TermsAndConditionsRepository>(
         () => TermsAndConditionsRepositoryImpl(locate()),

@@ -3,6 +3,7 @@ import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/usecases/chat/get_messages_by_chat_id_usecase.dart';
+import 'package:cabwire/domain/usecases/chat/send_message_usecase.dart';
 import 'package:cabwire/presentation/passenger/passenger_chat/presenter/passenger_chat_ui_state.dart';
 import 'package:cabwire/presentation/passenger/passenger_chat/ui/screens/passenger_audio_call_page.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:get/get.dart';
 
 class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
   final GetMessagesByChatIdUseCase _getMessagesByChatIdUseCase;
+  final SendMessageUseCase _sendMessageUseCase;
   final Obs<PassengerChatUiState> uiState = Obs<PassengerChatUiState>(
     PassengerChatUiState.initial(),
   );
@@ -19,7 +21,10 @@ class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
 
   final ScrollController scrollController = ScrollController();
 
-  PassengerChatPresenter(this._getMessagesByChatIdUseCase) {
+  PassengerChatPresenter(
+    this._getMessagesByChatIdUseCase,
+    this._sendMessageUseCase,
+  ) {
     _loadInitialMessages();
   }
 
@@ -62,7 +67,7 @@ class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
     // _chatService.sendTypingEvent(isTyping: text.isNotEmpty);
   }
 
-  void sendMessage() {
+  Future<void> sendMessage() async {
     final text = messageController.text.trim();
     if (text.isEmpty) return;
 
@@ -82,7 +87,13 @@ class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
     );
     messageController.clear();
 
-    // _chatService.sendMessage(text);
+    final result = await _sendMessageUseCase.execute(
+      SendMessageParams(chatId: '123', text: text),
+    );
+    result.fold(
+      (failure) => showMessage(message: failure.toString()),
+      (message) => _addReceivedMessage(message.text, message.sender),
+    );
     _scrollToBottom();
   }
 
