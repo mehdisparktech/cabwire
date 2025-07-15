@@ -296,7 +296,7 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
   ) {
     return DraggableScrollableSheet(
       initialChildSize: 0.8,
-      minChildSize: 0.05,
+      minChildSize: 0.2,
       maxChildSize: 0.9,
       snap: true,
       snapSizes: const [0.4, 0.7, 0.9],
