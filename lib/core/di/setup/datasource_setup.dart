@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
 import 'package:cabwire/data/datasources/local/user_data_local_data_source.dart';
+import 'package:cabwire/data/datasources/remote/chat_message_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/driver/device_info_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/driver/driver_all_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/info_remote_data_source.dart';
@@ -78,6 +79,9 @@ class DatasourceSetup implements SetupModule {
       )
       ..registerLazySingleton<ReviewRemoteDataSource>(
         () => ReviewRemoteDataSourceImpl(locate()),
+      )
+      ..registerLazySingleton<ChatMessageRemoteDataSource>(
+        () => ChatMessageRemoteDataSourceImpl(locate()),
       );
   }
 }

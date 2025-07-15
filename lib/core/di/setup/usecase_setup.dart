@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cabwire/domain/usecases/chat/get_messages_by_chat_id_usecase.dart';
 import 'package:cabwire/domain/usecases/complete_ride_usecase.dart';
 import 'package:cabwire/domain/usecases/create_ride_request_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
@@ -89,6 +90,9 @@ class UsecaseSetup implements SetupModule {
       ..registerLazySingleton(() => ResetPasswordUseCase(locate()))
       ..registerLazySingleton(() => TermsAndConditionsUsecase(locate()))
       ..registerLazySingleton(() => PrivacyAndPolicyUsecase(locate()))
-      ..registerLazySingleton(() => SubmitReviewUseCase(locate()));
+      ..registerLazySingleton(() => SubmitReviewUseCase(locate()))
+      ..registerLazySingleton(
+        () => GetMessagesByChatIdUseCase(locate(), locate()),
+      );
   }
 }

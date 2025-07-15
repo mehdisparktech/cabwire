@@ -48,4 +48,5 @@ class ApiEndPoint {
   static const createPackage = "$baseUrl/package/create-package";
   static const deleteMyAccount = "$baseUrl/user/delete-my-account";
   static const review = "$baseUrl/review";
+  static const message = "$baseUrl/message/";
 }

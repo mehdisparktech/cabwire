@@ -21,6 +21,7 @@ import 'package:cabwire/presentation/passenger/car_booking/presenter/finding_rid
 import 'package:cabwire/presentation/passenger/car_booking/presenter/passenger_category_list_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_pickup_location_presenter.dart';
+import 'package:cabwire/presentation/passenger/passenger_chat/presenter/passenger_chat_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/presenter/passenger_history_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_notification/presenter/passenger_notification_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_profile/presenter/passenger_edit_password_presenter.dart';
@@ -92,7 +93,7 @@ class PresenterSetup implements SetupModule {
       )
       ..registerLazySingleton(() => loadPresenter(CreatePostPresenter()))
       ..registerLazySingleton(() => loadPresenter(EarningsPresenter(locate())))
-      ..registerLazySingleton(() => loadPresenter(ChatPresenter()))
+      ..registerLazySingleton(() => loadPresenter(ChatPresenter(locate())))
       ..registerLazySingleton(() => loadPresenter(RideHistoryPresenter()))
       ..registerLazySingleton(() => loadPresenter(RidesharePresenter(locate())))
       ..registerLazySingleton(
@@ -149,6 +150,9 @@ class PresenterSetup implements SetupModule {
       )
       ..registerLazySingleton(
         () => loadPresenter(DriverEditPasswordPresenter(locate())),
+      )
+      ..registerLazySingleton(
+        () => loadPresenter(PassengerChatPresenter(locate())),
       );
     _setupPassengerPresenters();
   }

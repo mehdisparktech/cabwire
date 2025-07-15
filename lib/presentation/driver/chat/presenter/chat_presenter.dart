@@ -1,11 +1,16 @@
 import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/usecases/chat/get_messages_by_chat_id_usecase.dart';
 import 'package:cabwire/presentation/driver/chat/presenter/chat_ui_state.dart';
 import 'package:cabwire/presentation/driver/chat/ui/screens/audio_call_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../data/services/storage/storage_services.dart';
+
 class ChatPresenter extends BasePresenter<ChatUiState> {
+  final GetMessagesByChatIdUseCase _getMessagesByChatIdUseCase;
   final Obs<ChatUiState> uiState = Obs<ChatUiState>(ChatUiState.initial());
   ChatUiState get currentUiState => uiState.value;
 
@@ -13,12 +18,32 @@ class ChatPresenter extends BasePresenter<ChatUiState> {
 
   final ScrollController scrollController = ScrollController();
 
-  ChatPresenter() {
+  ChatPresenter(this._getMessagesByChatIdUseCase) {
     _loadInitialMessages();
   }
 
   Future<void> _loadInitialMessages() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    final userId = LocalStorage.userId;
+    final result = await _getMessagesByChatIdUseCase.execute(
+      GetMessagesByChatIdParams(chatId: '123'),
+    );
+    result.fold(
+      (failure) => showMessage(message: failure.toString()),
+      (messages) =>
+          uiState.value = currentUiState.copyWith(
+            messages:
+                messages
+                    .map(
+                      (e) => ChatMessage(
+                        id: e.id,
+                        text: e.text,
+                        timestamp: e.createdAt,
+                        isSender: e.sender == userId,
+                      ),
+                    )
+                    .toList(),
+          ),
+    );
   }
 
   @override
