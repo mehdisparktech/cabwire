@@ -4,8 +4,8 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
-import 'package:cabwire/presentation/driver/chat/ui/screens/audio_call_page.dart';
-import 'package:cabwire/presentation/driver/chat/ui/screens/chat_page.dart';
+import 'package:cabwire/presentation/passenger/passenger_chat/ui/screens/passenger_chat_page.dart';
+import 'package:cabwire/presentation/passenger/passenger_chat/ui/screens/passenger_audio_call_page.dart';
 import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -114,14 +114,14 @@ class RideshareBottomSheet extends StatelessWidget {
                 Expanded(
                   flex: 5,
                   child: MessageButtonWidget(
-                    onTap: () => Get.to(() => ChatPage()),
+                    onTap: () => Get.to(() => PassengerChatPage()),
                   ),
                 ),
                 Expanded(
                   flex: 1,
                   child: CircularIconButton(
                     icon: Icons.phone,
-                    onTap: () => Get.to(() => const AudioCallScreen()),
+                    onTap: () => Get.to(() => const PassengerAudioCallPage()),
                   ),
                 ),
               ],
