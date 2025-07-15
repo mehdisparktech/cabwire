@@ -3,30 +3,31 @@ import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
-import 'package:cabwire/presentation/driver/chat/presenter/chat_presenter.dart';
+import 'package:cabwire/presentation/passenger/passenger_chat/presenter/passenger_chat_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class PassengerChatPage extends StatelessWidget {
-  final ChatPresenter presenter = locate<ChatPresenter>();
+  final PassengerChatPresenter presenter = locate<PassengerChatPresenter>();
+  final String chatId;
 
-  PassengerChatPage({super.key});
+  PassengerChatPage({super.key, required this.chatId});
 
   @override
   Widget build(BuildContext context) {
+    presenter.initial(chatId);
     return Scaffold(
       appBar: _buildAppBar(context, presenter),
       body: PresentableWidgetBuilder(
         presenter: presenter,
         builder: () {
-          // final uiState = presenter.currentUiState;
           return _buildBody(context, presenter);
         },
       ),
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, ChatPresenter presenter) {
+  AppBar _buildAppBar(BuildContext context, PassengerChatPresenter presenter) {
     final uiState = presenter.currentUiState;
     return AppBar(
       toolbarHeight: 80,
@@ -68,7 +69,7 @@ class PassengerChatPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, ChatPresenter presenter) {
+  Widget _buildBody(BuildContext context, PassengerChatPresenter presenter) {
     return Column(
       children: [
         Expanded(child: _buildChatMessages(presenter)),
@@ -77,7 +78,7 @@ class PassengerChatPage extends StatelessWidget {
     );
   }
 
-  Widget _buildChatMessages(ChatPresenter presenter) {
+  Widget _buildChatMessages(PassengerChatPresenter presenter) {
     final uiState = presenter.currentUiState;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -225,7 +226,10 @@ class PassengerChatPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageInput(BuildContext context, ChatPresenter presenter) {
+  Widget _buildMessageInput(
+    BuildContext context,
+    PassengerChatPresenter presenter,
+  ) {
     return Container(
       height: 100,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -269,7 +273,7 @@ class PassengerChatPage extends StatelessWidget {
                 ),
                 filled: false,
                 suffixIcon: GestureDetector(
-                  onTap: presenter.sendMessage,
+                  onTap: () => presenter.sendMessage(chatId),
                   child: Container(
                     width: 20,
                     height: 20,

@@ -9,11 +9,13 @@ import 'package:get/get.dart';
 class RideShareScreen extends StatelessWidget {
   final String rideId;
   final RideResponseModel rideResponse;
+  final String chatId;
 
   const RideShareScreen({
     super.key,
     required this.rideId,
     required this.rideResponse,
+    required this.chatId,
   });
 
   @override
@@ -76,7 +78,7 @@ class RideShareScreen extends StatelessWidget {
       builder: (context, scrollController) {
         return SingleChildScrollView(
           controller: scrollController,
-          child: RideshareBottomSheet(presenter: presenter),
+          child: RideshareBottomSheet(presenter: presenter, chatId: chatId),
         );
       },
     );

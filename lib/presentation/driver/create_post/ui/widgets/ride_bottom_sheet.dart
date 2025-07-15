@@ -87,7 +87,7 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
                   // Use the new widget
                   onTap: () {
                     // You can define specific onTap behavior here if needed
-                    Get.to(() => ChatPage());
+                    Get.to(() => ChatPage(chatId: '123'));
                   },
                 ),
               ),

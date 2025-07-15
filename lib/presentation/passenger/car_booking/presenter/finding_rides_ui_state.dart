@@ -13,6 +13,7 @@ class FindingRidesUiState extends BaseUiState {
   final LatLng? driverLocation;
   final GoogleMapController? mapController;
   final Set<Marker> markers;
+  final String? chatId;
 
   const FindingRidesUiState({
     super.isLoading = false,
@@ -28,6 +29,7 @@ class FindingRidesUiState extends BaseUiState {
     this.driverLocation,
     this.mapController,
     this.markers = const <Marker>{},
+    this.chatId,
   });
 
   factory FindingRidesUiState.initial() {
@@ -35,6 +37,7 @@ class FindingRidesUiState extends BaseUiState {
       isLoading: false,
       isRideAccepted: false,
       isRideStarted: false,
+      chatId: '',
     );
   }
 
@@ -52,6 +55,7 @@ class FindingRidesUiState extends BaseUiState {
     LatLng? driverLocation,
     GoogleMapController? mapController,
     Set<Marker>? markers,
+    String? chatId,
   }) {
     return FindingRidesUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -67,6 +71,7 @@ class FindingRidesUiState extends BaseUiState {
       driverLocation: driverLocation ?? this.driverLocation,
       mapController: mapController ?? this.mapController,
       markers: markers ?? this.markers,
+      chatId: chatId ?? this.chatId,
     );
   }
 
@@ -85,5 +90,6 @@ class FindingRidesUiState extends BaseUiState {
     driverLocation,
     mapController,
     markers,
+    chatId,
   ];
 }

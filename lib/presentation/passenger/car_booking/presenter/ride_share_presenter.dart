@@ -496,38 +496,69 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       appLog("Socket connected: ${_socketService.isConnected}");
       appLog("Notification received: $data");
 
-      if (data.containsKey('rideProgress') && data['rideProgress'] == true) {
-        appLog("Ride processing event received: $data");
-        _handleRideProcessing(data);
-      }
+      try {
+        // Add detailed debugging for chat data
+        appLog("DEBUG: Examining data type: ${data.runtimeType}");
 
-      // Handle different types of notifications based on data content
-      // if (data is Map<String, dynamic>) {
-      //   // Handle ride start event
-      //   if (data.containsKey('rideStart') && data['rideStart'] == true) {
-      //     _handleRideStart(data);
-      //   }
-      //   // Handle ride processing event
-      //   else if (data.containsKey('rideProgress') &&
-      //       data['rideProgress'] == true) {
-      //     appLog("Ride processing event received: $data");
-      //     _handleRideProcessing(data);
-      //   }
-      //   // Handle ride end event
-      //   else if (data.containsKey('rideEnd') && data['rideEnd'] == true) {
-      //     _handleRideEnd(data);
-      //   }
-      //   // Handle driver location updates
-      //   else if (data.containsKey('lat') && data.containsKey('lng')) {
-      //     _handleDriverLocationUpdate(data);
-      //   }
-      //   // Handle general messages
-      //   else if (data.containsKey('message') || data.containsKey('text')) {
-      //     String message =
-      //         data.containsKey('text') ? data['text'] : data['message'];
-      //     showMessage(message: message);
-      //   }
-      // }
+        // Check if this is a ride acceptance notification with chat data
+        if (data is Map<String, dynamic> &&
+            data.containsKey('rideAccept') &&
+            data['rideAccept'] == true &&
+            data.containsKey('chat')) {
+          appLog("Ride acceptance notification with chat data detected");
+
+          // Extract chat ID directly
+          if (data['chat'] is Map<String, dynamic> &&
+              data['chat'].containsKey('_id')) {
+            final chatId = data['chat']['_id'].toString();
+            appLog("Chat ID extracted from ride acceptance: $chatId");
+            uiState.value = currentUiState.copyWith(chatId: chatId);
+            appLog("Chat ID is now: ${currentUiState.chatId}");
+          }
+        }
+
+        // Handle ride progress
+        if (data is Map<String, dynamic> &&
+            data.containsKey('rideProgress') &&
+            data['rideProgress'] == true) {
+          appLog("Ride processing event received");
+          _handleRideProcessing(data);
+        }
+
+        // Handle ride start
+        if (data is Map<String, dynamic> &&
+            data.containsKey('rideStart') &&
+            data['rideStart'] == true) {
+          appLog("Ride start event received");
+          _handleRideStart(data);
+        }
+
+        // Handle ride end
+        if (data is Map<String, dynamic> &&
+            data.containsKey('rideEnd') &&
+            data['rideEnd'] == true) {
+          appLog("Ride end event received");
+          _handleRideEnd(data);
+        }
+
+        // Handle driver location updates
+        if (data is Map<String, dynamic> &&
+            data.containsKey('lat') &&
+            data.containsKey('lng')) {
+          appLog("Driver location update received");
+          _handleDriverLocationUpdate(data);
+        }
+
+        // Handle messages
+        if (data is Map<String, dynamic> &&
+            (data.containsKey('message') || data.containsKey('text'))) {
+          final message =
+              data.containsKey('text') ? data['text'] : data['message'];
+          showMessage(message: message.toString());
+        }
+      } catch (e) {
+        appLog("Error processing notification data: $e");
+      }
     });
 
     appLog("Socket listeners setup complete for event: $eventName");

@@ -21,17 +21,25 @@ class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
 
   final ScrollController scrollController = ScrollController();
 
+  String? _currentChatId;
+
   PassengerChatPresenter(
     this._getMessagesByChatIdUseCase,
     this._sendMessageUseCase,
-  ) {
-    _loadInitialMessages();
+  );
+
+  void initial(String chatId) {
+    // Only load messages if not already loaded for this chat
+    if (_currentChatId != chatId) {
+      _currentChatId = chatId;
+      _loadInitialMessages(chatId);
+    }
   }
 
-  Future<void> _loadInitialMessages() async {
+  Future<void> _loadInitialMessages(String chatId) async {
     final userId = LocalStorage.userId;
     final result = await _getMessagesByChatIdUseCase.execute(
-      GetMessagesByChatIdParams(chatId: '123'),
+      GetMessagesByChatIdParams(chatId: chatId),
     );
     result.fold(
       (failure) => showMessage(message: failure.toString()),
@@ -67,7 +75,7 @@ class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
     // _chatService.sendTypingEvent(isTyping: text.isNotEmpty);
   }
 
-  Future<void> sendMessage() async {
+  Future<void> sendMessage(String chatId) async {
     final text = messageController.text.trim();
     if (text.isEmpty) return;
 
@@ -88,7 +96,7 @@ class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
     messageController.clear();
 
     final result = await _sendMessageUseCase.execute(
-      SendMessageParams(chatId: '123', text: text),
+      SendMessageParams(chatId: chatId, text: text),
     );
     result.fold(
       (failure) => showMessage(message: failure.toString()),

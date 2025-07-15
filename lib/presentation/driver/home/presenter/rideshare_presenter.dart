@@ -91,7 +91,7 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
   }
 
   void navigateToChat() {
-    Get.to(() => ChatPage());
+    Get.to(() => ChatPage(chatId: '123'));
   }
 
   void navigateToCall() {

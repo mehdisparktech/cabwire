@@ -19,8 +19,13 @@ import 'payment_info_widget.dart';
 
 class RideshareBottomSheet extends StatelessWidget {
   final RideSharePresenter presenter;
+  final String chatId;
 
-  const RideshareBottomSheet({super.key, required this.presenter});
+  const RideshareBottomSheet({
+    super.key,
+    required this.presenter,
+    required this.chatId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +119,8 @@ class RideshareBottomSheet extends StatelessWidget {
                 Expanded(
                   flex: 5,
                   child: MessageButtonWidget(
-                    onTap: () => Get.to(() => PassengerChatPage()),
+                    onTap:
+                        () => Get.to(() => PassengerChatPage(chatId: chatId)),
                   ),
                 ),
                 Expanded(

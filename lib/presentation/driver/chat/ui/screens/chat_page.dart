@@ -8,9 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ChatPage extends StatelessWidget {
+  final String chatId;
   final ChatPresenter presenter = locate<ChatPresenter>();
 
-  ChatPage({super.key});
+  ChatPage({super.key, required this.chatId});
 
   @override
   Widget build(BuildContext context) {

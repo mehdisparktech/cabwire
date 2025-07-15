@@ -44,6 +44,7 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     }
   }
 
+  //start reconnect monitor
   void _startReconnectMonitor() {
     appLog("Starting reconnect monitor...");
     _reconnectTimer?.cancel();
@@ -57,6 +58,7 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     });
   }
 
+  //setup socket listeners
   void _setupSocketListeners() {
     appLog("Setting up socket listeners...");
     if (rideId == null) return;
@@ -98,8 +100,18 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     appLog("Socket listeners setup complete for event: $eventName");
   }
 
+  //handle ride acceptance
   void _handleRideAcceptance(Map<String, dynamic> data) {
     appLog("Ride accepted event received: $data");
+
+    if (data.containsKey('chat') && data['chat'] != null) {
+      final chatData = data['chat'];
+      if (chatData is Map<String, dynamic> && chatData.containsKey('_id')) {
+        final chatId = chatData['_id'].toString();
+        appLog("Chat ID extracted from ride acceptance: $chatId");
+        uiState.value = currentUiState.copyWith(chatId: chatId);
+      }
+    }
 
     // Update UI state to indicate ride has been accepted
     uiState.value = currentUiState.copyWith(
@@ -119,8 +131,10 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     appLog(
       "Updated UI state - isRideAccepted: ${currentUiState.isRideAccepted}",
     );
+    appLog("Chat ID: ${currentUiState.chatId}");
   }
 
+  //handle driver acceptance
   void _handleDriverAcceptance(Map<String, dynamic> data) {
     appLog("Driver accepted event received: $data");
 
@@ -136,6 +150,7 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     showMessage(message: 'A driver has accepted your ride!');
   }
 
+  //handle driver location update
   void _handleDriverLocationUpdate(Map<String, dynamic> data) {
     final driverLat = data['lat'] as double;
     final driverLng = data['lng'] as double;
@@ -148,6 +163,7 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     _updateDriverMarker(LatLng(driverLat, driverLng));
   }
 
+  //handle ride status change
   // ignore: unused_element
   void _handleRideStatusChange(Map<String, dynamic> data) {
     appLog("Ride status changed: $data");
@@ -159,6 +175,7 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     }
   }
 
+  //update driver marker
   void _updateDriverMarker(LatLng position) {
     // Logic to update driver marker on the map
     if (currentUiState.mapController != null) {
@@ -166,6 +183,7 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     }
   }
 
+  //navigate to ride share screen
   void navigateToRideShareScreen(
     BuildContext context,
     String rideId,
@@ -175,16 +193,21 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder:
-            (context) =>
-                RideShareScreen(rideId: rideId, rideResponse: rideResponse),
+            (context) => RideShareScreen(
+              rideId: rideId,
+              rideResponse: rideResponse,
+              chatId: currentUiState.chatId ?? '',
+            ),
       ),
     );
   }
 
+  //on map created
   void onMapCreated(GoogleMapController controller) {
     uiState.value = currentUiState.copyWith(mapController: controller);
   }
 
+  //cancel ride request
   Future<void> cancelRideRequest(BuildContext context, String id) async {
     if (id.isNotEmpty) {
       final result = await _cancelRideUseCase.execute(id);
@@ -208,6 +231,7 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     }
   }
 
+  //dispose
   @override
   void dispose() {
     appLog("Disposing FindingRidesPresenter...");
@@ -229,12 +253,14 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     super.dispose();
   }
 
+  //add user message
   @override
   Future<void> addUserMessage(String message) async {
     uiState.value = currentUiState.copyWith(userMessage: message);
     showMessage(message: currentUiState.userMessage);
   }
 
+  //toggle loading
   @override
   Future<void> toggleLoading({required bool loading}) async {
     uiState.value = currentUiState.copyWith(isLoading: loading);

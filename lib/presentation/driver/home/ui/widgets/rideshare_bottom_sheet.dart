@@ -14,7 +14,6 @@ import 'payment_info_widget.dart';
 
 class RideshareBottomSheet extends StatelessWidget {
   final RidesharePresenter presenter;
-
   const RideshareBottomSheet({super.key, required this.presenter});
 
   @override

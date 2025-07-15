@@ -23,6 +23,7 @@ class RideShareUiState extends BaseUiState {
   final BitmapDescriptor destinationIcon;
   final BitmapDescriptor driverIcon;
   final BitmapDescriptor userLocationIcon;
+  final String chatId;
 
   const RideShareUiState({
     required super.isLoading,
@@ -47,6 +48,7 @@ class RideShareUiState extends BaseUiState {
     required this.destinationIcon,
     required this.driverIcon,
     required this.userLocationIcon,
+    required this.chatId,
   });
 
   factory RideShareUiState.empty({
@@ -77,6 +79,7 @@ class RideShareUiState extends BaseUiState {
       destinationIcon: BitmapDescriptor.defaultMarker,
       driverIcon: BitmapDescriptor.defaultMarker,
       userLocationIcon: BitmapDescriptor.defaultMarker,
+      chatId: '',
     );
   }
 
@@ -104,6 +107,7 @@ class RideShareUiState extends BaseUiState {
     destinationIcon,
     driverIcon,
     userLocationIcon,
+    chatId,
   ];
 
   RideShareUiState copyWith({
@@ -129,6 +133,7 @@ class RideShareUiState extends BaseUiState {
     BitmapDescriptor? destinationIcon,
     BitmapDescriptor? driverIcon,
     BitmapDescriptor? userLocationIcon,
+    String? chatId,
   }) {
     return RideShareUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -155,6 +160,7 @@ class RideShareUiState extends BaseUiState {
       destinationIcon: destinationIcon ?? this.destinationIcon,
       driverIcon: driverIcon ?? this.driverIcon,
       userLocationIcon: userLocationIcon ?? this.userLocationIcon,
+      chatId: chatId ?? this.chatId,
     );
   }
 }
