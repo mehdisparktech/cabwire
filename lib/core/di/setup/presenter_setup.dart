@@ -158,7 +158,8 @@ class PresenterSetup implements SetupModule {
         () => loadPresenter(DriverEditPasswordPresenter(locate())),
       )
       ..registerLazySingleton(
-        () => loadPresenter(PassengerChatPresenter(locate(), locate())),
+        () =>
+            loadPresenter(PassengerChatPresenter(locate(), locate(), locate())),
       );
     _setupPassengerPresenters();
   }

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
+import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/domain/usecases/chat/get_messages_by_chat_id_usecase.dart';
 import 'package:cabwire/domain/usecases/chat/send_message_usecase.dart';
 import 'package:cabwire/presentation/passenger/passenger_chat/presenter/passenger_chat_ui_state.dart';
@@ -11,6 +13,7 @@ import 'package:get/get.dart';
 
 class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
   final GetMessagesByChatIdUseCase _getMessagesByChatIdUseCase;
+  final SocketService _socketService;
   final SendMessageUseCase _sendMessageUseCase;
   final Obs<PassengerChatUiState> uiState = Obs<PassengerChatUiState>(
     PassengerChatUiState.initial(),
@@ -22,10 +25,12 @@ class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
   final ScrollController scrollController = ScrollController();
 
   String? _currentChatId;
+  Timer? _reconnectTimer;
 
   PassengerChatPresenter(
     this._getMessagesByChatIdUseCase,
     this._sendMessageUseCase,
+    this._socketService,
   );
 
   void initial(String chatId) {
@@ -33,6 +38,125 @@ class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
     if (_currentChatId != chatId) {
       _currentChatId = chatId;
       _loadInitialMessages(chatId);
+      _ensureSocketConnection();
+      // / Add a small delay to ensure socket is connected before setting up listeners
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _setupSocketListeners();
+      });
+
+      _startReconnectMonitor();
+    }
+  }
+
+  void _ensureSocketConnection() {
+    appLog("Checking socket connection...");
+    if (!_socketService.isConnected) {
+      appLog("Socket not connected. Connecting...");
+      _socketService.connectToSocket();
+    } else {
+      appLog("Socket is already connected.");
+    }
+  }
+
+  //start reconnect monitor
+  void _startReconnectMonitor() {
+    appLog("Starting reconnect monitor...");
+    _reconnectTimer?.cancel();
+    _reconnectTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (!_socketService.isConnected) {
+        appLog("Socket disconnected. Attempting to reconnect...");
+        _socketService.connectToSocket();
+        // Re-setup listeners after reconnection
+        _setupSocketListeners();
+      }
+    });
+  }
+
+  //setup socket listeners
+  void _setupSocketListeners() {
+    appLog("Setting up socket listeners...");
+    if (_currentChatId == null) return;
+
+    final eventName = 'getMessage::$_currentChatId';
+    appLog("Setting up socket listeners for event: $eventName");
+
+    // First, remove any existing listeners to avoid duplicates
+    _socketService.off(eventName);
+
+    // Setup fresh listener with extra debugging
+    _socketService.on(eventName, (dynamic data) {
+      appLog("SOCKET_EVENT_RECEIVED: Event $eventName triggered");
+      appLog("SOCKET_DATA_DEBUG: Raw data received: $data");
+
+      // Handle different data types
+      try {
+        if (data is Map) {
+          final Map<String, dynamic> messageData = Map<String, dynamic>.from(
+            data,
+          );
+          appLog("SOCKET_DEBUG: Message data: $messageData");
+
+          // Examine text field specifically
+          final textValue = messageData['text'];
+          appLog("SOCKET_DEBUG: Text field value: '$textValue'");
+
+          // Process the message
+          if (messageData.containsKey('sender') &&
+              messageData['sender'] != LocalStorage.userId) {
+            appLog(
+              "Message is not from the current user: ${messageData['sender'] != LocalStorage.userId}",
+            );
+            _handleMessageReceived(messageData);
+          } else {
+            appLog("SOCKET_DEBUG: Message data does not contain text field");
+          }
+        } else {
+          appLog("SOCKET_DEBUG: Received non-Map data: $data");
+        }
+      } catch (e, stackTrace) {
+        appLog("SOCKET_DEBUG: Error processing socket event: $e");
+        appLog("SOCKET_DEBUG: Stack trace: $stackTrace");
+      }
+    });
+
+    appLog("Socket listeners setup complete for event: $eventName");
+  }
+
+  void _handleMessageReceived(Map<String, dynamic> data) {
+    appLog("MESSAGE_PROCESSING: Processing message data: $data");
+
+    try {
+      // Extract text with safety checks
+      final textValue = data['text'];
+      final String messageText = textValue?.toString() ?? '';
+
+      appLog("MESSAGE_PROCESSING: Extracted text: '$messageText'");
+
+      if (messageText.isNotEmpty) {
+        appLog(
+          "MESSAGE_PROCESSING: Creating message with text: '$messageText'",
+        );
+
+        // Create new chat message
+        final newMessage = PassengerChatMessage(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          text: messageText,
+          timestamp: DateTime.now(),
+          isSender: false,
+        );
+
+        // Update UI state
+        final updatedMessages = [...currentUiState.messages, newMessage];
+        uiState.value = currentUiState.copyWith(messages: updatedMessages);
+
+        appLog("MESSAGE_PROCESSING: Message added successfully to UI state");
+        _scrollToBottom();
+      } else {
+        appLog("MESSAGE_PROCESSING: Empty message text, not adding to UI");
+      }
+    } catch (e, stackTrace) {
+      appLog("MESSAGE_PROCESSING: Error handling message: $e");
+      appLog("MESSAGE_PROCESSING: Stack trace: $stackTrace");
     }
   }
 
