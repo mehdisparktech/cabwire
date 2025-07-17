@@ -118,13 +118,13 @@ class PassengerChatPage extends StatelessWidget {
 
           final message = uiState.messages[messageIndex];
           if (message.isSender) {
-            return _buildSenderMessage(message.text, AppAssets.icProfileImage);
-          } else {
             return _buildReceiverMessage(
               message.text,
               message.showAvatar,
               AppAssets.icProfileImage,
             );
+          } else {
+            return _buildSenderMessage(message.text, AppAssets.icProfileImage);
           }
         },
       ),

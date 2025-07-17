@@ -41,23 +41,26 @@ class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
     final result = await _getMessagesByChatIdUseCase.execute(
       GetMessagesByChatIdParams(chatId: chatId),
     );
-    result.fold(
-      (failure) => showMessage(message: failure.toString()),
-      (messages) =>
-          uiState.value = currentUiState.copyWith(
-            messages:
-                messages
-                    .map(
-                      (e) => PassengerChatMessage(
-                        id: e.id,
-                        text: e.text,
-                        timestamp: e.createdAt,
-                        isSender: e.sender == userId,
-                      ),
-                    )
-                    .toList(),
-          ),
-    );
+    result.fold((failure) => showMessage(message: failure.toString()), (
+      messages,
+    ) {
+      final sortedMessages =
+          messages
+              .map(
+                (e) => PassengerChatMessage(
+                  id: e.id,
+                  text: e.text,
+                  timestamp: e.createdAt,
+                  isSender: e.sender == userId,
+                ),
+              )
+              .toList()
+            ..sort(
+              (a, b) => a.timestamp.compareTo(b.timestamp),
+            ); // Sort by timestamp ascending
+
+      uiState.value = currentUiState.copyWith(messages: sortedMessages);
+    });
   }
 
   @override
@@ -100,7 +103,7 @@ class PassengerChatPresenter extends BasePresenter<PassengerChatUiState> {
     );
     result.fold(
       (failure) => showMessage(message: failure.toString()),
-      (message) => _addReceivedMessage(message.text, message.sender),
+      (message) => debugPrint(message.text),
     );
     _scrollToBottom();
   }
