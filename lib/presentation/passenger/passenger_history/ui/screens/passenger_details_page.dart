@@ -1,11 +1,6 @@
-// ride_details_page.dart
-// (No significant changes from the previous combined presenter version for this file,
-// ensure it uses presenter.currentUiState.selectedRideDetails)
-
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
-import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
@@ -248,13 +243,13 @@ class PassengerRideDetailsScreen extends StatelessWidget {
                   //     text: 'Submit Feedback',
                   //     onPressed: presenter.submitFeedback,
                   //   ),
-                  ActionButton(
-                    isPrimary: true,
-                    text: 'Submit Feedback',
-                    onPressed: () {
-                      presenter.showFeedbackFormForSelectedRide();
-                    },
-                  ),
+                  // ActionButton(
+                  //   isPrimary: true,
+                  //   text: 'Submit Feedback',
+                  //   onPressed: () {
+                  //     presenter.showFeedbackFormForSelectedRide();
+                  //   },
+                  // ),
                 ],
               ),
             ),

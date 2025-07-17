@@ -1,16 +1,19 @@
-[FEATURE_NAME] = Password Reset
-[HTTP_METHOD] = POST
-[API_ENDPOINT] = api/auth/reset-password
+[FEATURE_NAME] = Get Ride History
+[HTTP_METHOD] = GET
+[API_ENDPOINT] = api/ride/ride
 
-[REQUEST_MODEL_NAME] = ResetPasswordModel
-[RESPONSE_MODEL_NAME] = ResetPasswordResponseModel
-[ENTITY_NAME] = ResetPasswordEntity
-[MAPPER_NAME] = ResetPasswordMapper
-[DATASOURCE_NAME] = ResetPasswordRemoteDataSource
-[REPOSITORY_NAME] = ResetPasswordRepository
-[USECASE_NAME] = ResetPasswordUseCase
-[USECASE_PARAMS] = ResetPasswordParams
-[RETURN_TYPE] = void
+[RESPONSE_MODEL_NAME] = RideHistoryResponseModel
+[ENTITY_NAME] = RideEntity
+[USER_ENTITY_NAME] = RideUserEntity
+[DRIVER_ENTITY_NAME] = RideDriverEntity
+[RESPONSE_LIST_MODEL] = List<RideModel>
+[MAPPER_NAME] = RideHistoryMapper
+[DATASOURCE_NAME] = RideHistoryRemoteDataSource
+[REPOSITORY_NAME] = RideHistoryRepository
+[USECASE_NAME] = GetRideHistoryUseCase
+[USECASE_PARAMS] = NoParams
+[RETURN_TYPE] = List<RideEntity>
+
 
 
 Generate Dart code for a **[FEATURE_NAME]** feature in a Flutter project that follows Clean Architecture.
@@ -28,20 +31,110 @@ Implement an API call to [DESCRIBE_THE_FEATURE_PURPOSE].
 - **Request Body (JSON):**
     ```json
     [REQUEST_BODY_JSON]
-   {
-    "currentPassword": "hello123",
-    "newPassword":"hello12345", 
-    "confirmPassword":"hello12345"}
+   
 
     ```
 - **Response:** Assume the API returns a 200 OK status on success.
 - **Response Body (JSON):**
     ```json
     [RESPONSE_BODY_JSON]
-   {
+  {
     "success": true,
-    "message": "Your password has been successfully reset.",
-    "data": {}}
+    "message": "Rides retrieved successfully",
+    "data": [
+        {
+            "pickupLocation": {
+                "lat": 23.8103,
+                "lng": 90.4125,
+                "address": "Dhaka, Bangladesh"
+            },
+            "dropoffLocation": {
+                "lat": 23.7522,
+                "lng": 90.3918,
+                "address": "Mirpur, Dhaka"
+            },
+            "_id": "6871ed4b4edb4c02519a40ed",
+            "userId": {
+                "geoLocation": {
+                    "type": "Point",
+                    "coordinates": [
+                        0,
+                        0
+                    ]
+                },
+                "action": "request",
+                "driverTotalEarn": 0,
+                "adminRevenue": 0,
+                "_id": "685a7b2a2e8c8fd76a0ed8fc",
+                "name": "John Doe",
+                "role": "USER",
+                "email": "user@gmail.com",
+                "image": "https://i.ibb.co/z5YHLV9/profile.png",
+                "status": "active",
+                "verified": true,
+                "isOnline": false,
+                "isDeleted": false,
+                "createdAt": "2025-06-24T10:17:14.295Z",
+                "updatedAt": "2025-07-15T06:17:22.812Z",
+                "__v": 0,
+                "totalAmountSpend": 5014.53,
+                "totalTrip": 18
+            },
+            "service": "686e0b71153fae6071f36f35",
+            "category": "686ca5bcbf07c6afc6bf8747",
+            "distance": 6.795114946577798,
+            "duration": 30,
+            "fare": 351.93,
+            "rideStatus": "completed",
+            "paymentMethod": "stripe",
+            "paymentStatus": "paid",
+            "rejectedDrivers": [],
+            "createdAt": "2025-07-12T05:06:19.400Z",
+            "updatedAt": "2025-07-12T05:07:06.138Z",
+            "__v": 0,
+            "driverId": {
+                "geoLocation": {
+                    "type": "Point",
+                    "coordinates": [
+                        90.4125,
+                        23.8103
+                    ]
+                },
+                "action": "request",
+                "adminRevenue": 0,
+                "totalAmountSpend": 0,
+                "_id": "68528df7a19352787ce298c9",
+                "name": "Zulkar Naeem Rabby",
+                "role": "DRIVER",
+                "email": "zn.rabby@gmail.com",
+                "image": "/image/images-1752296000345.jpg",
+                "status": "active",
+                "verified": true,
+                "isOnline": true,
+                "isDeleted": false,
+                "createdAt": "2025-06-18T09:59:19.528Z",
+                "updatedAt": "2025-07-15T06:17:22.654Z",
+                "__v": 0,
+                "stripeAccountId": "acct_1RdA4sPNNI1vZYZl",
+                "driverLicense": {
+                    "licenseNumber": 123456789,
+                    "licenseExpiryDate": "2030-12-31T00:00:00.000Z",
+                    "uploadDriversLicense": "/image/images-1752294386281.jpg"
+                },
+                "driverVehicles": {
+                    "vehiclesMake": "Toyota",
+                    "vehiclesModel": "Corolla",
+                    "vehiclesYear": "2018-01-01T00:00:00.000Z",
+                    "vehiclesRegistrationNumber": 987654321,
+                    "vehiclesInsuranceNumber": 123456789,
+                    "vehiclesPicture": "https://example.com/license.jpg",
+                    "vehiclesCategory": "Hatchback"
+                },
+                "driverTotalEarn": 4513.099999999999,
+                "totalTrip": 1,
+                "contact": "01712340000"
+            }
+        },]}
     ```
 
 ### **3. Project Flow & Folder Structure:**

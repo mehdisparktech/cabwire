@@ -25,26 +25,30 @@ class PassengerProfileWidget extends StatelessWidget {
           backgroundImage: AssetImage(AppAssets.icProfileImage),
         ),
         const SizedBox(width: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              name,
-              style:
-                  textStyle ??
-                  TextStyle(fontSize: 14, color: Colors.grey.shade600),
-            ),
-            const SizedBox(height: 4),
-            address != null
-                ? Text(
-                  address!,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-                : const SizedBox.shrink(),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style:
+                    textStyle ??
+                    TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              address != null
+                  ? Text(
+                    address!,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  )
+                  : const SizedBox.shrink(),
+            ],
+          ),
         ),
       ],
     );

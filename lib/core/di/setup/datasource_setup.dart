@@ -4,6 +4,7 @@ import 'package:cabwire/data/datasources/remote/passenger/passenger_auth_remote_
 import 'package:cabwire/data/datasources/remote/passenger/reset_password_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/passenger/review_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/terms_and_conditions_data_source.dart';
+import 'package:cabwire/data/mappers/ride_history_mapper.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
@@ -21,6 +22,7 @@ import 'package:cabwire/data/datasources/remote/verify_email_remote_data_source.
 import 'package:cabwire/data/datasources/remote/passenger/passenger_service_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/passenger/passenger_category_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/send_message_remote_data_source.dart';
+import 'package:cabwire/data/datasources/remote/ride_history_remote_data_source.dart';
 
 class DatasourceSetup implements SetupModule {
   final GetIt _serviceLocator;
@@ -86,6 +88,10 @@ class DatasourceSetup implements SetupModule {
       )
       ..registerLazySingleton<SendMessageRemoteDataSource>(
         () => SendMessageRemoteDataSourceImpl(locate()),
-      );
+      )
+      ..registerLazySingleton<RideHistoryRemoteDataSource>(
+        () => RideHistoryRemoteDataSourceImpl(locate()),
+      )
+      ..registerLazySingleton(() => RideHistoryMapper());
   }
 }

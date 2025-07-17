@@ -49,4 +49,5 @@ class ApiEndPoint {
   static const deleteMyAccount = "$baseUrl/user/delete-my-account";
   static const review = "$baseUrl/review";
   static const message = "$baseUrl/message/";
+  static const rideHistory = "$baseUrl/ride/ride/";
 }

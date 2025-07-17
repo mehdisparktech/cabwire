@@ -96,7 +96,9 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(
         () => loadPresenter(ChatPresenter(locate(), locate())),
       )
-      ..registerLazySingleton(() => loadPresenter(RideHistoryPresenter()))
+      ..registerLazySingleton(
+        () => loadPresenter(RideHistoryPresenter(locate())),
+      )
       ..registerLazySingleton(() => loadPresenter(RidesharePresenter(locate())))
       ..registerLazySingleton(
         () => loadPresenter(
@@ -104,7 +106,9 @@ class PresenterSetup implements SetupModule {
         ),
       )
       //>>>>>>>>>>>>>>>>>>>>>>>>>> Passenger Presenters  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      ..registerLazySingleton(() => loadPresenter(PassengerHistoryPresenter()))
+      ..registerLazySingleton(
+        () => loadPresenter(PassengerHistoryPresenter(locate())),
+      )
       ..registerLazySingleton(
         () => loadPresenter(PassengerServicesPresenter(locate())),
       )

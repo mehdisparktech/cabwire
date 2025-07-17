@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/app_assets.dart'; // For sample data if needed
+import 'package:cabwire/data/mappers/ride_history_mapper.dart';
 import 'package:cabwire/domain/entities/driver/ride_history_item_entity.dart';
+import 'package:cabwire/domain/usecases/get_ride_history_usecase.dart';
 import 'package:cabwire/presentation/driver/home/ui/widgets/successful_payment.dart'; // For navigation
 import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_history/ui/screens/passenger_details_page.dart';
@@ -10,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // For TextEditingController
 
 class PassengerHistoryPresenter extends BasePresenter<PassengerHistoryUiState> {
+  final GetRideHistoryUseCase _getRideHistoryUseCase;
   final Obs<PassengerHistoryUiState> uiState = Obs<PassengerHistoryUiState>(
     PassengerHistoryUiState.initial(),
   );
@@ -17,7 +20,7 @@ class PassengerHistoryPresenter extends BasePresenter<PassengerHistoryUiState> {
 
   final TextEditingController feedbackController = TextEditingController();
 
-  PassengerHistoryPresenter() {
+  PassengerHistoryPresenter(this._getRideHistoryUseCase) {
     _initialize();
   }
 
@@ -50,37 +53,14 @@ class PassengerHistoryPresenter extends BasePresenter<PassengerHistoryUiState> {
     await toggleLoading(loading: true);
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-
-      // Sample data - in a real app, this would come from a repository
-      final sampleRides = [
-        const RideHistoryItem(
-          id: 'ride1',
-          driverName: 'Santiago Dslab',
-          driverLocation: 'Block B, Banasree | Oct 26, 2023',
-          pickupLocation: 'Block B, Banasree, Dhaka.',
-          dropoffLocation: 'Green Road, Dhanmondi, Dhaka.',
-          distance: '10.5 km',
-          duration: '45 Minutes',
-          isCarRide: false,
-        ),
-        const RideHistoryItem(
-          id: 'ride2',
-          driverName: 'Another Driver',
-          driverLocation: 'Mirpur | Oct 25, 2023',
-          pickupLocation: 'Mirpur DOHS',
-          dropoffLocation: 'Green Road, Dhanmondi, Dhaka.',
-          distance: '15.2 km',
-          duration: '1 Hour 5 Minutes',
-          isCarRide: true,
-        ),
-      ];
-
-      uiState.value = currentUiState.copyWith(
-        rides: sampleRides,
-        viewMode: PassengerHistoryViewMode.list,
-      );
+      final result = await _getRideHistoryUseCase.execute();
+      result.fold((failure) => throw Exception(failure), (data) {
+        final mappedRides = RideHistoryMapper().mapToRideHistoryItemList(data);
+        uiState.value = currentUiState.copyWith(
+          rides: mappedRides,
+          viewMode: PassengerHistoryViewMode.list,
+        );
+      });
     } finally {
       await toggleLoading(loading: false);
     }
