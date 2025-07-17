@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/enum/service_type.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/domain/entities/passenger/passenger_service_entity.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
@@ -9,6 +10,8 @@ import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_pre
 import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
 import 'package:cabwire/presentation/passenger/home/ui/widgets/ride_booking_widget.dart';
 import 'package:cabwire/presentation/passenger/passenger_notification/ui/screens/passenger_notification_page.dart';
+import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/package_delivery/payment_method_screen.dart';
+import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/rental_car_welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -113,48 +116,11 @@ class PassengerHomeScreen extends StatelessWidget {
                     imageUrl: service.image,
                     fontWeight: FontWeight.w600,
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                                  const PassengerSearchDestinationScreen(),
-                        ),
-                      );
+                      _navigateToService(context, service);
                     },
                   ),
                 )
                 .toList(),
-        // services: [
-        //   Service(
-        //     title: 'Car',
-        //     imageUrl: AppAssets.icServiceCar,
-        //     fontWeight: FontWeight.w600,
-        //     onTap: () {
-        //       Navigator.push(
-        //         context,
-        //         MaterialPageRoute(
-        //           builder:
-        //               (context) => const PassengerSearchDestinationScreen(),
-        //         ),
-        //       );
-        //     },
-        //   ),
-        //   Service(
-        //     title: 'Emergency Car',
-        //     imageUrl: AppAssets.icServiceCar,
-        //     fontWeight: FontWeight.w400,
-        //     onTap: () {
-        //       Navigator.push(
-        //         context,
-        //         MaterialPageRoute(
-        //           builder:
-        //               (context) => const PassengerSearchDestinationScreen(),
-        //         ),
-        //       );
-        //     },
-        //   ),
-        // ],
       ),
     );
   }
@@ -191,5 +157,75 @@ class PassengerHomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _navigateToService(
+    BuildContext context,
+    PassengerServiceEntity service,
+  ) {
+    switch (service.serviceName) {
+      case 'car':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => PassengerSearchDestinationScreen(
+                  serviceType: ServiceType.carBooking,
+                  serviceId: service.id,
+                ),
+          ),
+        );
+        break;
+      case 'emergency-car':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => PassengerSearchDestinationScreen(
+                  serviceType: ServiceType.emergencyCar,
+                  serviceId: service.id,
+                ),
+          ),
+        );
+        break;
+      case 'rental-car':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RentalCarWelcomeScreen(serviceId: service.id),
+          ),
+        );
+        break;
+      case 'package':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => PackagePaymentMethodScreen(serviceId: service.id),
+          ),
+        );
+        break;
+      case 'cabwire-share':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => PassengerSearchDestinationScreen(
+                  serviceType: ServiceType.cabwireShare,
+                  serviceId: service.id,
+                ),
+          ),
+        );
+        break;
+      default:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) =>
+                    PassengerSearchDestinationScreen(serviceId: service.id),
+          ),
+        );
+    }
   }
 }
