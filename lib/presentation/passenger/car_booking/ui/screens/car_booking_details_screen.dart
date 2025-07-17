@@ -201,13 +201,22 @@ class CarBookingDetailsScreen extends StatelessWidget {
               //     text: 'Submit Feedback',
               //     onPressed: presenter.submitFeedback,
               //   ),
-              ActionButton(
-                isPrimary: true,
-                text: 'Submit Feedback',
-                onPressed: () {
-                  presenter.submitFeedback();
-                },
-              ),
+              if (rideResponse.data.paymentMethod == 'stripe')
+                ActionButton(
+                  isPrimary: true,
+                  text: 'Pay Now',
+                  onPressed: () {
+                    presenter.payNow(rideResponse.data.id);
+                  },
+                ),
+              if (rideResponse.data.paymentMethod == 'offline')
+                ActionButton(
+                  isPrimary: true,
+                  text: 'Submit Feedback',
+                  onPressed: () {
+                    presenter.submitFeedback();
+                  },
+                ),
             ],
           ),
         ),

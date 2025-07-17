@@ -840,4 +840,22 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       toggleLoading(loading: false);
     }
   }
+
+  Future<void> payNow(String rideId) async {
+    toggleLoading(loading: true);
+    final result = await _apiService.post(
+      ApiEndPoint.payRide,
+      body: {'rideId': rideId},
+    );
+    toggleLoading(loading: false);
+    result.fold(
+      (error) {
+        CustomToast(message: error.message);
+      },
+      (success) {
+        CustomToast(message: success.message ?? '');
+        Get.offAll(() => SucessfullScreen());
+      },
+    );
+  }
 }
