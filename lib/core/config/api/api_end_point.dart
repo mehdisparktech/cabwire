@@ -51,4 +51,5 @@ class ApiEndPoint {
   static const message = "$baseUrl/message/";
   static const rideHistory = "$baseUrl/ride/ride/";
   static const payRide = "$baseUrl/ride/ride-payment";
+  static const updateProfile = "$baseUrl/user/profile";
 }

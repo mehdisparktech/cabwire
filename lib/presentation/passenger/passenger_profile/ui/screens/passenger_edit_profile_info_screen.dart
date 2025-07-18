@@ -146,6 +146,7 @@ class PassengerEditProfileInfoScreen extends StatelessWidget {
                               const CommonText(text: 'Email'),
                               gapH10,
                               CustomTextFormField(
+                                readOnly: true,
                                 hintText: 'Enter Email',
                                 controller: presenter.editEmailController,
                                 keyboardType: TextInputType.emailAddress,
@@ -157,22 +158,6 @@ class PassengerEditProfileInfoScreen extends StatelessWidget {
                                 hintText: 'Enter Phone Number',
                                 controller: presenter.editPhoneNumberController,
                                 keyboardType: TextInputType.phone,
-                              ),
-                              gapH10,
-                              const CommonText(text: 'Date of Birth'),
-                              gapH10,
-                              CustomTextFormField(
-                                hintText: 'YYYY-MM-DD',
-                                controller:
-                                    presenter
-                                        .editDobController /* onTap: () => presenter.selectDateOfBirth(context) */,
-                              ),
-                              gapH10,
-                              const CommonText(text: 'Gender'),
-                              gapH10,
-                              CustomTextFormField(
-                                hintText: 'e.g., Male, Female, Other',
-                                controller: presenter.editGenderController,
                               ),
                             ],
                           ),

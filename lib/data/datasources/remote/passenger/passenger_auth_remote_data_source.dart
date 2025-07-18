@@ -1,4 +1,3 @@
-// TODO Implement this library.
 import 'package:cabwire/core/base/result.dart';
 import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
@@ -7,6 +6,7 @@ import 'package:cabwire/data/models/signin_response_model.dart';
 import 'package:cabwire/data/models/signup_response_model.dart';
 import 'package:cabwire/data/models/user_model.dart';
 import 'package:cabwire/data/services/api/api_service_impl.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract class PassengerAuthRemoteDataSource {
@@ -15,9 +15,14 @@ abstract class PassengerAuthRemoteDataSource {
   Future<Result<Map<String, dynamic>>> verifyEmail(String email, String otp);
   Future<Result<String>> resetCode(String email);
   Future<Result<String>> forgotPassword(String email);
-  Future<Result<String>> updatePassengerProfile(
+  Future<Result<String>> updatePassengerProfileWithEmail(
     ProfileModel profile,
     String email,
+  );
+  Future<Result<String>> updatePassengerProfile(
+    String? name,
+    String? contact,
+    String? profileImage,
   );
   Future<Result<String>> resetPasswordWithToken(
     String token,
@@ -122,7 +127,7 @@ class PassengerAuthRemoteDataSourceImpl extends PassengerAuthRemoteDataSource {
 
   // update driver profile
   @override
-  Future<Result<String>> updatePassengerProfile(
+  Future<Result<String>> updatePassengerProfileWithEmail(
     ProfileModel profile,
     String email,
   ) async {
@@ -130,6 +135,35 @@ class PassengerAuthRemoteDataSourceImpl extends PassengerAuthRemoteDataSource {
       final result = await apiService.patch(
         ApiEndPoint.updateProfileByEmail + email,
         body: profile.toJson(),
+      );
+      return result.fold(
+        (l) => left(l.message),
+        (r) => right(r.data['message']),
+      );
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
+
+  // update passenger profile
+  @override
+  Future<Result<String>> updatePassengerProfile(
+    String? name,
+    String? contact,
+    String? profileImage,
+  ) async {
+    try {
+      final result = await apiService.patch(
+        ApiEndPoint.updateProfile,
+        body: {
+          'name': name,
+          'phoneNumber': contact,
+          'profileImage': profileImage,
+        },
+        header: {
+          'Authorization': 'Bearer ${LocalStorage.token}',
+          'Content-Type': 'application/json',
+        },
       );
       return result.fold(
         (l) => left(l.message),

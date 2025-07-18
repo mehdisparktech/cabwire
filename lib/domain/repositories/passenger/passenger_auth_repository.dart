@@ -10,13 +10,19 @@ abstract class PassengerAuthRepository {
   Future<Result<Map<String, dynamic>>> verifyEmail(String email, String otp);
   Future<Result<String>> resetCode(String email);
   Future<Result<String>> forgotPassword(String email);
-  Future<Result<String>> updatePassengerProfile(
+  Future<Result<String>> updatePassengerProfileWithEmail(
     ProfileModel profile,
     String email,
+  );
+  Future<Result<String>> updatePassengerProfile(
+    String? name,
+    String? contact,
+    String? profileImage,
   );
   Future<Result<String>> resetPasswordWithToken(
     String token,
     String newpassword,
     String confirmPassword,
   );
+  Future<Result<ProfileResponseModel>> getPassengerProfile(String token);
 }

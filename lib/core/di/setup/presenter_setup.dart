@@ -125,7 +125,9 @@ class PresenterSetup implements SetupModule {
         () => loadPresenter(FindingRidesPresenter(locate(), locate())),
       )
       ..registerLazySingleton(
-        () => loadPresenter(PassengerProfilePresenter(locate(), locate())),
+        () => loadPresenter(
+          PassengerProfilePresenter(locate(), locate(), locate(), locate()),
+        ),
       )
       ..registerLazySingleton(
         () => loadPresenter(PassengerOnboardingPresenter()),

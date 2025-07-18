@@ -15,7 +15,9 @@ import 'package:cabwire/domain/usecases/driver/verify_email_usecase.dart';
 import 'package:cabwire/domain/usecases/get_ride_history_usecase.dart';
 import 'package:cabwire/domain/usecases/notifications_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/cencel_ride_usecase.dart';
+import 'package:cabwire/domain/usecases/passenger/get_passenger_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/reset_password_usecase.dart';
+import 'package:cabwire/domain/usecases/passenger/update_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/verify_email_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger_sign_in_usecase.dart';
 import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
@@ -97,6 +99,8 @@ class UsecaseSetup implements SetupModule {
         () => GetMessagesByChatIdUseCase(locate(), locate()),
       )
       ..registerLazySingleton(() => SendMessageUseCase(locate(), locate()))
-      ..registerLazySingleton(() => GetRideHistoryUseCase(locate(), locate()));
+      ..registerLazySingleton(() => GetRideHistoryUseCase(locate(), locate()))
+      ..registerLazySingleton(() => UpdateProfileUsecase(locate()))
+      ..registerLazySingleton(() => GetPassengerProfileUsecase(locate()));
   }
 }

@@ -67,11 +67,28 @@ class PassengerAuthRepositoryImpl implements PassengerAuthRepository {
   }
 
   @override
-  Future<Result<String>> updatePassengerProfile(
+  Future<Result<String>> updatePassengerProfileWithEmail(
     ProfileModel profile,
     String email,
   ) async {
-    final result = await _authDataSource.updatePassengerProfile(profile, email);
+    final result = await _authDataSource.updatePassengerProfileWithEmail(
+      profile,
+      email,
+    );
+    return result.fold((l) => left(l), (r) => right(r));
+  }
+
+  @override
+  Future<Result<String>> updatePassengerProfile(
+    String? name,
+    String? contact,
+    String? profileImage,
+  ) async {
+    final result = await _authDataSource.updatePassengerProfile(
+      name,
+      contact,
+      profileImage,
+    );
     return result.fold((l) => left(l), (r) => right(r));
   }
 
@@ -86,6 +103,12 @@ class PassengerAuthRepositoryImpl implements PassengerAuthRepository {
       newpassword,
       confirmPassword,
     );
+    return result.fold((l) => left(l), (r) => right(r));
+  }
+
+  @override
+  Future<Result<ProfileResponseModel>> getPassengerProfile(String token) async {
+    final result = await _authDataSource.getPassengerProfile(token);
     return result.fold((l) => left(l), (r) => right(r));
   }
 }

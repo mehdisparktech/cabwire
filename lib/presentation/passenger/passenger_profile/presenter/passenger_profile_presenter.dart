@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/app_assets.dart'; // For default assets
 import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart'; // Import LocalStorage
+import 'package:cabwire/domain/usecases/passenger/get_passenger_profile_usecase.dart';
+import 'package:cabwire/domain/usecases/passenger/update_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
 import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart'; // Import WelcomeScreen
@@ -25,6 +28,8 @@ import 'package:image_picker/image_picker.dart';
 class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   final TermsAndConditionsUsecase _termsAndConditionsUsecase;
   final PrivacyAndPolicyUsecase _privacyAndPolicyUsecase;
+  final UpdateProfileUsecase _updateProfileUsecase;
+  final GetPassengerProfileUsecase _getPassengerProfileUsecase;
   final Obs<PassengerProfileUiState> uiState = Obs<PassengerProfileUiState>(
     PassengerProfileUiState.initial(),
   );
@@ -36,9 +41,9 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   final TextEditingController editEmailController = TextEditingController();
   final TextEditingController editPhoneNumberController =
       TextEditingController();
-  final TextEditingController editDobController =
-      TextEditingController(); // Date of Birth
-  final TextEditingController editGenderController = TextEditingController();
+  // final TextEditingController editDobController =
+  //     TextEditingController(); // Date of Birth
+  // final TextEditingController editGenderController = TextEditingController();
   File? selectedProfileImageFile; // For new profile image
 
   // Edit Password
@@ -58,10 +63,13 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   PassengerProfilePresenter(
     this._termsAndConditionsUsecase,
     this._privacyAndPolicyUsecase,
+    this._updateProfileUsecase,
+    this._getPassengerProfileUsecase,
   ) {
     _loadInitialData();
     getTermsAndConditions();
     getPrivacyPolicy();
+    getPassengerProfile();
   }
 
   Future<void> _loadInitialData() async {
@@ -74,7 +82,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     final fetchedPassengerProfile = PassengerProfileData(
       name: profile?.name ?? 'Mehdi Hasan',
       email: profile?.email ?? '',
-      phoneNumber: '01682015735',
+      phoneNumber: '016820157335',
       avatarUrl: AppAssets.icProfileImage, // Placeholder or actual URL
       dateOfBirth: '1990-01-01',
       gender: 'Male',
@@ -94,8 +102,8 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     editNameController.text = profile.name;
     editEmailController.text = profile.email;
     editPhoneNumberController.text = profile.phoneNumber;
-    editDobController.text = profile.dateOfBirth ?? '';
-    editGenderController.text = profile.gender ?? '';
+    // editDobController.text = profile.dateOfBirth ?? '';
+    // editGenderController.text = profile.gender ?? '';
   }
 
   @override
@@ -205,31 +213,54 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
       toggleLoading(loading: false);
       return;
     }
-    // Simulate API call to update profile
-    appLog(
-      "Saving profile: ${editNameController.text}, ${editEmailController.text}",
+    final result = await _updateProfileUsecase.execute(
+      editNameController.text,
+      editPhoneNumberController.text,
+      selectedProfileImageFile?.path,
     );
-    if (selectedProfileImageFile != null) {
-      appLog("New profile image to upload: ${selectedProfileImageFile!.path}");
-      // Handle image upload here
-    }
-    await Future.delayed(const Duration(seconds: 2));
+    result.fold(
+      (error) {
+        addUserMessage(error, isError: true);
+        showMessage(message: error);
+        toggleLoading(loading: false);
+        return;
+      },
+      (success) {
+        addUserMessage(success);
+        showMessage(message: success);
+        toggleLoading(loading: false);
+        getPassengerProfile();
+        Get.back();
+      },
+    );
+  }
 
-    // On success, update the main userProfile state
-    final updatedProfile = currentUiState.passengerProfile.copyWith(
-      name: editNameController.text,
-      email: editEmailController.text,
-      phoneNumber: editPhoneNumberController.text,
-      dateOfBirth: editDobController.text,
-      gender: editGenderController.text,
-      // avatarUrl: newImageUrlFromServerIfUploaded, // Update if image was uploaded
+  Future<void> getPassengerProfile() async {
+    final result = await _getPassengerProfileUsecase.execute();
+    result.fold(
+      (error) {
+        addUserMessage(error);
+        showMessage(message: error);
+        toggleLoading(loading: false);
+        return;
+      },
+      (success) {
+        final profile = success.data;
+        addUserMessage(profile?.name ?? '');
+        showMessage(message: profile?.name ?? '');
+        uiState.value = currentUiState.copyWith(
+          passengerProfile: PassengerProfileData(
+            name: profile?.name ?? '',
+            email: profile?.email ?? '',
+            phoneNumber: '0168201573350',
+            avatarUrl: AppAssets.icProfileImage,
+            dateOfBirth: '',
+            gender: 'Male',
+          ),
+        );
+        toggleLoading(loading: false);
+      },
     );
-    uiState.value = currentUiState.copyWith(
-      passengerProfile: updatedProfile,
-      isLoading: false,
-    );
-    addUserMessage("Profile updated successfully!");
-    Get.back(); // Go back from edit screen
   }
 
   Future<void> savePassengerInfo() async {
@@ -241,8 +272,8 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
       name: editNameController.text,
       email: editEmailController.text,
       phoneNumber: editPhoneNumberController.text,
-      dateOfBirth: editDobController.text,
-      gender: editGenderController.text,
+      // dateOfBirth: editDobController.text,
+      // gender: editGenderController.text,
     );
     uiState.value = currentUiState.copyWith(
       passengerProfile: updatedPassengerInfo,
@@ -360,8 +391,8 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     editNameController.dispose();
     editEmailController.dispose();
     editPhoneNumberController.dispose();
-    editDobController.dispose();
-    editGenderController.dispose();
+    // editDobController.dispose();
+    // editGenderController.dispose();
     oldPasswordController.dispose();
     newPasswordController.dispose();
     confirmNewPasswordController.dispose();
