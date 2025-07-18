@@ -7,7 +7,7 @@ import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/search_destination_presenter.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/search_destination_ui_state.dart'
     as ui_state;
-import 'package:cabwire/presentation/driver/create_post/ui/screens/set_ride_information_page.dart';
+import 'package:cabwire/presentation/driver/create_post/ui/screens/create_post_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -30,17 +30,7 @@ class SearchDestinationScreen extends StatelessWidget {
               _buildDestinationContainer(context, presenter),
             ],
           ),
-          bottomSheet: Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: ActionButton(
-              borderRadius: 0,
-              isPrimary: true,
-              text: 'Continue',
-              onPressed: () {
-                Get.to(() => const SetRideInformationScreen());
-              },
-            ),
-          ),
+          bottomSheet: _buildBottomSheet(context, presenter),
         );
       },
     );
@@ -75,27 +65,24 @@ class SearchDestinationScreen extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: SizedBox(
         height: context.height * 0.9,
-        child: Stack(
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(px32),
-                  topRight: Radius.circular(px32),
-                ),
-              ),
-              child: Column(
-                children: [
-                  _buildHeader(context),
-                  _buildSearchInputs(context, presenter),
-                  _buildAddButton(context),
-                  _buildSearchHistory(context, presenter),
-                ],
-              ),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(px32),
+              topRight: Radius.circular(px32),
             ),
-          ],
+          ),
+          child: Column(
+            children: [
+              _buildHeader(context),
+              _buildSearchInputs(context, presenter),
+              _buildMultipleLocations(context, presenter),
+              _buildAddButton(context, presenter),
+              _buildContent(context, presenter),
+            ],
+          ),
         ),
       ),
     );
@@ -169,10 +156,11 @@ class SearchDestinationScreen extends StatelessWidget {
           ),
           _buildSearchField(
             controller: presenter.currentUiState.fromController,
-            hintText: 'From',
+            hintText: 'To',
             icon: Icons.location_on,
             iconColor: context.color.primaryBtn,
             showCloseIcon: true,
+            onClosePressed: () => presenter.clearFromField(),
           ),
         ],
       ),
@@ -186,6 +174,7 @@ class SearchDestinationScreen extends StatelessWidget {
     required Color iconColor,
     bool showVoiceIcon = false,
     bool showCloseIcon = false,
+    VoidCallback? onClosePressed,
   }) {
     return TextField(
       controller: controller,
@@ -198,7 +187,14 @@ class SearchDestinationScreen extends StatelessWidget {
             showVoiceIcon
                 ? Icon(Icons.mic, color: Colors.grey[600], size: 22.px)
                 : showCloseIcon
-                ? Icon(Icons.close, color: Colors.grey[600], size: 22.px)
+                ? GestureDetector(
+                  onTap: onClosePressed,
+                  child: Icon(
+                    Icons.close,
+                    color: Colors.grey[600],
+                    size: 22.px,
+                  ),
+                )
                 : null,
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
@@ -211,29 +207,101 @@ class SearchDestinationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAddButton(BuildContext context) {
+  Widget _buildMultipleLocations(
+    BuildContext context,
+    SearchDestinationPresenter presenter,
+  ) {
+    if (presenter.currentUiState.multipleLocations.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
+      margin: EdgeInsets.symmetric(horizontal: 16.px),
+      child: Column(
+        children:
+            presenter.currentUiState.multipleLocations.asMap().entries.map((
+              entry,
+            ) {
+              final index = entry.key;
+              final location = entry.value;
+              return Container(
+                margin: EdgeInsets.only(bottom: 8.px),
+                padding: EdgeInsets.all(12.px),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8.px),
+                  border: Border.all(color: Colors.grey[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: context.color.primaryBtn,
+                      size: 20.px,
+                    ),
+                    gapW12,
+                    Expanded(
+                      child: Text(
+                        location.address.isEmpty
+                            ? 'Select location'
+                            : location.address,
+                        style: TextStyle(
+                          fontSize: 14.px,
+                          color:
+                              location.address.isEmpty
+                                  ? Colors.grey[600]
+                                  : Colors.black87,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => presenter.removeMultipleLocation(index),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.grey[600],
+                        size: 18.px,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildAddButton(
+    BuildContext context,
+    SearchDestinationPresenter presenter,
+  ) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.px, vertical: 8.px),
       child: Align(
         alignment: Alignment.centerRight,
         child: TextButton(
-          onPressed: () {
-            // Add functionality here
-          },
+          onPressed: () => presenter.addMultipleLocation(),
           style: TextButton.styleFrom(
             backgroundColor: context.color.whiteColor,
             padding: EdgeInsets.symmetric(horizontal: 20.px, vertical: 12.px),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.px),
+              side: BorderSide(color: context.color.primaryBtn),
             ),
           ),
-          child: Text(
-            'Add',
-            style: TextStyle(
-              color: context.color.blackColor950,
-              fontSize: 18.px,
-              fontWeight: FontWeight.w700,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.add, color: context.color.primaryBtn, size: 18.px),
+              gapW8,
+              Text(
+                'Add Stop',
+                style: TextStyle(
+                  color: context.color.primaryBtn,
+                  fontSize: 16.px,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -266,7 +334,7 @@ class SearchDestinationScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final ui_state.SearchHistoryItem item =
                       presenter.currentUiState.searchHistory[index];
-                  return _buildHistoryItem(context, item);
+                  return _buildHistoryItem(context, item, presenter);
                 },
               ),
             ),
@@ -279,43 +347,170 @@ class SearchDestinationScreen extends StatelessWidget {
   Widget _buildHistoryItem(
     BuildContext context,
     ui_state.SearchHistoryItem item,
+    SearchDestinationPresenter presenter,
   ) {
-    return Row(
-      children: [
-        Column(
+    return GestureDetector(
+      onTap: () => presenter.selectHistoryItem(item),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.location_on,
+                color: context.color.primaryBtn,
+                size: 18.px,
+              ),
+              gapH4,
+              Text(
+                item.distance,
+                style: TextStyle(fontSize: 12.px, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+          gapW20,
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.location,
+                  style: TextStyle(
+                    fontSize: 14.px,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Divider(color: context.color.strokePrimary),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    SearchDestinationPresenter presenter,
+  ) {
+    // Show suggestions if any field has suggestions
+    if (presenter.currentUiState.destinationSuggestions.isNotEmpty) {
+      return _buildSuggestionsList(
+        context,
+        presenter.currentUiState.destinationSuggestions,
+        (suggestion) => presenter.selectDestinationSuggestion(suggestion),
+        'Destination Suggestions',
+      );
+    }
+
+    if (presenter.currentUiState.fromSuggestions.isNotEmpty) {
+      return _buildSuggestionsList(
+        context,
+        presenter.currentUiState.fromSuggestions,
+        (suggestion) => presenter.selectFromSuggestion(suggestion),
+        'From Suggestions',
+      );
+    }
+
+    // Show search history by default
+    return _buildSearchHistory(context, presenter);
+  }
+
+  Widget _buildSuggestionsList(
+    BuildContext context,
+    List<String> suggestions,
+    Function(String) onSuggestionTap,
+    String title,
+  ) {
+    return Expanded(
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: px24),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18.px,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+            gapH16,
+            Expanded(
+              child: ListView.separated(
+                itemCount: suggestions.length,
+                separatorBuilder:
+                    (context, index) =>
+                        Divider(color: context.color.strokePrimary, height: 1),
+                itemBuilder: (context, index) {
+                  final suggestion = suggestions[index];
+                  return _buildSuggestionItem(
+                    context,
+                    suggestion,
+                    onSuggestionTap,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSuggestionItem(
+    BuildContext context,
+    String suggestion,
+    Function(String) onTap,
+  ) {
+    return GestureDetector(
+      onTap: () => onTap(suggestion),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 12.px),
+        child: Row(
           children: [
             Icon(
               Icons.location_on,
               color: context.color.primaryBtn,
-              size: 18.px,
+              size: 20.px,
             ),
-            gapH4,
-            Text(
-              item.distance,
-              style: TextStyle(fontSize: 12.px, color: Colors.grey[600]),
-            ),
-          ],
-        ),
-        gapW20,
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                item.location,
+            gapW16,
+            Expanded(
+              child: Text(
+                suggestion,
                 style: TextStyle(
-                  fontSize: 14.px,
+                  fontSize: 16.px,
                   color: Colors.black87,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
-              Divider(color: context.color.strokePrimary),
-            ],
-          ),
+            ),
+            Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16.px),
+          ],
         ),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildBottomSheet(
+    BuildContext context,
+    SearchDestinationPresenter presenter,
+  ) {
+    return Container(
+      padding: EdgeInsets.all(16.px),
+      child: SafeArea(
+        child: ActionButton(
+          borderRadius: 12,
+          isPrimary: true,
+          text: 'Continue',
+          onPressed: () {
+            presenter.handleContinuePress(context, const CreatePostPage());
+          },
+        ),
+      ),
     );
   }
 }

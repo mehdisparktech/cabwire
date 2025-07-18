@@ -7,6 +7,7 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/search_destination_ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -139,11 +140,11 @@ class SearchDestinationPresenter
       if (query.isNotEmpty && query.length > 2) {
         if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
         _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-          searchDestinationPlaces(query);
+          searchFromPlaces(query);
         });
       } else if (query.isEmpty) {
         // Clear suggestions when field is empty
-        uiState.value = currentUiState.copyWith(destinationSuggestions: []);
+        uiState.value = currentUiState.copyWith(fromSuggestions: []);
       }
     };
 
@@ -165,11 +166,11 @@ class SearchDestinationPresenter
       if (query.isNotEmpty && query.length > 2) {
         if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
         _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-          searchOriginPlaces(query);
+          searchDestinationPlaces(query);
         });
       } else if (query.isEmpty) {
         // Clear suggestions when field is empty
-        uiState.value = currentUiState.copyWith(originSuggestions: []);
+        uiState.value = currentUiState.copyWith(destinationSuggestions: []);
       }
     };
 
@@ -221,10 +222,107 @@ class SearchDestinationPresenter
     }
   }
 
+  Future<void> searchFromPlaces(String query) async {
+    if (query.isEmpty || _isSearching) return;
+
+    _isSearching = true;
+    try {
+      final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json'
+        '?input=$query'
+        '&key=$_googleApiKey'
+        '&language=en'
+        '&components=country:bd',
+      );
+
+      final response = await _httpClient
+          .get(url)
+          .timeout(
+            const Duration(seconds: 5),
+            onTimeout: () => throw TimeoutException('API request timed out'),
+          );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['status'] == 'OK') {
+          final predictions = data['predictions'] as List;
+          final suggestions =
+              predictions.map((p) => p['description'].toString()).toList();
+
+          uiState.value = currentUiState.copyWith(fromSuggestions: suggestions);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error searching from places: $e');
+    } finally {
+      _isSearching = false;
+    }
+  }
+
   Future<void> selectDestinationSuggestion(String placeDescription) async {
     try {
       // Clear suggestions immediately to improve UI responsiveness
       uiState.value = currentUiState.copyWith(destinationSuggestions: []);
+
+      // Remove listener temporarily
+      if (_destinationListener != null) {
+        currentUiState.destinationController.removeListener(
+          _destinationListener!,
+        );
+      }
+
+      // Update the destinationController with the selected suggestion
+      currentUiState.destinationController.text = placeDescription;
+
+      // Re-add listener
+      if (_destinationListener != null) {
+        currentUiState.destinationController.addListener(_destinationListener!);
+      }
+
+      // Try to get coordinates for the selected location
+      final locations = await locationFromAddress(placeDescription);
+
+      if (locations.isNotEmpty) {
+        final location = locations.first;
+        final latLng = LatLng(location.latitude, location.longitude);
+
+        // Store destination coordinates
+        uiState.value = currentUiState.copyWith(
+          destinationLocation: latLng,
+          destinationAddress: placeDescription,
+        );
+
+        // If we have pickup location, calculate route
+        if (currentUiState.selectedPickupLocation != null) {
+          calculateRouteDistance(
+            currentUiState.selectedPickupLocation!,
+            latLng,
+          );
+          fetchRoutePolylines(currentUiState.selectedPickupLocation!, latLng);
+          // Fit bounds to show both markers
+          if (_mapController != null) {
+            fitBoundsOnMap();
+          }
+        } else if (currentUiState.currentLocation != null) {
+          // Use current location as pickup if no pickup was selected
+          calculateRouteDistance(currentUiState.currentLocation!, latLng);
+          fetchRoutePolylines(currentUiState.currentLocation!, latLng);
+          // Fit bounds to show both markers
+          if (_mapController != null) {
+            fitBoundsOnMap();
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error selecting destination place: $e');
+    }
+  }
+
+  Future<void> selectFromSuggestion(String placeDescription) async {
+    try {
+      // Clear suggestions immediately to improve UI responsiveness
+      uiState.value = currentUiState.copyWith(fromSuggestions: []);
 
       // Remove listener temporarily
       if (_fromListener != null) {
@@ -263,7 +361,7 @@ class SearchDestinationPresenter
         }
       }
     } catch (e) {
-      debugPrint('Error selecting destination place: $e');
+      debugPrint('Error selecting from place: $e');
     }
   }
 
@@ -341,6 +439,147 @@ class SearchDestinationPresenter
 
       uiState.value = currentUiState.copyWith(searchHistory: updatedHistory);
     }
+  }
+
+  // Method to add multiple locations
+  void addMultipleLocation() {
+    // Create a new empty location entry
+    final newLocation = MultipleLocationItem(address: '', coordinates: null);
+
+    final updatedLocations = List<MultipleLocationItem>.from(
+      currentUiState.multipleLocations,
+    );
+    updatedLocations.add(newLocation);
+
+    uiState.value = currentUiState.copyWith(
+      multipleLocations: updatedLocations,
+    );
+  }
+
+  // Method to remove a location from multiple locations
+  void removeMultipleLocation(int index) {
+    if (index >= 0 && index < currentUiState.multipleLocations.length) {
+      final updatedLocations = List<MultipleLocationItem>.from(
+        currentUiState.multipleLocations,
+      );
+      updatedLocations.removeAt(index);
+
+      uiState.value = currentUiState.copyWith(
+        multipleLocations: updatedLocations,
+      );
+    }
+  }
+
+  // Method to update a specific multiple location
+  void updateMultipleLocation(int index, String address, LatLng? coordinates) {
+    if (index >= 0 && index < currentUiState.multipleLocations.length) {
+      final updatedLocations = List<MultipleLocationItem>.from(
+        currentUiState.multipleLocations,
+      );
+
+      updatedLocations[index] = MultipleLocationItem(
+        address: address,
+        coordinates: coordinates,
+      );
+
+      uiState.value = currentUiState.copyWith(
+        multipleLocations: updatedLocations,
+      );
+    }
+  }
+
+  // Method to clear from field
+  void clearFromField() {
+    // Remove listener temporarily
+    if (_fromListener != null) {
+      currentUiState.fromController.removeListener(_fromListener!);
+    }
+
+    // Clear from controller
+    currentUiState.fromController.clear();
+
+    // Re-add listener
+    if (_fromListener != null) {
+      currentUiState.fromController.addListener(_fromListener!);
+    }
+
+    // Clear from-related state
+    uiState.value = currentUiState.copyWith(
+      selectedPickupLocation: null,
+      pickupAddress: null,
+      fromSuggestions: [],
+      routeDistance: null,
+      routeDuration: null,
+      routePolylines: null,
+    );
+  }
+
+  // Method to clear destination field
+  void clearDestinationField() {
+    // Remove listener temporarily
+    if (_destinationListener != null) {
+      currentUiState.destinationController.removeListener(
+        _destinationListener!,
+      );
+    }
+
+    // Clear destination controller
+    currentUiState.destinationController.clear();
+
+    // Re-add listener
+    if (_destinationListener != null) {
+      currentUiState.destinationController.addListener(_destinationListener!);
+    }
+
+    // Clear destination-related state
+    uiState.value = currentUiState.copyWith(
+      destinationLocation: null,
+      destinationAddress: null,
+      destinationSuggestions: [],
+      routeDistance: null,
+      routeDuration: null,
+      routePolylines: null,
+    );
+  }
+
+  // Method to clear all fields
+  void clearAllFields() {
+    // Remove listeners temporarily
+    if (_fromListener != null) {
+      currentUiState.fromController.removeListener(_fromListener!);
+    }
+    if (_destinationListener != null) {
+      currentUiState.destinationController.removeListener(
+        _destinationListener!,
+      );
+    }
+
+    // Clear text controllers
+    currentUiState.fromController.clear();
+    currentUiState.destinationController.clear();
+
+    // Re-add listeners
+    if (_fromListener != null) {
+      currentUiState.fromController.addListener(_fromListener!);
+    }
+    if (_destinationListener != null) {
+      currentUiState.destinationController.addListener(_destinationListener!);
+    }
+
+    // Clear state
+    uiState.value = currentUiState.copyWith(
+      selectedPickupLocation: null,
+      destinationLocation: null,
+      pickupAddress: null,
+      destinationAddress: null,
+      fromSuggestions: [],
+      destinationSuggestions: [],
+      originSuggestions: [],
+      routeDistance: null,
+      routeDuration: null,
+      routePolylines: null,
+      multipleLocations: [],
+    );
   }
 
   Future<void> searchOriginPlaces(String query) async {
@@ -537,16 +776,31 @@ class SearchDestinationPresenter
             final location = locations.first;
             final latLng = LatLng(location.latitude, location.longitude);
 
-            // Store as destination
+            // Store as destination (not origin!)
             uiState.value = currentUiState.copyWith(
-              originLocation: latLng,
-              originAddress: item.location,
+              destinationLocation: latLng,
+              destinationAddress: item.location,
             );
 
-            // Calculate route if we have origin/current location
-            if (currentUiState.currentLocation != null) {
+            // Calculate route if we have pickup location
+            if (currentUiState.selectedPickupLocation != null) {
+              calculateRouteDistance(
+                currentUiState.selectedPickupLocation!,
+                latLng,
+              );
+              fetchRoutePolylines(
+                currentUiState.selectedPickupLocation!,
+                latLng,
+              );
+            } else if (currentUiState.currentLocation != null) {
+              // Use current location as pickup if no pickup was selected
               calculateRouteDistance(currentUiState.currentLocation!, latLng);
               fetchRoutePolylines(currentUiState.currentLocation!, latLng);
+            }
+
+            // Fit bounds to show both markers
+            if (_mapController != null) {
+              fitBoundsOnMap();
             }
           }
         })
@@ -603,23 +857,63 @@ class SearchDestinationPresenter
   }
 
   void handleContinuePress(BuildContext context, Widget? nextScreen) {
-    // Check if we have both origin and destination
-    if (currentUiState.selectedPickupLocation == null) {
-      showMessage(message: 'Please select a pickup location');
+    // Debug logging to see current state
+    debugPrint('=== Continue Press Debug ===');
+    debugPrint(
+      'selectedPickupLocation: ${currentUiState.selectedPickupLocation}',
+    );
+    debugPrint('destinationLocation: ${currentUiState.destinationLocation}');
+    debugPrint('fromController.text: ${currentUiState.fromController.text}');
+    debugPrint(
+      'destinationController.text: ${currentUiState.destinationController.text}',
+    );
+    debugPrint('pickupAddress: ${currentUiState.pickupAddress}');
+    debugPrint('destinationAddress: ${currentUiState.destinationAddress}');
+
+    // Check if we have both pickup and destination
+    if (currentUiState.selectedPickupLocation == null &&
+        currentUiState.fromController.text.isEmpty) {
+      addUserMessage('Please select a pickup location');
       return;
     }
 
-    if (currentUiState.destinationLocation == null) {
-      showMessage(message: 'Please select a dropoff location');
+    if (currentUiState.destinationLocation == null &&
+        currentUiState.destinationController.text.isEmpty) {
+      addUserMessage('Please select a dropoff location');
       return;
     }
 
-    // Locations should already be validated in navigateToCarTypeSelection,
-    // but adding an extra check here for safety
-    if (currentUiState.serviceType == ServiceType.packageDelivery) {
-      navigateToPackageDelivery(context);
+    // If we have text but no coordinates, try to get coordinates
+    if (currentUiState.destinationController.text.isNotEmpty &&
+        currentUiState.destinationLocation == null) {
+      addUserMessage('Please wait while we process your destination location');
+      return;
+    }
+
+    if (currentUiState.fromController.text.isNotEmpty &&
+        currentUiState.selectedPickupLocation == null) {
+      addUserMessage('Please wait while we process your pickup location');
+      return;
+    }
+
+    // Validate that pickup and dropoff locations are different
+    if (currentUiState.destinationLocation != null &&
+        currentUiState.selectedPickupLocation != null) {
+      final pickupLocation = currentUiState.selectedPickupLocation!;
+      final destinationLocation = currentUiState.destinationLocation!;
+
+      if (pickupLocation.latitude == destinationLocation.latitude &&
+          pickupLocation.longitude == destinationLocation.longitude) {
+        addUserMessage('Pickup and dropoff locations cannot be the same');
+        return;
+      }
+    }
+
+    // Navigate to next screen
+    if (nextScreen != null) {
+      Get.to(() => nextScreen);
     } else {
-      navigateToCarTypeSelection(context, nextScreen);
+      navigateToPackageDelivery(context);
     }
   }
 

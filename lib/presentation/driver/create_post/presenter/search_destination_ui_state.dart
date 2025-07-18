@@ -11,13 +11,22 @@ class SearchHistoryItem {
   const SearchHistoryItem({required this.location, required this.distance});
 }
 
+class MultipleLocationItem {
+  final String address;
+  final LatLng? coordinates;
+
+  const MultipleLocationItem({required this.address, this.coordinates});
+}
+
 class SearchDestinationUiState extends BaseUiState {
   final LatLng? currentLocation;
   final LatLng? destinationLocation;
   final String? destinationAddress;
   final TextEditingController fromController;
   final List<String> destinationSuggestions;
+  final List<String> fromSuggestions;
   final List<SearchHistoryItem> searchHistory;
+  final List<MultipleLocationItem> multipleLocations;
   final String? routeDistance;
   final String? routeDuration;
   final String? error;
@@ -40,7 +49,9 @@ class SearchDestinationUiState extends BaseUiState {
     this.destinationAddress,
     required this.fromController,
     this.destinationSuggestions = const [],
+    this.fromSuggestions = const [],
     this.searchHistory = const [],
+    this.multipleLocations = const [],
     this.routeDistance,
     this.routeDuration,
     this.error,
@@ -68,6 +79,8 @@ class SearchDestinationUiState extends BaseUiState {
       destinationController: TextEditingController(),
       fromController: TextEditingController(),
       destinationSuggestions: [],
+      fromSuggestions: [],
+      multipleLocations: [],
       searchHistory: [
         SearchHistoryItem(
           location: 'Block B, Banasree, Dhaka.',
@@ -110,7 +123,9 @@ class SearchDestinationUiState extends BaseUiState {
     destinationController,
     fromController,
     destinationSuggestions,
+    fromSuggestions,
     searchHistory,
+    multipleLocations,
     routeDistance,
     routeDuration,
     error,
@@ -135,7 +150,9 @@ class SearchDestinationUiState extends BaseUiState {
     TextEditingController? destinationController,
     TextEditingController? fromController,
     List<String>? destinationSuggestions,
+    List<String>? fromSuggestions,
     List<SearchHistoryItem>? searchHistory,
+    List<MultipleLocationItem>? multipleLocations,
     String? routeDistance,
     String? routeDuration,
     String? error,
@@ -161,7 +178,9 @@ class SearchDestinationUiState extends BaseUiState {
       fromController: fromController ?? this.fromController,
       destinationSuggestions:
           destinationSuggestions ?? this.destinationSuggestions,
+      fromSuggestions: fromSuggestions ?? this.fromSuggestions,
       searchHistory: searchHistory ?? this.searchHistory,
+      multipleLocations: multipleLocations ?? this.multipleLocations,
       routeDistance: routeDistance ?? this.routeDistance,
       routeDuration: routeDuration ?? this.routeDuration,
       error: error ?? this.error,
