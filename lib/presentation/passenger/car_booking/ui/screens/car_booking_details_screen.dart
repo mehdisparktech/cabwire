@@ -206,7 +206,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                   isPrimary: true,
                   text: 'Pay Now',
                   onPressed: () {
-                    presenter.payNow(rideResponse.data.id);
+                    presenter.payNow(rideResponse.data.id, context);
                   },
                 ),
               if (rideResponse.data.paymentMethod == 'offline')

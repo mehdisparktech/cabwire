@@ -18,12 +18,14 @@ import 'package:cabwire/domain/usecases/location/get_location_updates_usecase.da
 import 'package:cabwire/domain/usecases/submit_review_usecase.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/car_booking_details_screen.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_trip_close_otp_page.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/payment_method_screen.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/sucessfull_screen.dart'
     show SucessfullScreen;
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'ride_share_ui_state.dart';
 
 class RideSharePresenter extends BasePresenter<RideShareUiState> {
@@ -44,6 +46,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
   final TextEditingController commentController = TextEditingController();
   final TextEditingController ratingController = TextEditingController();
+  WebViewController? webViewController;
 
   RideSharePresenter({
     String rideId = '',
@@ -841,21 +844,72 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
   }
 
-  Future<void> payNow(String rideId) async {
+  //===================>> pay now
+
+  Future<void> payNow(String rideId, BuildContext context) async {
     toggleLoading(loading: true);
-    final result = await _apiService.post(
-      ApiEndPoint.payRide,
-      body: {'rideId': rideId},
-    );
-    toggleLoading(loading: false);
-    result.fold(
-      (error) {
-        CustomToast(message: error.message);
-      },
-      (success) {
-        CustomToast(message: success.message ?? '');
-        Get.offAll(() => SucessfullScreen());
-      },
-    );
+
+    try {
+      Map<String, dynamic> payload = {"rideId": rideId};
+
+      final result = await _apiService.post(ApiEndPoint.payRide, body: payload);
+
+      result.fold(
+        (error) {
+          CustomToast(message: error.message);
+        },
+        (success) {
+          CustomToast(message: success.message ?? '');
+          appLog("success.data: ${success.data}");
+          appLog("success.data['redirectUrl']: ${success.data['redirectUrl']}");
+          stripePaymentByWebview(
+            paymentUrl: success.data['redirectUrl'],
+            context: context,
+          );
+        },
+      );
+    } catch (e) {
+      CustomToast(message: e.toString());
+    } finally {
+      toggleLoading(loading: false);
+    }
+  }
+
+  //===================>> stripe payment by webview
+
+  stripePaymentByWebview({
+    required String paymentUrl,
+    required BuildContext context,
+  }) {
+    if (paymentUrl.isNotEmpty) {
+      Get.to(() => PaymentMethodScreen());
+      webViewController =
+          WebViewController()
+            ..setJavaScriptMode(JavaScriptMode.unrestricted)
+            ..setNavigationDelegate(
+              NavigationDelegate(
+                onPageStarted: (url) {
+                  toggleLoading(loading: true);
+                },
+                onPageFinished: (url) {
+                  toggleLoading(loading: false);
+
+                  if (url.contains("success")) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PaymentMethodScreen(),
+                      ),
+                    );
+                  } else if (url.contains("failed") || url.contains("cancel")) {
+                    Get.back();
+                  }
+                },
+              ),
+            )
+            ..loadRequest(Uri.parse(paymentUrl));
+
+      toggleLoading(loading: false);
+    }
   }
 }
