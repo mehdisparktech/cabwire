@@ -25,6 +25,7 @@ class PaymentMethodScreen extends StatelessWidget {
                     ? SizedBox(
                       width: double.infinity,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           LoadingIndicator(
                             theme: Theme.of(context),
@@ -36,7 +37,7 @@ class PaymentMethodScreen extends StatelessWidget {
                     : Column(
                       children: [
                         SizedBox(
-                          height: Get.height,
+                          height: Get.height - 100,
                           width: double.infinity,
                           child: WebViewWidget(
                             controller: presenter.webViewController!,

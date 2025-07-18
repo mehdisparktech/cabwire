@@ -861,9 +861,11 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
         (success) {
           CustomToast(message: success.message ?? '');
           appLog("success.data: ${success.data}");
-          appLog("success.data['redirectUrl']: ${success.data['redirectUrl']}");
+          appLog(
+            "success.data['data']['redirectUrl']: ${success.data['data']['redirectUrl']}",
+          );
           stripePaymentByWebview(
-            paymentUrl: success.data['redirectUrl'],
+            paymentUrl: success.data['data']['redirectUrl'],
             context: context,
           );
         },
@@ -895,12 +897,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
                   toggleLoading(loading: false);
 
                   if (url.contains("success")) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PaymentMethodScreen(),
-                      ),
-                    );
+                    Get.offAll(() => SucessfullScreen());
                   } else if (url.contains("failed") || url.contains("cancel")) {
                     Get.back();
                   }
