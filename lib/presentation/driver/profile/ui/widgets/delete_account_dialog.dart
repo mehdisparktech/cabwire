@@ -112,9 +112,10 @@ class DeleteAccountDialog extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          // No logic needed, just close the dialog
+                          presenter.deleteAccount(
+                            presenter.deleteAccountPasswordController.text,
+                          );
                           Navigator.of(context).pop();
-                          onConfirm();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepOrange,

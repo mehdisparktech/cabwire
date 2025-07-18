@@ -7,7 +7,7 @@ import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
-import 'package:cabwire/domain/usecases/passenger/delete_profile_usecase.dart';
+import 'package:cabwire/domain/usecases/driver/delete_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
 import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart';
@@ -31,7 +31,7 @@ import 'package:cabwire/data/services/storage/storage_services.dart';
 class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   final TermsAndConditionsUsecase _termsAndConditionsUsecase;
   final PrivacyAndPolicyUsecase _privacyAndPolicyUsecase;
-  final DeleteProfileUsecase _deleteProfileUsecase;
+  final DriverDeleteProfileUsecase _deleteProfileUsecase;
   final Obs<DriverProfileUiState> uiState = Obs<DriverProfileUiState>(
     DriverProfileUiState.initial(),
   );

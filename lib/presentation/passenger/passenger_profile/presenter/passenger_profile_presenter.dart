@@ -31,7 +31,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   final PrivacyAndPolicyUsecase _privacyAndPolicyUsecase;
   final UpdateProfileUsecase _updateProfileUsecase;
   final GetPassengerProfileUsecase _getPassengerProfileUsecase;
-  final DeleteProfileUsecase _deleteProfileUsecase;
+  final PassengerDeleteProfileUsecase _deleteProfileUsecase;
   final Obs<PassengerProfileUiState> uiState = Obs<PassengerProfileUiState>(
     PassengerProfileUiState.initial(),
   );
