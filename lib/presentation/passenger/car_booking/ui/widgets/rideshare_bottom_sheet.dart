@@ -139,7 +139,10 @@ class RideshareBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             PaymentInfoWidget(
-              paymentType: uiState.rideResponse?.data.paymentMethod ?? '',
+              paymentType:
+                  uiState.rideResponse?.data.paymentMethod == 'stripe'
+                      ? 'Online Payment'
+                      : 'Cash Payment',
               amount: uiState.rideResponse?.data.fare.toString() ?? '',
             ),
             if (uiState.isRideProcessing || uiState.isRideEnd)
