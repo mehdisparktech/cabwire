@@ -6,6 +6,7 @@ import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart'; // Import LocalStorage
+import 'package:cabwire/domain/usecases/passenger/delete_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/get_passenger_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/update_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
@@ -30,6 +31,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   final PrivacyAndPolicyUsecase _privacyAndPolicyUsecase;
   final UpdateProfileUsecase _updateProfileUsecase;
   final GetPassengerProfileUsecase _getPassengerProfileUsecase;
+  final DeleteProfileUsecase _deleteProfileUsecase;
   final Obs<PassengerProfileUiState> uiState = Obs<PassengerProfileUiState>(
     PassengerProfileUiState.initial(),
   );
@@ -60,11 +62,18 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   final TextEditingController contactMessageController =
       TextEditingController();
 
+  // Delete Account
+  // final bool showPassword = false;
+  // final bool showConfirmPassword = false;
+  final TextEditingController deleteAccountPasswordController =
+      TextEditingController();
+
   PassengerProfilePresenter(
     this._termsAndConditionsUsecase,
     this._privacyAndPolicyUsecase,
     this._updateProfileUsecase,
     this._getPassengerProfileUsecase,
+    this._deleteProfileUsecase,
   ) {
     _loadInitialData();
     getTermsAndConditions();
@@ -167,8 +176,8 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
           (ctx) => DeleteAccountDialog(
             onConfirm: () {
               Get.back(); // Close dialog
-              _deleteAccount();
             },
+            presenter: this,
           ),
     );
   }
@@ -351,28 +360,26 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     }
   }
 
-  void _deleteAccount() async {
+  Future<void> deleteAccount(String password) async {
     toggleLoading(loading: true);
-    // Perform actual account deletion
-    appLog("Deleting account...");
-
     try {
-      await LocalStorage.removeAllPrefData();
-
-      appLog("Successfully deleted account and cleared user data");
-
-      Future.delayed(const Duration(milliseconds: 500), () {
-        toggleLoading(loading: false);
-        Get.offAll(() => WelcomeScreen());
-        addUserMessage("Account deleted successfully");
-      });
-    } catch (e) {
-      appLog("Error during account deletion: $e");
-      toggleLoading(loading: false);
-      addUserMessage(
-        "Error deleting account. Please try again.",
-        isError: true,
+      final result = await _deleteProfileUsecase.execute(password);
+      result.fold(
+        (error) {
+          addUserMessage(error, isError: true);
+          toggleLoading(loading: false);
+          return;
+        },
+        (success) {
+          addUserMessage(success);
+          LocalStorage.removeAllPrefData();
+          toggleLoading(loading: false);
+          Get.offAll(() => WelcomeScreen());
+        },
       );
+    } catch (e) {
+      addUserMessage(e.toString(), isError: true);
+      toggleLoading(loading: false);
     }
   }
 
@@ -410,6 +417,12 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     );
   }
 
+  void toggleShowPassword() {
+    uiState.value = currentUiState.copyWith(
+      showPassword: !(currentUiState.showPassword ?? false),
+    );
+  }
+
   @override
   void dispose() {
     // Dispose all controllers
@@ -425,6 +438,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     contactEmailController.dispose();
     contactPhoneNumberController.dispose();
     contactMessageController.dispose();
+    deleteAccountPasswordController.dispose();
     super.dispose();
   }
 }

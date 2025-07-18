@@ -30,6 +30,7 @@ abstract class PassengerAuthRemoteDataSource {
     String confirmPassword,
   );
   Future<Result<ProfileResponseModel>> getPassengerProfile(String token);
+  Future<Result<String>> deleteMyAccount(String token, String password);
 }
 
 class PassengerAuthRemoteDataSourceImpl extends PassengerAuthRemoteDataSource {
@@ -207,6 +208,27 @@ class PassengerAuthRemoteDataSourceImpl extends PassengerAuthRemoteDataSource {
       return result.fold(
         (l) => left(l.message),
         (r) => right(ProfileResponseModel.fromJson(r.data)),
+      );
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
+
+  // delete my account
+  @override
+  Future<Result<String>> deleteMyAccount(String token, String password) async {
+    try {
+      final result = await apiService.delete(
+        ApiEndPoint.deleteMyAccount,
+        header: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: {'password': password},
+      );
+      return result.fold(
+        (l) => left(l.message),
+        (r) => right(r.data['message']),
       );
     } catch (e) {
       return left(e.toString());

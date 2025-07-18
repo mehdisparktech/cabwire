@@ -16,6 +16,7 @@ class PassengerProfileData {
   final String avatarUrl; // Asset path or network URL
   final String? dateOfBirth;
   final String? gender;
+  final bool? showPassword;
   // Add other general profile fields
 
   const PassengerProfileData({
@@ -25,6 +26,7 @@ class PassengerProfileData {
     required this.avatarUrl,
     this.dateOfBirth,
     this.gender,
+    this.showPassword,
   });
 
   // Factory for initial/empty state
@@ -36,6 +38,7 @@ class PassengerProfileData {
       avatarUrl: '', // Default or placeholder
       dateOfBirth: null,
       gender: null,
+      showPassword: false,
     );
   }
 
@@ -46,6 +49,7 @@ class PassengerProfileData {
     String? avatarUrl,
     String? dateOfBirth,
     String? gender,
+    bool? showPassword,
   }) {
     return PassengerProfileData(
       name: name ?? this.name,
@@ -54,6 +58,7 @@ class PassengerProfileData {
       avatarUrl: avatarUrl ?? this.avatarUrl,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       gender: gender ?? this.gender,
+      showPassword: showPassword ?? this.showPassword,
     );
   }
 }
@@ -62,6 +67,7 @@ class PassengerProfileUiState extends BaseUiState {
   final PassengerProfileData passengerProfile;
   final String? termsAndConditions;
   final String? privacyPolicy;
+  final bool? showPassword;
   // For forms - keeping it simple, presenter will manage controllers directly for now
   // Or you can store form field values here if you prefer not to pass controllers around.
   // final String editProfileName;
@@ -74,6 +80,7 @@ class PassengerProfileUiState extends BaseUiState {
     required this.passengerProfile,
     this.termsAndConditions,
     this.privacyPolicy,
+    this.showPassword,
   });
 
   factory PassengerProfileUiState.initial() {
@@ -84,6 +91,7 @@ class PassengerProfileUiState extends BaseUiState {
           PassengerProfileData.empty(), // Load actual data in presenter
       termsAndConditions: null,
       privacyPolicy: null,
+      showPassword: false,
     );
   }
 
@@ -94,6 +102,7 @@ class PassengerProfileUiState extends BaseUiState {
     passengerProfile,
     termsAndConditions,
     privacyPolicy,
+    showPassword,
   ];
 
   PassengerProfileUiState copyWith({
@@ -102,6 +111,7 @@ class PassengerProfileUiState extends BaseUiState {
     PassengerProfileData? passengerProfile,
     String? termsAndConditions,
     String? privacyPolicy,
+    bool? showPassword,
   }) {
     return PassengerProfileUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -109,6 +119,7 @@ class PassengerProfileUiState extends BaseUiState {
       passengerProfile: passengerProfile ?? this.passengerProfile,
       termsAndConditions: termsAndConditions ?? this.termsAndConditions,
       privacyPolicy: privacyPolicy ?? this.privacyPolicy,
+      showPassword: showPassword ?? this.showPassword,
     );
   }
 }

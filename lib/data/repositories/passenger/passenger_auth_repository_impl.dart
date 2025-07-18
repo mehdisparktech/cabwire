@@ -111,4 +111,10 @@ class PassengerAuthRepositoryImpl implements PassengerAuthRepository {
     final result = await _authDataSource.getPassengerProfile(token);
     return result.fold((l) => left(l), (r) => right(r));
   }
+
+  @override
+  Future<Result<String>> deleteMyAccount(String token, String password) async {
+    final result = await _authDataSource.deleteMyAccount(token, password);
+    return result.fold((l) => left(l), (r) => right(r));
+  }
 }

@@ -25,4 +25,5 @@ abstract class PassengerAuthRepository {
     String confirmPassword,
   );
   Future<Result<ProfileResponseModel>> getPassengerProfile(String token);
+  Future<Result<String>> deleteMyAccount(String token, String password);
 }
