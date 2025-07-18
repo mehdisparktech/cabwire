@@ -4,6 +4,7 @@ import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presen
 import 'package:cabwire/presentation/driver/auth/presenter/driver_forgot_password_presenter.dart';
 import 'package:cabwire/presentation/driver/chat/presenter/chat_presenter.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/create_post_presenter.dart';
+import 'package:cabwire/presentation/driver/create_post/presenter/search_destination_presenter.dart';
 import 'package:cabwire/presentation/driver/earnings/presenter/earning_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_trip_close_otp_presenter.dart';
@@ -169,6 +170,9 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(
         () =>
             loadPresenter(PassengerChatPresenter(locate(), locate(), locate())),
+      )
+      ..registerLazySingleton(
+        () => loadPresenter(SearchDestinationPresenter()),
       );
     _setupPassengerPresenters();
   }

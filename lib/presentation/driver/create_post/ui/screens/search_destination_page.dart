@@ -1,76 +1,60 @@
 import 'package:cabwire/core/config/app_screen.dart';
+import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
+import 'package:cabwire/presentation/driver/create_post/presenter/search_destination_presenter.dart';
+import 'package:cabwire/presentation/driver/create_post/presenter/search_destination_ui_state.dart'
+    as ui_state;
 import 'package:cabwire/presentation/driver/create_post/ui/screens/set_ride_information_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class SearchDestinationScreen extends StatefulWidget {
+class SearchDestinationScreen extends StatelessWidget {
   const SearchDestinationScreen({super.key});
 
   @override
-  State<SearchDestinationScreen> createState() =>
-      _SearchDestinationScreenState();
-}
-
-class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
-  final TextEditingController _destinationController = TextEditingController();
-  final TextEditingController _fromController = TextEditingController();
-  late GoogleMapController mapController;
-
-  final LatLng _center = const LatLng(23.8103, 90.4125);
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
-
-  // Sample search history data
-  final List<SearchHistoryItem> _searchHistory = [
-    SearchHistoryItem(location: 'Block B, Banasree, Dhaka.', distance: '3.8mi'),
-    SearchHistoryItem(location: 'Block B, Banasree, Dhaka.', distance: '3.8mi'),
-    SearchHistoryItem(location: 'Block B, Banasree, Dhaka.', distance: '3.8mi'),
-    SearchHistoryItem(location: 'Block B, Banasree, Dhaka.', distance: '3.8mi'),
-    SearchHistoryItem(location: 'Block B, Banasree, Dhaka.', distance: '3.8mi'),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _destinationController.text = 'Block B, Banasree, Dhaka.';
-  }
-
-  @override
-  void dispose() {
-    _destinationController.dispose();
-    _fromController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.theme.colorScheme.surface,
-      body: Stack(children: [_buildMap(), _buildDestinationContainer()]),
-      bottomSheet: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: ActionButton(
-          borderRadius: 0,
-          isPrimary: true,
-          text: 'Continue',
-          onPressed: () {
-            Get.to(() => const SetRideInformationScreen());
-          },
-        ),
-      ),
+    final SearchDestinationPresenter presenter =
+        locate<SearchDestinationPresenter>();
+    return PresentableWidgetBuilder(
+      presenter: presenter,
+      builder: () {
+        return Scaffold(
+          backgroundColor: context.theme.colorScheme.surface,
+          body: Stack(
+            children: [
+              _buildMap(context, presenter),
+              _buildDestinationContainer(context, presenter),
+            ],
+          ),
+          bottomSheet: Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: ActionButton(
+              borderRadius: 0,
+              isPrimary: true,
+              text: 'Continue',
+              onPressed: () {
+                Get.to(() => const SetRideInformationScreen());
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildMap() {
+  Widget _buildMap(BuildContext context, SearchDestinationPresenter presenter) {
     return GoogleMap(
-      onMapCreated: _onMapCreated,
-      initialCameraPosition: CameraPosition(target: _center, zoom: 14.0),
+      onMapCreated: presenter.onDestinationMapCreated,
+      initialCameraPosition: CameraPosition(
+        target:
+            presenter.currentUiState.currentLocation ??
+            const LatLng(23.8103, 90.4125),
+        zoom: 14.0,
+      ),
       myLocationEnabled: true,
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
@@ -83,7 +67,10 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
     );
   }
 
-  Widget _buildDestinationContainer() {
+  Widget _buildDestinationContainer(
+    BuildContext context,
+    SearchDestinationPresenter presenter,
+  ) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: SizedBox(
@@ -101,10 +88,10 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
               ),
               child: Column(
                 children: [
-                  _buildHeader(),
-                  _buildSearchInputs(),
-                  _buildAddButton(),
-                  _buildSearchHistory(),
+                  _buildHeader(context),
+                  _buildSearchInputs(context, presenter),
+                  _buildAddButton(context),
+                  _buildSearchHistory(context, presenter),
                 ],
               ),
             ),
@@ -114,13 +101,13 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
+            onTap: () => Get.back(),
             child: Container(
               padding: EdgeInsets.all(8.px),
               decoration: BoxDecoration(
@@ -148,7 +135,10 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
     );
   }
 
-  Widget _buildSearchInputs() {
+  Widget _buildSearchInputs(
+    BuildContext context,
+    SearchDestinationPresenter presenter,
+  ) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.px),
       padding: EdgeInsets.all(16.px),
@@ -167,7 +157,7 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
       child: Column(
         children: [
           _buildSearchField(
-            controller: _destinationController,
+            controller: presenter.currentUiState.destinationController,
             hintText: 'Block B, Banasree, Dhaka.',
             icon: Icons.location_on,
             iconColor: context.color.primaryBtn,
@@ -178,7 +168,7 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
             child: Divider(color: context.color.strokePrimary),
           ),
           _buildSearchField(
-            controller: _fromController,
+            controller: presenter.currentUiState.fromController,
             hintText: 'From',
             icon: Icons.location_on,
             iconColor: context.color.primaryBtn,
@@ -221,7 +211,7 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
     );
   }
 
-  Widget _buildAddButton() {
+  Widget _buildAddButton(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
       child: Align(
@@ -250,7 +240,10 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
     );
   }
 
-  Widget _buildSearchHistory() {
+  Widget _buildSearchHistory(
+    BuildContext context,
+    SearchDestinationPresenter presenter,
+  ) {
     return Expanded(
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: px24),
@@ -268,11 +261,12 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
             gapH16,
             Expanded(
               child: ListView.separated(
-                itemCount: _searchHistory.length,
+                itemCount: presenter.currentUiState.searchHistory.length,
                 separatorBuilder: (context, index) => gapH20,
                 itemBuilder: (context, index) {
-                  final item = _searchHistory[index];
-                  return _buildHistoryItem(item);
+                  final ui_state.SearchHistoryItem item =
+                      presenter.currentUiState.searchHistory[index];
+                  return _buildHistoryItem(context, item);
                 },
               ),
             ),
@@ -282,7 +276,10 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
     );
   }
 
-  Widget _buildHistoryItem(SearchHistoryItem item) {
+  Widget _buildHistoryItem(
+    BuildContext context,
+    ui_state.SearchHistoryItem item,
+  ) {
     return Row(
       children: [
         Column(
@@ -321,12 +318,4 @@ class _SearchDestinationScreenState extends State<SearchDestinationScreen> {
       ],
     );
   }
-}
-
-// Data model for search history items
-class SearchHistoryItem {
-  final String location;
-  final String distance;
-
-  SearchHistoryItem({required this.location, required this.distance});
 }
