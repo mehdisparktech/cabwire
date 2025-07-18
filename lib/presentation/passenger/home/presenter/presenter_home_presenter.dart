@@ -36,6 +36,11 @@ class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
     loadUserProfile();
   }
 
+  // Method to refresh profile data when screen is focused
+  Future<void> refreshUserProfile() async {
+    await loadUserProfile();
+  }
+
   Future<void> loadUserProfile() async {
     final ProfileModel? profile = await LocalStorage.getPassengerProfile();
     uiState.value = currentUiState.copyWith(

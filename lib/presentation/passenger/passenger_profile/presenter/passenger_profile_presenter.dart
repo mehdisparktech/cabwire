@@ -225,7 +225,32 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
         toggleLoading(loading: false);
         return;
       },
-      (success) {
+      (success) async {
+        // Get current profile from storage
+        final ProfileModel? currentProfile =
+            await LocalStorage.getPassengerProfile();
+        if (currentProfile != null) {
+          // Create a new profile with updated values
+          final updatedProfile = ProfileModel(
+            id: currentProfile.id,
+            name: editNameController.text,
+            email: currentProfile.email,
+            role: currentProfile.role,
+            image: currentProfile.image,
+            status: currentProfile.status,
+            verified: currentProfile.verified,
+            isOnline: currentProfile.isOnline,
+            isDeleted: currentProfile.isDeleted,
+            geoLocation: currentProfile.geoLocation,
+            stripeAccountId: currentProfile.stripeAccountId,
+            createdAt: currentProfile.createdAt,
+            updatedAt: DateTime.now(),
+          );
+
+          // Save updated profile back to local storage
+          await LocalStorage.savePassengerProfile(updatedProfile);
+        }
+
         addUserMessage(success);
         showMessage(message: success);
         toggleLoading(loading: false);
