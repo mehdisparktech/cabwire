@@ -86,4 +86,11 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
     );
     return result.fold((l) => left(l), (r) => right(r));
   }
+
+  @override
+  Future<Result<String>> deleteMyAccount(String password) async {
+    final token = LocalStorage.token;
+    final result = await _authDataSource.deleteMyAccount(token, password);
+    return result.fold((l) => left(l), (r) => right(r));
+  }
 }

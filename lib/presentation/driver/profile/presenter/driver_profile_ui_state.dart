@@ -128,6 +128,7 @@ class DriverProfileUiState extends BaseUiState {
   final DrivingInfoData drivingInfo;
   final String? termsAndConditions;
   final String? privacyPolicy;
+  final bool? showPassword;
 
   // For forms - keeping it simple, presenter will manage controllers directly for now
   // Or you can store form field values here if you prefer not to pass controllers around.
@@ -142,6 +143,7 @@ class DriverProfileUiState extends BaseUiState {
     required this.drivingInfo,
     this.termsAndConditions,
     this.privacyPolicy,
+    this.showPassword,
   });
 
   factory DriverProfileUiState.initial() {
@@ -152,6 +154,7 @@ class DriverProfileUiState extends BaseUiState {
       drivingInfo: DrivingInfoData.empty(), // Load actual data in presenter
       termsAndConditions: null,
       privacyPolicy: null,
+      showPassword: false,
     );
   }
 
@@ -163,6 +166,7 @@ class DriverProfileUiState extends BaseUiState {
     drivingInfo,
     termsAndConditions,
     privacyPolicy,
+    showPassword,
   ];
 
   DriverProfileUiState copyWith({
@@ -172,6 +176,7 @@ class DriverProfileUiState extends BaseUiState {
     DrivingInfoData? drivingInfo,
     String? termsAndConditions,
     String? privacyPolicy,
+    bool? showPassword,
   }) {
     return DriverProfileUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -180,6 +185,7 @@ class DriverProfileUiState extends BaseUiState {
       drivingInfo: drivingInfo ?? this.drivingInfo,
       termsAndConditions: termsAndConditions ?? this.termsAndConditions,
       privacyPolicy: privacyPolicy ?? this.privacyPolicy,
+      showPassword: showPassword ?? this.showPassword,
     );
   }
 }

@@ -19,4 +19,5 @@ abstract class DriverAuthRepository {
     String newpassword,
     String confirmPassword,
   );
+  Future<Result<String>> deleteMyAccount(String password);
 }

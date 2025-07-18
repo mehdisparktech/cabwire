@@ -7,8 +7,10 @@ import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
+import 'package:cabwire/domain/usecases/passenger/delete_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
+import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
 import 'package:cabwire/presentation/driver/profile/ui/screens/contact_us_screen.dart';
@@ -29,6 +31,7 @@ import 'package:cabwire/data/services/storage/storage_services.dart';
 class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   final TermsAndConditionsUsecase _termsAndConditionsUsecase;
   final PrivacyAndPolicyUsecase _privacyAndPolicyUsecase;
+  final DeleteProfileUsecase _deleteProfileUsecase;
   final Obs<DriverProfileUiState> uiState = Obs<DriverProfileUiState>(
     DriverProfileUiState.initial(),
   );
@@ -82,10 +85,15 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   final TextEditingController contactSubjectController =
       TextEditingController();
 
+  // Delete Account
+  final TextEditingController deleteAccountPasswordController =
+      TextEditingController();
+
   DriverProfilePresenter(
     this._driverContactUseCase,
     this._termsAndConditionsUsecase,
     this._privacyAndPolicyUsecase,
+    this._deleteProfileUsecase,
   ) {
     loadDriverProfile();
     _loadInitialData();
@@ -232,9 +240,15 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
           (ctx) => DeleteAccountDialog(
             onConfirm: () {
               Get.back(); // Close dialog
-              _deleteAccount();
             },
+            presenter: this,
           ),
+    );
+  }
+
+  void toggleShowPassword() {
+    uiState.value = currentUiState.copyWith(
+      showPassword: !(currentUiState.showPassword ?? false),
     );
   }
 
@@ -413,19 +427,27 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     });
   }
 
-  void _deleteAccount() {
+  Future<void> deleteAccount(String password) async {
     toggleLoading(loading: true);
-    // Perform actual account deletion
-    appLog("Deleting account...");
-    Future.delayed(const Duration(seconds: 2), () {
-      toggleLoading(loading: false);
-      Get.offAll(
-        () => const DriverAuthNavigatorScreen(),
-      ); // Navigate to login or welcome screen
-      addUserMessage(
-        "Account deleted successfully (navigation not implemented).",
+    try {
+      final result = await _deleteProfileUsecase.execute(password);
+      result.fold(
+        (error) {
+          addUserMessage(error, isError: true);
+          toggleLoading(loading: false);
+          return;
+        },
+        (success) {
+          addUserMessage(success);
+          LocalStorage.removeAllPrefData();
+          toggleLoading(loading: false);
+          Get.offAll(() => WelcomeScreen());
+        },
       );
-    });
+    } catch (e) {
+      addUserMessage(e.toString(), isError: true);
+      toggleLoading(loading: false);
+    }
   }
 
   void goBack() {
@@ -482,6 +504,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     contactPhoneNumberController.dispose();
     contactMessageController.dispose();
     contactSubjectController.dispose();
+    deleteAccountPasswordController.dispose();
     super.dispose();
   }
 }

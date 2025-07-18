@@ -24,6 +24,7 @@ abstract class DriverAuthRemoteDataSource {
     String confirmPassword,
   );
   Future<Result<DriverProfileModel>> getDriverProfile(String token);
+  Future<Result<String>> deleteMyAccount(String token, String password);
 }
 
 class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
@@ -178,6 +179,27 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
       );
     } catch (e) {
       appLog('getDriverProfile error: ${e.toString()}');
+      return left(e.toString());
+    }
+  }
+
+  // delete my account
+  @override
+  Future<Result<String>> deleteMyAccount(String token, String password) async {
+    try {
+      final result = await apiService.delete(
+        ApiEndPoint.deleteMyAccount,
+        header: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: {'password': password},
+      );
+      return result.fold(
+        (l) => left(l.message),
+        (r) => right(r.data['message']),
+      );
+    } catch (e) {
       return left(e.toString());
     }
   }
