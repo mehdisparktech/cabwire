@@ -4,6 +4,7 @@ import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
 import 'package:cabwire/core/static/constants.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
@@ -119,6 +120,11 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
         if (!rideExists) {
           updatedRides.add(rideRequest);
           uiState.value = currentUiState.copyWith(rideRequests: updatedRides);
+
+          appLog(
+            'ride service: ${rideRequest.service.isNotEmpty ? rideRequest.service : "No service specified"}',
+          );
+
           debugPrint(
             'Added ride request: ${rideRequest.id} to list. Total requests: ${updatedRides.length}',
           );

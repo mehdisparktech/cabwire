@@ -4,6 +4,7 @@ class RideRequestModel {
   final String id;
   final String userId;
   final String rideId;
+  final String service;
   final LatLng pickupLocation;
   final LatLng dropoffLocation;
   final String pickupAddress;
@@ -17,6 +18,7 @@ class RideRequestModel {
     required this.id,
     required this.userId,
     required this.rideId,
+    required this.service,
     required this.pickupLocation,
     required this.pickupAddress,
     required this.dropoffLocation,
@@ -36,6 +38,7 @@ class RideRequestModel {
       id: json['_id'] as String? ?? '',
       userId: json['userId'] as String? ?? '',
       rideId: json['rideId'] as String? ?? '',
+      service: json['serviceName'] as String? ?? '',
       pickupLocation: LatLng(
         pickupLoc['lat'] as double? ?? 0.0,
         pickupLoc['lng'] as double? ?? 0.0,

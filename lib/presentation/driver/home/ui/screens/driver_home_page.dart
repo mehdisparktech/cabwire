@@ -252,6 +252,21 @@ class DriverHomePage extends StatelessWidget {
               ),
             ],
           ),
+          if (rideRequest.service == 'emergency-car') ...[
+            gapH8,
+            Divider(color: Colors.grey.shade300),
+            CustomText(
+              'Emergency Car Booking',
+              fontWeight: FontWeight.bold,
+              fontSize: 16.px,
+              color: Theme.of(context).primaryColor,
+            ),
+            CustomText(
+              'An urgent ride request is waiting. Accept to provide immediate service.',
+              fontWeight: FontWeight.w500,
+            ),
+            gapH8,
+          ],
           gapH8,
           Divider(color: Colors.grey.shade300),
           CustomText('PICK UP', fontSize: 12.px, color: Colors.grey),
