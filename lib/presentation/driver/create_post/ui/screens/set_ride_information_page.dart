@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/data/models/create_ride_model.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/driver/create_post/ui/screens/ride_overview_page.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
@@ -9,7 +10,17 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SetRideInformationScreen extends StatefulWidget {
-  const SetRideInformationScreen({super.key});
+  final LatLng pickupLocation;
+  final String pickupAddress;
+  final List<LatLng> destinationLocations;
+  final List<String> destinationAddresses;
+  const SetRideInformationScreen({
+    super.key,
+    required this.pickupLocation,
+    required this.pickupAddress,
+    required this.destinationLocations,
+    required this.destinationAddresses,
+  });
 
   @override
   State<SetRideInformationScreen> createState() =>
@@ -32,7 +43,7 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
   @override
   void initState() {
     super.initState();
-    _destinationController.text = '\$1';
+    _destinationController.text = '1';
     _seatController.text = '2';
     _lastBookingTimeController.text = '10:00 AM';
   }
@@ -57,7 +68,20 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
           isPrimary: true,
           text: 'Continue',
           onPressed: () {
-            Get.to(() => RideOverviewScreen(isCreatePost: true));
+            Get.to(
+              () => RideOverviewScreen(
+                isCreatePost: true,
+                createRideModel: CreateRideModel(
+                  pickupLocation: widget.pickupLocation,
+                  pickupAddress: widget.pickupAddress,
+                  destinationLocations: widget.destinationLocations,
+                  destinationAddresses: widget.destinationAddresses,
+                  perKmRate: _destinationController.text,
+                  totalDistance: _seatController.text,
+                  lastBookingTime: _lastBookingTimeController.text,
+                ),
+              ),
+            );
           },
         ),
       ),
@@ -105,7 +129,7 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
 
                   _buildSearchField(
                     controller: _destinationController,
-                    hintText: '\$1',
+                    hintText: '1',
                     title: 'Per Km',
                   ),
                   gapH20,
@@ -189,12 +213,4 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
       ],
     );
   }
-}
-
-// Data model for search history items
-class SearchHistoryItem {
-  final String location;
-  final String distance;
-
-  SearchHistoryItem({required this.location, required this.distance});
 }

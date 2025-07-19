@@ -3,6 +3,7 @@ import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/data/models/create_ride_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
@@ -16,34 +17,21 @@ import 'package:get/get.dart';
 
 class RideOverviewScreen extends StatelessWidget {
   final bool isCreatePost;
-
-  RideOverviewScreen({super.key, this.isCreatePost = false});
+  final CreateRideModel createRideModel;
+  RideOverviewScreen({
+    super.key,
+    this.isCreatePost = false,
+    required this.createRideModel,
+  });
   final CreatePostPresenter _presenter = locate<CreatePostPresenter>();
 
-  // Extract static data to avoid recreation on every build
-  // static const RideData _rideData = RideData(
-  //   driverName: 'Santiago Dslab',
-  //   vehicleNumber: 'DHK METRO HA 64-8549',
-  //   vehicleModel: 'Volvo XC90',
-  //   pickupLocation: 'Block B, Banasree, Dhaka.',
-  //   dropoffLocation: 'Green Road, Dhanmondi, Dhaka.',
-  //   dropoffLocation2: 'Green Road, Dhanmondi, Dhaka.',
-  //   statistics: [
-  //     TripStatistic(title: 'Total Distance:', value: '20 km'),
-  //     TripStatistic(title: 'Per Km Rate:', value: '\$1'),
-  //     TripStatistic(title: 'Seat Available:', value: '2'),
-  //     TripStatistic(title: 'Last Booking Time:', value: '45 Minutes'),
-  //   ],
-  //   totalAmount: '\$100',
-  // );
-
-  // Constants for better maintainability
   static const double _defaultSpacing = 16.0;
   static const double _sectionSpacing = 24.0;
   static const double _smallSpacing = 12.0;
 
   @override
   Widget build(BuildContext context) {
+    _presenter.setCreateRideModel(createRideModel);
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Ride Overview',
@@ -54,6 +42,7 @@ class RideOverviewScreen extends StatelessWidget {
         presenter: _presenter,
         builder: () {
           final rideData = _presenter.currentUiState.rideData;
+          final createRideModel = _presenter.currentUiState.createRideModel;
           return SingleChildScrollView(
             padding: const EdgeInsets.all(_defaultSpacing),
             child: Column(
@@ -63,7 +52,7 @@ class RideOverviewScreen extends StatelessWidget {
                 const SizedBox(height: _sectionSpacing),
                 _buildVehicleSection(rideData),
                 const SizedBox(height: _sectionSpacing),
-                _buildTripSection(rideData),
+                _buildTripSection(createRideModel!),
                 const SizedBox(height: _sectionSpacing),
                 _buildStatisticsSection(rideData),
                 const SizedBox(height: 20),
@@ -78,7 +67,6 @@ class RideOverviewScreen extends StatelessWidget {
     );
   }
 
-  // Extracted widgets for better organization and reusability
   Widget _buildDriverSection(dynamic rideData) {
     return DriverProfileWidget(
       name: rideData?.driverName ?? '',
@@ -124,16 +112,16 @@ class RideOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTripSection(dynamic rideData) {
+  Widget _buildTripSection(CreateRideModel createRideModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomText('My Trip', fontSize: 16.px, fontWeight: FontWeight.bold),
         gapH10,
         DriverRouteInformationWidget(
-          pickupLocation: rideData?.pickupLocation ?? '',
-          dropoffLocation: rideData?.dropoffLocation ?? '',
-          dropoffLocation2: rideData?.dropoffLocation ?? '',
+          pickupLocation: createRideModel.pickupAddress,
+          dropoffLocation: createRideModel.destinationAddresses.first,
+          dropoffLocation2: createRideModel.destinationAddresses.last,
         ),
       ],
     );
@@ -200,7 +188,6 @@ class RideOverviewScreen extends StatelessWidget {
   }
 }
 
-// Extracted as a separate widget for better performance and reusability
 class _TripStatisticItem extends StatelessWidget {
   final String title;
   final String value;

@@ -5,8 +5,7 @@ import 'package:cabwire/core/enum/service_type.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/search_destination_ui_state.dart';
-import 'package:cabwire/presentation/driver/create_post/ui/screens/set_ride_information_page.dart'
-    hide SearchHistoryItem;
+import 'package:cabwire/presentation/driver/create_post/ui/screens/set_ride_information_page.dart';
 import 'package:cabwire/domain/entities/search_history_item_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -914,7 +913,15 @@ class SearchDestinationPresenter
     // Navigate to next screen
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SetRideInformationScreen()),
+      MaterialPageRoute(
+        builder:
+            (context) => SetRideInformationScreen(
+              pickupLocation: currentUiState.selectedPickupLocation!,
+              pickupAddress: currentUiState.pickupAddress!,
+              destinationLocations: [currentUiState.destinationLocation!],
+              destinationAddresses: [currentUiState.destinationAddress!],
+            ),
+      ),
     );
   }
 
