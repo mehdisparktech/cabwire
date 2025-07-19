@@ -188,6 +188,12 @@ class DriverProfileScreen extends StatelessWidget {
                       ),
                       Item(
                         vertical: 16,
+                        image: AppAssets.icCar,
+                        title: 'Edit Vehicle Information',
+                        onTap: presenter.navigateToEditVehicleInfo,
+                      ),
+                      Item(
+                        vertical: 16,
                         image: AppAssets.icHistory,
                         title: 'History',
                         onTap: presenter.navigateToHistory,

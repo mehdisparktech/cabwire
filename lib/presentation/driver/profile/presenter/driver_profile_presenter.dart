@@ -17,6 +17,7 @@ import 'package:cabwire/presentation/driver/profile/ui/screens/contact_us_screen
 import 'package:cabwire/presentation/driver/profile/ui/screens/edit_driving_info_screen.dart';
 import 'package:cabwire/presentation/driver/profile/ui/screens/edit_password_screen.dart';
 import 'package:cabwire/presentation/driver/profile/ui/screens/edit_profile_info_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/screens/edit_vehicle_info_screen.dart';
 import 'package:cabwire/presentation/driver/profile/ui/screens/privacy_policy_screen.dart';
 import 'package:cabwire/presentation/driver/profile/ui/screens/terms_and_conditions_screen.dart';
 import 'package:cabwire/presentation/driver/profile/ui/widgets/delete_account_dialog.dart';
@@ -210,6 +211,11 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       currentUiState.drivingInfo,
     ); // Ensure controllers have latest data
     Get.to(() => EditDrivingInfoScreen());
+  }
+
+  void navigateToEditVehicleInfo() {
+    _populateEditDrivingControllers(currentUiState.drivingInfo);
+    Get.to(() => EditVehicleInfoScreen());
   }
 
   void navigateToHistory() {

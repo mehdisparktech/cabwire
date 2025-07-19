@@ -8,16 +8,16 @@ import 'package:cabwire/presentation/common/components/common_text.dart'; // Add
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_presenter.dart';
 import 'package:flutter/material.dart';
 
-class EditDrivingInfoScreen extends StatelessWidget {
+class EditVehicleInfoScreen extends StatelessWidget {
   final DriverProfilePresenter presenter = locate<DriverProfilePresenter>();
 
-  EditDrivingInfoScreen({super.key});
+  EditVehicleInfoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Edit Driving Information', // Changed title
+        title: 'Edit Vehicle Information', // Changed title
         showBackButton: true,
       ),
       body: PresentableWidgetBuilder(
@@ -43,31 +43,49 @@ class EditDrivingInfoScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const CommonText(text: 'Driving License Number'),
+                        CommonText(text: 'Vehicle Registration Number'),
                         gapH10,
                         CustomTextFormField(
-                          hintText: 'Enter Driving License Number',
-                          controller: presenter.drivingLicenseNumberController,
+                          hintText: 'Enter Vehicle Reg. No.',
+                          controller:
+                              presenter.vehiclesRegistrationNumberController,
                         ),
                         gapH20,
-                        const CommonText(text: 'License Expiry Date'), gapH10,
+                        CommonText(text: 'Vehicle Insurance Number'),
+                        gapH10,
                         CustomTextFormField(
-                          hintText: 'YYYY-MM-DD',
+                          hintText: 'Enter Vehicle Insurance No.',
                           controller:
-                              presenter
-                                  .drivingLicenseExpiryDateController /* onTap: showDatePicker */,
+                              presenter.vehiclesInsuranceNumberController,
                         ),
                         gapH20,
-                        const CommonText(text: 'License Issue Date'), gapH10,
+                        CommonText(text: 'Vehicle Make'),
+                        gapH10,
                         CustomTextFormField(
-                          hintText: 'YYYY-MM-DD',
-                          controller:
-                              presenter
-                                  .drivingLicenseIssuingDateController /* onTap: showDatePicker */,
+                          hintText: 'Enter Vehicle Make',
+                          controller: presenter.vehiclesMakeController,
                         ),
-
-                        // Add more fields as needed, your original code had duplicates
-                        // For example:
+                        gapH20,
+                        CommonText(text: 'Vehicle Model'),
+                        gapH10,
+                        CustomTextFormField(
+                          hintText: 'Enter Vehicle Model',
+                          controller: presenter.vehiclesModelController,
+                        ),
+                        gapH20,
+                        CommonText(text: 'Vehicle Year'),
+                        gapH10,
+                        CustomTextFormField(
+                          hintText: 'Enter Vehicle Year',
+                          controller: presenter.vehiclesYearController,
+                        ),
+                        gapH20,
+                        CommonText(text: 'Vehicle Category'),
+                        gapH10,
+                        CustomTextFormField(
+                          hintText: 'Enter Vehicle Category',
+                          controller: presenter.vehiclesCategoryController,
+                        ),
                         gapH20,
                       ],
                     ),
