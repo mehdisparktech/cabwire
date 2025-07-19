@@ -52,4 +52,5 @@ class ApiEndPoint {
   static const rideHistory = "$baseUrl/ride/ride/";
   static const payRide = "$baseUrl/ride/ride-payment";
   static const updateProfile = "$baseUrl/user/profile";
+  static const createCabwire = "$baseUrl/cabwire/create-cabwire";
 }

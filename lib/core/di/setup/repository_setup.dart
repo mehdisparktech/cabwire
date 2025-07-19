@@ -1,4 +1,5 @@
 import 'package:cabwire/data/repositories/chat_message_repository_impl.dart';
+import 'package:cabwire/data/repositories/driver/create_cabwire_repository_impl.dart';
 import 'package:cabwire/data/repositories/driver/driver_auth_repository_impl.dart';
 import 'package:cabwire/data/repositories/notifications_repository_impl.dart';
 import 'package:cabwire/data/repositories/passenger/passenger_auth_repository_impl.dart';
@@ -7,6 +8,7 @@ import 'package:cabwire/data/repositories/review_repository_impl.dart';
 import 'package:cabwire/data/repositories/ride_history_repository_impl.dart';
 import 'package:cabwire/data/repositories/terms_and_conditions_repository_impl.dart';
 import 'package:cabwire/domain/repositories/chat_message_repository.dart';
+import 'package:cabwire/domain/repositories/driver/create_cabwire_repository.dart';
 import 'package:cabwire/domain/repositories/notifications_repository.dart';
 import 'package:cabwire/domain/repositories/passenger/passenger_auth_repository.dart';
 import 'package:cabwire/domain/repositories/passenger/reset_password_repository.dart';
@@ -108,6 +110,9 @@ class RepositorySetup implements SetupModule {
       )
       ..registerLazySingleton<RideHistoryRepository>(
         () => RideHistoryRepositoryImpl(locate(), locate(), locate()),
+      )
+      ..registerLazySingleton<CreateCabwireRepository>(
+        () => CreateCabwireRepositoryImpl(locate()),
       );
   }
 }

@@ -18,11 +18,26 @@ import 'package:cabwire/presentation/driver/ride_history/ui/widgets/route_inform
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class CreatePostDetailsScreen extends StatelessWidget {
+class CreatePostDetailsScreen extends StatefulWidget {
   final bool isCreatePost;
 
-  CreatePostDetailsScreen({super.key, this.isCreatePost = false});
-  final CreatePostPresenter _presenter = locate<CreatePostPresenter>();
+  const CreatePostDetailsScreen({super.key, this.isCreatePost = false});
+
+  @override
+  State<CreatePostDetailsScreen> createState() =>
+      _CreatePostDetailsScreenState();
+}
+
+class _CreatePostDetailsScreenState extends State<CreatePostDetailsScreen> {
+  late final CreatePostPresenter _presenter;
+
+  @override
+  void initState() {
+    super.initState();
+    _presenter = locate<CreatePostPresenter>();
+    // Explicitly reload driver profile when screen is shown
+    Future.microtask(() => _presenter.loadDriverProfile());
+  }
 
   // Extract static data to avoid recreation on every build
   // static const RideData _rideData = RideData(
@@ -40,6 +55,8 @@ class CreatePostDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Debug log to see if driver name is available
+
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Ride Overview',
@@ -69,7 +86,7 @@ class CreatePostDetailsScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildDriverSection(rideData),
+                _buildDriverSection(),
                 gapH10,
                 _buildVehicleSection(rideData),
                 gapH10,
@@ -88,9 +105,11 @@ class CreatePostDetailsScreen extends StatelessWidget {
   }
 
   // Extracted widgets for better organization and reusability
-  Widget _buildDriverSection(dynamic rideData) {
+  Widget _buildDriverSection() {
+    final driverName = _presenter.currentUiState.driverName;
+
     return DriverProfileWidget(
-      name: rideData?.driverName ?? '',
+      name: driverName?.isNotEmpty == true ? driverName! : 'Driver Name',
       textStyle: TextStyle(
         fontSize: px16,
         color: Colors.black,

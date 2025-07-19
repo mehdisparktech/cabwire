@@ -11,18 +11,23 @@ class CreatePostUiState extends BaseUiState {
     this.rideData,
     this.createRideModel,
     this.totalAmount,
+    this.driverName,
   });
 
   final RideData? rideData;
   final CreateRideModel? createRideModel;
   final String? totalAmount;
-
+  final String? driverName;
   factory CreatePostUiState.empty() {
+    // Make sure to handle the case when LocalStorage.myName might be empty
+    final driverName =
+        LocalStorage.myName.isNotEmpty ? LocalStorage.myName : 'Driver';
+
     return CreatePostUiState(
       userMessage: null,
       isLoading: true,
       rideData: RideData(
-        driverName: LocalStorage.myName,
+        driverName: driverName,
         vehicleNumber: 'DHK METRO HA 64-8549',
         vehicleModel: 'Volvo XC90',
         pickupLocation: '',
@@ -39,6 +44,7 @@ class CreatePostUiState extends BaseUiState {
         lastBookingTime: '',
       ),
       totalAmount: '',
+      driverName: driverName,
     );
   }
 
@@ -49,6 +55,7 @@ class CreatePostUiState extends BaseUiState {
     rideData,
     createRideModel,
     totalAmount,
+    driverName,
   ];
 
   CreatePostUiState copyWith({
@@ -57,6 +64,7 @@ class CreatePostUiState extends BaseUiState {
     RideData? rideData,
     CreateRideModel? createRideModel,
     String? totalAmount,
+    String? driverName,
   }) {
     return CreatePostUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -64,6 +72,7 @@ class CreatePostUiState extends BaseUiState {
       rideData: rideData ?? this.rideData,
       createRideModel: createRideModel ?? this.createRideModel,
       totalAmount: totalAmount ?? this.totalAmount,
+      driverName: driverName ?? this.driverName,
     );
   }
 }

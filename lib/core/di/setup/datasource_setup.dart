@@ -1,3 +1,4 @@
+import 'package:cabwire/data/datasources/remote/driver/create_cabwire_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/driver/driver_earnings_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/notification_remote_data_source.dart';
 import 'package:cabwire/data/datasources/remote/passenger/passenger_auth_remote_data_source.dart';
@@ -92,6 +93,9 @@ class DatasourceSetup implements SetupModule {
       ..registerLazySingleton<RideHistoryRemoteDataSource>(
         () => RideHistoryRemoteDataSourceImpl(locate()),
       )
-      ..registerLazySingleton(() => RideHistoryMapper());
+      ..registerLazySingleton(() => RideHistoryMapper())
+      ..registerLazySingleton<CreateCabwireRemoteDataSource>(
+        () => CreateCabwireRemoteDataSourceImpl(),
+      );
   }
 }
