@@ -3,14 +3,18 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/services/api/api_failure.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/entities/driver/payment_list_entity.dart';
+import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/usecases/driver/get_driver_earnings_usecase.dart';
 import 'package:cabwire/presentation/driver/earnings/presenter/earning_ui_state.dart';
 import 'package:get/get.dart';
 
 class EarningsPresenter extends BasePresenter<EarningsUiState> {
+  final ApiService apiService;
   final Obs<EarningsUiState> uiState = Obs<EarningsUiState>(
     EarningsUiState.initial(),
   );
@@ -19,7 +23,7 @@ class EarningsPresenter extends BasePresenter<EarningsUiState> {
 
   EarningsUiState get currentUiState => uiState.value;
 
-  EarningsPresenter(this._getDriverEarningsUseCase) {
+  EarningsPresenter(this._getDriverEarningsUseCase, this.apiService) {
     loadEarningsData(EarningsFilter.today);
   }
 
@@ -247,9 +251,17 @@ class EarningsPresenter extends BasePresenter<EarningsUiState> {
     }
   }
 
-  void withdrawAmount() {
-    print("Withdraw Amount Tapped");
-    addUserMessage("Withdrawal functionality not implemented yet.");
+  Future<void> withdrawAmount() async {
+    final userId = LocalStorage.userId;
+    final result = await apiService.post(ApiEndPoint.withdrawAmount + userId);
+    result.fold(
+      (error) {
+        addUserMessage(error.message);
+      },
+      (success) {
+        addUserMessage(success.message ?? 'Withdrawal successful');
+      },
+    );
   }
 
   void goBack() {

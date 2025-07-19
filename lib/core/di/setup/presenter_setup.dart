@@ -96,7 +96,9 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(
         () => loadPresenter(CreatePostPresenter(locate())),
       )
-      ..registerLazySingleton(() => loadPresenter(EarningsPresenter(locate())))
+      ..registerLazySingleton(
+        () => loadPresenter(EarningsPresenter(locate(), locate())),
+      )
       ..registerLazySingleton(
         () => loadPresenter(ChatPresenter(locate(), locate())),
       )
