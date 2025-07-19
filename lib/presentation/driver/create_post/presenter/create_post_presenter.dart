@@ -113,7 +113,9 @@ class CreatePostPresenter extends BasePresenter<CreatePostUiState> {
           _updateRideDataWithResponse(response.data);
 
           toggleLoading(loading: false);
-          Get.to(() => CreatePostDetailsScreen());
+          Get.to(
+            () => CreatePostDetailsScreen(cabwireResponseEntity: response),
+          );
         },
       );
     } catch (e) {

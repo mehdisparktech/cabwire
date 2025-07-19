@@ -3,21 +3,16 @@ import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
-import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/create_post_presenter.dart';
-import 'package:cabwire/presentation/driver/create_post/ui/screens/create_post_details_page.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/driver/ride_history/ui/widgets/driver_profile_widget.dart';
 import 'package:cabwire/presentation/driver/ride_history/ui/widgets/route_information_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class RideOverviewScreen extends StatelessWidget {
-  final bool isCreatePost;
-
-  RideOverviewScreen({super.key, this.isCreatePost = false});
+class EarningsRideOverviewScreen extends StatelessWidget {
+  EarningsRideOverviewScreen({super.key});
   final CreatePostPresenter _presenter = locate<CreatePostPresenter>();
 
   // Extract static data to avoid recreation on every build
@@ -74,7 +69,6 @@ class RideOverviewScreen extends StatelessWidget {
           );
         },
       ),
-      bottomSheet: _buildBottomSheet(),
     );
   }
 
@@ -183,20 +177,6 @@ class RideOverviewScreen extends StatelessWidget {
           style: TextStyle(fontSize: 16.px, fontWeight: FontWeight.w600),
         ),
       ],
-    );
-  }
-
-  Widget _buildBottomSheet() {
-    if (!isCreatePost) return const SizedBox.shrink();
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.px),
-      child: ActionButton(
-        borderRadius: 0,
-        isPrimary: true,
-        text: 'Create Post',
-        onPressed: () => Get.to(() => CreatePostDetailsScreen()),
-      ),
     );
   }
 }

@@ -395,16 +395,29 @@ class SearchDestinationPresenter
             final elements = rows[0]['elements'] as List;
             if (elements.isNotEmpty) {
               final element = elements[0];
-              final distance = element['distance']['text'];
-              final duration = element['duration']['text'];
+              final distanceText = element['distance']['text'];
+              final durationText = element['duration']['text'];
+
+              // Extract numeric value from distance string
+              final distanceValue =
+                  element['distance']['value'] /
+                  1000.0; // Convert meters to kilometers
+              final durationValue =
+                  element['duration']['value'] /
+                  60.0; // Convert seconds to minutes
 
               uiState.value = currentUiState.copyWith(
-                routeDistance: distance,
-                routeDuration: duration,
+                routeDistance: distanceValue,
+                routeDuration: durationValue,
+                routeDistanceText: distanceText,
+                routeDurationText: durationText,
               );
 
               // Add this route to search history if not already present
-              addToSearchHistory(currentUiState.fromController.text, distance);
+              addToSearchHistory(
+                currentUiState.fromController.text,
+                distanceText,
+              );
             }
           }
         }
@@ -910,6 +923,17 @@ class SearchDestinationPresenter
       }
     }
 
+    // Make sure we have numeric distance and duration values
+    final double distance =
+        currentUiState.routeDistance is double
+            ? currentUiState.routeDistance
+            : 0.0;
+
+    final double duration =
+        currentUiState.routeDuration is double
+            ? currentUiState.routeDuration
+            : 0.0;
+
     // Navigate to next screen
     Navigator.push(
       context,
@@ -920,6 +944,8 @@ class SearchDestinationPresenter
               pickupAddress: currentUiState.pickupAddress!,
               destinationLocations: [currentUiState.destinationLocation!],
               destinationAddresses: [currentUiState.destinationAddress!],
+              distance: distance,
+              duration: duration,
             ),
       ),
     );

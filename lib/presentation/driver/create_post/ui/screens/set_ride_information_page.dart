@@ -14,12 +14,16 @@ class SetRideInformationScreen extends StatefulWidget {
   final String pickupAddress;
   final List<LatLng> destinationLocations;
   final List<String> destinationAddresses;
+  final double distance;
+  final double duration;
   const SetRideInformationScreen({
     super.key,
     required this.pickupLocation,
     required this.pickupAddress,
     required this.destinationLocations,
     required this.destinationAddresses,
+    required this.distance,
+    required this.duration,
   });
 
   @override
@@ -69,8 +73,7 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
           text: 'Continue',
           onPressed: () {
             Get.to(
-              () => RideOverviewScreen(
-                isCreatePost: true,
+              () => CreatePostRideOverviewScreen(
                 createRideModel: CreateRideModel(
                   pickupLocation: widget.pickupLocation,
                   pickupAddress: widget.pickupAddress,
@@ -79,6 +82,15 @@ class _SetRideInformationScreenState extends State<SetRideInformationScreen> {
                   perKmRate: _destinationController.text,
                   totalDistance: _seatController.text,
                   lastBookingTime: _lastBookingTimeController.text,
+                  startTime: DateTime.now().toIso8601String(),
+                  endTime:
+                      DateTime.now()
+                          .add(const Duration(hours: 1))
+                          .toIso8601String(),
+                  distance: widget.distance,
+                  duration: widget.duration.toInt(),
+                  fare: double.tryParse(_destinationController.text) ?? 0,
+                  seatsAvailable: int.tryParse(_seatController.text) ?? 0,
                 ),
               ),
             );

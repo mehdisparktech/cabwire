@@ -30,36 +30,36 @@ class CreateCabwireUsecase {
 
     // Create pickup location
     final pickupLocation = LocationEntity(
-      lat: model.pickupLocation.latitude,
-      lng: model.pickupLocation.longitude,
-      address: model.pickupAddress,
+      lat: model.pickupLocation?.latitude ?? 0.0,
+      lng: model.pickupLocation?.longitude ?? 0.0,
+      address: model.pickupAddress ?? '',
     );
 
     // Create dropoff location (using first destination if available)
     final dropoffLocation = LocationEntity(
       lat:
-          model.destinationLocations.isNotEmpty
-              ? model.destinationLocations.first.latitude
+          model.destinationLocations?.isNotEmpty ?? false
+              ? model.destinationLocations?.first.latitude ?? 0.0
               : 0.0,
       lng:
-          model.destinationLocations.isNotEmpty
-              ? model.destinationLocations.first.longitude
+          model.destinationLocations?.isNotEmpty ?? false
+              ? model.destinationLocations?.first.longitude ?? 0.0
               : 0.0,
       address:
-          model.destinationAddresses.isNotEmpty
-              ? model.destinationAddresses.first
+          model.destinationAddresses?.isNotEmpty ?? false
+              ? model.destinationAddresses?.first ?? ''
               : '',
     );
 
     // Calculate distance from the total distance string
-    final distance = double.tryParse(model.totalDistance) ?? 15.5;
+    final distance = double.tryParse(model.totalDistance ?? '15.5') ?? 15.5;
 
     // Use the perKmRate as perKM
-    final perKM = double.tryParse(model.perKmRate) ?? 20;
+    final perKM = double.tryParse(model.perKmRate ?? '20') ?? 20;
 
     // Parse the lastBookingTime or use current timestamp
     final lastBookingTime =
-        int.tryParse(model.lastBookingTime) ??
+        int.tryParse(model.lastBookingTime ?? '') ??
         (DateTime.now().millisecondsSinceEpoch ~/ 1000);
 
     // Duration is roughly distance * 2 minutes per km

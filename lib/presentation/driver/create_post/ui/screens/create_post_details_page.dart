@@ -3,16 +3,16 @@ import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
-
+import 'package:cabwire/domain/entities/driver/create_cabwire_entity.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
-import 'package:cabwire/presentation/driver/chat/ui/screens/audio_call_page.dart';
+import 'package:cabwire/presentation/driver/chat/ui/screens/chat_page.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/create_post_presenter.dart';
+import 'package:cabwire/presentation/driver/create_post/ui/screens/ride_details_page.dart';
 import 'package:cabwire/presentation/driver/create_post/ui/screens/ride_start_page.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
-import 'package:cabwire/presentation/driver/ride_history/ui/screens/ride_details_page.dart';
 import 'package:cabwire/presentation/driver/ride_history/ui/widgets/driver_profile_widget.dart';
 import 'package:cabwire/presentation/driver/ride_history/ui/widgets/route_information_widget.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +20,13 @@ import 'package:get/get.dart';
 
 class CreatePostDetailsScreen extends StatefulWidget {
   final bool isCreatePost;
+  final CabwireResponseEntity cabwireResponseEntity;
 
-  const CreatePostDetailsScreen({super.key, this.isCreatePost = false});
+  const CreatePostDetailsScreen({
+    super.key,
+    this.isCreatePost = false,
+    required this.cabwireResponseEntity,
+  });
 
   @override
   State<CreatePostDetailsScreen> createState() =>
@@ -162,9 +167,12 @@ class _CreatePostDetailsScreenState extends State<CreatePostDetailsScreen> {
         ),
         gapH10,
         DriverRouteInformationWidget(
-          pickupLocation: rideData?.pickupLocation ?? '',
-          dropoffLocation: rideData?.dropoffLocation ?? '',
-          dropoffLocation2: rideData?.dropoffLocation ?? '',
+          pickupLocation:
+              widget.cabwireResponseEntity.data.pickupLocation.address,
+          dropoffLocation:
+              widget.cabwireResponseEntity.data.dropoffLocation.address,
+          dropoffLocation2:
+              widget.cabwireResponseEntity.data.dropoffLocation.address,
         ),
       ],
     );
@@ -179,11 +187,15 @@ class _CreatePostDetailsScreenState extends State<CreatePostDetailsScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            CustomText('2/3'),
+            CustomText('0/${widget.cabwireResponseEntity.data.setAvailable}'),
             gapH10,
             GestureDetector(
               onTap: () {
-                Get.to(() => RideDetailsScreen());
+                Get.to(
+                  () => CreatePostRideDetailsScreen(
+                    cabwireResponseEntity: widget.cabwireResponseEntity,
+                  ),
+                );
               },
               child: CustomText(
                 'View details',
@@ -193,9 +205,11 @@ class _CreatePostDetailsScreenState extends State<CreatePostDetailsScreen> {
             ),
             gapH10,
             CircularIconButton(
-              icon: Icons.phone,
+              icon: Icons.message_outlined,
               onTap: () {
-                Get.to(() => const AudioCallScreen());
+                Get.to(
+                  () => ChatPage(chatId: widget.cabwireResponseEntity.data.id),
+                );
               },
             ),
           ],

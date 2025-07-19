@@ -13,14 +13,9 @@ import 'package:cabwire/presentation/driver/ride_history/ui/widgets/driver_profi
 import 'package:cabwire/presentation/driver/ride_history/ui/widgets/route_information_widget.dart';
 import 'package:flutter/material.dart';
 
-class RideOverviewScreen extends StatelessWidget {
-  final bool isCreatePost;
+class CreatePostRideOverviewScreen extends StatelessWidget {
   final CreateRideModel createRideModel;
-  RideOverviewScreen({
-    super.key,
-    this.isCreatePost = false,
-    required this.createRideModel,
-  });
+  CreatePostRideOverviewScreen({super.key, required this.createRideModel});
   final CreatePostPresenter _presenter = locate<CreatePostPresenter>();
 
   static const double _defaultSpacing = 16.0;
@@ -117,9 +112,11 @@ class RideOverviewScreen extends StatelessWidget {
         CustomText('My Trip', fontSize: 16.px, fontWeight: FontWeight.bold),
         gapH10,
         DriverRouteInformationWidget(
-          pickupLocation: createRideModel.pickupAddress,
-          dropoffLocation: createRideModel.destinationAddresses.first,
-          dropoffLocation2: createRideModel.destinationAddresses.last,
+          pickupLocation: createRideModel.pickupAddress ?? '',
+          dropoffLocation:
+              createRideModel.destinationAddresses?.firstOrNull ?? '',
+          dropoffLocation2:
+              createRideModel.destinationAddresses?.lastOrNull ?? '',
         ),
       ],
     );
@@ -172,8 +169,6 @@ class RideOverviewScreen extends StatelessWidget {
   }
 
   Widget _buildBottomSheet() {
-    if (!isCreatePost) return const SizedBox.shrink();
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: ActionButton(

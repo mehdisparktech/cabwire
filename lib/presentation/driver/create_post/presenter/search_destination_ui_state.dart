@@ -21,8 +21,10 @@ class SearchDestinationUiState extends BaseUiState {
   final List<String> fromSuggestions;
   final List<SearchHistoryItem> searchHistory;
   final List<MultipleLocationItem> multipleLocations;
-  final String? routeDistance;
-  final String? routeDuration;
+  final dynamic routeDistance;
+  final dynamic routeDuration;
+  final String? routeDistanceText;
+  final String? routeDurationText;
   final String? error;
   final LatLng? selectedPickupLocation;
   final String? pickupAddress;
@@ -48,6 +50,8 @@ class SearchDestinationUiState extends BaseUiState {
     this.multipleLocations = const [],
     this.routeDistance,
     this.routeDuration,
+    this.routeDistanceText,
+    this.routeDurationText,
     this.error,
     this.selectedPickupLocation,
     this.pickupAddress,
@@ -93,6 +97,8 @@ class SearchDestinationUiState extends BaseUiState {
       ],
       routeDistance: null,
       routeDuration: null,
+      routeDistanceText: null,
+      routeDurationText: null,
       error: null,
       selectedPickupLocation: null,
       pickupAddress: null,
@@ -122,6 +128,8 @@ class SearchDestinationUiState extends BaseUiState {
     multipleLocations,
     routeDistance,
     routeDuration,
+    routeDistanceText,
+    routeDurationText,
     error,
     selectedPickupLocation,
     pickupAddress,
@@ -147,8 +155,10 @@ class SearchDestinationUiState extends BaseUiState {
     List<String>? fromSuggestions,
     List<SearchHistoryItem>? searchHistory,
     List<MultipleLocationItem>? multipleLocations,
-    String? routeDistance,
-    String? routeDuration,
+    dynamic routeDistance,
+    dynamic routeDuration,
+    String? routeDistanceText,
+    String? routeDurationText,
     String? error,
     LatLng? selectedPickupLocation,
     String? pickupAddress,
@@ -177,6 +187,8 @@ class SearchDestinationUiState extends BaseUiState {
       multipleLocations: multipleLocations ?? this.multipleLocations,
       routeDistance: routeDistance ?? this.routeDistance,
       routeDuration: routeDuration ?? this.routeDuration,
+      routeDistanceText: routeDistanceText ?? this.routeDistanceText,
+      routeDurationText: routeDurationText ?? this.routeDurationText,
       error: error ?? this.error,
       selectedPickupLocation:
           selectedPickupLocation ?? this.selectedPickupLocation,
