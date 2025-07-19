@@ -27,6 +27,7 @@ import 'package:cabwire/presentation/driver/ride_history/ui/screens/ride_history
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
+import 'package:image_picker/image_picker.dart';
 // import 'package:image_picker/image_picker.dart'; // If you implement image picking
 
 class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
@@ -273,19 +274,15 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
 
   // --- Actions ---
   Future<void> pickProfileImage() async {
-    // // Using image_picker package
-    // final ImagePicker picker = ImagePicker();
-    // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    // if (image != null) {
-    //   selectedProfileImageFile = File(image.path);
-    //   // To show preview immediately, you might need a separate observable for the image file in UI state
-    //   // or trigger a rebuild of the EditProfileInfoScreen if it's designed to show the selected file.
-    //   // For simplicity, let's assume the presenter holds it and it's passed during save.
-    //   addUserMessage("Image selected. Press Save to upload.");
-    //   // Force a small state update to make PresentableWidgetBuilder rebuild if EditProfileInfoScreen uses it
-    //   uiState.value = currentUiState.copyWith(userMessage: uiState.value.userMessage);
-    // }
-    addUserMessage("Image picking not implemented in this example.");
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      selectedProfileImageFile = File(image.path);
+      addUserMessage("Image selected. Press Save to upload.");
+      uiState.value = currentUiState.copyWith(
+        userMessage: uiState.value.userMessage,
+      );
+    }
   }
 
   Future<void> saveProfileInfo() async {
