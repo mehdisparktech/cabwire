@@ -165,7 +165,9 @@ class PassengerRideDetailsScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              details.paymentMethod ?? 'Cash Payment Received',
+                              details.paymentMethod == 'stripe'
+                                  ? 'Online Payment Received'
+                                  : 'Cash Payment Received',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

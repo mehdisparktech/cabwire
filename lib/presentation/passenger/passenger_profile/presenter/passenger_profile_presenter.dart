@@ -205,13 +205,11 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
       // To show preview immediately, you might need a separate observable for the image file in UI state
       // or trigger a rebuild of the EditProfileInfoScreen if it's designed to show the selected file.
       // For simplicity, let's assume the presenter holds it and it's passed during save.
-      addUserMessage("Image selected. Press Save to upload.");
       // Force a small state update to make PresentableWidgetBuilder rebuild if EditProfileInfoScreen uses it
       uiState.value = currentUiState.copyWith(
         userMessage: uiState.value.userMessage,
       );
     }
-    addUserMessage("Image picking not implemented in this example.");
   }
 
   Future<void> saveProfileInfo() async {
@@ -229,7 +227,6 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     );
     result.fold(
       (error) {
-        addUserMessage(error, isError: true);
         showMessage(message: error);
         toggleLoading(loading: false);
         return;
@@ -260,7 +257,6 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
           await LocalStorage.savePassengerProfile(updatedProfile);
         }
 
-        addUserMessage(success);
         showMessage(message: success);
         toggleLoading(loading: false);
         getPassengerProfile();
@@ -280,8 +276,6 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
       },
       (success) {
         final profile = success.data;
-        addUserMessage(profile?.name ?? '');
-        showMessage(message: profile?.name ?? '');
         uiState.value = currentUiState.copyWith(
           passengerProfile: PassengerProfileData(
             name: profile?.name ?? '',
@@ -313,7 +307,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
       passengerProfile: updatedPassengerInfo,
       isLoading: false,
     );
-    addUserMessage("Passenger information updated successfully!");
+    showMessage(message: "Passenger information updated successfully!");
     Get.back();
   }
 
@@ -329,7 +323,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     );
     await Future.delayed(const Duration(seconds: 2));
     toggleLoading(loading: false);
-    addUserMessage("Your message has been sent!");
+    showMessage(message: "Your message has been sent!");
     Get.back();
   }
 
@@ -351,7 +345,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
         toggleLoading(loading: false);
         // Navigate to welcome screen which will show auth screen since isLogIn is now false
         Get.offAll(() => WelcomeScreen());
-        addUserMessage("Logged out successfully");
+        showMessage(message: "Logged out successfully");
       });
     } catch (e) {
       appLog("Error during logout: $e");
@@ -371,7 +365,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
           return;
         },
         (success) {
-          addUserMessage(success);
+          showMessage(message: success);
           LocalStorage.removeAllPrefData();
           toggleLoading(loading: false);
           Get.offAll(() => WelcomeScreen());

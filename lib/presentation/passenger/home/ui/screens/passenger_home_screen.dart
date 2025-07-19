@@ -68,6 +68,7 @@ class PassengerHomeScreen extends StatelessWidget {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       toolbarHeight: 80,
+      centerTitle: false,
       leading: Padding(
         padding: EdgeInsets.all(4.px),
         child: CircleAvatar(
