@@ -18,6 +18,7 @@ class LocalStorage {
   static String myImage = "";
   static String myName = "";
   static String myEmail = "";
+  static String myContact = "";
   static String userType = "";
   static ThemeData theme = AppTheme.lightTheme;
   // Create Local Storage Instance
@@ -41,14 +42,45 @@ class LocalStorage {
     myImage = localStorage.getString(LocalStorageKeys.myImage) ?? "";
     myName = localStorage.getString(LocalStorageKeys.myName) ?? "";
     myEmail = localStorage.getString(LocalStorageKeys.myEmail) ?? "";
+    myContact = localStorage.getString(LocalStorageKeys.myContact) ?? "";
     userType = localStorage.getString(LocalStorageKeys.userType) ?? "driver";
+
     // Get stored theme type
     final themeType = userType == "driver" ? "driver" : "passenger";
     theme =
         themeType == "driver" ? AppTheme.driverTheme : AppTheme.passengerTheme;
 
+    // Try to load profile data based on user type
+    if (userType == "driver") {
+      final driverProfile = await getDriverProfile();
+      if (driverProfile != null) {
+        myName = driverProfile.name ?? myName;
+        myEmail = driverProfile.email ?? myEmail;
+        myImage = driverProfile.image ?? myImage;
+        myContact = driverProfile.contact ?? myContact;
+
+        // Update localStorage with these values for consistency
+        await localStorage.setString(LocalStorageKeys.myName, myName);
+        await localStorage.setString(LocalStorageKeys.myEmail, myEmail);
+        await localStorage.setString(LocalStorageKeys.myImage, myImage);
+        await localStorage.setString(LocalStorageKeys.myContact, myContact);
+      }
+    } else {
+      final passengerProfile = await getPassengerProfile();
+      if (passengerProfile != null) {
+        myName = passengerProfile.name ?? myName;
+        myEmail = passengerProfile.email ?? myEmail;
+        myImage = passengerProfile.image ?? myImage;
+
+        // Update localStorage with these values for consistency
+        await localStorage.setString(LocalStorageKeys.myName, myName);
+        await localStorage.setString(LocalStorageKeys.myEmail, myEmail);
+        await localStorage.setString(LocalStorageKeys.myImage, myImage);
+      }
+    }
+
     appLog(
-      "userId: $userId, userType: $userType, themeType: $themeType, theme: ${theme.toString()}",
+      "userId: $userId, userType: $userType, themeType: $themeType, theme: ${theme.toString()}, name: $myName, email: $myEmail",
       source: "Local Storage",
     );
   }
@@ -67,12 +99,12 @@ class LocalStorage {
 
     // Save user type
     await localStorage.setString(LocalStorageKeys.userType, userType.name);
-    userType = userType;
+    LocalStorage.userType = userType.name;
 
     // Save theme based on user type
     final themeType = userType == UserType.driver ? "driver" : "passenger";
     await localStorage.setString(LocalStorageKeys.theme, themeType);
-    theme =
+    LocalStorage.theme =
         themeType == "driver" ? AppTheme.driverTheme : AppTheme.passengerTheme;
 
     // Parse JWT to get user data
@@ -144,6 +176,7 @@ class LocalStorage {
     localStorage.setString(LocalStorageKeys.myImage, "");
     localStorage.setString(LocalStorageKeys.myName, "");
     localStorage.setString(LocalStorageKeys.myEmail, "");
+    localStorage.setString(LocalStorageKeys.myContact, "");
     localStorage.setBool(LocalStorageKeys.isLogIn, false);
     localStorage.setString(LocalStorageKeys.theme, "light");
   }
@@ -170,6 +203,33 @@ class LocalStorage {
       CacheKeys.driverProfile,
       json.encode(profile.toJson()),
     );
+
+    // Update common static variables for quick access
+    if (profile.name != null) {
+      myName = profile.name!;
+      await localStorage.setString(LocalStorageKeys.myName, myName);
+    }
+
+    if (profile.email != null) {
+      myEmail = profile.email!;
+      await localStorage.setString(LocalStorageKeys.myEmail, myEmail);
+    }
+
+    if (profile.image != null) {
+      myImage = profile.image!;
+      await localStorage.setString(LocalStorageKeys.myImage, myImage);
+    }
+
+    if (profile.contact != null) {
+      myContact = profile.contact!;
+      await localStorage.setString(LocalStorageKeys.myContact, myContact);
+    }
+
+    // Log the saved profile for debugging
+    appLog(
+      "Driver profile saved: ${profile.name}, ${profile.email}, ${profile.contact}",
+      source: "Local Storage",
+    );
   }
 
   static Future<void> savePassengerProfile(ProfileModel profile) async {
@@ -177,6 +237,28 @@ class LocalStorage {
     await localStorage.setString(
       CacheKeys.passengerProfile,
       json.encode(profile.toJson()),
+    );
+
+    // Update common static variables for quick access
+    if (profile.name != null) {
+      myName = profile.name!;
+      await localStorage.setString(LocalStorageKeys.myName, myName);
+    }
+
+    if (profile.email != null) {
+      myEmail = profile.email!;
+      await localStorage.setString(LocalStorageKeys.myEmail, myEmail);
+    }
+
+    if (profile.image != null) {
+      myImage = profile.image!;
+      await localStorage.setString(LocalStorageKeys.myImage, myImage);
+    }
+
+    // Log the saved profile for debugging
+    appLog(
+      "Passenger profile saved: ${profile.name}, ${profile.email}",
+      source: "Local Storage",
     );
   }
 

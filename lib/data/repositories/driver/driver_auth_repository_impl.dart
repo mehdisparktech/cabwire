@@ -66,10 +66,66 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
 
   @override
   Future<Result<String>> updateDriverProfile(
-    DriverProfileModel profile,
-    String email,
+    String? name,
+    String? contact,
+    String? profileImage,
   ) async {
-    final result = await _authDataSource.updateDriverProfile(profile, email);
+    final result = await _authDataSource.updateDriverProfile(
+      name,
+      contact,
+      profileImage,
+      LocalStorage.token,
+    );
+
+    // If update is successful, save to local storage
+    if (result.isRight()) {
+      // If we have a current profile, merge with the updates
+      final currentProfile = await LocalStorage.getDriverProfile();
+      if (currentProfile != null) {
+        // Create a merged profile with updated fields
+        final updatedProfile = DriverProfileModel(
+          id: currentProfile.id,
+          name: name ?? currentProfile.name,
+          role: currentProfile.role,
+          email: currentProfile.email,
+          image: profileImage ?? currentProfile.image,
+          status: currentProfile.status,
+          verified: currentProfile.verified,
+          isOnline: currentProfile.isOnline,
+          isDeleted: currentProfile.isDeleted,
+          geoLocation: currentProfile.geoLocation,
+          stripeAccountId: currentProfile.stripeAccountId,
+          createdAt: currentProfile.createdAt,
+          updatedAt: DateTime.now(),
+          contact: contact ?? currentProfile.contact,
+          gender: currentProfile.gender,
+          dateOfBirth: currentProfile.dateOfBirth,
+          driverLicense: currentProfile.driverLicense,
+          driverVehicles: currentProfile.driverVehicles,
+          driverTotalEarn: currentProfile.driverTotalEarn,
+          totalTrip: currentProfile.totalTrip,
+          action: currentProfile.action,
+          adminRevenue: currentProfile.adminRevenue,
+          totalAmountSpend: currentProfile.totalAmountSpend,
+        );
+
+        await LocalStorage.saveDriverProfile(updatedProfile);
+        appLog(
+          'Updated driver profile saved to local storage',
+          source: "DriverAuthRepository",
+        );
+      } else {
+        // If no current profile, just save what we have
+        await LocalStorage.saveDriverProfile(
+          DriverProfileModel(name: name, contact: contact, image: profileImage),
+        );
+        appLog(
+          'New driver profile saved to local storage',
+          source: "DriverAuthRepository",
+        );
+      }
+    }
+
     return result.fold((l) => left(l), (r) => right(r));
   }
 

@@ -469,6 +469,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         return;
       }
 
+      // ignore: unused_local_variable
       final profile = DriverProfileModel(
         name: nameController.text.trim(),
         contact: phoneNumberController.text.trim(),
@@ -497,8 +498,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         ),
       );
       final result = await _driverProfileUpdateUsecase.execute(
-        profile,
-        emailController.text.trim(),
+        nameController.text.trim(),
+        phoneNumberController.text.trim(),
+        profileImagePath,
       );
 
       await result.fold(

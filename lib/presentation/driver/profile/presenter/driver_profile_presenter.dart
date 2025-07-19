@@ -8,6 +8,7 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/delete_profile_usecase.dart';
+import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dart';
 import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
 import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart';
@@ -34,6 +35,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   final TermsAndConditionsUsecase _termsAndConditionsUsecase;
   final PrivacyAndPolicyUsecase _privacyAndPolicyUsecase;
   final DriverDeleteProfileUsecase _deleteProfileUsecase;
+  final DriverProfileUpdateUsecase _updateProfileUsecase;
   final Obs<DriverProfileUiState> uiState = Obs<DriverProfileUiState>(
     DriverProfileUiState.initial(),
   );
@@ -96,6 +98,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     this._termsAndConditionsUsecase,
     this._privacyAndPolicyUsecase,
     this._deleteProfileUsecase,
+    this._updateProfileUsecase,
   ) {
     loadDriverProfile();
     _loadInitialData();
@@ -294,15 +297,22 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       return;
     }
     // Simulate API call to update profile
-    appLog(
-      "Saving profile: ${editNameController.text}, ${editEmailController.text}",
+    final result = await _updateProfileUsecase.execute(
+      editNameController.text,
+      editPhoneNumberController.text,
+      selectedProfileImageFile?.path,
     );
-    if (selectedProfileImageFile != null) {
-      appLog("New profile image to upload: ${selectedProfileImageFile!.path}");
-      // Handle image upload here
-    }
-    await Future.delayed(const Duration(seconds: 2));
-
+    result.fold(
+      (error) {
+        toggleLoading(loading: false);
+        addUserMessage(error, isError: true);
+        return;
+      },
+      (success) {
+        toggleLoading(loading: false);
+        addUserMessage(success);
+      },
+    );
     // On success, update the main userProfile state
     final updatedProfile = currentUiState.userProfile.copyWith(
       name: editNameController.text,

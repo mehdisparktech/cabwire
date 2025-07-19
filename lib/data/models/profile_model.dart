@@ -37,6 +37,7 @@ class ProfileModel extends ProfileEntity {
     super.stripeAccountId,
     super.createdAt,
     super.updatedAt,
+    super.contact,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
@@ -63,6 +64,7 @@ class ProfileModel extends ProfileEntity {
           json['updatedAt'] != null
               ? DateTime.tryParse(json['updatedAt'])
               : null,
+      contact: json['contact'],
     );
   }
 
@@ -81,6 +83,7 @@ class ProfileModel extends ProfileEntity {
     'stripeAccountId': stripeAccountId,
     'createdAt': createdAt?.toIso8601String(),
     'updatedAt': updatedAt?.toIso8601String(),
+    'contact': contact,
   };
 }
 

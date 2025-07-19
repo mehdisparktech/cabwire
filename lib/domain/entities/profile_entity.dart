@@ -14,6 +14,7 @@ class ProfileEntity extends Equatable {
   final String? stripeAccountId;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final String? contact;
 
   const ProfileEntity({
     this.id,
@@ -29,6 +30,7 @@ class ProfileEntity extends Equatable {
     this.stripeAccountId,
     this.createdAt,
     this.updatedAt,
+    this.contact,
   });
 
   @override
@@ -46,6 +48,7 @@ class ProfileEntity extends Equatable {
     stripeAccountId,
     createdAt,
     updatedAt,
+    contact,
   ];
 }
 

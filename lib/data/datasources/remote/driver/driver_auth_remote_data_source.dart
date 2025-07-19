@@ -15,8 +15,10 @@ abstract class DriverAuthRemoteDataSource {
   Future<Result<String>> resetCode(String email);
   Future<Result<String>> forgotPassword(String email);
   Future<Result<String>> updateDriverProfile(
-    DriverProfileModel profile,
-    String email,
+    String? name,
+    String? contact,
+    String? profileImage,
+    String token,
   );
   Future<Result<String>> resetPasswordWithToken(
     String token,
@@ -123,13 +125,19 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
   // update driver profile
   @override
   Future<Result<String>> updateDriverProfile(
-    DriverProfileModel profile,
-    String email,
+    String? name,
+    String? contact,
+    String? profileImage,
+    String token,
   ) async {
     try {
       final result = await apiService.patch(
-        ApiEndPoint.updateProfileByEmail + email,
-        body: profile.toJson(),
+        ApiEndPoint.updateProfile,
+        body: {'name': name, 'contact': contact, 'profileImage': profileImage},
+        header: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
       );
       return result.fold(
         (l) => left(l.message),
