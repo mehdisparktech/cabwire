@@ -1,15 +1,9 @@
 import 'package:cabwire/core/base/base_ui_state.dart';
 import 'package:cabwire/core/enum/service_type.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
+import 'package:cabwire/domain/entities/search_history_item_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-class SearchHistoryItem {
-  final String location;
-  final String distance;
-
-  const SearchHistoryItem({required this.location, required this.distance});
-}
 
 class MultipleLocationItem {
   final String address;

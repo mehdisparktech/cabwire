@@ -5,9 +5,7 @@ import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/search_destination_presenter.dart';
-import 'package:cabwire/presentation/driver/create_post/presenter/search_destination_ui_state.dart'
-    as ui_state;
-import 'package:cabwire/presentation/driver/create_post/ui/screens/create_post_page.dart';
+import 'package:cabwire/domain/entities/search_history_item_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -332,8 +330,7 @@ class SearchDestinationScreen extends StatelessWidget {
                 itemCount: presenter.currentUiState.searchHistory.length,
                 separatorBuilder: (context, index) => gapH20,
                 itemBuilder: (context, index) {
-                  final ui_state.SearchHistoryItem item =
-                      presenter.currentUiState.searchHistory[index];
+                  final item = presenter.currentUiState.searchHistory[index];
                   return _buildHistoryItem(context, item, presenter);
                 },
               ),
@@ -346,7 +343,7 @@ class SearchDestinationScreen extends StatelessWidget {
 
   Widget _buildHistoryItem(
     BuildContext context,
-    ui_state.SearchHistoryItem item,
+    SearchHistoryItem item,
     SearchDestinationPresenter presenter,
   ) {
     return GestureDetector(
@@ -507,7 +504,7 @@ class SearchDestinationScreen extends StatelessWidget {
           isPrimary: true,
           text: 'Continue',
           onPressed: () {
-            presenter.handleContinuePress(context, const CreatePostPage());
+            presenter.handleContinuePress(context);
           },
         ),
       ),
