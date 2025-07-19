@@ -227,7 +227,7 @@ class _CreatePostDetailsScreenState extends State<CreatePostDetailsScreen> {
   Widget _buildBottomSheet() {
     return ActionButton(
       isPrimary: true,
-      text: 'Start Ride',
+      text: 'Continue',
       onPressed: () => Get.to(() => const RideStartPage()),
     );
   }
