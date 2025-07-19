@@ -194,6 +194,12 @@ class _CreatePostDetailsScreenState extends State<CreatePostDetailsScreen> {
                 Get.to(
                   () => CreatePostRideDetailsScreen(
                     cabwireResponseEntity: widget.cabwireResponseEntity,
+                    driverName:
+                        _presenter.currentUiState.rideData?.driverName ?? '',
+                    vehicleNumber:
+                        _presenter.currentUiState.rideData?.vehicleNumber ?? '',
+                    vehicleModel:
+                        _presenter.currentUiState.rideData?.vehicleModel ?? '',
                   ),
                 );
               },

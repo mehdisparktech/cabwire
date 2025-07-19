@@ -13,10 +13,16 @@ import 'package:flutter/material.dart';
 
 class CreatePostRideDetailsScreen extends StatelessWidget {
   final CabwireResponseEntity cabwireResponseEntity;
+  final String driverName;
+  final String vehicleNumber;
+  final String vehicleModel;
 
   const CreatePostRideDetailsScreen({
     super.key,
     required this.cabwireResponseEntity,
+    required this.driverName,
+    required this.vehicleNumber,
+    required this.vehicleModel,
   });
 
   @override
@@ -37,7 +43,7 @@ class CreatePostRideDetailsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 DriverProfileWidget(
-                  name: cabwireResponseEntity.data.driverId,
+                  name: driverName,
                   address: cabwireResponseEntity.data.pickupLocation.address,
                 ),
                 const SizedBox(height: 24),
@@ -50,7 +56,7 @@ class CreatePostRideDetailsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            cabwireResponseEntity.data.driverId,
+                            vehicleNumber,
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -60,7 +66,7 @@ class CreatePostRideDetailsScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            cabwireResponseEntity.data.driverId,
+                            vehicleModel,
                             style: const TextStyle(
                               fontSize: 14,
                               color: Colors.black87,
