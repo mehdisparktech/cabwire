@@ -174,7 +174,9 @@ class RideDetailsScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                details.paymentMethod ?? 'N/A',
+                                details.paymentMethod == 'stripe'
+                                    ? 'Online Payment'
+                                    : 'Cash Payment',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -238,9 +240,12 @@ class RideDetailsScreen extends StatelessWidget {
                     if (uiState.viewMode == RideViewMode.details &&
                         (details.existingFeedback == null ||
                             details.existingFeedback!.isEmpty))
-                      ActionButton(
-                        text: 'Add Feedback',
-                        onPressed: presenter.showFeedbackFormForSelectedRide,
+                      Center(
+                        child: ActionButton(
+                          isPrimary: true,
+                          text: 'Add Feedback',
+                          onPressed: presenter.showFeedbackFormForSelectedRide,
+                        ),
                       ),
 
                     if (uiState.viewMode == RideViewMode.feedback)

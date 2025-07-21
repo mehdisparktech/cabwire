@@ -26,21 +26,22 @@ class DriverOnboardingUiState extends BaseUiState {
       pageController: PageController(),
       onboardingPages: [
         {
-          'image': AppAssets.icSplash1,
-          'title': 'Welcome Driver',
-          'subtitle': 'Start earning with our easy-to-use driver platform.',
+          'image': AppAssets.icCabwireDriver,
+          'title': 'Choose Your First Ride',
+          'subtitle':
+              'Your first customer awaits. Select and begin your journey with us!',
         },
         {
-          'image': AppAssets.icSplash2,
+          'image': AppAssets.icVintageCar,
           'title': 'Receive Ride Requests',
           'subtitle':
               'Get notified of nearby riders and choose which rides to accept.',
         },
         {
-          'image': AppAssets.icSplash3,
-          'title': 'Track Earnings',
+          'image': AppAssets.icThankYou,
+          'title': 'Thank You!',
           'subtitle':
-              'Monitor your daily, weekly, and monthly income with detailed breakdowns.',
+              'You’re all set. Start earning with Cabwire and enjoy the ride!',
           'showBackButton': true,
         },
       ],
