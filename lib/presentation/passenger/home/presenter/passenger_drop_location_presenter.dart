@@ -14,6 +14,7 @@ import 'package:cabwire/presentation/passenger/car_booking/ui/screens/finding_ri
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_ui_state.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/ride_share/ride_share_car_type_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -34,7 +35,7 @@ class PassengerDropLocationPresenter
   bool _isSearching = false;
 
   // For production, replace this with actual Google Maps API key
-  static const String _googleApiKey = 'AIzaSyBVd7ggzUDHSxsiQ0tsB1IBxteOXyiz_uU';
+  static final String _googleApiKey = dotenv.env['GOOGLE_API_KEY'] ?? '';
 
   // Listener callback
   VoidCallback? _fromListener;

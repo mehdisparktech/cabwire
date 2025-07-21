@@ -5,6 +5,7 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_pickup_location_ui_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -26,7 +27,7 @@ class PassengerPickupLocationPresenter
   VoidCallback? _searchListener;
 
   // For production, replace this with actual Google Maps API key
-  static const String _googleApiKey = 'AIzaSyBVd7ggzUDHSxsiQ0tsB1IBxteOXyiz_uU';
+  static final String _googleApiKey = dotenv.env['GOOGLE_API_KEY'] ?? '';
   final http.Client _httpClient = http.Client();
 
   PassengerPickupLocationPresenter(this._getCurrentLocationUsecase);

@@ -8,6 +8,7 @@ import 'package:cabwire/domain/usecases/register_device_usecase.dart';
 import 'package:cabwire/domain/usecases/location/check_location_permission_usecase.dart';
 import 'package:cabwire/domain/usecases/location/request_location_permission_usecase.dart';
 import 'package:cabwire/presentation/initial_app.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   runZonedGuarded<Future<void>>(() async {
@@ -21,12 +22,16 @@ Future<void> main() async {
 
 /// Initialize the app
 Future<void> _initializeApp() async {
-  //await loadEnv();
+  await loadEnv();
   await ServiceLocator.setUp();
   final socketService = locate<SocketService>();
   socketService.connectToSocket();
   final notificationService = locate<NotificationService>();
   await notificationService.initLocalNotification();
+}
+
+Future<void> loadEnv() async {
+  await dotenv.load(fileName: ".env");
 }
 
 /// Check if the app is first run

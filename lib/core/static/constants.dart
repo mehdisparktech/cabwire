@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 const List<Color> availableColors = [
   Color(0xff66BB6A),
@@ -43,4 +44,4 @@ const Duration defaultPageTransitionDuration = Duration(milliseconds: 370);
 // - Directions API
 // - Places API
 // - Geocoding API
-const String googleApiKey = 'AIzaSyBVd7ggzUDHSxsiQ0tsB1IBxteOXyiz_uU';
+final String googleApiKey = dotenv.env['GOOGLE_API_KEY'] ?? '';
