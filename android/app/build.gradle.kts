@@ -43,7 +43,7 @@ android {
 
     defaultConfig {
         applicationId = "com.cabwire.cabwire"
-        minSdk = 21 // Update to 21 as required by NDK
+        minSdk = 29 // Update from 21 to 29 to support forceDarkAllowed
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -71,4 +71,9 @@ flutter {
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     implementation("androidx.multidex:multidex:2.0.1")
+    
+    // Test dependencies
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.24")
+    testImplementation("org.mockito:mockito-core:5.8.0")
+    testImplementation("io.mockk:mockk:1.13.16")
 }
