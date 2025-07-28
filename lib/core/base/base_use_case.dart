@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
-import 'package:cabwire/domain/user/service/error_message_handler.dart';
+import 'package:cabwire/domain/services/error_message_handler.dart';
 
 /// The BaseUseCase class serves as a base for all use cases in the application.
 ///

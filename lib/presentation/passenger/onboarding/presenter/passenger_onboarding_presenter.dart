@@ -1,5 +1,8 @@
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/usecases/save_first_time_use_case.dart';
+import 'package:cabwire/presentation/passenger/auth/ui/screens/passenger_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/passenger/onboarding/presenter/passenger_onboarding_ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,13 +35,40 @@ class PassengerOnboardingPresenter
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+      if (currentUiState.currentPage == currentUiState.totalPages - 1) {
+        uiState.value = currentUiState.copyWith(showSkipButton: false);
+      }
     }
   }
 
-  void onGetStarted() {
-    // Navigate to passenger main page or login
-    // Get.offAll(() => PassengerMainPage());
-    Get.back(); // Temporary: just go back to welcome screen
+  void onSkip() {
+    if (currentUiState.currentPage < currentUiState.totalPages - 1) {
+      pageController.animateToPage(
+        currentUiState.totalPages,
+        duration: const Duration(milliseconds: 10),
+        curve: Curves.easeOut,
+      );
+      uiState.value = currentUiState.copyWith(showSkipButton: false);
+    }
+  }
+
+  void onBack() {
+    if (currentUiState.currentPage > 0) {
+      pageController.previousPage(
+        duration: const Duration(milliseconds: 10),
+        curve: Curves.easeOut,
+      );
+      uiState.value = currentUiState.copyWith(showSkipButton: true);
+    }
+  }
+
+  void onGetStarted() async {
+    // Mark first time as done
+    final saveFirstTimeUseCase = locate<SaveFirstTimeUseCase>();
+    await saveFirstTimeUseCase.execute();
+
+    // Navigate to AuthNavigator for login/signup
+    Get.to(() => const PassengerAuthNavigationScreen());
   }
 
   @override

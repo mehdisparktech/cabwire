@@ -1,0 +1,191 @@
+import 'package:cabwire/core/base/base_ui_state.dart';
+// You might want a dedicated UserProfileModel
+// import 'package:cabwire/features/auth/models/user_profile_model.dart';
+
+// Enum to manage which part of the profile flow is active
+// This helps the Presenter and potentially a wrapper UI decide what to show/manage.
+// However, since you have separate screen files, this might be less critical for UI rendering
+// and more for presenter's internal logic or if you had one dynamic "form" screen.
+// For now, let's assume navigation handles distinct screens.
+// enum ProfileViewMode { main, editInfo, editPassword, editDriving, contactUs }
+
+class UserProfileData {
+  final String name;
+  final String email; // Assuming email is part of profile info
+  final String phoneNumber;
+  final String avatarUrl; // Asset path or network URL
+  final String? dateOfBirth;
+  final String? gender;
+  // Add other general profile fields
+
+  const UserProfileData({
+    required this.name,
+    required this.email,
+    required this.phoneNumber,
+    required this.avatarUrl,
+    this.dateOfBirth,
+    this.gender,
+  });
+
+  // Factory for initial/empty state
+  factory UserProfileData.empty() {
+    return const UserProfileData(
+      name: '',
+      email: '',
+      phoneNumber: '',
+      avatarUrl: '', // Default or placeholder
+      dateOfBirth: null,
+      gender: null,
+    );
+  }
+
+  UserProfileData copyWith({
+    String? name,
+    String? email,
+    String? phoneNumber,
+    String? avatarUrl,
+    String? dateOfBirth,
+    String? gender,
+  }) {
+    return UserProfileData(
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      gender: gender ?? this.gender,
+    );
+  }
+}
+
+class DrivingInfoData {
+  final String licenseNumber;
+  final String licenseExpiryDate;
+  final String licenseIssueDate;
+  final String vehiclesRegistrationNumber;
+  final String vehiclesInsuranceNumber;
+  final String vehiclesMake;
+  final String vehiclesModel;
+  final String vehiclesYear;
+  final String vehiclesCategory;
+  // Add other driving-specific fields
+
+  const DrivingInfoData({
+    required this.licenseNumber,
+    required this.licenseExpiryDate,
+    required this.licenseIssueDate,
+    required this.vehiclesRegistrationNumber,
+    required this.vehiclesInsuranceNumber,
+    required this.vehiclesMake,
+    required this.vehiclesModel,
+    required this.vehiclesYear,
+    required this.vehiclesCategory,
+  });
+
+  factory DrivingInfoData.empty() {
+    return const DrivingInfoData(
+      licenseNumber: '',
+      licenseExpiryDate: '',
+      licenseIssueDate: '',
+      vehiclesRegistrationNumber: '',
+      vehiclesInsuranceNumber: '',
+      vehiclesMake: '',
+      vehiclesModel: '',
+      vehiclesYear: '',
+      vehiclesCategory: '',
+    );
+  }
+
+  DrivingInfoData copyWith({
+    String? licenseNumber,
+    String? licenseExpiryDate,
+    String? licenseIssueDate,
+    String? vehiclesRegistrationNumber,
+    String? vehiclesInsuranceNumber,
+    String? vehiclesMake,
+    String? vehiclesModel,
+    String? vehiclesYear,
+    String? vehiclesCategory,
+  }) {
+    return DrivingInfoData(
+      licenseNumber: licenseNumber ?? this.licenseNumber,
+      licenseExpiryDate: licenseExpiryDate ?? this.licenseExpiryDate,
+      licenseIssueDate: licenseIssueDate ?? this.licenseIssueDate,
+      vehiclesRegistrationNumber:
+          vehiclesRegistrationNumber ?? this.vehiclesRegistrationNumber,
+      vehiclesInsuranceNumber:
+          vehiclesInsuranceNumber ?? this.vehiclesInsuranceNumber,
+      vehiclesMake: vehiclesMake ?? this.vehiclesMake,
+      vehiclesModel: vehiclesModel ?? this.vehiclesModel,
+      vehiclesYear: vehiclesYear ?? this.vehiclesYear,
+      vehiclesCategory: vehiclesCategory ?? this.vehiclesCategory,
+    );
+  }
+}
+
+class DriverProfileUiState extends BaseUiState {
+  final UserProfileData userProfile;
+  final DrivingInfoData drivingInfo;
+  final String? termsAndConditions;
+  final String? privacyPolicy;
+  final bool? showPassword;
+
+  // For forms - keeping it simple, presenter will manage controllers directly for now
+  // Or you can store form field values here if you prefer not to pass controllers around.
+  // final String editProfileName;
+  // final String editProfileEmail;
+  // ... and so on for all form fields. This can become very large.
+
+  const DriverProfileUiState({
+    required super.isLoading,
+    required super.userMessage,
+    required this.userProfile,
+    required this.drivingInfo,
+    this.termsAndConditions,
+    this.privacyPolicy,
+    this.showPassword,
+  });
+
+  factory DriverProfileUiState.initial() {
+    return DriverProfileUiState(
+      isLoading: false,
+      userMessage: '',
+      userProfile: UserProfileData.empty(), // Load actual data in presenter
+      drivingInfo: DrivingInfoData.empty(), // Load actual data in presenter
+      termsAndConditions: null,
+      privacyPolicy: null,
+      showPassword: false,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    isLoading,
+    userMessage,
+    userProfile,
+    drivingInfo,
+    termsAndConditions,
+    privacyPolicy,
+    showPassword,
+  ];
+
+  DriverProfileUiState copyWith({
+    bool? isLoading,
+    String? userMessage,
+    UserProfileData? userProfile,
+    DrivingInfoData? drivingInfo,
+    String? termsAndConditions,
+    String? privacyPolicy,
+    bool? showPassword,
+  }) {
+    return DriverProfileUiState(
+      isLoading: isLoading ?? this.isLoading,
+      userMessage: userMessage ?? this.userMessage,
+      userProfile: userProfile ?? this.userProfile,
+      drivingInfo: drivingInfo ?? this.drivingInfo,
+      termsAndConditions: termsAndConditions ?? this.termsAndConditions,
+      privacyPolicy: privacyPolicy ?? this.privacyPolicy,
+      showPassword: showPassword ?? this.showPassword,
+    );
+  }
+}

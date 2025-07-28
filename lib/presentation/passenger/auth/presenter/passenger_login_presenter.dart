@@ -1,0 +1,117 @@
+import 'package:cabwire/core/config/themes.dart';
+import 'package:cabwire/core/enum/user_type.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/domain/usecases/passenger_sign_in_usecase.dart';
+import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/presentation/passenger/auth/presenter/passenger_login_ui_state.dart';
+import 'package:get/get.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
+
+class PassengerLoginPresenter extends BasePresenter<PassengerLoginUiState> {
+  final PassengerSignInUsecase _signInUsecase;
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  final Obs<PassengerLoginUiState> uiState = Obs(PassengerLoginUiState.empty());
+  PassengerLoginUiState get currentUiState => uiState.value;
+
+  PassengerLoginPresenter(this._signInUsecase);
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initDevelopmentCredentials();
+    _checkExistingLogin();
+  }
+
+  void _initDevelopmentCredentials() {
+    emailController.text = 'user@gmail.com';
+    passwordController.text = 'hello123';
+  }
+
+  Future<void> _checkExistingLogin() async {
+    await LocalStorage.getAllPrefData();
+
+    if (LocalStorage.isLogIn && !LocalStorage.isTokenExpired()) {
+      // Valid token exists, navigate to home
+      Get.offAll(() => PassengerMainPage());
+    }
+  }
+
+  void togglePasswordVisibility() {
+    uiState.value = currentUiState.copyWith(
+      obscurePassword: !currentUiState.obscurePassword,
+    );
+  }
+
+  Future<void> onSignIn(BuildContext context) async {
+    if (formKey.currentState?.validate() ?? false) {
+      await executeTaskWithLoading(() async {
+        appLog('Attempting sign in...'); // Debug print
+        final result = await _signInUsecase.execute(
+          emailController.text.trim(),
+          passwordController.text,
+        );
+
+        await result.fold(
+          // Handle error
+          (errorMessage) async {
+            appLog('Sign in error: $errorMessage'); // Debug print
+            await addUserMessage(errorMessage);
+            showMessage(message: errorMessage);
+          },
+          // Handle success
+          (user) async {
+            appLog('Sign in successful, updating UI state...'); // Debug print
+
+            // Save token and user data
+            if (user.data?.token != null) {
+              await LocalStorage.saveLoginData(
+                user.data!.token!,
+                UserType.passenger,
+                AppTheme.passengerTheme,
+              );
+            }
+
+            uiState.value = currentUiState.copyWith(
+              user: user,
+              isAuthenticated: true,
+            );
+
+            appLog('Attempting navigation...'); // Debug print
+            clearControllers();
+            Get.offAll(() => PassengerMainPage());
+            appLog('Navigation called'); // Debug print
+          },
+        );
+      });
+    }
+  }
+
+  @override
+  Future<void> addUserMessage(String message) async {
+    uiState.value = currentUiState.copyWith(userMessage: message);
+  }
+
+  @override
+  Future<void> toggleLoading({required bool loading}) async {
+    uiState.value = currentUiState.copyWith(isLoading: loading);
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  void clearControllers() {
+    emailController.clear();
+    passwordController.clear();
+  }
+}

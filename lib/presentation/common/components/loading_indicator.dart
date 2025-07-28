@@ -1,0 +1,27 @@
+import 'package:cabwire/core/config/app_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:cabwire/core/external_libs/loading_animation/ink_drop_loading_animation.dart';
+
+class LoadingIndicator extends StatelessWidget {
+  const LoadingIndicator({
+    super.key,
+    this.ringColor,
+    this.color,
+    required this.theme,
+  });
+
+  final Color? color;
+  final Color? ringColor;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: InkDropLoading(
+        size: px30,
+        ringColor: ringColor,
+        color: color ?? theme.primaryColor,
+      ),
+    );
+  }
+}

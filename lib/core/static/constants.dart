@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 const List<Color> availableColors = [
   Color(0xff66BB6A),
@@ -36,3 +37,11 @@ const String facebookGroupUrl = "https://www.facebook.com/groups/irdofficial";
 const String facebookPageUrl = "https://www.facebook.com/com.oratiq/";
 
 const Duration defaultPageTransitionDuration = Duration(milliseconds: 370);
+
+// Google Maps API key - Make sure this key has the following APIs enabled:
+// - Maps SDK for Android
+// - Maps SDK for iOS
+// - Directions API
+// - Places API
+// - Geocoding API
+final String googleApiKey = dotenv.env['GOOGLE_API_KEY'] ?? '';

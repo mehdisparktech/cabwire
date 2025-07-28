@@ -5,6 +5,7 @@ class PassengerOnboardingUiState extends BaseUiState {
   final int currentPage;
   final int totalPages;
   final PageController? pageController;
+  final bool? showSkipButton;
 
   const PassengerOnboardingUiState({
     required super.isLoading,
@@ -12,6 +13,7 @@ class PassengerOnboardingUiState extends BaseUiState {
     required this.currentPage,
     required this.totalPages,
     this.pageController,
+    this.showSkipButton,
   });
 
   factory PassengerOnboardingUiState.empty() {
@@ -21,6 +23,7 @@ class PassengerOnboardingUiState extends BaseUiState {
       currentPage: 0,
       totalPages: 3,
       pageController: PageController(),
+      showSkipButton: true,
     );
   }
 
@@ -31,6 +34,7 @@ class PassengerOnboardingUiState extends BaseUiState {
     currentPage,
     totalPages,
     pageController,
+    showSkipButton,
   ];
 
   PassengerOnboardingUiState copyWith({
@@ -39,6 +43,7 @@ class PassengerOnboardingUiState extends BaseUiState {
     int? currentPage,
     int? totalPages,
     PageController? pageController,
+    bool? showSkipButton,
   }) {
     return PassengerOnboardingUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -46,6 +51,7 @@ class PassengerOnboardingUiState extends BaseUiState {
       currentPage: currentPage ?? this.currentPage,
       totalPages: totalPages ?? this.totalPages,
       pageController: pageController ?? this.pageController,
+      showSkipButton: showSkipButton ?? this.showSkipButton,
     );
   }
 }

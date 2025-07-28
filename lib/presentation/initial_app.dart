@@ -1,13 +1,19 @@
-import 'package:cabwire/presentation/welcome_screen.dart';
+import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/enum/user_type.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
+import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_presenter.dart';
+import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart';
+import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
+import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:cabwire/core/config/app_screen.dart';
-import 'package:cabwire/core/config/themes.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class InitialApp extends StatelessWidget {
-  const InitialApp({super.key, required this.isFirstRun});
+  InitialApp({super.key, required this.isFirstRun});
 
   final bool isFirstRun;
 
@@ -16,25 +22,67 @@ class InitialApp extends StatelessWidget {
 
   static BuildContext get globalContext =>
       navigatorKey.currentContext ?? Get.context!;
+  final WelcomePresenter presenter = locate<WelcomePresenter>();
 
   @override
   Widget build(BuildContext context) {
+    // Update the presenter with the isFirstRun value from main
+    presenter.uiState.value = presenter.currentUiState.copyWith(
+      isFirstRun: isFirstRun,
+    );
+
     return ResponsiveSizer(
       builder: (context, orientation, deviceType) {
-        return GetMaterialApp(
-          navigatorKey: navigatorKey,
-          builder: (context, child) {
-            return Overlay(
-              initialEntries: [OverlayEntry(builder: (context) => child!)],
+        return PresentableWidgetBuilder(
+          presenter: presenter,
+          builder: () {
+            return GetMaterialApp(
+              navigatorKey: navigatorKey,
+              builder: (context, child) {
+                return AnimatedTheme(
+                  data: presenter.uiState.value.theme,
+                  duration: const Duration(milliseconds: 100),
+                  child: Overlay(
+                    initialEntries: [
+                      OverlayEntry(builder: (context) => child!),
+                    ],
+                  ),
+                );
+              },
+              onInit: () {
+                AppScreen.setUp(context);
+                LocalStorage.getAllPrefData();
+              },
+              onReady: () {
+                AppScreen.setUp(context);
+                LocalStorage.getAllPrefData();
+              },
+              debugShowCheckedModeBanner: false,
+              theme: presenter.uiState.value.theme,
+              title: 'Cabwire',
+              home: FutureBuilder(
+                future: LocalStorage.getAllPrefData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container(
+                      color: Colors.white,
+                      child: const Center(child: CircularProgressIndicator()),
+                    );
+                  }
+
+                  // Check if user is logged in and token is valid
+                  if (LocalStorage.isLogIn && !LocalStorage.isTokenExpired()) {
+                    if (LocalStorage.userType == UserType.driver.name) {
+                      return DriverMainPage();
+                    } else {
+                      return PassengerMainPage();
+                    }
+                  }
+                  return WelcomeScreen();
+                },
+              ),
             );
           },
-          onInit: () => AppScreen.setUp(context),
-          onReady: () => AppScreen.setUp(context),
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.passengerTheme,
-          title: 'Initial Project',
-          // home: isFirstRun ? OnboardingPage() : MainPage(),
-          home: const WelcomeScreen(),
         );
       },
     );

@@ -1,0 +1,16 @@
+flutter_native_splash:
+  background_image: assets/images/png/splash_screen.png # 🎨 BG only (stretch full)
+  image: assets/images/png/splash_screen_logo_big.png # 🔳 Center logo
+
+  android_12:
+    color: "#012F9E"
+    image: assets/images/png/logo_splash.png # Android 12 center icon
+    #branding: assets/images/png/cabwire_text.png
+
+  fullscreen: true
+  android: true
+  ios: true
+  web: false
+
+  #dart run flutter_native_splash:create --path=native_splash.yaml
+  #dart run flutter_native_splash:remove --path=native_splash.yaml
