@@ -2,6 +2,7 @@ import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart'; // For gapW25
+import 'package:cabwire/core/utility/utility.dart';
 // import 'package:cabwire/core/utility/utility.dart'; // For context.theme
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/common/components/common_text.dart'; // Assuming this is your custom text
@@ -159,7 +160,7 @@ class DriverProfileScreen extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(
+                        color: Colors.grey.withOpacityInt(
                           0.2,
                         ), // Corrected opacity
                         spreadRadius: 0,

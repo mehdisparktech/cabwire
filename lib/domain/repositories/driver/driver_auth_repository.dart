@@ -20,4 +20,32 @@ abstract class DriverAuthRepository {
     String confirmPassword,
   );
   Future<Result<String>> deleteMyAccount(String password);
+
+  // New separate API methods for driver registration
+  Future<Result<String>> confirmDriverInformation({
+    required String name,
+    required String contact,
+    required String gender,
+    required String dateOfBirth,
+    required String email,
+    String? profileImage,
+  });
+
+  Future<Result<String>> submitDriverVehicleInformation({
+    required String vehiclesMake,
+    required String vehiclesModel,
+    required String vehiclesYear,
+    required String vehiclesRegistrationNumber,
+    required String vehiclesInsuranceNumber,
+    required String vehiclesCategory,
+    required String email,
+    String? vehicleImage,
+  });
+
+  Future<Result<String>> submitDriverLicenseInformation({
+    required String licenseNumber,
+    required String licenseExpiryDate,
+    required String email,
+    String? licenseImage,
+  });
 }

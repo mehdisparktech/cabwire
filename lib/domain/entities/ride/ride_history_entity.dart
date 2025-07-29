@@ -20,7 +20,7 @@ class RideHistoryEntity extends BaseEntity {
   final String createdAt;
   final String updatedAt;
 
-  RideHistoryEntity({
+  const RideHistoryEntity({
     required this.id,
     this.pickupLocation,
     this.dropoffLocation,

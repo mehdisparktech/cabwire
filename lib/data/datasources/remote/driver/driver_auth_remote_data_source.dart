@@ -6,7 +6,10 @@ import 'package:cabwire/data/models/signin_response_model.dart';
 import 'package:cabwire/data/models/signup_response_model.dart';
 import 'package:cabwire/data/models/user_model.dart';
 import 'package:cabwire/data/services/api/api_service_impl.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
+import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
+import 'dart:convert';
 
 abstract class DriverAuthRemoteDataSource {
   Future<Result<SignupResponseModel>> signUp(UserModel user);
@@ -27,6 +30,34 @@ abstract class DriverAuthRemoteDataSource {
   );
   Future<Result<DriverProfileModel>> getDriverProfile(String token);
   Future<Result<String>> deleteMyAccount(String token, String password);
+
+  // New separate API methods for driver registration with FormData
+  Future<Result<String>> confirmDriverInformation({
+    required String name,
+    required String contact,
+    required String gender,
+    required String dateOfBirth,
+    required String email,
+    String? profileImage,
+  });
+
+  Future<Result<String>> submitDriverVehicleInformation({
+    required String vehiclesMake,
+    required String vehiclesModel,
+    required String vehiclesYear,
+    required String vehiclesRegistrationNumber,
+    required String vehiclesInsuranceNumber,
+    required String vehiclesCategory,
+    required String email,
+    String? vehicleImage,
+  });
+
+  Future<Result<String>> submitDriverLicenseInformation({
+    required String licenseNumber,
+    required String licenseExpiryDate,
+    required String email,
+    String? licenseImage,
+  });
 }
 
 class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
@@ -208,6 +239,175 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
         (r) => right(r.data['message']),
       );
     } catch (e) {
+      return left(e.toString());
+    }
+  }
+
+  // Confirm driver information with FormData
+  @override
+  Future<Result<String>> confirmDriverInformation({
+    required String name,
+    required String contact,
+    required String gender,
+    required String dateOfBirth,
+    required String email,
+    String? profileImage,
+  }) async {
+    try {
+      final token = LocalStorage.token;
+
+      // Prepare JSON data
+      final jsonData = {
+        'name': name,
+        'contact': contact,
+        'gender': gender,
+        'dateOfBirth': dateOfBirth,
+      };
+
+      // Create FormData
+      final formData = FormData.fromMap({'data': jsonEncode(jsonData)});
+
+      // Add image if provided
+      if (profileImage != null) {
+        final fileName = profileImage.split('/').last;
+        formData.files.add(
+          MapEntry(
+            'image',
+            await MultipartFile.fromFile(profileImage, filename: fileName),
+          ),
+        );
+      }
+
+      appLog("DataSource ========>>>   $email");
+
+      final result = await apiService.patchFormData(
+        ApiEndPoint.driverConfirmInformation + email,
+        formData: formData,
+        header: {'Authorization': 'Bearer $token'},
+      );
+
+      return result.fold(
+        (l) => left(l.message),
+        (r) => right(r.data['message'] ?? 'Information confirmed successfully'),
+      );
+    } catch (e) {
+      appLog('confirmDriverInformation error: ${e.toString()}');
+      return left(e.toString());
+    }
+  }
+
+  // Submit driver vehicle information with FormData
+  @override
+  Future<Result<String>> submitDriverVehicleInformation({
+    required String vehiclesMake,
+    required String vehiclesModel,
+    required String vehiclesYear,
+    required String vehiclesRegistrationNumber,
+    required String vehiclesInsuranceNumber,
+    required String vehiclesCategory,
+    required String email,
+    String? vehicleImage,
+  }) async {
+    try {
+      final token = LocalStorage.token;
+
+      DateTime dateFromYear = DateTime(int.parse(vehiclesYear));
+
+      // এটিকে ISO 8601 ফরম্যাটের স্ট্রিং-এ রূপান্তর করুন
+      String formattedDateString = dateFromYear.toIso8601String();
+
+      // Prepare JSON data
+      final jsonData = {
+        "driverVehicles": {
+          "vehiclesMake": vehiclesMake,
+          "vehiclesModel": vehiclesModel,
+          "vehiclesYear": formattedDateString,
+          "vehiclesRegistrationNumber": vehiclesRegistrationNumber,
+          "vehiclesInsuranceNumber": vehiclesInsuranceNumber,
+          "vehiclesCategory": vehiclesCategory,
+        },
+      };
+
+      // Create FormData
+      final formData = FormData.fromMap({'data': jsonEncode(jsonData)});
+
+      // Add vehicle image if provided
+      if (vehicleImage != null) {
+        final fileName = vehicleImage.split('/').last;
+        formData.files.add(
+          MapEntry(
+            'image',
+            await MultipartFile.fromFile(vehicleImage, filename: fileName),
+          ),
+        );
+      }
+
+      final result = await apiService.patchFormData(
+        ApiEndPoint.driverVehicleInformation + email,
+        formData: formData,
+        header: {'Authorization': 'Bearer $token'},
+      );
+
+      return result.fold(
+        (l) => left(l.message),
+        (r) => right(
+          r.data['message'] ?? 'Vehicle information submitted successfully',
+        ),
+      );
+    } catch (e) {
+      appLog('submitDriverVehicleInformation error: ${e.toString()}');
+      return left(e.toString());
+    }
+  }
+
+  @override
+  Future<Result<String>> submitDriverLicenseInformation({
+    required String licenseNumber,
+    required String licenseExpiryDate,
+    required String email,
+    String? licenseImage,
+  }) async {
+    try {
+      final token = LocalStorage.token;
+
+      // Prepare JSON data
+      final jsonData = {
+        'driverLicense': {
+          'licenseNumber':
+              licenseNumber, // licenseNumber ভেরিয়েবল থেকে মান আসবে
+          'licenseExpiryDate':
+              licenseExpiryDate, // licenseExpiryDate ভেরিয়েবল থেকে মান আসবে
+        },
+      };
+
+      // Create FormData
+      final formData = FormData.fromMap({'data': jsonEncode(jsonData)});
+
+      // Add license image if provided
+      if (licenseImage != null) {
+        final fileName = licenseImage.split('/').last;
+        formData.files.add(
+          MapEntry(
+            'image',
+            await MultipartFile.fromFile(licenseImage, filename: fileName),
+          ),
+        );
+      }
+
+      final result = await apiService.patchFormData(
+        ApiEndPoint.driverLicensInformation + email,
+        formData: formData,
+        header: {'Authorization': 'Bearer $token'},
+      );
+
+      return result.fold(
+        (l) => left(l.message),
+        (r) => right(
+          r.data['message'] ?? 'Vehicle information submitted successfully',
+        ),
+      );
+    } catch (e) {
+      appLog('submitDriverVehicleInformation error: ${e.toString()}');
       return left(e.toString());
     }
   }

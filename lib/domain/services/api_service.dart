@@ -50,4 +50,16 @@ abstract class ApiService {
     String method,
     Map<String, String>? filePaths,
   });
+
+  Future<Either<ApiFailure, ApiSuccess<Map<String, dynamic>>>> postFormData(
+    String url, {
+    required dynamic formData,
+    Map<String, String>? header,
+  });
+
+  Future<Either<ApiFailure, ApiSuccess<Map<String, dynamic>>>> patchFormData(
+    String url, {
+    required dynamic formData,
+    Map<String, String>? header,
+  });
 }

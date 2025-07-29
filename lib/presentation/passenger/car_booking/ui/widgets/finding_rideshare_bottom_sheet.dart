@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_color.dart';
+import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/passenger/car_booking/presenter/finding_rides_presenter.dart';
@@ -79,7 +80,7 @@ class _FindingRideshareBottomSheetState
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: Colors.black.withOpacityInt(0.12),
             blurRadius: 10,
             spreadRadius: 0,
           ),

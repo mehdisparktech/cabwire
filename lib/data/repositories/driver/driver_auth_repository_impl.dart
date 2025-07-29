@@ -149,4 +149,64 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
     final result = await _authDataSource.deleteMyAccount(token, password);
     return result.fold((l) => left(l), (r) => right(r));
   }
+
+  @override
+  Future<Result<String>> confirmDriverInformation({
+    required String name,
+    required String contact,
+    required String gender,
+    required String dateOfBirth,
+    required String email,
+    String? profileImage,
+  }) async {
+    final result = await _authDataSource.confirmDriverInformation(
+      name: name,
+      contact: contact,
+      gender: gender,
+      dateOfBirth: dateOfBirth,
+      profileImage: profileImage,
+      email: email,
+    );
+    return result.fold((l) => left(l), (r) => right(r));
+  }
+
+  @override
+  Future<Result<String>> submitDriverVehicleInformation({
+    required String vehiclesMake,
+    required String vehiclesModel,
+    required String vehiclesYear,
+    required String vehiclesRegistrationNumber,
+    required String vehiclesInsuranceNumber,
+    required String vehiclesCategory,
+    required String email,
+    String? vehicleImage,
+  }) async {
+    final result = await _authDataSource.submitDriverVehicleInformation(
+      vehiclesMake: vehiclesMake,
+      vehiclesModel: vehiclesModel,
+      vehiclesYear: vehiclesYear,
+      vehiclesRegistrationNumber: vehiclesRegistrationNumber,
+      vehiclesInsuranceNumber: vehiclesInsuranceNumber,
+      vehiclesCategory: vehiclesCategory,
+      vehicleImage: vehicleImage,
+      email: email,
+    );
+    return result.fold((l) => left(l), (r) => right(r));
+  }
+
+  @override
+  Future<Result<String>> submitDriverLicenseInformation({
+    required String licenseNumber,
+    required String licenseExpiryDate,
+    required String email,
+    String? licenseImage,
+  }) async {
+    final result = await _authDataSource.submitDriverLicenseInformation(
+      licenseNumber: licenseNumber,
+      licenseExpiryDate: licenseExpiryDate,
+      licenseImage: licenseImage,
+      email: email,
+    );
+    return result.fold((l) => left(l), (r) => right(r));
+  }
 }

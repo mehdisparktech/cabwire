@@ -4,13 +4,14 @@ class ApiEndPoint {
   // static const socketUrl = "https://rabby3000.binarybards.online";
 
   //office
-  // static const baseUrl = "http://10.10.7.109:5005/api/v1";
-  // static const imageUrl = "http://10.10.7.109:5005";
-  // static const socketUrl = "http://10.10.7.109:5005";
+  static const baseUrl = "http://10.10.7.112:5005/api/v1";
+  static const imageUrl = "http://10.10.7.112:5005";
+  static const socketUrl = "http://10.10.7.112:5005";
 
-  static const baseUrl = "http://31.97.98.240:5005/api/v1";
-  static const imageUrl = "http://31.97.98.240:5005/";
-  static const socketUrl = "http://31.97.98.240:5005/";
+  //Live
+  // static const baseUrl = "http://31.97.98.240:5005/api/v1";
+  // static const imageUrl = "http://31.97.98.240:5005/";
+  // static const socketUrl = "http://31.97.98.240:5005/";
 
   //home
   // static const baseUrl = "http://192.168.10.207:5005/api/v1";
@@ -58,4 +59,12 @@ class ApiEndPoint {
   static const updateProfile = "$baseUrl/user/profile";
   static const createCabwire = "$baseUrl/cabwire/create-cabwire";
   static const withdrawAmount = "$baseUrl/payment/transfer-to-driver/";
+
+  // Driver registration separate endpoints
+  static const driverConfirmInformation =
+      "$baseUrl/user/update-profile-by-email/";
+  static const driverVehicleInformation =
+      "$baseUrl/user/update-vehicles-by-email/";
+  static const driverLicensInformation =
+      "$baseUrl/user/update-driver-by-email/";
 }
