@@ -9,7 +9,9 @@ import 'package:cabwire/data/services/api/api_service_impl.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:http_parser/http_parser.dart';
 import 'dart:convert';
+import 'package:mime/mime.dart';
 
 abstract class DriverAuthRemoteDataSource {
   Future<Result<SignupResponseModel>> signUp(UserModel user);
@@ -267,17 +269,23 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
       // Create FormData
       final formData = FormData.fromMap({'data': jsonEncode(jsonData)});
 
+      appLog(profileImage != null);
+
       // Add image if provided
       if (profileImage != null) {
         final fileName = profileImage.split('/').last;
+        var mimeType = lookupMimeType(fileName);
         formData.files.add(
           MapEntry(
             'image',
-            await MultipartFile.fromFile(profileImage, filename: fileName),
+            await MultipartFile.fromFile(
+              profileImage,
+              filename: fileName,
+              contentType: MediaType.parse(mimeType!),
+            ),
           ),
         );
       }
-
       appLog("DataSource ========>>>   $email");
 
       final result = await apiService.patchFormData(
@@ -331,13 +339,20 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
       // Create FormData
       final formData = FormData.fromMap({'data': jsonEncode(jsonData)});
 
+      appLog(vehicleImage != null);
+
       // Add vehicle image if provided
       if (vehicleImage != null) {
         final fileName = vehicleImage.split('/').last;
+        var mimeType = lookupMimeType(fileName);
         formData.files.add(
           MapEntry(
             'image',
-            await MultipartFile.fromFile(vehicleImage, filename: fileName),
+            await MultipartFile.fromFile(
+              vehicleImage,
+              filename: fileName,
+              contentType: MediaType.parse(mimeType!),
+            ),
           ),
         );
       }
@@ -383,13 +398,20 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
       // Create FormData
       final formData = FormData.fromMap({'data': jsonEncode(jsonData)});
 
+      appLog(licenseImage != null);
+
       // Add license image if provided
       if (licenseImage != null) {
         final fileName = licenseImage.split('/').last;
+        var mimeType = lookupMimeType(fileName);
         formData.files.add(
           MapEntry(
             'image',
-            await MultipartFile.fromFile(licenseImage, filename: fileName),
+            await MultipartFile.fromFile(
+              licenseImage,
+              filename: fileName,
+              contentType: MediaType.parse(mimeType!),
+            ),
           ),
         );
       }
