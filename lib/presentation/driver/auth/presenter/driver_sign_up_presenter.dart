@@ -16,6 +16,7 @@ import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_resend
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_password_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/screens/driver_stripe_accoount_connect_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
@@ -389,7 +390,8 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           if (context.mounted) {
             _navigation.navigateWithFadeTransition(
               context,
-              const DriverAuthNavigatorScreen(),
+              //const DriverAuthNavigatorScreen(),
+              const DriverStripeAccoountConnectScreen(),
               clearStack: true,
             );
           }

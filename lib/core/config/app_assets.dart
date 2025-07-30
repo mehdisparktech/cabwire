@@ -72,4 +72,5 @@ class AppAssets {
   static const String icCabwireDriver = 'assets/images/svg/cabwire_driver.svg';
   static const String icVintageCar = 'assets/images/svg/vintage_car.svg';
   static const String icThankYou = 'assets/images/svg/thank_you.svg';
+  static const String isStripimg = 'assets/images/svg/stripimg.svg';
 }
