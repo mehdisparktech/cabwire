@@ -364,6 +364,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
 
     await executeTaskWithLoading(() async {
       // Parse the license expiry date to DateTime object
+      final maill = emailController.text;
 
       final result = await _driverVehicleInformationUsecase.execute(
         vehiclesMake: vehiclesMakeController.text.trim(),
@@ -373,7 +374,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
             vehiclesRegistrationNumberController.text.trim(),
         vehiclesInsuranceNumber: vehiclesInsuranceNumberController.text.trim(),
         vehiclesCategory: vehicleCategoryController.text.trim(),
-        email: "mamebod412@amirei.com",
+        email: emailController.text,
         vehicleImage: vehicleImagePath,
       );
 
@@ -391,7 +392,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
             _navigation.navigateWithFadeTransition(
               context,
               //const DriverAuthNavigatorScreen(),
-              const DriverStripeAccoountConnectScreen(),
+              DriverStripeAccoountConnectScreen(email: maill),
               clearStack: true,
             );
           }

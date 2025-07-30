@@ -10,7 +10,8 @@ import 'package:cabwire/presentation/driver/auth/presenter/driver_stripe_accooun
 import 'package:flutter/material.dart';
 
 class DriverStripeAccoountConnectScreen extends StatelessWidget {
-  const DriverStripeAccoountConnectScreen({super.key});
+  final String email;
+  const DriverStripeAccoountConnectScreen({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,7 @@ class DriverStripeAccoountConnectScreen extends StatelessWidget {
   ) {
     return CustomButton(
       text: AppStrings.connectWithStripe,
-      onPressed: () => presenter.onStripeAccountConnect(context),
+      onPressed: () => presenter.onStripeAccountConnect(context, email),
     );
   }
 }

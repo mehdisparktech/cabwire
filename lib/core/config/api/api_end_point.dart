@@ -67,4 +67,5 @@ class ApiEndPoint {
       "$baseUrl/user/update-vehicles-by-email/";
   static const driverLicensInformation =
       "$baseUrl/user/update-driver-by-email/";
+  static const stripeConnected = "$baseUrl/stripe/create-connected-account/";
 }
