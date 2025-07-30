@@ -40,7 +40,7 @@ class DriverStripeAccoountConnectPresenter
 
     try {
       final result = await _apiService.post(
-        ApiEndPoint.stripeConnected + "motoco6223@amirei.com",
+        ApiEndPoint.stripeConnected + email,
       );
 
       result.fold(
