@@ -523,15 +523,9 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
         }
 
         // Handle ride progress
-        // if (data is Map<String, dynamic> &&
-        //     data.containsKey('rideProgress') &&
-        //     data['rideProgress'] == true) {
-        //   appLog("Ride processing event received");
-        //   _handleRideProcessing(data);
-        // }
-
-        // Handle ride progress
-        if (data.containsKey('rideProgress') && data['rideProgress'] == true) {
+        if (data is Map<String, dynamic> &&
+            data.containsKey('rideProgress') &&
+            data['rideProgress'] == true) {
           appLog("Ride processing event received");
           _handleRideProcessing(data);
         }
