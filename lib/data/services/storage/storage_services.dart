@@ -227,7 +227,7 @@ class LocalStorage {
 
     // Log the saved profile for debugging
     appLog(
-      "Driver profile saved: ${profile.name}, ${profile.email}, ${profile.contact}",
+      "Driver profile saved: ${profile.name}, ${profile.email}, ${profile.contact},${profile.image}",
       source: "Local Storage",
     );
   }
