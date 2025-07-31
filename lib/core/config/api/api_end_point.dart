@@ -6,7 +6,7 @@ class ApiEndPoint {
   //office
   static const baseUrl = "http://10.10.7.112:5005/api/v1";
   static const imageUrl = "http://10.10.7.112:5005";
-  static const socketUrl = "http://10.10.7.112:5005";
+  static const socketUrl = "ws://10.10.7.112:5005";
 
   //Live
   // static const baseUrl = "http://31.97.98.240:5005/api/v1";

@@ -12,21 +12,23 @@ import 'package:get/get.dart';
 
 class PassengerTripStartOtpPage extends StatefulWidget {
   final String otp;
+  final String chatId;
   final String rideId;
   final RideResponseModel rideResponse;
   const PassengerTripStartOtpPage({
     super.key,
     required this.otp,
+    required this.chatId,
     required this.rideId,
     required this.rideResponse,
   });
 
   @override
   State<PassengerTripStartOtpPage> createState() =>
-      _PassengerTripCloseOtpPageState();
+      _PassengerTripStartOtpPage();
 }
 
-class _PassengerTripCloseOtpPageState extends State<PassengerTripStartOtpPage> {
+class _PassengerTripStartOtpPage extends State<PassengerTripStartOtpPage> {
   final RideSharePresenter _presenter = locate<RideSharePresenter>();
   late final List<TextEditingController> otpControllers;
 
@@ -39,7 +41,12 @@ class _PassengerTripCloseOtpPageState extends State<PassengerTripStartOtpPage> {
     for (int i = 0; i < widget.otp.length && i < 4; i++) {
       otpControllers[i].text = widget.otp[i];
     }
-    _presenter.onStartedPressed(context, widget.rideId, widget.rideResponse);
+    _presenter.onStartedPressed(
+      context,
+      widget.rideId,
+      widget.rideResponse,
+      widget.chatId,
+    );
   }
 
   @override
@@ -53,7 +60,7 @@ class _PassengerTripCloseOtpPageState extends State<PassengerTripStartOtpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Trip Closure OTP'),
+      appBar: CustomAppBar(title: 'Trip Start OTP'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
         child: Column(

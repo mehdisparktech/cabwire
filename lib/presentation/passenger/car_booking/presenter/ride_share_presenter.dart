@@ -523,9 +523,15 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
         }
 
         // Handle ride progress
-        if (data is Map<String, dynamic> &&
-            data.containsKey('rideProgress') &&
-            data['rideProgress'] == true) {
+        // if (data is Map<String, dynamic> &&
+        //     data.containsKey('rideProgress') &&
+        //     data['rideProgress'] == true) {
+        //   appLog("Ride processing event received");
+        //   _handleRideProcessing(data);
+        // }
+
+        // Handle ride progress
+        if (data.containsKey('rideProgress') && data['rideProgress'] == true) {
           appLog("Ride processing event received");
           _handleRideProcessing(data);
         }
@@ -821,8 +827,9 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     BuildContext context,
     String rideId,
     RideResponseModel rideResponse,
+    String chatId,
   ) async {
-    if (currentUiState.isRideEnd) {
+    if (currentUiState.isRideProcessing) {
       if (context.mounted) {
         Navigator.push(
           // ignore: use_build_context_synchronously
@@ -832,7 +839,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
                 (context) => RideShareScreen(
                   rideId: rideId,
                   rideResponse: rideResponse,
-                  chatId: currentUiState.chatId,
+                  chatId: chatId,
                 ),
           ),
         );

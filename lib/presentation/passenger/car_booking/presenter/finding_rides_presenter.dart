@@ -122,6 +122,8 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
       driverPhone: data['driverPhone']?.toString(),
       driverPhoto: data['driverPhoto']?.toString(),
       driverVehicle: data['driverVehicle']?.toString(),
+      chatId: data['chatId'],
+      otp: data['otp'],
     );
 
     // Show success message
@@ -145,6 +147,8 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
       driverPhone: data['driverPhone'],
       driverPhoto: data['driverPhoto'],
       driverVehicle: data['driverVehicle'],
+      chatId: data['chatId'],
+      otp: data['otp'],
     );
 
     showMessage(message: 'A driver has accepted your ride!');
@@ -168,9 +172,10 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
   void _handleRideStatusChange(Map<String, dynamic> data) {
     appLog("Ride status changed: $data");
     final status = data['rideAccept'];
+    final otp = data['otp'];
 
     if (status) {
-      uiState.value = currentUiState.copyWith(isRideStarted: true);
+      uiState.value = currentUiState.copyWith(isRideStarted: true, otp: otp);
       showMessage(message: 'Your ride has started!');
     }
   }
@@ -190,14 +195,16 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     RideResponseModel rideResponse,
   ) {
     appLog("Navigating to RideShareScreen...");
+    appLog("Chat ID: ${currentUiState.chatId}");
+    appLog("OTP: ${currentUiState.otp}");
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder:
             (context) => PassengerTripStartOtpPage(
               rideId: rideId,
               rideResponse: rideResponse,
-              //chatId: currentUiState.chatId ?? '',
-              otp: '',
+              chatId: currentUiState.chatId ?? '',
+              otp: currentUiState.otp ?? '',
             ),
       ),
     );
