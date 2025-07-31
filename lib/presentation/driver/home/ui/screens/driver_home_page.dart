@@ -1,8 +1,11 @@
+import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/static/ui_const.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
+import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_ui_state.dart';
@@ -45,7 +48,16 @@ class DriverHomePage extends StatelessWidget {
       leading: Padding(
         padding: EdgeInsets.all(4.px),
         child: CircleAvatar(
-          backgroundImage: AssetImage(AppAssets.icProfileImage),
+          radius: 30,
+          backgroundColor: Colors.grey,
+          child: ClipOval(
+            child: CommonImage(
+              imageSrc: ApiEndPoint.imageUrl + LocalStorage.myImage,
+              width: 60,
+              height: 60,
+              fill: BoxFit.cover,
+            ),
+          ),
         ),
       ),
       title: Column(

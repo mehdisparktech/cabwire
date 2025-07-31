@@ -9,11 +9,14 @@ import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_reset_password_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/forget_password_usecase.dart';
+import 'package:cabwire/domain/usecases/driver/driver_confirm_information_usecase.dart';
+import 'package:cabwire/domain/usecases/driver/driver_vehicle_information_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/get_driver_earnings_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/resent_code_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/sign_in_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_sign_up_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/verify_email_usecase.dart';
+import 'package:cabwire/domain/usecases/driver_license_information_usecase.dart';
 import 'package:cabwire/domain/usecases/get_ride_history_usecase.dart';
 import 'package:cabwire/domain/usecases/notifications_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/cencel_ride_usecase.dart';
@@ -80,6 +83,12 @@ class UsecaseSetup implements SetupModule {
       ..registerLazySingleton(
         () => DriverResetPasswordUsecase(locate(), locate()),
       )
+      ..registerLazySingleton(
+        () => DriverConfirmInformationUsecase(locate(), locate()),
+      )
+      ..registerLazySingleton(
+        () => DriverVehicleInformationUsecase(locate(), locate()),
+      )
       ..registerLazySingleton(() => UpdateOnlineStatusUseCase(locate()))
       ..registerLazySingleton(() => DriverContactUseCase(locate()))
       ..registerLazySingleton(() => GetPassengerServicesUseCase(locate()))
@@ -107,6 +116,9 @@ class UsecaseSetup implements SetupModule {
       ..registerLazySingleton(() => GetPassengerProfileUsecase(locate()))
       ..registerLazySingleton(() => DriverDeleteProfileUsecase(locate()))
       ..registerLazySingleton(() => PassengerDeleteProfileUsecase(locate()))
-      ..registerLazySingleton(() => CreateCabwireUsecase(locate()));
+      ..registerLazySingleton(() => CreateCabwireUsecase(locate()))
+      ..registerLazySingleton(
+        () => DriverLicenseInformationUsecase(locate(), locate()),
+      );
   }
 }

@@ -2,6 +2,7 @@ import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_pre
 import 'package:cabwire/presentation/driver/auth/presenter/driver_login_presenter.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_forgot_password_presenter.dart';
+import 'package:cabwire/presentation/driver/auth/presenter/driver_stripe_accoount_connect_presenter.dart';
 import 'package:cabwire/presentation/driver/chat/presenter/chat_presenter.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/create_post_presenter.dart';
 import 'package:cabwire/presentation/driver/create_post/presenter/search_destination_presenter.dart';
@@ -85,7 +86,15 @@ class PresenterSetup implements SetupModule {
       )
       ..registerLazySingleton(
         () => loadPresenter(
-          DriverSignUpPresenter(locate(), locate(), locate(), locate()),
+          DriverSignUpPresenter(
+            locate(),
+            locate(),
+            locate(),
+            locate(),
+            locate(),
+            locate(),
+            locate(),
+          ),
         ),
       )
       ..registerLazySingleton(
@@ -181,8 +190,9 @@ class PresenterSetup implements SetupModule {
         () =>
             loadPresenter(PassengerChatPresenter(locate(), locate(), locate())),
       )
+      ..registerLazySingleton(() => loadPresenter(SearchDestinationPresenter()))
       ..registerLazySingleton(
-        () => loadPresenter(SearchDestinationPresenter()),
+        () => loadPresenter(DriverStripeAccoountConnectPresenter()),
       );
     _setupPassengerPresenters();
   }

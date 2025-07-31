@@ -63,6 +63,48 @@ class ApiServiceImpl implements ApiService {
   }) => _request(url, "DELETE", body: body, header: header);
 
   @override
+  Future<Either<ApiFailure, ApiSuccess<Map<String, dynamic>>>> postFormData(
+    String url, {
+    required dynamic formData,
+    Map<String, String>? header,
+  }) async {
+    try {
+      final headers = <String, String>{...?header};
+
+      final response = await _dio.post(
+        url,
+        data: formData,
+        options: Options(headers: headers),
+      );
+
+      return _handleResponse(response);
+    } catch (e) {
+      return _handleError(e);
+    }
+  }
+
+  @override
+  Future<Either<ApiFailure, ApiSuccess<Map<String, dynamic>>>> patchFormData(
+    String url, {
+    required dynamic formData,
+    Map<String, String>? header,
+  }) async {
+    try {
+      final headers = <String, String>{...?header};
+
+      final response = await _dio.patch(
+        url,
+        data: formData,
+        options: Options(headers: headers),
+      );
+
+      return _handleResponse(response);
+    } catch (e) {
+      return _handleError(e);
+    }
+  }
+
+  @override
   Future<Either<ApiFailure, ApiSuccess<Map<String, dynamic>>>> multipart(
     String url, {
     Map<String, String> header = const {},

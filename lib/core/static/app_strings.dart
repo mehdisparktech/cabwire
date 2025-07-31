@@ -198,4 +198,9 @@ class AppStrings {
   static const String retry = "Retry";
   static const String noCategoriesAvailable = "No categories available";
   static const String continueText = "Continue";
+
+  static const String connectStripe = "Connect Stripe";
+  static const String connectStripeSubtitle =
+      "Connect your Stripe account to start receiving online payments.";
+  static const String connectWithStripe = "Connect With Stripe";
 }

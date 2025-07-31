@@ -116,7 +116,7 @@ class PassengerCategoryListPresenter
         paymentMethod: currentUiState.paymentMethod!,
       );
 
-      print(params);
+      appLog(params);
 
       // Execute use case
       final result = await _createRideRequestUseCase.execute(params);

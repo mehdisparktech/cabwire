@@ -11,6 +11,7 @@ import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
 import 'package:cabwire/core/static/constants.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
@@ -19,6 +20,7 @@ import 'package:cabwire/domain/usecases/submit_review_usecase.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/car_booking_details_screen.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_trip_close_otp_page.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/payment_method_screen.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/sucessfull_screen.dart'
     show SucessfullScreen;
 import 'package:flutter/material.dart';
@@ -789,6 +791,48 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
             builder:
                 (context) => CarBookingDetailsScreen(
                   rideResponse: currentUiState.rideResponse!,
+                ),
+          ),
+        );
+      }
+    } else {
+      // Setup socket listener for automatic navigation if notification comes
+      final eventName = 'notification::${currentUiState.rideId}';
+      appLog(
+        "Setting up additional socket listener for navigation on: $eventName",
+      );
+
+      _socketService.on(eventName, (data) {
+        if (data.containsKey('rideComplete') && data['rideComplete'] == true) {
+          appLog(
+            "Ride complete notification received, navigating to details screen",
+          );
+          Get.offAll(
+            () => CarBookingDetailsScreen(
+              rideResponse: currentUiState.rideResponse!,
+            ),
+          );
+        }
+      });
+    }
+  }
+
+  Future<void> onStartedPressed(
+    BuildContext context,
+    String rideId,
+    RideResponseModel rideResponse,
+  ) async {
+    if (currentUiState.isRideEnd) {
+      if (context.mounted) {
+        Navigator.push(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => RideShareScreen(
+                  rideId: rideId,
+                  rideResponse: rideResponse,
+                  chatId: currentUiState.chatId,
                 ),
           ),
         );

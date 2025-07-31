@@ -1,19 +1,22 @@
+import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/data/models/user_model.dart';
-import 'package:cabwire/domain/entities/driver/driver_entity.dart'
-    as driver_entity;
 import 'package:cabwire/domain/entities/driver/driver_profile_entity.dart'
     as profile_entity;
 import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/resent_code_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_sign_up_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/verify_email_usecase.dart';
+import 'package:cabwire/domain/usecases/driver/driver_confirm_information_usecase.dart';
+import 'package:cabwire/domain/usecases/driver/driver_vehicle_information_usecase.dart';
+import 'package:cabwire/domain/usecases/driver_license_information_usecase.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_email_verification_presenter.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_resend_code.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_email_verify_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_reset_password_screen.dart';
+import 'package:cabwire/presentation/driver/auth/ui/screens/driver_stripe_accoount_connect_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cabwire/core/base/base_presenter.dart';
@@ -40,6 +43,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
   final ResentCodeUsecase _resentCodeUsecase;
   final DriverSignUpUseCase _signUpUsecase;
   final DriverProfileUpdateUsecase _driverProfileUpdateUsecase;
+  final DriverConfirmInformationUsecase _driverConfirmInformationUsecase;
+  final DriverVehicleInformationUsecase _driverVehicleInformationUsecase;
+  final DriverLicenseInformationUsecase _driverlicenseInfoUsecase;
 
   // State management
   final Obs<DriverSignUpUiState> uiState = Obs(DriverSignUpUiState.empty());
@@ -66,6 +72,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
     this._resentCodeUsecase,
     this._signUpUsecase,
     this._driverProfileUpdateUsecase,
+    this._driverConfirmInformationUsecase,
+    this._driverVehicleInformationUsecase,
+    this._driverlicenseInfoUsecase,
   );
 
   @override
@@ -260,25 +269,136 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
     await _updateRegistrationStep1(context);
   }
 
-  void confirmPersonalInformation(BuildContext context) {
+  Future<void> confirmPersonalInformation(BuildContext context) async {
     if (!_validation.validateForm(confirmInfoFormKey)) return;
-    _updateRegistrationStep2();
-    NavigationUtility.slideRight(
-      context,
-      const DriverLicenseInformationScreen(),
-    );
+    appLog("============>>>>>>> ${emailController.text}");
+
+    await executeTaskWithLoading(() async {
+      // Parse the display date to DateTime object
+      final dateOfBirthDateTime = DateFormatHelper.parseDisplayDate(
+        dateOfBirthController.text.trim(),
+      );
+
+      if (dateOfBirthDateTime == null) {
+        await addUserMessage('Invalid date format');
+        return;
+      }
+
+      final result = await _driverConfirmInformationUsecase.execute(
+        name: nameController.text.trim(),
+        contact: phoneNumberController.text.trim(),
+        gender: genderController.text.trim(),
+        dateOfBirth: DateFormatHelper.formatDateForApi(dateOfBirthDateTime),
+        profileImage: profileImagePath,
+        email: emailController.text,
+      );
+
+      await result.fold(
+        (errorMessage) async {
+          await addUserMessage(errorMessage);
+          await showMessage(message: errorMessage);
+        },
+        (successMessage) async {
+          await addUserMessage(successMessage);
+          await showMessage(message: successMessage);
+          _updateRegistrationStep2();
+          if (context.mounted) {
+            NavigationUtility.slideRight(
+              context,
+              const DriverLicenseInformationScreen(),
+            );
+          }
+        },
+      );
+    });
   }
 
-  void confirmLicenseInformation(BuildContext context) {
+  void confirmLicenseInformation(BuildContext context) async {
     if (!_validation.validateForm(licenseInfoFormKey)) return;
-    _updateRegistrationStep3();
-    NavigationUtility.slideRight(context, const VehiclesInformationScreen());
+    // _updateRegistrationStep3();
+    // NavigationUtility.slideRight(context, const VehiclesInformationScreen());
+    await executeTaskWithLoading(() async {
+      // Parse the license expiry date to DateTime object
+      final licenseExpiryDateTime = DateFormatHelper.parseDisplayDate(
+        licenseExpiryDateController.text.trim(),
+      );
+
+      if (licenseExpiryDateTime == null) {
+        await addUserMessage('Invalid license expiry date format');
+        return;
+      }
+
+      final result = await _driverlicenseInfoUsecase.execute(
+        licenseNumber: driverLicenseNumberController.text.trim(),
+        licenseExpiryDate: DateFormatHelper.formatDateForApi(
+          licenseExpiryDateTime,
+        ),
+        email: emailController.text,
+        licenseImage: licenseImagePath,
+      );
+
+      await result.fold(
+        (errorMessage) async {
+          await addUserMessage(errorMessage);
+          await showMessage(message: errorMessage);
+        },
+        (successMessage) async {
+          await addUserMessage(successMessage);
+          await showMessage(
+            message: 'License Information completed successfully!',
+          );
+          if (context.mounted) {
+            _navigation.navigateWithFadeTransition(
+              context,
+              const VehiclesInformationScreen(),
+              clearStack: true,
+            );
+          }
+        },
+      );
+    });
   }
 
-  void confirmVehicleInformation(BuildContext context) {
+  Future<void> confirmVehicleInformation(BuildContext context) async {
     if (!_validation.validateForm(vehicleInfoFormKey)) return;
-    _updateRegistrationStep4();
-    completeRegistration(context);
+
+    await executeTaskWithLoading(() async {
+      // Parse the license expiry date to DateTime object
+      final maill = emailController.text;
+
+      final result = await _driverVehicleInformationUsecase.execute(
+        vehiclesMake: vehiclesMakeController.text.trim(),
+        vehiclesModel: vehiclesModelController.text.trim(),
+        vehiclesYear: vehiclesYearController.text.trim(),
+        vehiclesRegistrationNumber:
+            vehiclesRegistrationNumberController.text.trim(),
+        vehiclesInsuranceNumber: vehiclesInsuranceNumberController.text.trim(),
+        vehiclesCategory: vehicleCategoryController.text.trim(),
+        email: emailController.text,
+        vehicleImage: vehicleImagePath,
+      );
+
+      await result.fold(
+        (errorMessage) async {
+          await addUserMessage(errorMessage);
+          await showMessage(message: errorMessage);
+        },
+        (successMessage) async {
+          await addUserMessage(successMessage);
+          await showMessage(message: 'Registration completed successfully!');
+          currentUiState.copyWith(isRegistered: true);
+          clearControllers();
+          if (context.mounted) {
+            _navigation.navigateWithFadeTransition(
+              context,
+              //const DriverAuthNavigatorScreen(),
+              DriverStripeAccoountConnectScreen(email: maill),
+              clearStack: true,
+            );
+          }
+        },
+      );
+    });
   }
 
   // Date picker methods - delegated to UI helpers
@@ -575,37 +695,37 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
     currentUiState.copyWith(driver: updatedDriver, currentStep: 2);
   }
 
-  void _updateRegistrationStep3() {
-    final updatedDriver = currentUiState.driver?.copyWith(
-      driverLicense: driver_entity.DriverLicenseEntity(
-        licenseNumber: int.parse(driverLicenseNumberController.text.trim()),
-        licenseExpiryDate: DateTime.parse(
-          licenseExpiryDateController.text.trim(),
-        ),
-        uploadDriversLicense: licenseImagePath ?? '',
-      ),
-    );
-    currentUiState.copyWith(driver: updatedDriver, currentStep: 3);
-  }
+  // void _updateRegistrationStep3() {
+  //   final updatedDriver = currentUiState.driver?.copyWith(
+  //     driverLicense: driver_entity.DriverLicenseEntity(
+  //       licenseNumber: int.parse(driverLicenseNumberController.text.trim()),
+  //       licenseExpiryDate: DateTime.parse(
+  //         licenseExpiryDateController.text.trim(),
+  //       ),
+  //       uploadDriversLicense: licenseImagePath ?? '',
+  //     ),
+  //   );
+  //   currentUiState.copyWith(driver: updatedDriver, currentStep: 3);
+  // }
 
-  void _updateRegistrationStep4() {
-    final updatedDriver = currentUiState.driver?.copyWith(
-      driverVehicles: driver_entity.DriverVehicleEntity(
-        vehiclesMake: vehiclesMakeController.text.trim(),
-        vehiclesModel: vehiclesModelController.text.trim(),
-        vehiclesYear: DateTime.parse(vehiclesYearController.text.trim()),
-        vehiclesRegistrationNumber: int.parse(
-          vehiclesRegistrationNumberController.text.trim(),
-        ),
-        vehiclesInsuranceNumber: int.parse(
-          vehiclesInsuranceNumberController.text.trim(),
-        ),
-        vehiclesCategory: int.parse(vehicleCategoryController.text.trim()),
-        vehiclesPicture: int.parse(vehicleImagePath ?? '0'),
-      ),
-    );
-    currentUiState.copyWith(driver: updatedDriver, currentStep: 4);
-  }
+  // void _updateRegistrationStep4() {
+  //   final updatedDriver = currentUiState.driver?.copyWith(
+  //     driverVehicles: driver_entity.DriverVehicleEntity(
+  //       vehiclesMake: vehiclesMakeController.text.trim(),
+  //       vehiclesModel: vehiclesModelController.text.trim(),
+  //       vehiclesYear: DateTime.parse(vehiclesYearController.text.trim()),
+  //       vehiclesRegistrationNumber: int.parse(
+  //         vehiclesRegistrationNumberController.text.trim(),
+  //       ),
+  //       vehiclesInsuranceNumber: int.parse(
+  //         vehiclesInsuranceNumberController.text.trim(),
+  //       ),
+  //       vehiclesCategory: int.parse(vehicleCategoryController.text.trim()),
+  //       vehiclesPicture: int.parse(vehicleImagePath ?? '0'),
+  //     ),
+  //   );
+  //   currentUiState.copyWith(driver: updatedDriver, currentStep: 4);
+  // }
 
   @override
   Future<void> resendVerificationCode() async {
