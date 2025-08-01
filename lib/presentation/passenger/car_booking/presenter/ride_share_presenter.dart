@@ -11,7 +11,6 @@ import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
 import 'package:cabwire/core/static/constants.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
-import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
@@ -19,10 +18,9 @@ import 'package:cabwire/domain/usecases/location/get_location_updates_usecase.da
 import 'package:cabwire/domain/usecases/submit_review_usecase.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/car_booking_details_screen.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_trip_close_otp_page.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_trip_start_otp_page.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/payment_method_screen.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/sucessfull_screen.dart'
-    show SucessfullScreen;
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/sucessfull_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
@@ -31,6 +29,15 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'ride_share_ui_state.dart';
 
 class RideSharePresenter extends BasePresenter<RideShareUiState> {
+  // Constants
+  static const double _defaultPickupSpeedKmh = 25.0;
+  static const double _defaultRideSpeedKmh = 30.0;
+  static const double _earthRadiusMeters = 6371000;
+  static const Duration _reconnectInterval = Duration(seconds: 5);
+  static const Duration _timeUpdateInterval = Duration(seconds: 30);
+  static const Duration _socketSetupDelay = Duration(milliseconds: 500);
+
+  // Services
   final ApiService _apiService = locate<ApiService>();
   final SocketService _socketService = locate<SocketService>();
   final GetCurrentLocationUsecase _getCurrentLocationUsecase =
@@ -38,14 +45,18 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   final GetLocationUpdatesUsecase _getLocationUpdatesUsecase =
       locate<GetLocationUpdatesUsecase>();
   final SubmitReviewUseCase submitReviewUseCase;
-  Timer? _reconnectTimer;
-  Timer? _timeUpdateTimer; // Timer for updating the remaining time
   final PolylinePoints _polylinePoints = PolylinePoints();
+
+  // Timers and Subscriptions
+  Timer? _reconnectTimer;
+  Timer? _timeUpdateTimer;
   StreamSubscription? _locationSubscription;
 
+  // UI State
   final Obs<RideShareUiState> uiState;
   RideShareUiState get currentUiState => uiState.value;
 
+  // Controllers
   final TextEditingController commentController = TextEditingController();
   final TextEditingController ratingController = TextEditingController();
   WebViewController? webViewController;
@@ -53,228 +64,125 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   RideSharePresenter({
     String rideId = '',
     rideResponse,
+    bool isRideProcessing = false,
     required this.submitReviewUseCase,
   }) : uiState = Obs<RideShareUiState>(
-         RideShareUiState.empty(rideId: rideId, rideResponse: rideResponse),
+         RideShareUiState.empty(
+           rideId: rideId,
+           rideResponse: rideResponse,
+           isRideProcessing: isRideProcessing,
+         ),
        ) {
     if (rideId.isNotEmpty && rideResponse != null) {
       _initialize();
     }
   }
 
+  // ===== Lifecycle Methods =====
+
   @override
   void onClose() {
-    _locationSubscription?.cancel();
-    _reconnectTimer?.cancel();
-    _timeUpdateTimer?.cancel(); // Cancel the timer update timer
-    _reconnectTimer = null;
-    _timeUpdateTimer = null;
-
-    // Remove socket listeners
-    if (currentUiState.rideId.isNotEmpty) {
-      final eventName = 'notification::${currentUiState.rideId}';
-      _socketService.off(eventName);
-      appLog("Socket listener removed for event: $eventName");
-    }
-
-    currentUiState.mapController?.dispose();
+    _cleanup();
     super.onClose();
   }
 
-  void init({required String rideId, required rideResponse}) {
+  void init({
+    required String rideId,
+    required rideResponse,
+    required bool isRideProcessing,
+  }) {
     uiState.value = RideShareUiState.empty(
       rideId: rideId,
       rideResponse: rideResponse,
+      isRideProcessing: isRideProcessing,
     );
     _initialize();
   }
 
+  // ===== Private Initialization Methods =====
+
   void _initialize() {
+    uiState.value = currentUiState.copyWith(
+      socketEventName:
+          'notification::${currentUiState.rideResponse?.data.userId}',
+    );
     _ensureSocketConnection();
     _setCustomIcons();
     _initializeLocations();
     _getCurrentUserLocation();
     _startLocationUpdates();
-    _startTimeUpdates(); // Start updating the time estimates
-
-    // Add a small delay to ensure socket is connected before setting up listeners
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _setupSocketListeners();
-    });
-
+    _startTimeUpdates();
     _startReconnectMonitor();
+
+    // Delay socket setup to ensure connection
+    Future.delayed(_socketSetupDelay, _setupSocketListeners);
   }
 
-  // Start the timer to update the remaining time
-  void _startTimeUpdates() {
+  void _cleanup() {
+    _locationSubscription?.cancel();
+    _reconnectTimer?.cancel();
     _timeUpdateTimer?.cancel();
-    _timeUpdateTimer = Timer.periodic(const Duration(seconds: 30), (_) {
-      _updateEstimatedTimeRemaining();
-    });
-  }
 
-  // Calculate the estimated time based on the current location and destination
-  void _updateEstimatedTimeRemaining() {
-    // Skip if we don't have driver location
-    appLog("Current location: ${currentUiState.currentUserLocation}");
-    // if (currentUiState.driverLocation == null) {
-    //   return;
-    // }
-
-    LatLng targetLocation;
-    double averageSpeedMps;
-
-    // If ride is starting, calculate time to pickup
-    if (currentUiState.isRideStart) {
-      // Skip if we don't have source coordinates
-      targetLocation = currentUiState.sourceMapCoordinates;
-
-      // Use real-time speed if available, otherwise use default
-      if (currentUiState.currentSpeed != null &&
-          currentUiState.currentSpeed! > 0) {
-        averageSpeedMps = currentUiState.currentSpeed!;
-        appLog(
-          "Using real-time speed for calculations: ${averageSpeedMps.toStringAsFixed(2)} m/s",
-        );
-      } else {
-        // Fallback to default speed (25 km/h) when heading to pickup
-        averageSpeedMps = 6.94; // 25 km/h in m/s
-        appLog(
-          "Using default speed for pickup: ${averageSpeedMps.toStringAsFixed(2)} m/s",
-        );
-      }
-    }
-    // If ride is in progress, calculate time to destination
-    else if (currentUiState.isRideProcessing) {
-      // Skip if we don't have destination coordinates
-      targetLocation = currentUiState.destinationMapCoordinates;
-
-      // Use real-time speed if available, otherwise use default
-      if (currentUiState.currentSpeed != null &&
-          currentUiState.currentSpeed! > 0) {
-        averageSpeedMps = currentUiState.currentSpeed!;
-        appLog(
-          "Using real-time speed for calculations: ${averageSpeedMps.toStringAsFixed(2)} m/s",
-        );
-      } else {
-        // Fallback to default speed (30 km/h) when in ride
-        averageSpeedMps = 8.33; // 30 km/h in m/s
-        appLog(
-          "Using default speed for ride: ${averageSpeedMps.toStringAsFixed(2)} m/s",
-        );
-      }
-    }
-    // Neither in start nor processing state
-    else {
-      return;
-    }
-
-    // Get the distance between driver and target location
-    final distanceInMeters = _calculateDistance(
-      currentUiState.currentUserLocation!,
-      targetLocation,
-    );
-
-    appLog("Distance in meters: $distanceInMeters");
-
-    // Calculate estimated time
-    final estimatedTimeInSeconds = (distanceInMeters / averageSpeedMps).round();
-    final estimatedTimeInMinutes = (estimatedTimeInSeconds / 60).ceil();
-
-    // Update the state with new estimated time
-    if (estimatedTimeInMinutes != currentUiState.timerLeft ||
-        estimatedTimeInSeconds != currentUiState.estimatedTimeInSeconds) {
-      uiState.value = currentUiState.copyWith(
-        timerLeft: estimatedTimeInMinutes,
-        estimatedTimeInSeconds: estimatedTimeInSeconds,
+    if (currentUiState.rideId.isNotEmpty) {
+      _socketService.off(currentUiState.socketEventName);
+      appLog(
+        "Socket listener removed for event: ${currentUiState.socketEventName}",
       );
     }
+
+    currentUiState.mapController?.dispose();
   }
 
-  // Calculate the distance between two points in meters
-  double _calculateDistance(LatLng point1, LatLng point2) {
-    const double earthRadius = 6371000; // Earth radius in meters
-
-    // Convert degrees to radians
-    final lat1 = point1.latitude * math.pi / 180;
-    final lng1 = point1.longitude * math.pi / 180;
-    final lat2 = point2.latitude * math.pi / 180;
-    final lng2 = point2.longitude * math.pi / 180;
-
-    // Haversine formula
-    final dLat = lat2 - lat1;
-    final dLng = lng2 - lng1;
-    final a =
-        math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(lat1) *
-            math.cos(lat2) *
-            math.sin(dLng / 2) *
-            math.sin(dLng / 2);
-    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
-    final distance = earthRadius * c;
-
-    return distance;
-  }
+  // ===== Location Management =====
 
   Future<void> _getCurrentUserLocation() async {
     final result = await _getCurrentLocationUsecase.execute();
-    result.fold(
-      (error) {
-        appLog("Error getting current location: $error");
-      },
-      (location) {
-        final currentLatLng = LatLng(location.latitude, location.longitude);
-        uiState.value = currentUiState.copyWith(
-          currentUserLocation: currentLatLng,
-        );
-        _setMapMarkers();
-      },
-    );
+    result.fold((error) => appLog("Error getting current location: $error"), (
+      location,
+    ) {
+      final currentLatLng = LatLng(location.latitude, location.longitude);
+      uiState.value = currentUiState.copyWith(
+        currentUserLocation: currentLatLng,
+      );
+      _setMapMarkers();
+    });
   }
 
   void _startLocationUpdates() {
     _locationSubscription?.cancel();
-    _locationSubscription = _getLocationUpdatesUsecase.execute().listen(
-      (result) {
-        result.fold(
-          (error) {
-            appLog("Location update error: $error");
-          },
-          (location) {
-            final newLocation = LatLng(location.latitude, location.longitude);
+    _locationSubscription = _getLocationUpdatesUsecase.execute().listen((
+      result,
+    ) {
+      result.fold(
+        (error) => appLog("Location update error: $error"),
+        (location) => _handleLocationUpdate(location),
+      );
+    }, onError: (e) => appLog("Error in location subscription: $e"));
+  }
 
-            // Calculate heading if we have a previous location
-            double heading = currentUiState.userHeading;
-            if (currentUiState.currentUserLocation != null) {
-              heading = _calculateBearing(
-                currentUiState.currentUserLocation!,
-                newLocation,
-              );
-            }
+  void _handleLocationUpdate(location) {
+    final newLocation = LatLng(location.latitude, location.longitude);
+    double heading = currentUiState.userHeading;
 
-            // Get speed from location entity (in m/s)
-            final speed = location.speed;
-            appLog(
-              "Current speed: ${speed != null ? '${speed.toStringAsFixed(2)} m/s' : 'unavailable'}",
-            );
+    if (currentUiState.currentUserLocation != null) {
+      heading = _calculateBearing(
+        currentUiState.currentUserLocation!,
+        newLocation,
+      );
+    }
 
-            uiState.value = currentUiState.copyWith(
-              currentUserLocation: newLocation,
-              userHeading: heading,
-              currentSpeed: speed,
-            );
-
-            // Update time estimates with new speed
-            _updateEstimatedTimeRemaining();
-
-            _setMapMarkers();
-          },
-        );
-      },
-      onError: (e) {
-        appLog("Error in location subscription: $e");
-      },
+    uiState.value = currentUiState.copyWith(
+      currentUserLocation: newLocation,
+      userHeading: heading,
+      currentSpeed: location.speed,
     );
+
+    appLog(
+      "Current speed: ${location.speed?.toStringAsFixed(2) ?? 'unavailable'} m/s",
+    );
+
+    _updateEstimatedTimeRemaining();
+    _setMapMarkers();
   }
 
   void _initializeLocations() {
@@ -287,27 +195,18 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       final pickupLatLng = LatLng(pickupLocation.lat, pickupLocation.lng);
       final dropoffLatLng = LatLng(dropoffLocation.lat, dropoffLocation.lng);
 
-      // Calculate initial estimated time based on the distance between pickup and dropoff
-      final distanceInMeters = _calculateDistance(pickupLatLng, dropoffLatLng);
-
-      // Calculate estimated time - assume average speed of 30 km/h (8.33 m/s)
-      const averageSpeedMps = 8.33;
-      final estimatedTimeInSeconds =
-          (distanceInMeters / averageSpeedMps).round();
-      final estimatedTimeInMinutes = (estimatedTimeInSeconds / 60).ceil();
-
-      appLog(
-        "Initial distance: $distanceInMeters meters, estimated time: $estimatedTimeInMinutes minutes",
+      final estimatedTime = _calculateInitialEstimatedTime(
+        pickupLatLng,
+        dropoffLatLng,
       );
 
       uiState.value = currentUiState.copyWith(
         sourceMapCoordinates: pickupLatLng,
         destinationMapCoordinates: dropoffLatLng,
-        timerLeft: estimatedTimeInMinutes,
-        estimatedTimeInSeconds: estimatedTimeInSeconds,
+        timerLeft: estimatedTime.inMinutes,
+        estimatedTimeInSeconds: estimatedTime.inSeconds,
       );
 
-      // Initialize markers and polyline
       _setMapMarkers();
       _generatePolyline();
     } catch (e) {
@@ -315,91 +214,145 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
   }
 
+  // ===== Time Calculation Methods =====
+
+  void _startTimeUpdates() {
+    _timeUpdateTimer?.cancel();
+    _timeUpdateTimer = Timer.periodic(
+      _timeUpdateInterval,
+      (_) => _updateEstimatedTimeRemaining(),
+    );
+  }
+
+  void _updateEstimatedTimeRemaining() {
+    appLog("Current location: ${currentUiState.currentUserLocation}");
+
+    final targetInfo = _getTargetLocationInfo();
+    if (targetInfo == null) return;
+
+    final distanceInMeters = _calculateDistance(
+      currentUiState.currentUserLocation!,
+      targetInfo.location,
+    );
+
+    final estimatedTime = _calculateEstimatedTime(
+      distanceInMeters,
+      targetInfo.averageSpeed,
+    );
+
+    if (_hasTimeChanged(estimatedTime)) {
+      uiState.value = currentUiState.copyWith(
+        timerLeft: estimatedTime.inMinutes,
+        estimatedTimeInSeconds: estimatedTime.inSeconds,
+      );
+    }
+  }
+
+  ({LatLng location, double averageSpeed})? _getTargetLocationInfo() {
+    if (currentUiState.isRideStart) {
+      return (
+        location: currentUiState.sourceMapCoordinates,
+        averageSpeed: _getSpeed(_defaultPickupSpeedKmh),
+      );
+    } else if (currentUiState.isRideProcessing) {
+      return (
+        location: currentUiState.destinationMapCoordinates,
+        averageSpeed: _getSpeed(_defaultRideSpeedKmh),
+      );
+    }
+    return null;
+  }
+
+  double _getSpeed(double defaultSpeedKmh) {
+    if (currentUiState.currentSpeed != null &&
+        currentUiState.currentSpeed! > 0) {
+      appLog(
+        "Using real-time speed: ${currentUiState.currentSpeed!.toStringAsFixed(2)} m/s",
+      );
+      return currentUiState.currentSpeed!;
+    }
+    final speedMps = defaultSpeedKmh / 3.6;
+    appLog("Using default speed: ${speedMps.toStringAsFixed(2)} m/s");
+    return speedMps;
+  }
+
+  Duration _calculateEstimatedTime(double distanceMeters, double speedMps) {
+    final seconds = (distanceMeters / speedMps).round();
+    appLog(
+      "Distance: ${distanceMeters.toStringAsFixed(0)}m, Time: ${(seconds / 60).ceil()} minutes",
+    );
+    return Duration(seconds: seconds);
+  }
+
+  Duration _calculateInitialEstimatedTime(LatLng pickup, LatLng dropoff) {
+    final distance = _calculateDistance(pickup, dropoff);
+    const averageSpeedMps = 8.33; // 30 km/h
+    return _calculateEstimatedTime(distance, averageSpeedMps);
+  }
+
+  bool _hasTimeChanged(Duration newTime) {
+    return newTime.inMinutes != currentUiState.timerLeft ||
+        newTime.inSeconds != currentUiState.estimatedTimeInSeconds;
+  }
+
+  // ===== Map & UI Methods =====
+
   Future<void> _setCustomIcons() async {
     try {
-      // Set pickup location icon
-      await BitmapDescriptor.asset(
-        const ImageConfiguration(size: Size(50, 50)),
-        AppAssets.icLocationActive,
-      ).then((value) {
-        uiState.value = currentUiState.copyWith(sourceIcon: value);
-      });
+      final icons = await Future.wait([
+        _loadIcon(AppAssets.icLocationActive, const Size(50, 50)),
+        _loadIcon(AppAssets.icLocationActive, const Size(50, 50)),
+        _loadIcon(AppAssets.icMyCar, const Size(50, 80)),
+        _loadIcon(AppAssets.icMyCar, const Size(50, 80)),
+      ]);
 
-      // Set dropoff location icon
-      await BitmapDescriptor.asset(
-        const ImageConfiguration(size: Size(50, 50)),
-        AppAssets.icLocationActive,
-      ).then((value) {
-        uiState.value = currentUiState.copyWith(destinationIcon: value);
-      });
+      uiState.value = currentUiState.copyWith(
+        sourceIcon: icons[0],
+        destinationIcon: icons[1],
+        driverIcon: icons[2],
+        userLocationIcon: icons[3],
+      );
 
-      // Set driver icon
-      await BitmapDescriptor.asset(
-        const ImageConfiguration(size: Size(50, 80)),
-        AppAssets.icMyCar,
-      ).then((value) {
-        uiState.value = currentUiState.copyWith(driverIcon: value);
-      });
-
-      // Set user location icon
-      await BitmapDescriptor.asset(
-        ImageConfiguration(size: Size(50, 80)),
-        AppAssets.icMyCar,
-      ).then((value) {
-        uiState.value = currentUiState.copyWith(userLocationIcon: value);
-      });
-
-      // Update markers with the custom icons
       _setMapMarkers();
     } catch (e) {
       appLog("Error setting custom icons: $e");
     }
   }
 
-  void _setMapMarkers() {
-    final Set<Marker> markers = {};
+  Future<BitmapDescriptor> _loadIcon(String asset, Size size) async {
+    return await BitmapDescriptor.asset(ImageConfiguration(size: size), asset);
+  }
 
-    // Add pickup marker
-    markers.add(
-      Marker(
-        markerId: const MarkerId('pickup'),
+  void _setMapMarkers() {
+    final markers = <Marker>{
+      _createMarker(
+        id: 'pickup',
         position: currentUiState.sourceMapCoordinates,
         icon: currentUiState.sourceIcon,
-        infoWindow: InfoWindow(
-          title: 'Pickup Location',
-          snippet:
-              currentUiState.rideResponse?.data.pickupLocation.address ?? '',
-        ),
+        title: 'Pickup Location',
+        snippet: currentUiState.rideResponse?.data.pickupLocation.address ?? '',
       ),
-    );
-
-    // Add dropoff marker
-    markers.add(
-      Marker(
-        markerId: const MarkerId('dropoff'),
+      _createMarker(
+        id: 'dropoff',
         position: currentUiState.destinationMapCoordinates,
         icon: currentUiState.destinationIcon,
-        infoWindow: InfoWindow(
-          title: 'Dropoff Location',
-          snippet:
-              currentUiState.rideResponse?.data.dropoffLocation.address ?? '',
-        ),
+        title: 'Dropoff Location',
+        snippet:
+            currentUiState.rideResponse?.data.dropoffLocation.address ?? '',
       ),
-    );
+    };
 
-    // Add driver marker if available
     if (currentUiState.driverLocation != null) {
       markers.add(
-        Marker(
-          markerId: const MarkerId('driver'),
+        _createMarker(
+          id: 'driver',
           position: currentUiState.driverLocation!,
           icon: currentUiState.driverIcon,
-          infoWindow: const InfoWindow(title: 'Driver Location'),
+          title: 'Driver Location',
         ),
       );
     }
 
-    // Add user's current location marker if available
     if (currentUiState.currentUserLocation != null) {
       markers.add(
         Marker(
@@ -415,6 +368,21 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
 
     uiState.value = currentUiState.copyWith(markers: markers);
+  }
+
+  Marker _createMarker({
+    required String id,
+    required LatLng position,
+    required BitmapDescriptor icon,
+    required String title,
+    String? snippet,
+  }) {
+    return Marker(
+      markerId: MarkerId(id),
+      position: position,
+      icon: icon,
+      infoWindow: InfoWindow(title: title, snippet: snippet),
+    );
   }
 
   Future<void> _generatePolyline() async {
@@ -434,36 +402,60 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
         ),
       );
 
-      if (polylineResult.points.isEmpty) {
-        appLog("No route points returned from API");
-
-        // If no route is available, create a straight line
-        uiState.value = currentUiState.copyWith(
-          polylineCoordinates: [
-            currentUiState.sourceMapCoordinates,
-            currentUiState.destinationMapCoordinates,
-          ],
-        );
-        return;
-      }
-
-      // Convert points to LatLng list
-      final List<LatLng> polylineCoordinates =
-          polylineResult.points
-              .map((point) => LatLng(point.latitude, point.longitude))
-              .toList();
+      final polylineCoordinates =
+          polylineResult.points.isEmpty
+              ? [
+                currentUiState.sourceMapCoordinates,
+                currentUiState.destinationMapCoordinates,
+              ]
+              : polylineResult.points
+                  .map((p) => LatLng(p.latitude, p.longitude))
+                  .toList();
 
       uiState.value = currentUiState.copyWith(
         polylineCoordinates: polylineCoordinates,
       );
-
-      appLog(
-        "Successfully generated polyline with ${polylineCoordinates.length} points",
-      );
+      appLog("Generated polyline with ${polylineCoordinates.length} points");
     } catch (e) {
       appLog("Error generating polyline: $e");
     }
   }
+
+  void onMapCreated(GoogleMapController controller) {
+    uiState.value = currentUiState.copyWith(mapController: controller);
+    _fitMapToBounds();
+  }
+
+  void _fitMapToBounds() {
+    if (currentUiState.mapController == null) return;
+
+    try {
+      final bounds = _calculateBounds(
+        currentUiState.sourceMapCoordinates,
+        currentUiState.destinationMapCoordinates,
+      );
+      currentUiState.mapController!.animateCamera(
+        CameraUpdate.newLatLngBounds(bounds, 80),
+      );
+    } catch (e) {
+      appLog("Error fitting map to bounds: $e");
+    }
+  }
+
+  LatLngBounds _calculateBounds(LatLng point1, LatLng point2) {
+    return LatLngBounds(
+      southwest: LatLng(
+        math.min(point1.latitude, point2.latitude),
+        math.min(point1.longitude, point2.longitude),
+      ),
+      northeast: LatLng(
+        math.max(point1.latitude, point2.latitude),
+        math.max(point1.longitude, point2.longitude),
+      ),
+    );
+  }
+
+  // ===== Socket Management =====
 
   void _ensureSocketConnection() {
     appLog("Checking socket connection...");
@@ -476,279 +468,313 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   void _startReconnectMonitor() {
     appLog("Starting reconnect monitor...");
     _reconnectTimer?.cancel();
-    _reconnectTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+    _reconnectTimer = Timer.periodic(_reconnectInterval, (_) {
       if (!_socketService.isConnected) {
         appLog("Socket disconnected. Attempting to reconnect...");
         _socketService.connectToSocket();
-        // Re-setup listeners after reconnection
         _setupSocketListeners();
       }
     });
   }
 
   void _setupSocketListeners() {
-    appLog("Setting up socket listeners...");
     if (currentUiState.rideId.isEmpty) return;
 
-    final eventName = 'notification::${currentUiState.rideId}';
-    appLog("Setting up socket listeners for event: $eventName");
+    appLog(
+      "Setting up socket listeners for event: ${currentUiState.socketEventName}",
+    );
 
-    // First, remove any existing listeners to avoid duplicates
-    _socketService.off(eventName);
+    // Remove existing listeners to avoid duplicates
+    _socketService.off(currentUiState.socketEventName);
 
     // Setup fresh listener
-    _socketService.on(eventName, (data) {
-      appLog("Socket connected: ${_socketService.isConnected}");
-      appLog("Notification received: $data");
+    _socketService.on(
+      currentUiState.socketEventName,
+      _handleSocketNotification,
+    );
 
-      try {
-        // Add detailed debugging for chat data
-        appLog("DEBUG: Examining data type: ${data.runtimeType}");
+    appLog("Socket listeners setup complete");
+  }
 
-        // Check if this is a ride acceptance notification with chat data
-        if (data is Map<String, dynamic> &&
-            data.containsKey('rideAccept') &&
-            data['rideAccept'] == true &&
-            data.containsKey('chat')) {
-          appLog("Ride acceptance notification with chat data detected");
+  void _handleSocketNotification(dynamic data) {
+    appLog("Notification received: $data");
 
-          // Extract chat ID directly
-          if (data['chat'] is Map<String, dynamic> &&
-              data['chat'].containsKey('_id')) {
-            final chatId = data['chat']['_id'].toString();
-            appLog("Chat ID extracted from ride acceptance: $chatId");
-            uiState.value = currentUiState.copyWith(chatId: chatId);
-            appLog("Chat ID is now: ${currentUiState.chatId}");
-          }
-        }
+    if (data is! Map<String, dynamic>) return;
 
-        // Handle ride progress
-        if (data is Map<String, dynamic> &&
-            data.containsKey('rideProgress') &&
-            data['rideProgress'] == true) {
-          appLog("Ride processing event received");
-          _handleRideProcessing(data);
-        }
-
-        // Handle ride start
-        if (data is Map<String, dynamic> &&
-            data.containsKey('rideStart') &&
-            data['rideStart'] == true) {
-          appLog("Ride start event received");
-          _handleRideStart(data);
-        }
-
-        // Handle ride end
-        if (data is Map<String, dynamic> &&
-            data.containsKey('rideEnd') &&
-            data['rideEnd'] == true) {
-          appLog("Ride end event received");
-          _handleRideEnd(data);
-        }
-
-        // Handle driver location updates
-        if (data is Map<String, dynamic> &&
-            data.containsKey('lat') &&
-            data.containsKey('lng')) {
-          appLog("Driver location update received");
-          _handleDriverLocationUpdate(data);
-        }
-
-        // Handle messages
-        if (data is Map<String, dynamic> &&
-            (data.containsKey('message') || data.containsKey('text'))) {
-          final message =
-              data.containsKey('text') ? data['text'] : data['message'];
-          showMessage(message: message.toString());
-        }
-      } catch (e) {
-        appLog("Error processing notification data: $e");
+    try {
+      // Handle ride acceptance with chat
+      if (_isRideAcceptance(data)) {
+        _extractChatId(data);
       }
-    });
 
-    appLog("Socket listeners setup complete for event: $eventName");
+      // Handle ride events
+      if (data['rideProgress'] == true) {
+        _handleRideProcessing(data);
+      } else if (data['rideStartOtp'] == true) {
+        appLog("rideStartOtp:=======<><><>< $data");
+        appLog("rideStartOtp:=======<><><>< ${data['otp']}");
+        final otp = data['otp'] != null ? data['otp'].toString() : "";
+        _handleRideStartOtp(data, otp);
+      } else if (data['rideStart'] == true) {
+        _handleRideStart(data);
+      } else if (data['rideEnd'] == true) {
+        _handleRideEnd(data);
+      } else if (_isDriverLocationUpdate(data)) {
+        _handleDriverLocationUpdate(data);
+      }
+
+      // Handle messages
+      _handleMessageIfPresent(data);
+    } catch (e) {
+      appLog("Error processing notification: $e");
+    }
+  }
+
+  bool _isRideAcceptance(Map<String, dynamic> data) {
+    return data['rideAccept'] == true && data.containsKey('chat');
+  }
+
+  bool _isDriverLocationUpdate(Map<String, dynamic> data) {
+    return data.containsKey('lat') && data.containsKey('lng');
+  }
+
+  void _extractChatId(Map<String, dynamic> data) {
+    if (data['chat'] is Map<String, dynamic> && data['chat']['_id'] != null) {
+      final chatId = data['chat']['_id'].toString();
+      appLog("Chat ID extracted: $chatId");
+      uiState.value = currentUiState.copyWith(chatId: chatId);
+    }
+  }
+
+  void _handleMessageIfPresent(Map<String, dynamic> data) {
+    final message = data['text'] ?? data['message'];
+    if (message != null) {
+      showMessage(message: message.toString());
+    }
+  }
+
+  void _handleRideStartOtp(Map<String, dynamic> data, String otp) {
+    appLog("Ride start otp event received");
+    appLog("Ride start otp event received:************ $otp");
+    //uiState.value = currentUiState.copyWith(isRideStartOtp: true);
+
+    Get.offAll(
+      () => PassengerTripStartOtpPage(
+        otp: otp,
+        chatId: currentUiState.chatId,
+        rideId: currentUiState.rideId,
+        rideResponse: currentUiState.rideResponse!,
+      ),
+    );
+
+    showMessage(
+      message: data['text'] ?? data['message'] ?? 'Your ride has started!',
+    );
   }
 
   void _handleRideStart(Map<String, dynamic> data) {
-    appLog("Ride start event received: $data");
+    appLog("Ride start event received");
     uiState.value = currentUiState.copyWith(isRideStart: true);
 
-    // Calculate initial time estimate if we have the driver's location
     if (currentUiState.driverLocation != null) {
-      // Calculate distance from driver to pickup location
-      final distanceInMeters = _calculateDistance(
-        currentUiState.driverLocation!,
-        currentUiState.sourceMapCoordinates,
-      );
-
-      // Calculate estimated time - assume slower speed of 25 km/h (6.94 m/s) in pickup areas
-      const averageSpeedMps = 6.94;
-      final estimatedTimeInSeconds =
-          (distanceInMeters / averageSpeedMps).round();
-      final estimatedTimeInMinutes = (estimatedTimeInSeconds / 60).ceil();
-
-      appLog(
-        "Distance to pickup: $distanceInMeters meters, estimated time: $estimatedTimeInMinutes minutes",
-      );
-
-      uiState.value = currentUiState.copyWith(
-        timerLeft: estimatedTimeInMinutes,
-        estimatedTimeInSeconds: estimatedTimeInSeconds,
-      );
+      _updateTimeToPickup();
     }
 
-    // Show message if available
-    if (data.containsKey('text')) {
-      showMessage(message: data['text']);
-    } else if (data.containsKey('message')) {
-      showMessage(message: data['message']);
-    } else {
-      showMessage(message: 'Your ride has started!');
-    }
+    showMessage(
+      message: data['text'] ?? data['message'] ?? 'Your ride has started!',
+    );
   }
 
   void _handleRideProcessing(Map<String, dynamic> data) {
-    appLog("Ride processing event received: $data");
+    appLog("Ride processing event received");
     uiState.value = currentUiState.copyWith(
       isRideProcessing: true,
       isRideStart: false,
     );
 
-    // Calculate initial time estimate based on current positions
     if (currentUiState.driverLocation != null) {
       _updateEstimatedTimeRemaining();
     }
 
-    // Show message if available
-    if (data.containsKey('message') || data.containsKey('text')) {
-      String message =
-          data.containsKey('text') ? data['text'] : data['message'];
-      showMessage(message: message);
-    }
+    showMessage(
+      message: data['text'] ?? data['message'] ?? 'Your ride is in progress',
+    );
   }
 
   void _handleRideEnd(Map<String, dynamic> data) {
-    appLog("Ride end event received: $data");
+    appLog("Ride end event received");
     uiState.value = currentUiState.copyWith(
       isRideProcessing: false,
       isRideEnd: true,
     );
 
-    // Show message if available
-    if (data.containsKey('message')) {
-      showMessage(message: data['message']);
-    } else {
-      showMessage(message: 'Your ride has ended!');
-    }
+    showMessage(message: data['message'] ?? 'Your ride has ended!');
 
-    // Check if we need to automatically navigate to the next page
-    if (data.containsKey('rideComplete') && data['rideComplete'] == true) {
-      // Automatically navigate to next page if rideComplete is true
-      Get.offAll(
-        () =>
-            CarBookingDetailsScreen(rideResponse: currentUiState.rideResponse!),
-      );
+    if (data['rideComplete'] == true) {
+      _navigateToDetails();
     }
   }
 
   void _handleDriverLocationUpdate(Map<String, dynamic> data) {
-    final driverLat = data['lat'] as double;
-    final driverLng = data['lng'] as double;
-    final driverLocation = LatLng(driverLat, driverLng);
+    final driverLocation = LatLng(data['lat'] as double, data['lng'] as double);
 
-    // Update the driver location in the state
     uiState.value = currentUiState.copyWith(driverLocation: driverLocation);
-
-    // Update the map markers with the new driver location
     _setMapMarkers();
-
-    // Recalculate the estimated time remaining
     _updateEstimatedTimeRemaining();
 
-    // Update map view if controller is available
-    if (currentUiState.mapController != null) {
-      currentUiState.mapController!.animateCamera(
-        CameraUpdate.newLatLng(driverLocation),
+    currentUiState.mapController?.animateCamera(
+      CameraUpdate.newLatLng(driverLocation),
+    );
+  }
+
+  void _updateTimeToPickup() {
+    final distance = _calculateDistance(
+      currentUiState.driverLocation!,
+      currentUiState.sourceMapCoordinates,
+    );
+    final time = _calculateEstimatedTime(
+      distance,
+      _defaultPickupSpeedKmh / 3.6,
+    );
+
+    uiState.value = currentUiState.copyWith(
+      timerLeft: time.inMinutes,
+      estimatedTimeInSeconds: time.inSeconds,
+    );
+  }
+
+  // ===== Navigation Methods =====
+
+  void _navigateToDetails() {
+    Get.offAll(
+      () => CarBookingDetailsScreen(rideResponse: currentUiState.rideResponse!),
+    );
+  }
+
+  Future<void> onForwardPressed(BuildContext context) async {
+    if (currentUiState.isRideEnd) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => CarBookingDetailsScreen(
+                rideResponse: currentUiState.rideResponse!,
+              ),
+        ),
       );
+    } else {
+      _setupNavigationListener();
     }
   }
 
-  void onMapCreated(GoogleMapController controller) {
-    uiState.value = currentUiState.copyWith(mapController: controller);
-
-    // Move camera to show both pickup and dropoff locations
-    _fitMapToBounds();
+  void _setupNavigationListener() {
+    _socketService.on(currentUiState.socketEventName, (data) {
+      if (data is Map<String, dynamic> && data['rideComplete'] == true) {
+        _navigateToDetails();
+      }
+    });
   }
 
-  void _fitMapToBounds() {
-    if (currentUiState.mapController == null) return;
-
-    try {
-      // Create a bounds that includes both pickup and dropoff locations
-      final bounds = LatLngBounds(
-        southwest: LatLng(
-          currentUiState.sourceMapCoordinates.latitude <
-                  currentUiState.destinationMapCoordinates.latitude
-              ? currentUiState.sourceMapCoordinates.latitude
-              : currentUiState.destinationMapCoordinates.latitude,
-          currentUiState.sourceMapCoordinates.longitude <
-                  currentUiState.destinationMapCoordinates.longitude
-              ? currentUiState.sourceMapCoordinates.longitude
-              : currentUiState.destinationMapCoordinates.longitude,
-        ),
-        northeast: LatLng(
-          currentUiState.sourceMapCoordinates.latitude >
-                  currentUiState.destinationMapCoordinates.latitude
-              ? currentUiState.sourceMapCoordinates.latitude
-              : currentUiState.destinationMapCoordinates.latitude,
-          currentUiState.sourceMapCoordinates.longitude >
-                  currentUiState.destinationMapCoordinates.longitude
-              ? currentUiState.sourceMapCoordinates.longitude
-              : currentUiState.destinationMapCoordinates.longitude,
-        ),
-      );
-
-      // Add some padding
-      currentUiState.mapController!.animateCamera(
-        CameraUpdate.newLatLngBounds(bounds, 80),
-      );
-    } catch (e) {
-      appLog("Error fitting map to bounds: $e");
-    }
-  }
+  // ===== API Methods =====
 
   Future<void> requestCloseRide() async {
     toggleLoading(loading: true);
+
     final result = await _apiService.patch(
       ApiEndPoint.requestCloseRide +
           (currentUiState.rideResponse?.data.id ?? ''),
     );
+
     toggleLoading(loading: false);
 
-    result.fold(
-      (error) {
-        CustomToast(message: error.message);
-      },
-      (success) {
-        CustomToast(message: success.message ?? '');
-        // Extract the OTP value from the nested data structure
-        final otpData = success.data;
-        appLog("OTP data: $otpData");
-        final otp = otpData['data']['otp'].toString();
-        appLog("OTP: $otp");
-        Get.to(() => PassengerTripCloseOtpPage(otp: otp));
-      },
-    );
+    result.fold((error) => CustomToast(message: error.message), (success) {
+      CustomToast(message: success.message ?? '');
+      final otp = success.data['data']['otp'].toString();
+      Get.to(() => PassengerTripCloseOtpPage(otp: otp));
+    });
   }
 
   void handleTripClosureButtonPress() {
-    if (currentUiState.isRideEnd) {
-      requestCloseRide();
-    } else {
-      requestCloseRide();
+    requestCloseRide();
+    if (!currentUiState.isRideEnd) {
       uiState.value = currentUiState.copyWith(isRideProcessing: true);
     }
   }
+
+  Future<void> submitFeedback() async {
+    toggleLoading(loading: true);
+
+    try {
+      final result = await submitReviewUseCase.execute(
+        SubmitReviewParams(
+          serviceType: 'Cabwire',
+          serviceId: currentUiState.rideResponse?.data.id ?? '',
+          comment: commentController.text,
+          rating: 4,
+        ),
+      );
+
+      result.fold((error) => CustomToast(message: error), (success) {
+        CustomToast(message: success);
+        Get.offAll(() => SucessfullScreen());
+      });
+    } catch (e) {
+      CustomToast(message: e.toString());
+    } finally {
+      toggleLoading(loading: false);
+    }
+  }
+
+  Future<void> payNow(String rideId, BuildContext context) async {
+    toggleLoading(loading: true);
+
+    try {
+      final result = await _apiService.post(
+        ApiEndPoint.payRide,
+        body: {"rideId": rideId},
+      );
+
+      result.fold((error) => CustomToast(message: error.message), (success) {
+        CustomToast(message: success.message ?? '');
+        final redirectUrl = success.data['data']['redirectUrl'];
+        _initializePayment(redirectUrl, context);
+      });
+    } catch (e) {
+      CustomToast(message: e.toString());
+    } finally {
+      toggleLoading(loading: false);
+    }
+  }
+
+  void _initializePayment(String paymentUrl, BuildContext context) {
+    if (paymentUrl.isEmpty) return;
+
+    Get.to(() => PaymentMethodScreen());
+
+    webViewController =
+        WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..setNavigationDelegate(
+            NavigationDelegate(
+              onPageStarted: (_) => toggleLoading(loading: true),
+              onPageFinished: (url) {
+                toggleLoading(loading: false);
+                _handlePaymentResult(url);
+              },
+            ),
+          )
+          ..loadRequest(Uri.parse(paymentUrl));
+  }
+
+  void _handlePaymentResult(String url) {
+    if (url.contains("success")) {
+      Get.offAll(() => SucessfullScreen());
+    } else if (url.contains("failed") || url.contains("cancel")) {
+      Get.back();
+    }
+  }
+
+  // ===== BasePresenter Implementation =====
 
   @override
   Future<void> addUserMessage(String message) async {
@@ -761,7 +787,29 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     uiState.value = currentUiState.copyWith(isLoading: loading);
   }
 
-  // Calculate the bearing/heading angle between two locations
+  // ===== Utility Methods =====
+
+  double _calculateDistance(LatLng point1, LatLng point2) {
+    final lat1 = point1.latitude * math.pi / 180;
+    final lng1 = point1.longitude * math.pi / 180;
+    final lat2 = point2.latitude * math.pi / 180;
+    final lng2 = point2.longitude * math.pi / 180;
+
+    final dLat = lat2 - lat1;
+    final dLng = lng2 - lng1;
+
+    final a =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(lat1) *
+            math.cos(lat2) *
+            math.sin(dLng / 2) *
+            math.sin(dLng / 2);
+
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+
+    return _earthRadiusMeters * c;
+  }
+
   double _calculateBearing(LatLng start, LatLng end) {
     final startLat = start.latitude * (math.pi / 180.0);
     final startLng = start.longitude * (math.pi / 180.0);
@@ -777,181 +825,6 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
     final bearing = math.atan2(y, x);
 
-    // Convert from radians to degrees
     return (((bearing * 180.0 / math.pi) + 360.0) % 360.0);
-  }
-
-  Future<void> onForwardPressed(BuildContext context) async {
-    if (currentUiState.isRideEnd) {
-      if (context.mounted) {
-        Navigator.push(
-          // ignore: use_build_context_synchronously
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => CarBookingDetailsScreen(
-                  rideResponse: currentUiState.rideResponse!,
-                ),
-          ),
-        );
-      }
-    } else {
-      // Setup socket listener for automatic navigation if notification comes
-      final eventName = 'notification::${currentUiState.rideId}';
-      appLog(
-        "Setting up additional socket listener for navigation on: $eventName",
-      );
-
-      _socketService.on(eventName, (data) {
-        if (data.containsKey('rideComplete') && data['rideComplete'] == true) {
-          appLog(
-            "Ride complete notification received, navigating to details screen",
-          );
-          Get.offAll(
-            () => CarBookingDetailsScreen(
-              rideResponse: currentUiState.rideResponse!,
-            ),
-          );
-        }
-      });
-    }
-  }
-
-  Future<void> onStartedPressed(
-    BuildContext context,
-    String rideId,
-    RideResponseModel rideResponse,
-    String chatId,
-  ) async {
-    if (currentUiState.isRideProcessing) {
-      if (context.mounted) {
-        Navigator.push(
-          // ignore: use_build_context_synchronously
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => RideShareScreen(
-                  rideId: rideId,
-                  rideResponse: rideResponse,
-                  chatId: chatId,
-                ),
-          ),
-        );
-      }
-    } else {
-      // Setup socket listener for automatic navigation if notification comes
-      final eventName = 'notification::${currentUiState.rideId}';
-      appLog(
-        "Setting up additional socket listener for navigation on: $eventName",
-      );
-
-      _socketService.on(eventName, (data) {
-        if (data.containsKey('rideComplete') && data['rideComplete'] == true) {
-          appLog(
-            "Ride complete notification received, navigating to details screen",
-          );
-          Get.offAll(
-            () => CarBookingDetailsScreen(
-              rideResponse: currentUiState.rideResponse!,
-            ),
-          );
-        }
-      });
-    }
-  }
-
-  Future<void> submitFeedback() async {
-    toggleLoading(loading: true);
-    final comment = commentController.text;
-    final rating = 4;
-    try {
-      final result = await submitReviewUseCase.execute(
-        SubmitReviewParams(
-          serviceType: 'Cabwire',
-          serviceId: currentUiState.rideResponse?.data.id ?? '',
-          comment: comment,
-          rating: rating,
-        ),
-      );
-      result.fold(
-        (error) {
-          CustomToast(message: error);
-        },
-        (success) {
-          CustomToast(message: success);
-          Get.offAll(() => SucessfullScreen());
-        },
-      );
-    } catch (e) {
-      CustomToast(message: e.toString());
-    } finally {
-      toggleLoading(loading: false);
-    }
-  }
-
-  //===================>> pay now
-
-  Future<void> payNow(String rideId, BuildContext context) async {
-    toggleLoading(loading: true);
-
-    try {
-      Map<String, dynamic> payload = {"rideId": rideId};
-
-      final result = await _apiService.post(ApiEndPoint.payRide, body: payload);
-
-      result.fold(
-        (error) {
-          CustomToast(message: error.message);
-        },
-        (success) {
-          CustomToast(message: success.message ?? '');
-          appLog("success.data: ${success.data}");
-          appLog(
-            "success.data['data']['redirectUrl']: ${success.data['data']['redirectUrl']}",
-          );
-          stripePaymentByWebview(
-            paymentUrl: success.data['data']['redirectUrl'],
-            context: context,
-          );
-        },
-      );
-    } catch (e) {
-      CustomToast(message: e.toString());
-    } finally {
-      toggleLoading(loading: false);
-    }
-  }
-
-  //===================>> stripe payment by webview
-
-  stripePaymentByWebview({
-    required String paymentUrl,
-    required BuildContext context,
-  }) {
-    if (paymentUrl.isNotEmpty) {
-      Get.to(() => PaymentMethodScreen());
-      webViewController =
-          WebViewController()
-            ..setJavaScriptMode(JavaScriptMode.unrestricted)
-            ..setNavigationDelegate(
-              NavigationDelegate(
-                onPageStarted: (url) {
-                  toggleLoading(loading: true);
-                },
-                onPageFinished: (url) {
-                  toggleLoading(loading: false);
-
-                  if (url.contains("success")) {
-                    Get.offAll(() => SucessfullScreen());
-                  } else if (url.contains("failed") || url.contains("cancel")) {
-                    Get.back();
-                  }
-                },
-              ),
-            )
-            ..loadRequest(Uri.parse(paymentUrl));
-
-      toggleLoading(loading: false);
-    }
   }
 }

@@ -80,6 +80,7 @@ class _RideShareMyBookingScreenState extends State<RideShareMyBookingScreen> {
           message: 'success',
         ),
         chatId: '1',
+        isRideProcessing: false,
       ),
     );
   }

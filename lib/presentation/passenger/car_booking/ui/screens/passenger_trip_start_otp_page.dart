@@ -5,7 +5,7 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
-import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_presenter.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/passenger_trip_start_otp_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -29,12 +29,21 @@ class PassengerTripStartOtpPage extends StatefulWidget {
 }
 
 class _PassengerTripStartOtpPage extends State<PassengerTripStartOtpPage> {
-  final RideSharePresenter _presenter = locate<RideSharePresenter>();
+  final PassengerTripStartOtpPresenter _presenter =
+      locate<PassengerTripStartOtpPresenter>();
   late final List<TextEditingController> otpControllers;
 
   @override
   void initState() {
     super.initState();
+    if (_presenter.currentUiState.rideId?.isNotEmpty ?? false) {
+      _presenter.initialize(
+        widget.rideId,
+        widget.chatId,
+        widget.otp,
+        widget.rideResponse,
+      );
+    }
     otpControllers = List.generate(4, (index) => TextEditingController());
 
     // Set each controller with the corresponding digit

@@ -21,6 +21,7 @@ import 'package:cabwire/presentation/passenger/auth/presenter/passenger_set_loca
 import 'package:cabwire/presentation/passenger/car_booking/presenter/car_booking_presenter.dart';
 import 'package:cabwire/presentation/passenger/car_booking/presenter/finding_rides_presenter.dart';
 import 'package:cabwire/presentation/passenger/car_booking/presenter/passenger_category_list_presenter.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/passenger_trip_start_otp_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_pickup_location_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_chat/presenter/passenger_chat_presenter.dart';
@@ -193,6 +194,9 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(() => loadPresenter(SearchDestinationPresenter()))
       ..registerLazySingleton(
         () => loadPresenter(DriverStripeAccoountConnectPresenter()),
+      )
+      ..registerLazySingleton(
+        () => loadPresenter(PassengerTripStartOtpPresenter(locate())),
       );
     _setupPassengerPresenters();
   }

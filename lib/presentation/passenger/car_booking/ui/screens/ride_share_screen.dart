@@ -10,12 +10,14 @@ class RideShareScreen extends StatelessWidget {
   final String rideId;
   final RideResponseModel rideResponse;
   final String chatId;
+  final bool isRideProcessing;
 
   const RideShareScreen({
     super.key,
     required this.rideId,
     required this.rideResponse,
     required this.chatId,
+    required this.isRideProcessing,
   });
 
   @override
@@ -25,6 +27,7 @@ class RideShareScreen extends StatelessWidget {
       presenter.init(
         rideId: rideResponse.data.userId,
         rideResponse: rideResponse,
+        isRideProcessing: isRideProcessing,
       );
     }
 
