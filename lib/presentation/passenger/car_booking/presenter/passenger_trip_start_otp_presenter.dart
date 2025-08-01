@@ -20,19 +20,46 @@ class PassengerTripStartOtpPresenter
     String otp,
     RideResponseModel rideResponse,
   ) {
+    appLog(
+      "Initializing PassengerTripStartOtpPresenter with rideId: $rideId, userId: ${rideResponse.data.userId}",
+    );
+
     uiState.value = currentUiState.copyWith(
       rideId: rideId,
       chatId: chatId,
       otp: otp,
       rideResponse: rideResponse,
     );
-    String socketEventName = 'notification::${rideResponse.data.userId}';
+
+    // Ensure socket is connected before setting up listeners
     _ensureSocketConnection();
+
+    // Make sure we're listening to the correct event
+    String socketEventName = 'notification::${rideResponse.data.userId}';
+    appLog("Setting up main socket event listener for: $socketEventName");
+
+    // Set up the socket listeners
     _setupSocketListeners(socketEventName);
+
+    // Also check for socket connection issues
+    if (!_socketService.isConnected) {
+      appLog("WARNING: Socket not connected after initialization attempt!");
+    }
   }
 
   void _ensureSocketConnection() {
-    _socketService.connectToSocket();
+    if (!_socketService.isConnected) {
+      appLog("Socket not connected. Connecting now...");
+      _socketService.connectToSocket();
+      // Wait a moment to ensure connection is established
+      Future.delayed(Duration(milliseconds: 500), () {
+        appLog(
+          "Socket connection status: ${_socketService.isConnected ? 'Connected' : 'Not connected'}",
+        );
+      });
+    } else {
+      appLog("Socket already connected");
+    }
   }
 
   void _setupSocketListeners(String socketEventName) {
@@ -51,6 +78,10 @@ class PassengerTripStartOtpPresenter
 
   void _handleSocketNotification(dynamic data) {
     appLog("Notification received: $data");
+    // Handle ride progress notification
+    if (data is Map<String, dynamic> && data['rideProgress'] == true) {
+      appLog("Ride progress notification received: $data");
+    }
   }
 
   Future<void> onStartedPressed(
@@ -61,8 +92,16 @@ class PassengerTripStartOtpPresenter
   ) async {
     String socketEventName = 'notification::${rideResponse.data.userId}';
     appLog("Socket event name: $socketEventName");
+
+    // Ensure socket is connected
+    _ensureSocketConnection();
+
+    // Remove any existing listeners to avoid duplicates
+    _socketService.off(socketEventName);
+
+    // Add listener for ride progress
     _socketService.on(socketEventName, (data) {
-      appLog("Data: $data");
+      appLog("Data received in onStartedPressed: $data");
       if (data is Map<String, dynamic> && data['rideProgress'] == true) {
         appLog("Ride progress:==========>>>>>>>*** $data");
         Navigator.push(

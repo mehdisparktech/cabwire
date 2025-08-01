@@ -58,14 +58,13 @@ class RideShareUiState extends BaseUiState {
   factory RideShareUiState.empty({
     required String rideId,
     required RideResponseModel? rideResponse,
-    required bool isRideProcessing,
   }) {
     return RideShareUiState(
       isLoading: false,
       userMessage: null,
       isRideStart: false,
       isRideStartOtp: false,
-      isRideProcessing: isRideProcessing,
+      isRideProcessing: false,
       isRideEnd: false,
       timerLeft: 5,
       estimatedTimeInSeconds: 5 * 60, // Initialize with 5 minutes in seconds

@@ -64,14 +64,9 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   RideSharePresenter({
     String rideId = '',
     rideResponse,
-    bool isRideProcessing = false,
     required this.submitReviewUseCase,
   }) : uiState = Obs<RideShareUiState>(
-         RideShareUiState.empty(
-           rideId: rideId,
-           rideResponse: rideResponse,
-           isRideProcessing: isRideProcessing,
-         ),
+         RideShareUiState.empty(rideId: rideId, rideResponse: rideResponse),
        ) {
     if (rideId.isNotEmpty && rideResponse != null) {
       _initialize();
@@ -89,12 +84,22 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   void init({
     required String rideId,
     required rideResponse,
+    required String chatId,
     required bool isRideProcessing,
   }) {
+    appLog(
+      "Initializing RideSharePresenter with isRideProcessing: $isRideProcessing",
+    );
     uiState.value = RideShareUiState.empty(
       rideId: rideId,
       rideResponse: rideResponse,
+    );
+    uiState.value = currentUiState.copyWith(
       isRideProcessing: isRideProcessing,
+      chatId: chatId,
+    );
+    appLog(
+      "After setting, isRideProcessing value: ${currentUiState.isRideProcessing}",
     );
     _initialize();
   }
@@ -106,6 +111,7 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       socketEventName:
           'notification::${currentUiState.rideResponse?.data.userId}',
     );
+    appLog("Ride Processing in init: ${currentUiState.isRideProcessing}");
     _ensureSocketConnection();
     _setCustomIcons();
     _initializeLocations();

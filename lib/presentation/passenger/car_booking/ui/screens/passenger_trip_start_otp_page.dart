@@ -36,26 +36,32 @@ class _PassengerTripStartOtpPage extends State<PassengerTripStartOtpPage> {
   @override
   void initState() {
     super.initState();
-    if (_presenter.currentUiState.rideId?.isNotEmpty ?? false) {
-      _presenter.initialize(
-        widget.rideId,
-        widget.chatId,
-        widget.otp,
-        widget.rideResponse,
-      );
-    }
-    otpControllers = List.generate(4, (index) => TextEditingController());
 
-    // Set each controller with the corresponding digit
+    // Initialize OTP controllers
+    otpControllers = List.generate(4, (index) => TextEditingController());
     for (int i = 0; i < widget.otp.length && i < 4; i++) {
       otpControllers[i].text = widget.otp[i];
     }
-    _presenter.onStartedPressed(
-      context,
+
+    // Initialize presenter regardless of current state
+    _presenter.initialize(
       widget.rideId,
-      widget.rideResponse,
       widget.chatId,
+      widget.otp,
+      widget.rideResponse,
     );
+
+    // Allow time for socket connection to establish
+    Future.delayed(Duration(milliseconds: 1000), () {
+      if (mounted) {
+        _presenter.onStartedPressed(
+          context,
+          widget.rideId,
+          widget.rideResponse,
+          widget.chatId,
+        );
+      }
+    });
   }
 
   @override
