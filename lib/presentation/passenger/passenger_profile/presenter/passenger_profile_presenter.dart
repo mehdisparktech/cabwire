@@ -91,7 +91,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     final fetchedPassengerProfile = PassengerProfileData(
       name: profile?.name ?? 'Mehdi Hasan',
       email: profile?.email ?? '',
-      phoneNumber: '016820157335',
+      phoneNumber: profile?.contact ?? '',
       avatarUrl: AppAssets.icProfileImage, // Placeholder or actual URL
       dateOfBirth: '1990-01-01',
       gender: 'Male',
@@ -280,7 +280,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
           passengerProfile: PassengerProfileData(
             name: profile?.name ?? '',
             email: profile?.email ?? '',
-            phoneNumber: '0168201573350',
+            phoneNumber: profile?.contact ?? '',
             avatarUrl: AppAssets.icProfileImage,
             dateOfBirth: '',
             gender: 'Male',

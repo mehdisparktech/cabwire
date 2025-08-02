@@ -255,6 +255,11 @@ class LocalStorage {
       await localStorage.setString(LocalStorageKeys.myImage, myImage);
     }
 
+    if (profile.contact != null) {
+      myContact = profile.contact!;
+      await localStorage.setString(LocalStorageKeys.myContact, myContact);
+    }
+
     // Log the saved profile for debugging
     appLog(
       "Passenger profile saved: ${profile.name}, ${profile.email}",

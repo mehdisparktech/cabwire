@@ -155,16 +155,8 @@ class PassengerAuthRemoteDataSourceImpl extends PassengerAuthRemoteDataSource {
   ) async {
     try {
       final result = await apiService.patch(
-        ApiEndPoint.updateProfile,
-        body: {
-          'name': name,
-          'phoneNumber': contact,
-          'profileImage': profileImage,
-        },
-        header: {
-          'Authorization': 'Bearer ${LocalStorage.token}',
-          'Content-Type': 'application/json',
-        },
+        ApiEndPoint.updatePassengerProfile + LocalStorage.myEmail,
+        body: {'name': name, 'contact': contact},
       );
       return result.fold(
         (l) => left(l.message),
