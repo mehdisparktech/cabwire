@@ -720,10 +720,16 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
         ),
       );
 
-      result.fold((error) => CustomToast(message: error), (success) {
-        CustomToast(message: success);
-        Get.offAll(() => SucessfullScreen());
-      });
+      result.fold(
+        (error) {
+          CustomToast(message: error);
+          Get.offAll(() => SucessfullScreen());
+        },
+        (success) {
+          CustomToast(message: success);
+          Get.offAll(() => SucessfullScreen());
+        },
+      );
     } catch (e) {
       CustomToast(message: e.toString());
     } finally {

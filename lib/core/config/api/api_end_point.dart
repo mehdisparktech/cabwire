@@ -43,8 +43,9 @@ class ApiEndPoint {
   static const passengerServices = "$baseUrl/service";
   static const passengerCategories = "$baseUrl/category";
   static const createRide = "$baseUrl/ride/create-ride";
+  static const startMatchedRide = "$baseUrl/ride/request-start-match-otp/";
   static const ridesAccept = "$baseUrl/ride/accept-ride-driver/";
-  static const startRide = "$baseUrl/ride/continue-ride-driver/";
+  static const startRide = "$baseUrl/ride/request-start-otp/";
   static const closeTrip = "$baseUrl/ride/verify-ride-otp/";
   static const requestCloseRide = "$baseUrl/ride/request-close-ride/";
   static const cancelRide = "$baseUrl/ride/cancel-ride/";

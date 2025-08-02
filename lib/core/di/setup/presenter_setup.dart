@@ -9,6 +9,7 @@ import 'package:cabwire/presentation/driver/create_post/presenter/search_destina
 import 'package:cabwire/presentation/driver/earnings/presenter/earning_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_trip_close_otp_presenter.dart';
+import 'package:cabwire/presentation/driver/home/presenter/driver_trip_start_otp_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/rideshare_presenter.dart';
 import 'package:cabwire/presentation/driver/notification/presenter/notification_presenter.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_edit_password_presenter.dart';
@@ -197,6 +198,9 @@ class PresenterSetup implements SetupModule {
       )
       ..registerLazySingleton(
         () => loadPresenter(PassengerTripStartOtpPresenter(locate())),
+      )
+      ..registerLazySingleton(
+        () => loadPresenter(DriverTripStartOtpPresenter(locate(), locate())),
       );
     _setupPassengerPresenters();
   }
