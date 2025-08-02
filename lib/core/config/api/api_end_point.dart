@@ -60,6 +60,8 @@ class ApiEndPoint {
   static const updateProfile = "$baseUrl/user/profile";
   static const createCabwire = "$baseUrl/cabwire/create-cabwire";
   static const withdrawAmount = "$baseUrl/payment/transfer-to-driver/";
+  static const updatePassengerProfile =
+      "$baseUrl/user/update-profile-by-email/";
 
   // Driver registration separate endpoints
   static const driverConfirmInformation =

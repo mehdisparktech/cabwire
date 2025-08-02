@@ -71,7 +71,7 @@ class PassengerEmailVerifyPresenter
           userMessage: entity.message,
         );
         if (uiState.value.isSignUp) {
-          Get.to(() => ConfirmInformationScreen());
+          Get.to(() => ConfirmInformationScreen(email: uiState.value.email));
         } else {
           Get.to(() => PassengerAuthNavigationScreen());
         }

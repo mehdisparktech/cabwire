@@ -12,7 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SetLocationScreen extends StatelessWidget {
-  const SetLocationScreen({super.key});
+  const SetLocationScreen({super.key, required this.email});
+  final String email;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,11 @@ class SetLocationScreen extends StatelessWidget {
             ],
             actionButton: CustomButton(
               text: "Complete",
-              onPressed: presenter.setLocation,
+              onPressed:
+                  () =>
+                      presenter.uiState.value.isLoading
+                          ? null
+                          : presenter.setLocation(email),
               isLoading: uiState.isLoading,
             ),
           );

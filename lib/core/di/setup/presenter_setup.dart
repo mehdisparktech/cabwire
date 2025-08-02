@@ -58,9 +58,11 @@ class PresenterSetup implements SetupModule {
         () => loadPresenter(PassengerEmailVerifyPresenter(locate())),
       )
       ..registerFactory(
-        () => loadPresenter(PassengerConfirmInformationPresenter()),
+        () => loadPresenter(PassengerConfirmInformationPresenter(locate())),
       )
-      ..registerFactory(() => loadPresenter(PassengerSetLocationPresenter()));
+      ..registerFactory(
+        () => loadPresenter(PassengerSetLocationPresenter(locate())),
+      );
   }
 
   @override

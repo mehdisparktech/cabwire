@@ -11,7 +11,8 @@ import 'package:cabwire/presentation/passenger/auth/presenter/passenger_confirm_
 import 'package:flutter/material.dart';
 
 class ConfirmInformationScreen extends StatelessWidget {
-  const ConfirmInformationScreen({super.key});
+  const ConfirmInformationScreen({super.key, required this.email});
+  final String email;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +58,7 @@ class ConfirmInformationScreen extends StatelessWidget {
             ],
             actionButton: CustomButton(
               text: "Continue",
-              onPressed: presenter.confirmInformation,
+              onPressed: () => presenter.confirmInformation(email),
               isLoading: uiState.isLoading,
             ),
           );
