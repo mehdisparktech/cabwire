@@ -9,6 +9,7 @@ import 'package:cabwire/presentation/driver/create_post/presenter/search_destina
 import 'package:cabwire/presentation/driver/earnings/presenter/earning_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_trip_close_otp_presenter.dart';
+import 'package:cabwire/presentation/driver/home/presenter/driver_trip_start_otp_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/rideshare_presenter.dart';
 import 'package:cabwire/presentation/driver/notification/presenter/notification_presenter.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_edit_password_presenter.dart';
@@ -21,6 +22,7 @@ import 'package:cabwire/presentation/passenger/auth/presenter/passenger_set_loca
 import 'package:cabwire/presentation/passenger/car_booking/presenter/car_booking_presenter.dart';
 import 'package:cabwire/presentation/passenger/car_booking/presenter/finding_rides_presenter.dart';
 import 'package:cabwire/presentation/passenger/car_booking/presenter/passenger_category_list_presenter.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/passenger_trip_start_otp_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_pickup_location_presenter.dart';
 import 'package:cabwire/presentation/passenger/passenger_chat/presenter/passenger_chat_presenter.dart';
@@ -56,9 +58,11 @@ class PresenterSetup implements SetupModule {
         () => loadPresenter(PassengerEmailVerifyPresenter(locate())),
       )
       ..registerFactory(
-        () => loadPresenter(PassengerConfirmInformationPresenter()),
+        () => loadPresenter(PassengerConfirmInformationPresenter(locate())),
       )
-      ..registerFactory(() => loadPresenter(PassengerSetLocationPresenter()));
+      ..registerFactory(
+        () => loadPresenter(PassengerSetLocationPresenter(locate())),
+      );
   }
 
   @override
@@ -193,6 +197,12 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(() => loadPresenter(SearchDestinationPresenter()))
       ..registerLazySingleton(
         () => loadPresenter(DriverStripeAccoountConnectPresenter()),
+      )
+      ..registerLazySingleton(
+        () => loadPresenter(PassengerTripStartOtpPresenter(locate())),
+      )
+      ..registerLazySingleton(
+        () => loadPresenter(DriverTripStartOtpPresenter(locate(), locate())),
       );
     _setupPassengerPresenters();
   }

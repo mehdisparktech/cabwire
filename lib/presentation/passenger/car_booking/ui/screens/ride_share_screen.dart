@@ -10,23 +10,26 @@ class RideShareScreen extends StatelessWidget {
   final String rideId;
   final RideResponseModel rideResponse;
   final String chatId;
+  final bool isRideProcessing;
 
   const RideShareScreen({
     super.key,
     required this.rideId,
     required this.rideResponse,
     required this.chatId,
+    required this.isRideProcessing,
   });
 
   @override
   Widget build(BuildContext context) {
-    final presenter = locate<RideSharePresenter>();
-    if (presenter.currentUiState.rideId.isEmpty) {
-      presenter.init(
-        rideId: rideResponse.data.userId,
-        rideResponse: rideResponse,
-      );
-    }
+    final RideSharePresenter presenter = locate<RideSharePresenter>();
+    // Always initialize the presenter with the current values
+    presenter.init(
+      rideId: rideResponse.data.userId,
+      rideResponse: rideResponse,
+      chatId: chatId,
+      isRideProcessing: isRideProcessing,
+    );
 
     return Scaffold(
       body: Stack(

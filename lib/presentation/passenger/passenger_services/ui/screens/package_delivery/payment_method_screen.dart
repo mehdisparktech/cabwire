@@ -137,6 +137,7 @@ class PackagePaymentMethodScreen extends StatelessWidget {
                             message: 'success',
                           ),
                           chatId: '1',
+                          isRideProcessing: false,
                         ),
                       ),
                 ),

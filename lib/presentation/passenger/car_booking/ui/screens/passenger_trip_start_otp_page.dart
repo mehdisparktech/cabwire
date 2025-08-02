@@ -5,41 +5,63 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/auth/app_logo_display.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
-import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_presenter.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/passenger_trip_start_otp_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class PassengerTripStartOtpPage extends StatefulWidget {
   final String otp;
+  final String chatId;
   final String rideId;
   final RideResponseModel rideResponse;
   const PassengerTripStartOtpPage({
     super.key,
     required this.otp,
+    required this.chatId,
     required this.rideId,
     required this.rideResponse,
   });
 
   @override
   State<PassengerTripStartOtpPage> createState() =>
-      _PassengerTripCloseOtpPageState();
+      _PassengerTripStartOtpPage();
 }
 
-class _PassengerTripCloseOtpPageState extends State<PassengerTripStartOtpPage> {
-  final RideSharePresenter _presenter = locate<RideSharePresenter>();
+class _PassengerTripStartOtpPage extends State<PassengerTripStartOtpPage> {
+  final PassengerTripStartOtpPresenter _presenter =
+      locate<PassengerTripStartOtpPresenter>();
   late final List<TextEditingController> otpControllers;
 
   @override
   void initState() {
     super.initState();
-    otpControllers = List.generate(4, (index) => TextEditingController());
 
-    // Set each controller with the corresponding digit
+    // Initialize OTP controllers
+    otpControllers = List.generate(4, (index) => TextEditingController());
     for (int i = 0; i < widget.otp.length && i < 4; i++) {
       otpControllers[i].text = widget.otp[i];
     }
-    _presenter.onStartedPressed(context, widget.rideId, widget.rideResponse);
+
+    // Initialize presenter regardless of current state
+    _presenter.initialize(
+      widget.rideId,
+      widget.chatId,
+      widget.otp,
+      widget.rideResponse,
+    );
+
+    // Allow time for socket connection to establish
+    Future.delayed(Duration(milliseconds: 1000), () {
+      if (mounted) {
+        _presenter.onStartedPressed(
+          context,
+          widget.rideId,
+          widget.rideResponse,
+          widget.chatId,
+        );
+      }
+    });
   }
 
   @override
@@ -53,7 +75,7 @@ class _PassengerTripCloseOtpPageState extends State<PassengerTripStartOtpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Trip Closure OTP'),
+      appBar: CustomAppBar(title: 'Trip Start OTP'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
         child: Column(

@@ -5,6 +5,7 @@ class FindingRidesUiState extends BaseUiState {
   final String? error;
   final bool isRideAccepted;
   final bool isRideStarted;
+  final String? otp;
   final String? driverId;
   final String? driverName;
   final String? driverPhone;
@@ -21,6 +22,7 @@ class FindingRidesUiState extends BaseUiState {
     this.error,
     required this.isRideAccepted,
     required this.isRideStarted,
+    this.otp,
     this.driverId,
     this.driverName,
     this.driverPhone,
@@ -37,6 +39,7 @@ class FindingRidesUiState extends BaseUiState {
       isLoading: false,
       isRideAccepted: false,
       isRideStarted: false,
+      otp: '',
       chatId: '',
     );
   }
@@ -47,6 +50,7 @@ class FindingRidesUiState extends BaseUiState {
     String? userMessage,
     bool? isRideAccepted,
     bool? isRideStarted,
+    String? otp,
     String? driverId,
     String? driverName,
     String? driverPhone,
@@ -63,6 +67,7 @@ class FindingRidesUiState extends BaseUiState {
       userMessage: userMessage ?? this.userMessage,
       isRideAccepted: isRideAccepted ?? this.isRideAccepted,
       isRideStarted: isRideStarted ?? this.isRideStarted,
+      otp: otp ?? this.otp,
       driverId: driverId ?? this.driverId,
       driverName: driverName ?? this.driverName,
       driverPhone: driverPhone ?? this.driverPhone,
@@ -82,6 +87,7 @@ class FindingRidesUiState extends BaseUiState {
     userMessage,
     isRideAccepted,
     isRideStarted,
+    otp,
     driverId,
     driverName,
     driverPhone,

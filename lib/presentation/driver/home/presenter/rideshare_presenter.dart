@@ -8,6 +8,7 @@ import 'package:cabwire/presentation/driver/chat/ui/screens/audio_call_page.dart
 import 'package:cabwire/presentation/driver/chat/ui/screens/chat_page.dart';
 import 'package:cabwire/presentation/driver/home/presenter/rideshare_ui_state.dart';
 import 'package:cabwire/presentation/driver/home/ui/screens/driver_trip_close_otp_page.dart';
+import 'package:cabwire/presentation/driver/home/ui/screens/driver_trip_start_otp_page.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -72,6 +73,10 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
           isRideProcessing: true,
           userMessage: success.message,
           isRideStart: true,
+        );
+        Get.off(
+          () =>
+              DriverTripStartOtpPage(rideRequest: currentUiState.rideRequest!),
         );
         CustomToast(message: success.message!);
       },

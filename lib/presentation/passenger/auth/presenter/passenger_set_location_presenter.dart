@@ -1,5 +1,7 @@
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
+import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/presentation/passenger/auth/presenter/passenger_set_location_ui_state.dart';
 import 'package:cabwire/presentation/passenger/auth/ui/screens/passenger_auth_navigator_screen.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:get/get.dart';
 
 class PassengerSetLocationPresenter
     extends BasePresenter<PassengerSetLocationUiState> {
+  final ApiService apiService;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController locationController = TextEditingController();
 
@@ -15,15 +18,22 @@ class PassengerSetLocationPresenter
   );
   PassengerSetLocationUiState get currentUiState => uiState.value;
 
-  PassengerSetLocationPresenter();
+  PassengerSetLocationPresenter(this.apiService);
 
-
-  void setLocation() {
+  Future<void> setLocation(String email) async {
     if (formKey.currentState?.validate() ?? false) {
       appLog('Setting location: ${locationController.text}');
-      // Here you would typically save the location to a repository
-      // For now, we'll just navigate to the next screen
-      Get.to(() => const PassengerAuthNavigationScreen());
+
+      final response = await apiService.patch(
+        ApiEndPoint.updatePassengerProfile + email,
+        body: {'location': locationController.text},
+      );
+
+      if (response.isRight()) {
+        Get.to(() => PassengerAuthNavigationScreen());
+      } else {
+        addUserMessage("Something went wrong");
+      }
     }
   }
 

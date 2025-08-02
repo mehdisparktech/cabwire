@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RideShareUiState extends BaseUiState {
   final bool isRideStart;
+  final bool isRideStartOtp;
   final bool isRideProcessing;
   final bool isRideEnd;
   final int timerLeft;
@@ -24,11 +25,13 @@ class RideShareUiState extends BaseUiState {
   final BitmapDescriptor driverIcon;
   final BitmapDescriptor userLocationIcon;
   final String chatId;
+  final String socketEventName;
 
   const RideShareUiState({
     required super.isLoading,
     required super.userMessage,
     required this.isRideStart,
+    required this.isRideStartOtp,
     required this.isRideProcessing,
     required this.isRideEnd,
     required this.timerLeft,
@@ -49,6 +52,7 @@ class RideShareUiState extends BaseUiState {
     required this.driverIcon,
     required this.userLocationIcon,
     required this.chatId,
+    required this.socketEventName,
   });
 
   factory RideShareUiState.empty({
@@ -59,6 +63,7 @@ class RideShareUiState extends BaseUiState {
       isLoading: false,
       userMessage: null,
       isRideStart: false,
+      isRideStartOtp: false,
       isRideProcessing: false,
       isRideEnd: false,
       timerLeft: 5,
@@ -80,6 +85,7 @@ class RideShareUiState extends BaseUiState {
       driverIcon: BitmapDescriptor.defaultMarker,
       userLocationIcon: BitmapDescriptor.defaultMarker,
       chatId: '',
+      socketEventName: '',
     );
   }
 
@@ -88,6 +94,7 @@ class RideShareUiState extends BaseUiState {
     isLoading,
     userMessage,
     isRideStart,
+    isRideStartOtp,
     isRideProcessing,
     isRideEnd,
     timerLeft,
@@ -108,12 +115,14 @@ class RideShareUiState extends BaseUiState {
     driverIcon,
     userLocationIcon,
     chatId,
+    socketEventName,
   ];
 
   RideShareUiState copyWith({
     bool? isLoading,
     String? userMessage,
     bool? isRideStart,
+    bool? isRideStartOtp,
     bool? isRideProcessing,
     bool? isRideEnd,
     int? timerLeft,
@@ -134,11 +143,13 @@ class RideShareUiState extends BaseUiState {
     BitmapDescriptor? driverIcon,
     BitmapDescriptor? userLocationIcon,
     String? chatId,
+    String? socketEventName,
   }) {
     return RideShareUiState(
       isLoading: isLoading ?? this.isLoading,
       userMessage: userMessage ?? this.userMessage,
       isRideStart: isRideStart ?? this.isRideStart,
+      isRideStartOtp: isRideStartOtp ?? this.isRideStartOtp,
       isRideProcessing: isRideProcessing ?? this.isRideProcessing,
       isRideEnd: isRideEnd ?? this.isRideEnd,
       timerLeft: timerLeft ?? this.timerLeft,
@@ -161,6 +172,7 @@ class RideShareUiState extends BaseUiState {
       driverIcon: driverIcon ?? this.driverIcon,
       userLocationIcon: userLocationIcon ?? this.userLocationIcon,
       chatId: chatId ?? this.chatId,
+      socketEventName: socketEventName ?? this.socketEventName,
     );
   }
 }

@@ -1,15 +1,19 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_color.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_form_container.dart';
 import 'package:cabwire/presentation/common/components/auth/auth_screen_wrapper.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_text_form_field.dart';
 import 'package:cabwire/presentation/passenger/auth/presenter/passenger_set_location_presenter.dart';
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SetLocationScreen extends StatelessWidget {
-  const SetLocationScreen({super.key});
+  const SetLocationScreen({super.key, required this.email});
+  final String email;
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +37,31 @@ class SetLocationScreen extends StatelessWidget {
               presenter.addUserMessage("");
             });
           }
-
           return AuthFormContainer(
             logoAssetPath: AppAssets.icPassengerLogo,
             logoAssetPath2: AppAssets.icCabwireLogo,
             formKey: presenter.formKey,
             formFields: [
+              Container(
+                height: 54.px,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.px),
+                  border: Border.all(color: AppColor.activeIndicator),
+                ),
+                child: Center(
+                  child: Text(
+                    "Current Location",
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.activeIndicator,
+                    ),
+                  ),
+                ),
+              ),
+              gapH16,
               CustomTextFormField(
                 controller: presenter.locationController,
                 hintText: 'Enter a new address',
@@ -53,7 +76,11 @@ class SetLocationScreen extends StatelessWidget {
             ],
             actionButton: CustomButton(
               text: "Complete",
-              onPressed: presenter.setLocation,
+              onPressed:
+                  () =>
+                      presenter.uiState.value.isLoading
+                          ? null
+                          : presenter.setLocation(email),
               isLoading: uiState.isLoading,
             ),
           );
