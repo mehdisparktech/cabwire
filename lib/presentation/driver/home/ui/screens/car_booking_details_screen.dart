@@ -1,9 +1,12 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/data/models/ride_completed_response_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
+import 'package:cabwire/presentation/driver/earnings/presenter/earning_presenter.dart';
+import 'package:cabwire/presentation/driver/earnings/presenter/earning_ui_state.dart';
 import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
 import 'package:cabwire/presentation/driver/ride_history/ui/widgets/driver_profile_widget.dart';
 import 'package:cabwire/presentation/driver/ride_history/ui/widgets/route_information_widget.dart';
@@ -172,6 +175,10 @@ class CarBookingDetailsScreen extends StatelessWidget {
           isPrimary: true,
           text: 'Trip Completed',
           onPressed: () {
+            // Update earnings data when trip is completed
+            final earningsPresenter = locate<EarningsPresenter>();
+            earningsPresenter.loadEarningsData(EarningsFilter.today);
+
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => DriverMainPage()),
