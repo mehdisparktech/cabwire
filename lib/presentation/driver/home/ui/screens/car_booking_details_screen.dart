@@ -166,15 +166,18 @@ class CarBookingDetailsScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomSheet: ActionButton(
-        isPrimary: true,
-        text: 'Trip Completed',
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => DriverMainPage()),
-          );
-        },
+      bottomSheet: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+        child: ActionButton(
+          isPrimary: true,
+          text: 'Trip Completed',
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DriverMainPage()),
+            );
+          },
+        ),
       ),
     );
   }

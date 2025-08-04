@@ -73,6 +73,7 @@ class _RideBottomSheetState extends State<RideBottomSheet> {
                     ? 'You\'re on the way to pick up the passenger.'
                     : 'Ready To Start The Ride',
             isRideStart: isRideStart,
+            isRideProcessing: isRideProcessing,
           ), // Use the new widget
           gapH16,
           const PassengerInfoWidget(

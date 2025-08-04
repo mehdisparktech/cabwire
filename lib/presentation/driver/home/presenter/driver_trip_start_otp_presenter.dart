@@ -97,7 +97,9 @@ class DriverTripStartOtpPresenter
           isLoading: false,
           userMessage: success.message,
         );
-        Get.off(() => RidesharePage(rideRequest: rideRequest));
+        Get.off(
+          () => RidesharePage(rideRequest: rideRequest, rideProgress: true),
+        );
         CustomToast(message: success.message!);
       },
     );
@@ -124,7 +126,9 @@ class DriverTripStartOtpPresenter
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RidesharePage(rideRequest: rideRequest),
+            builder:
+                (context) =>
+                    RidesharePage(rideRequest: rideRequest, rideProgress: true),
           ),
         );
       }

@@ -16,6 +16,16 @@ class RideshareBottomSheet extends StatelessWidget {
   final RidesharePresenter presenter;
   const RideshareBottomSheet({super.key, required this.presenter});
 
+  String _getPickupText(uiState) {
+    if (uiState.isRideProcessing) {
+      return 'Ride is in progress. Heading to destination.';
+    } else if (uiState.isRideStart) {
+      return 'Ready To Start The Ride';
+    } else {
+      return 'You\'re on the way to pick up the passenger.';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -44,11 +54,9 @@ class RideshareBottomSheet extends StatelessWidget {
             const SizedBox(height: 12),
             PickupInfoWidget(
               timerLeft: uiState.timerLeft,
-              pickupText:
-                  !uiState.isRideStart
-                      ? 'You\'re on the way to pick up the passenger.'
-                      : 'Ready To Start The Ride',
+              pickupText: _getPickupText(uiState),
               isRideStart: uiState.isRideStart,
+              isRideProcessing: uiState.isRideProcessing,
             ),
             const SizedBox(height: 16),
             PassengerInfoWidget(

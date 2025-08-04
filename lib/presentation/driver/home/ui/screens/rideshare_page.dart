@@ -10,8 +10,13 @@ import 'package:get/get.dart';
 
 class RidesharePage extends StatelessWidget {
   final RideRequestModel rideRequest;
+  final bool rideProgress;
 
-  const RidesharePage({super.key, required this.rideRequest});
+  const RidesharePage({
+    super.key,
+    required this.rideRequest,
+    this.rideProgress = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +27,9 @@ class RidesharePage extends StatelessWidget {
           presenter: presenter,
           builder: () {
             presenter.setRideRequest(rideRequest);
+            if (rideProgress) {
+              presenter.setRideProgress(true);
+            }
             final uiState = presenter.currentUiState;
             return Stack(
               children: [
@@ -35,7 +43,7 @@ class RidesharePage extends StatelessWidget {
                   distance:
                       '${uiState.rideRequest!.distance.toStringAsFixed(1)} km',
                   address:
-                      uiState.isRideStart
+                      uiState.isRideProcessing
                           ? uiState.rideRequest!.dropoffAddress
                           : uiState.rideRequest!.pickupAddress,
                   onBackPressed: () => Get.back(),

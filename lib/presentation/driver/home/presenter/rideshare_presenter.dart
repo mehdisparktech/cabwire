@@ -83,6 +83,17 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
     _initializeLocations();
   }
 
+  void setRideProgress(bool rideProgress) {
+    if (rideProgress) {
+      uiState.value = currentUiState.copyWith(
+        isRideProcessing: true,
+        isRideStart: true,
+      );
+      // Update estimated time for the destination when ride is in progress
+      _updateEstimatedTimeRemaining();
+    }
+  }
+
   void _startRideTimer() {
     _rideStartTimer = Timer(const Duration(seconds: 5), () {
       uiState.value = currentUiState.copyWith(isRideStart: true);
@@ -292,18 +303,25 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
   }
 
   ({LatLng location, double averageSpeed})? _getTargetLocationInfo() {
-    if (currentUiState.isRideStart && !currentUiState.isRideProcessing) {
-      return (
-        location: currentUiState.sourceMapCoordinates,
-        averageSpeed: _getSpeed(_defaultPickupSpeedKmh),
-      );
-    } else if (currentUiState.isRideProcessing) {
+    if (currentUiState.isRideProcessing) {
+      // When ride is in progress, target is the destination
       return (
         location: currentUiState.destinationMapCoordinates,
         averageSpeed: _getSpeed(_defaultRideSpeedKmh),
       );
+    } else if (currentUiState.isRideStart && !currentUiState.isRideProcessing) {
+      // When ride is ready to start but not yet processing, target is pickup
+      return (
+        location: currentUiState.sourceMapCoordinates,
+        averageSpeed: _getSpeed(_defaultPickupSpeedKmh),
+      );
+    } else {
+      // When going to pickup passenger
+      return (
+        location: currentUiState.sourceMapCoordinates,
+        averageSpeed: _getSpeed(_defaultPickupSpeedKmh),
+      );
     }
-    return null;
   }
 
   double _getSpeed(double defaultSpeedKmh) {
