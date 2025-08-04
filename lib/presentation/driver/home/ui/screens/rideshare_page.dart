@@ -25,18 +25,8 @@ class RidesharePage extends StatelessWidget {
             final uiState = presenter.currentUiState;
             return Stack(
               children: [
-                // Map
-                GoogleMap(
-                  onMapCreated: presenter.onMapCreated,
-                  initialCameraPosition: CameraPosition(
-                    target: uiState.mapCenter!,
-                    zoom: 14.0,
-                  ),
-                  myLocationEnabled: true,
-                  myLocationButtonEnabled: false,
-                  zoomControlsEnabled: false,
-                  mapToolbarEnabled: false,
-                ),
+                // Map with enhanced features
+                _buildMap(presenter, uiState),
 
                 // Top navigation bar
                 TopNavigationBar(
@@ -64,5 +54,40 @@ class RidesharePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildMap(RidesharePresenter presenter, uiState) {
+    return Obx(() {
+      final currentUiState = presenter.currentUiState;
+
+      return GoogleMap(
+        onMapCreated: presenter.onMapCreated,
+        initialCameraPosition: CameraPosition(
+          target: uiState.mapCenter ?? const LatLng(23.8103, 90.4125),
+          zoom: 14.0,
+        ),
+        myLocationEnabled: true,
+        myLocationButtonEnabled: false,
+        zoomControlsEnabled: false,
+        mapToolbarEnabled: false,
+        scrollGesturesEnabled: true,
+        zoomGesturesEnabled: true,
+        tiltGesturesEnabled: true,
+        rotateGesturesEnabled: true,
+        markers: currentUiState.markers,
+        polylines: {
+          if (currentUiState.polylineCoordinates != null)
+            Polyline(
+              polylineId: const PolylineId('route'),
+              points: currentUiState.polylineCoordinates!,
+              color: Colors.blue,
+              width: 5,
+              patterns: [PatternItem.dash(20), PatternItem.gap(5)],
+              endCap: Cap.roundCap,
+              startCap: Cap.roundCap,
+            ),
+        },
+      );
+    });
   }
 }
