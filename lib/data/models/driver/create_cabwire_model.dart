@@ -164,20 +164,28 @@ class CabwireDataModel {
       pickupLocation: LocationModel.fromJson(json['pickupLocation']),
       dropoffLocation: LocationModel.fromJson(json['dropoffLocation']),
       distance: (json['distance'] ?? 0.0).toDouble(),
-      duration: json['duration'] ?? 0,
+      duration: _parseToInt(json['duration']),
       fare: (json['fare'] ?? 0.0).toDouble(),
       perKM: (json['perKM'] ?? 0.0).toDouble(),
       rideStatus: json['rideStatus'] ?? '',
-      setAvailable: json['setAvailable'] ?? 0,
-      lastBookingTime: json['lastBookingTime'] ?? 0,
+      setAvailable: _parseToInt(json['setAvailable']),
+      lastBookingTime: _parseToInt(json['lastBookingTime']),
       paymentMethod: json['paymentMethod'] ?? '',
       paymentStatus: json['paymentStatus'] ?? '',
       id: json['_id'] ?? '',
       users: List<String>.from(json['users'] ?? []),
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',
-      v: json['__v'] ?? 0,
+      v: _parseToInt(json['__v']),
     );
+  }
+
+  static int _parseToInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? 0;
+    if (value is double) return value.toInt();
+    return 0;
   }
 
   CabwireDataEntity toEntity() {

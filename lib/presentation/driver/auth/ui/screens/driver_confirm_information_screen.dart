@@ -99,6 +99,7 @@ class ConfirmInformationScreen extends StatelessWidget {
             actionButton: CustomButton(
               text: AppStrings.driverContinue,
               onPressed: () => presenter.confirmPersonalInformation(context),
+              isLoading: presenter.uiState.value.isLoading,
             ),
           ),
         ],

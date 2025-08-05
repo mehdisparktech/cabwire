@@ -17,7 +17,7 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
       appBar: CustomAppBar(title: 'Trip Closure OTP'),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.px, vertical: 50.px),
+          padding: EdgeInsets.symmetric(horizontal: 30.px, vertical: 30.px),
           child: Column(
             children: [
               _buildOTPInputField(
@@ -43,12 +43,13 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
                 title: 'Green Road, Dhanmondi, Dhaka.',
                 otp: '4',
               ),
+              gapH50,
             ],
           ),
         ),
       ),
       bottomSheet: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
+        padding: EdgeInsets.symmetric(horizontal: 30.px, vertical: 16.px),
         child: ActionButton(
           borderRadius: 0,
           isPrimary: true,
@@ -73,7 +74,12 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: ActionButton(isPrimary: true, text: otp, onPressed: () {}),
+              child: ActionButton(
+                isPrimary: true,
+                text: otp,
+                onPressed: () {},
+                borderRadius: 8.px,
+              ),
             ),
             gapW10,
             Text(
@@ -85,6 +91,7 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
         gapH20,
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ...List.generate(
               4,
@@ -128,16 +135,16 @@ class RideshareTripCloseOtpPage extends StatelessWidget {
                 ),
               ),
             ),
-            gapW20,
-            Expanded(
-              child: ActionButton(
-                isPrimary: true,
-                text: 'Completed',
-                onPressed: () {},
-              ),
-            ),
           ],
         ),
+        gapH20,
+        ActionButton(
+          isPrimary: true,
+          text: 'Completed',
+          onPressed: () {},
+          borderRadius: 8.px,
+        ),
+        gapH20,
       ],
     );
   }

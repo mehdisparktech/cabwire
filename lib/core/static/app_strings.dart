@@ -203,4 +203,5 @@ class AppStrings {
   static const String connectStripeSubtitle =
       "Connect your Stripe account to start receiving online payments.";
   static const String connectWithStripe = "Connect With Stripe";
+  static const String skip = "Skip";
 }

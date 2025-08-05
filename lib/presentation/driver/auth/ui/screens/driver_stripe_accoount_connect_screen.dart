@@ -1,4 +1,5 @@
 import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
@@ -25,6 +26,16 @@ class DriverStripeAccoountConnectScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: TextButton(
+              onPressed: () => presenter.onSkip(context),
+              child: Text(
+                AppStrings.skip,
+                style: TextStyle(fontSize: px16, fontWeight: FontWeight.w500),
+              ),
+            ),
+          ),
           gapH100,
           CommonImage(imageSrc: AppAssets.isStripimg, height: 250, width: 250),
           gapH40,

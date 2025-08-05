@@ -33,6 +33,11 @@ class DriverStripeAccoountConnectPresenter
   //   }
   // }
 
+  //===================>> Skip
+  onSkip(BuildContext context) {
+    Get.offAll(() => const DriverAuthNavigatorScreen());
+  }
+
   //===================>> Stripe
 
   Future<void> onStripeAccountConnect(BuildContext context, email) async {
@@ -97,7 +102,11 @@ class DriverStripeAccoountConnectPresenter
                       clearStack: true,
                     );
                   } else if (url.contains("failed") || url.contains("cancel")) {
-                    Get.back();
+                    _navigation.navigateWithFadeTransition(
+                      context,
+                      const DriverAuthNavigatorScreen(),
+                      clearStack: true,
+                    );
                   }
                 },
                 onWebResourceError: (error) {

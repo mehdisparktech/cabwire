@@ -31,8 +31,8 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
   }
 
   void _initDevelopmentCredentials() {
-    emailController.text = 'dorih26263@amirei.com';
-    passwordController.text = '12345678';
+    emailController.text = 'tacate3911@nicext.com';
+    passwordController.text = '123456789';
   }
 
   Future<void> _checkExistingLogin() async {

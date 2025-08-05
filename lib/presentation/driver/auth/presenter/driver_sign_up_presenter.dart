@@ -270,6 +270,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
   }
 
   Future<void> confirmPersonalInformation(BuildContext context) async {
+    toggleLoading(loading: true);
     if (!_validation.validateForm(confirmInfoFormKey)) return;
     appLog("============>>>>>>> ${emailController.text}");
 
@@ -297,6 +298,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         (errorMessage) async {
           await addUserMessage(errorMessage);
           await showMessage(message: errorMessage);
+          toggleLoading(loading: false);
         },
         (successMessage) async {
           await addUserMessage(successMessage);
@@ -308,12 +310,14 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
               const DriverLicenseInformationScreen(),
             );
           }
+          toggleLoading(loading: false);
         },
       );
     });
   }
 
   void confirmLicenseInformation(BuildContext context) async {
+    toggleLoading(loading: true);
     if (!_validation.validateForm(licenseInfoFormKey)) return;
     // _updateRegistrationStep3();
     // NavigationUtility.slideRight(context, const VehiclesInformationScreen());
@@ -341,6 +345,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         (errorMessage) async {
           await addUserMessage(errorMessage);
           await showMessage(message: errorMessage);
+          toggleLoading(loading: false);
         },
         (successMessage) async {
           await addUserMessage(successMessage);
@@ -354,12 +359,14 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
               clearStack: true,
             );
           }
+          toggleLoading(loading: false);
         },
       );
     });
   }
 
   Future<void> confirmVehicleInformation(BuildContext context) async {
+    toggleLoading(loading: true);
     if (!_validation.validateForm(vehicleInfoFormKey)) return;
 
     await executeTaskWithLoading(() async {
@@ -382,6 +389,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         (errorMessage) async {
           await addUserMessage(errorMessage);
           await showMessage(message: errorMessage);
+          toggleLoading(loading: false);
         },
         (successMessage) async {
           await addUserMessage(successMessage);
@@ -396,6 +404,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
               clearStack: true,
             );
           }
+          toggleLoading(loading: false);
         },
       );
     });

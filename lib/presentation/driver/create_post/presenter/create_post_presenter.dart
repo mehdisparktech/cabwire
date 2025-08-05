@@ -1,4 +1,5 @@
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/create_ride_model.dart';
@@ -101,12 +102,15 @@ class CreatePostPresenter extends BasePresenter<CreatePostUiState> {
         fare,
       );
 
+      appLog("==============**********  ${result.toString()}");
+
       result.fold(
         (error) {
           addUserMessage(error);
           toggleLoading(loading: false);
         },
         (response) {
+          logDebug('Response: ${response.data.id}');
           addUserMessage(response.message);
 
           // Update the ride data with the response
@@ -148,10 +152,13 @@ class CreatePostPresenter extends BasePresenter<CreatePostUiState> {
 
   // set total amount
   void setTotalAmount() {
-    final totalAmount =
-        (double.parse(currentUiState.createRideModel?.totalDistance ?? '0') *
-                double.parse(currentUiState.createRideModel?.perKmRate ?? '0'))
-            .toString();
+    final distance =
+        double.tryParse(currentUiState.createRideModel?.totalDistance ?? '0') ??
+        0.0;
+    final rate =
+        double.tryParse(currentUiState.createRideModel?.perKmRate ?? '0') ??
+        0.0;
+    final totalAmount = (distance * rate).toString();
     uiState.value = currentUiState.copyWith(totalAmount: totalAmount);
   }
 

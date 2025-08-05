@@ -42,6 +42,7 @@ class VehiclesInformationScreen extends StatelessWidget {
         actionButton: CustomButton(
           text: AppStrings.driverCompleteRegistration,
           onPressed: () => presenter.confirmVehicleInformation(context),
+          isLoading: presenter.uiState.value.isLoading,
         ),
       ),
     );

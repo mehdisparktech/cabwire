@@ -86,24 +86,34 @@ class CreateRideModel {
       totalDistance:
           json['totalDistance']?.toString() ?? json['distance']?.toString(),
       lastBookingTime: json['lastBookingTime']?.toString(),
-      seatsBooked: json['seatsBooked'],
+      seatsBooked: _parseToInt(json['seatsBooked']),
       startTime: json['startTime'],
       endTime: json['endTime'],
       distance:
           json['distance'] != null
               ? double.tryParse(json['distance'].toString())
               : null,
-      duration: json['duration'],
+      duration: _parseToInt(json['duration']),
       fare:
           json['fare'] != null
               ? double.tryParse(json['fare'].toString())
               : null,
-      seatsAvailable: json['setAvailable'] ?? json['seatsAvailable'],
-      perKM: json['perKM'],
+      seatsAvailable: _parseToInt(
+        json['setAvailable'] ?? json['seatsAvailable'],
+      ),
+      perKM: _parseToInt(json['perKM']),
       rideStatus: json['rideStatus'],
       paymentMethod: json['paymentMethod'],
       paymentStatus: json['paymentStatus'],
     );
+  }
+
+  static int _parseToInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? 0;
+    if (value is double) return value.toInt();
+    return 0;
   }
 
   Map<String, dynamic> toJson() {

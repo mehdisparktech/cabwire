@@ -37,6 +37,7 @@ class DriverLicenseInformationScreen extends StatelessWidget {
         actionButton: CustomButton(
           text: AppStrings.driverContinue,
           onPressed: () => presenter.confirmLicenseInformation(context),
+          isLoading: presenter.uiState.value.isLoading,
         ),
       ),
     );
