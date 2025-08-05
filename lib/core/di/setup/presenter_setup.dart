@@ -61,7 +61,7 @@ class PresenterSetup implements SetupModule {
         () => loadPresenter(PassengerConfirmInformationPresenter(locate())),
       )
       ..registerFactory(
-        () => loadPresenter(PassengerSetLocationPresenter(locate())),
+        () => loadPresenter(PassengerSetLocationPresenter(locate(), locate())),
       );
   }
 

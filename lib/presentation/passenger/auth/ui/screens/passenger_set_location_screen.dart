@@ -42,21 +42,24 @@ class SetLocationScreen extends StatelessWidget {
             logoAssetPath2: AppAssets.icCabwireLogo,
             formKey: presenter.formKey,
             formFields: [
-              Container(
-                height: 54.px,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.px),
-                  border: Border.all(color: AppColor.activeIndicator),
-                ),
-                child: Center(
-                  child: Text(
-                    "Current Location",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.activeIndicator,
+              GestureDetector(
+                onTap: () => presenter.getCurrentLocation(),
+                child: Container(
+                  height: 54.px,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.px),
+                    border: Border.all(color: AppColor.activeIndicator),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Current Location",
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.activeIndicator,
+                      ),
                     ),
                   ),
                 ),
