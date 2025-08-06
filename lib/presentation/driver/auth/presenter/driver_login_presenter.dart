@@ -31,7 +31,7 @@ class DriverLoginPresenter extends BasePresenter<DriverLoginUiState> {
   }
 
   void _initDevelopmentCredentials() {
-    emailController.text = 'tacate3911@nicext.com';
+    emailController.text = 'fohoya4555@balincs.com';
     passwordController.text = '123456789';
   }
 

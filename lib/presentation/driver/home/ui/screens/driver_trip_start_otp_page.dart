@@ -55,79 +55,81 @@ class _DriverTripStartOtpPage extends State<DriverTripStartOtpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: 'Trip Closure OTP'),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30.px, vertical: 50.px),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomText(
-              'Enter OTP To Close This Trip',
-              fontSize: 18.px,
-              fontWeight: FontWeight.w700,
-            ),
-            gapH20,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(
-                4,
-                (index) => SizedBox(
-                  width: 40.px,
-                  height: 50.px,
-                  child: TextField(
-                    controller: otpControllers[index],
-                    focusNode: focusNodes[index],
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 22.px,
-                      fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 30.px, vertical: 50.px),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomText(
+                'Enter OTP To Start This Trip',
+                fontSize: 18.px,
+                fontWeight: FontWeight.w700,
+              ),
+              gapH20,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(
+                  4,
+                  (index) => SizedBox(
+                    width: 40.px,
+                    height: 50.px,
+                    child: TextField(
+                      controller: otpControllers[index],
+                      focusNode: focusNodes[index],
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 22.px,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.px),
+                          borderSide: BorderSide(
+                            color: context.theme.colorScheme.primary,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.px),
+                          borderSide: BorderSide(
+                            color: context.theme.colorScheme.primary,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.px),
+                          borderSide: BorderSide(
+                            color: context.color.primaryBtn,
+                            width: 2,
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(1),
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      onChanged: (value) {
+                        if (value.isNotEmpty && index < 3) {
+                          focusNodes[index + 1].requestFocus();
+                        }
+                      },
                     ),
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.px),
-                        borderSide: BorderSide(
-                          color: context.theme.colorScheme.primary,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.px),
-                        borderSide: BorderSide(
-                          color: context.theme.colorScheme.primary,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.px),
-                        borderSide: BorderSide(
-                          color: context.color.primaryBtn,
-                          width: 2,
-                        ),
-                      ),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(1),
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                    onChanged: (value) {
-                      if (value.isNotEmpty && index < 3) {
-                        focusNodes[index + 1].requestFocus();
-                      }
-                    },
                   ),
                 ),
               ),
-            ),
-            gapH80,
-            Align(
-              alignment: Alignment.center,
-              child: AppLogoDisplay(
-                logoAssetPath: AppAssets.icDriverLogo,
-                logoAssetPath2: AppAssets.icCabwireLogo,
+              gapH80,
+              Align(
+                alignment: Alignment.center,
+                child: AppLogoDisplay(
+                  logoAssetPath: AppAssets.icDriverLogo,
+                  logoAssetPath2: AppAssets.icCabwireLogo,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomSheet: Padding(
@@ -136,7 +138,7 @@ class _DriverTripStartOtpPage extends State<DriverTripStartOtpPage> {
           borderRadius: 0,
           isPrimary: true,
           isLoading: _presenter.currentUiState.isLoading,
-          text: 'Trip Closure',
+          text: 'Trip Start',
           onPressed: () {
             final otp = getOtpValue();
             if (otp > 0) {

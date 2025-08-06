@@ -18,7 +18,7 @@ class RideshareBottomSheet extends StatelessWidget {
 
   String _getPickupText(uiState) {
     if (uiState.isRideProcessing) {
-      return 'Ride is in progress. Heading to destination.';
+      return 'Your Trip Will Complete In Approximately';
     } else if (uiState.isRideStart) {
       return 'Ready To Start The Ride';
     } else {
@@ -60,7 +60,7 @@ class RideshareBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             PassengerInfoWidget(
-              passengerName: uiState.rideRequest!.userId,
+              passengerName: "Danial",
               passengerAddress: uiState.rideRequest!.pickupAddress,
               distance:
                   '${uiState.rideRequest!.distance.toStringAsFixed(2)} km',
