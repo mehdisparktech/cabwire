@@ -267,8 +267,7 @@ class PassengerPickupLocationPresenter
         'https://maps.googleapis.com/maps/api/place/autocomplete/json'
         '?input=$query'
         '&key=$_googleApiKey'
-        '&language=en'
-        '&components=country:bd', // Limit to Bangladesh
+        '&language=en',
       );
 
       final response = await _httpClient
