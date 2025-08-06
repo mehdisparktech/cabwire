@@ -363,15 +363,39 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
           toggleLoading(loading: false);
         },
         (success) {
-          debugPrint('Ride accepted: $success');
-          addUserMessage('Ride accepted: $success');
-          final List<RideRequestModel> updatedRides = List.from(
-            currentUiState.rideRequests,
-          )..removeWhere((ride) => ride.rideId == rideId);
-          uiState.value = currentUiState.copyWith(rideRequests: updatedRides);
-          Get.to(() => RidesharePage(rideRequest: rideRequest!));
-          CustomToast(message: 'Ride accepted: $success');
-          toggleLoading(loading: false);
+          try {
+            // Safely access nested data
+            final responseData = success.data;
+            if (responseData['data'] != null) {
+              final dataSection = responseData['data'];
+              final chatData = dataSection['chat'];
+              final chatId = chatData?['_id'];
+              uiState.value = currentUiState.copyWith(chatId: chatId);
+              appLog('chatId: $chatId');
+              debugPrint('Ride accepted successfully');
+              addUserMessage('Ride accepted successfully');
+              final List<RideRequestModel> updatedRides = List.from(
+                currentUiState.rideRequests,
+              )..removeWhere((ride) => ride.rideId == rideId);
+              uiState.value = currentUiState.copyWith(
+                rideRequests: updatedRides,
+              );
+              Get.to(
+                () => RidesharePage(
+                  rideRequest: rideRequest!,
+                  chatId: uiState.value.chatId ?? '',
+                ),
+              );
+              CustomToast(message: 'Ride accepted successfully');
+              toggleLoading(loading: false);
+            } else {
+              debugPrint('No data found in response');
+            }
+          } catch (e) {
+            debugPrint('Error processing ride acceptance response: $e');
+            addUserMessage('Ride accepted but failed to process response');
+            toggleLoading(loading: false);
+          }
         },
       );
     } else {

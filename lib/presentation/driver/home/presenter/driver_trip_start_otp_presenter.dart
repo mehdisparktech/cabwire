@@ -78,7 +78,11 @@ class DriverTripStartOtpPresenter
     }
   }
 
-  Future<void> tripStart(RideRequestModel rideRequest, String otp) async {
+  Future<void> tripStart(
+    RideRequestModel rideRequest,
+    String otp,
+    String chatId,
+  ) async {
     //uiState.value = currentUiState.copyWith(isRideProcessing: true);
     final response = await _apiService.post(
       ApiEndPoint.startMatchedRide + rideRequest.rideId,
@@ -98,7 +102,11 @@ class DriverTripStartOtpPresenter
           userMessage: success.message,
         );
         Get.off(
-          () => RidesharePage(rideRequest: rideRequest, rideProgress: true),
+          () => RidesharePage(
+            rideRequest: rideRequest,
+            rideProgress: true,
+            chatId: chatId,
+          ),
         );
         CustomToast(message: success.message!);
       },
@@ -108,6 +116,7 @@ class DriverTripStartOtpPresenter
   Future<void> onStartedPressed(
     BuildContext context,
     RideRequestModel rideRequest,
+    String chatId,
   ) async {
     String socketEventName = 'notification::${rideRequest.id}';
     appLog("Socket event name: $socketEventName");
@@ -127,8 +136,11 @@ class DriverTripStartOtpPresenter
           context,
           MaterialPageRoute(
             builder:
-                (context) =>
-                    RidesharePage(rideRequest: rideRequest, rideProgress: true),
+                (context) => RidesharePage(
+                  rideRequest: rideRequest,
+                  rideProgress: true,
+                  chatId: chatId,
+                ),
           ),
         );
       }

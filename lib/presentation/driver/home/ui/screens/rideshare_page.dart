@@ -11,11 +11,13 @@ import 'package:get/get.dart';
 class RidesharePage extends StatelessWidget {
   final RideRequestModel rideRequest;
   final bool rideProgress;
+  final String chatId;
 
   const RidesharePage({
     super.key,
     required this.rideRequest,
     this.rideProgress = false,
+    required this.chatId,
   });
 
   @override
@@ -26,7 +28,7 @@ class RidesharePage extends StatelessWidget {
         child: PresentableWidgetBuilder(
           presenter: presenter,
           builder: () {
-            presenter.setRideRequest(rideRequest);
+            presenter.setRideRequest(rideRequest, chatId);
             if (rideProgress) {
               presenter.setRideProgress(true);
             }

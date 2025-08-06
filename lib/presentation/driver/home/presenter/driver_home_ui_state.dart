@@ -17,7 +17,7 @@ class DriverHomeUiState extends BaseUiState {
   final List<LatLng>? polylineCoordinates;
   final List<RideRequestModel> rideRequests;
   final String? driverEmail;
-
+  final String? chatId;
   const DriverHomeUiState({
     required super.isLoading,
     required super.userMessage,
@@ -34,6 +34,7 @@ class DriverHomeUiState extends BaseUiState {
     this.polylineCoordinates,
     required this.rideRequests,
     this.driverEmail,
+    this.chatId,
   });
 
   // (initial state)
@@ -54,6 +55,7 @@ class DriverHomeUiState extends BaseUiState {
       polylineCoordinates: null,
       rideRequests: [],
       driverEmail: '',
+      chatId: '',
     );
   }
 
@@ -74,6 +76,7 @@ class DriverHomeUiState extends BaseUiState {
     polylineCoordinates,
     rideRequests,
     driverEmail,
+    chatId,
   ];
 
   DriverHomeUiState copyWith({
@@ -92,6 +95,7 @@ class DriverHomeUiState extends BaseUiState {
     List<LatLng>? polylineCoordinates,
     List<RideRequestModel>? rideRequests,
     String? driverEmail,
+    String? chatId,
   }) {
     return DriverHomeUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -110,6 +114,7 @@ class DriverHomeUiState extends BaseUiState {
       polylineCoordinates: polylineCoordinates ?? this.polylineCoordinates,
       rideRequests: rideRequests ?? this.rideRequests,
       driverEmail: driverEmail ?? this.driverEmail,
+      chatId: chatId ?? this.chatId,
     );
   }
 }

@@ -15,7 +15,12 @@ import 'package:get/get.dart';
 
 class DriverTripStartOtpPage extends StatefulWidget {
   final RideRequestModel rideRequest;
-  const DriverTripStartOtpPage({super.key, required this.rideRequest});
+  final String chatId;
+  const DriverTripStartOtpPage({
+    super.key,
+    required this.rideRequest,
+    required this.chatId,
+  });
 
   @override
   State<DriverTripStartOtpPage> createState() => _DriverTripStartOtpPage();
@@ -142,7 +147,11 @@ class _DriverTripStartOtpPage extends State<DriverTripStartOtpPage> {
           onPressed: () {
             final otp = getOtpValue();
             if (otp > 0) {
-              _presenter.tripStart(widget.rideRequest, otp.toString());
+              _presenter.tripStart(
+                widget.rideRequest,
+                otp.toString(),
+                widget.chatId,
+              );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Please enter a valid OTP')),

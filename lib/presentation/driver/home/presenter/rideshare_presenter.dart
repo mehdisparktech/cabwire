@@ -72,13 +72,14 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
     Future.delayed(_socketSetupDelay, _setupSocketListeners);
   }
 
-  void setRideRequest(RideRequestModel rideRequest) {
+  void setRideRequest(RideRequestModel rideRequest, String chatId) {
     uiState.value = currentUiState.copyWith(
       rideRequest: rideRequest,
       mapCenter: rideRequest.pickupLocation,
       sourceMapCoordinates: rideRequest.pickupLocation,
       destinationMapCoordinates: rideRequest.dropoffLocation,
       socketEventName: 'notification::${rideRequest.userId}',
+      chatId: chatId,
     );
     _initializeLocations();
   }
@@ -125,8 +126,10 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
           isRideStart: true,
         );
         Get.off(
-          () =>
-              DriverTripStartOtpPage(rideRequest: currentUiState.rideRequest!),
+          () => DriverTripStartOtpPage(
+            rideRequest: currentUiState.rideRequest!,
+            chatId: currentUiState.chatId,
+          ),
         );
         CustomToast(message: success.message!);
       },
@@ -146,7 +149,7 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
   }
 
   void navigateToChat() {
-    Get.to(() => ChatPage(chatId: '123'));
+    Get.to(() => ChatPage(chatId: currentUiState.chatId));
   }
 
   void navigateToCall() {
