@@ -15,12 +15,12 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    presenter.initial(chatId);
     return Scaffold(
       appBar: _buildAppBar(context, presenter),
       body: PresentableWidgetBuilder(
         presenter: presenter,
         builder: () {
-          // final uiState = presenter.currentUiState;
           return _buildBody(context, presenter);
         },
       ),
@@ -117,7 +117,7 @@ class ChatPage extends StatelessWidget {
           }
 
           final message = uiState.messages[messageIndex];
-          if (message.isSender) {
+          if (!message.isSender) {
             return _buildSenderMessage(message.text, AppAssets.icProfileImage);
           } else {
             return _buildReceiverMessage(
@@ -270,7 +270,7 @@ class ChatPage extends StatelessWidget {
                 ),
                 filled: false,
                 suffixIcon: GestureDetector(
-                  onTap: presenter.sendMessage,
+                  onTap: () => presenter.sendMessage(chatId),
                   child: Container(
                     width: 20,
                     height: 20,

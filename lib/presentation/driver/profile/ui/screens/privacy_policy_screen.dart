@@ -28,13 +28,16 @@ class PrivacyPolicyScreen extends StatelessWidget {
                       imageType: ImageType.svg,
                     ),
                   )
-                  : Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: CommonText(
-                      text: presenter.uiState.value.privacyPolicy ?? '',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      textAlign: TextAlign.justify,
+                  : SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: CommonText(
+                        text: presenter.uiState.value.privacyPolicy ?? '',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        textAlign: TextAlign.justify,
+                        maxLines: 100,
+                      ),
                     ),
                   ),
         );

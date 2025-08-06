@@ -31,13 +31,16 @@ class TermsAndConditionsScreen extends StatelessWidget {
                       width: 300,
                     ),
                   )
-                  : Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: CommonText(
-                      text: presenter.uiState.value.termsAndConditions ?? '',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      textAlign: TextAlign.justify,
+                  : SingleChildScrollView(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(24.0),
+                      child: CommonText(
+                        text: presenter.uiState.value.termsAndConditions ?? '',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        textAlign: TextAlign.justify,
+                        maxLines: 100,
+                      ),
                     ),
                   ),
         );
