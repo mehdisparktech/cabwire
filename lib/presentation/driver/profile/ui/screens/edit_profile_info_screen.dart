@@ -1,9 +1,9 @@
-import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
-// import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_button.dart';
 import 'package:cabwire/presentation/common/components/auth/custom_text_form_field.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
@@ -63,25 +63,10 @@ class EditProfileInfoScreen extends StatelessWidget {
                                           ? FileImage(
                                             presenter.selectedProfileImageFile!,
                                           )
-                                          : (uiState
-                                                  .userProfile
-                                                  .avatarUrl
-                                                  .isNotEmpty &&
-                                              !uiState.userProfile.avatarUrl
-                                                  .startsWith('http'))
-                                          ? AssetImage(
-                                                uiState.userProfile.avatarUrl,
-                                              )
-                                              as ImageProvider
-                                          : (uiState
-                                              .userProfile
-                                              .avatarUrl
-                                              .isNotEmpty)
-                                          ? NetworkImage(
-                                            uiState.userProfile.avatarUrl,
-                                          )
-                                          : AssetImage(AppAssets.icProfileImage)
-                                              as ImageProvider,
+                                          : NetworkImage(
+                                            ApiEndPoint.imageUrl +
+                                                LocalStorage.myImage,
+                                          ),
                                 ),
                               ),
                               Positioned(

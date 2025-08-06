@@ -10,7 +10,7 @@ class ApiEndPoint {
 
   //Live
   static const baseUrl = "http://31.97.98.240:5005/api/v1";
-  static const imageUrl = "http://31.97.98.240:5005/";
+  static const imageUrl = "http://31.97.98.240:5005";
   static const socketUrl = "http://31.97.98.240:5005";
 
   //home

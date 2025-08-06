@@ -230,6 +230,10 @@ class LocalStorage {
       "Driver profile saved: ${profile.name}, ${profile.email}, ${profile.contact},${profile.image}",
       source: "Local Storage",
     );
+    appLog(
+      "Driver Local Storage profile saved: ${LocalStorage.myName}, ${LocalStorage.myEmail}, ${LocalStorage.myContact},${LocalStorage.myImage}",
+      source: "Local Storage",
+    );
   }
 
   static Future<void> savePassengerProfile(ProfileModel profile) async {

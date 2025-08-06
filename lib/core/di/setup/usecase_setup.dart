@@ -30,6 +30,7 @@ import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
 import 'package:cabwire/domain/usecases/submit_review_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
 import 'package:cabwire/domain/usecases/update_online_status_usecase.dart';
+import 'package:cabwire/domain/usecases/update_profile_photo_usecase.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/di/setup/setup_module.dart';
@@ -119,6 +120,9 @@ class UsecaseSetup implements SetupModule {
       ..registerLazySingleton(() => CreateCabwireUsecase(locate()))
       ..registerLazySingleton(
         () => DriverLicenseInformationUsecase(locate(), locate()),
+      )
+      ..registerLazySingleton(
+        () => UpdateProfilePhotoUsecase(locate(), locate()),
       );
   }
 }

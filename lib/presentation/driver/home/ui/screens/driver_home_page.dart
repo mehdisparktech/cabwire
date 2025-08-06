@@ -53,6 +53,7 @@ class DriverHomePage extends StatelessWidget {
           child: ClipOval(
             child: CommonImage(
               imageSrc: ApiEndPoint.imageUrl + LocalStorage.myImage,
+              imageType: ImageType.network,
               width: 60,
               height: 60,
               fill: BoxFit.cover,

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cabwire/core/base/base_presenter.dart';
-import 'package:cabwire/core/config/app_assets.dart'; // For default assets
+import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
@@ -11,6 +11,7 @@ import 'package:cabwire/domain/usecases/driver/delete_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dart';
 import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
+import 'package:cabwire/domain/usecases/update_profile_photo_usecase.dart';
 import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
@@ -36,6 +37,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   final PrivacyAndPolicyUsecase _privacyAndPolicyUsecase;
   final DriverDeleteProfileUsecase _deleteProfileUsecase;
   final DriverProfileUpdateUsecase _updateProfileUsecase;
+  final UpdateProfilePhotoUsecase _updateProfilePhotoUsecase;
   final Obs<DriverProfileUiState> uiState = Obs<DriverProfileUiState>(
     DriverProfileUiState.initial(),
   );
@@ -99,6 +101,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     this._privacyAndPolicyUsecase,
     this._deleteProfileUsecase,
     this._updateProfileUsecase,
+    this._updateProfilePhotoUsecase,
   ) {
     loadDriverProfile();
     _loadInitialData();
@@ -115,7 +118,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
             name: profile.name ?? '',
             email: profile.email ?? '',
             phoneNumber: profile.contact ?? '01823450011',
-            avatarUrl: AppAssets.icProfileImage,
+            avatarUrl: ApiEndPoint.imageUrl + LocalStorage.myImage,
             dateOfBirth: profile.dateOfBirth ?? '1994-11-15',
             gender: profile.gender ?? 'Male',
           ),
@@ -296,6 +299,26 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       toggleLoading(loading: false);
       return;
     }
+    if (selectedProfileImageFile != null) {
+      final result = await _updateProfilePhotoUsecase.execute(
+        LocalStorage.myEmail,
+        selectedProfileImageFile!.path,
+      );
+      result.fold(
+        (error) {
+          toggleLoading(loading: false);
+          addUserMessage(error, isError: true);
+          return;
+        },
+        (success) {
+          toggleLoading(loading: false);
+          addUserMessage("Profile updated successfully!");
+          showMessage(message: 'Profile updated successfully!');
+          Get.back();
+        },
+      );
+    }
+
     // Simulate API call to update profile
     final result = await _updateProfileUsecase.execute(
       editNameController.text,

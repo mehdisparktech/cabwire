@@ -20,4 +20,15 @@ class DriverRepositoryImpl implements DriverRepository {
       return left(e.toString());
     }
   }
+
+  @override
+  Future<Result<void>> updateProfilePhoto(String email, String photo) async {
+    try {
+      final result = await _remoteDataSource.updateProfilePhoto(email, photo);
+
+      return result.fold((error) => left(error), (success) => right(success));
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
 }
