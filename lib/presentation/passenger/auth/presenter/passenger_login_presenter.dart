@@ -31,7 +31,7 @@ class PassengerLoginPresenter extends BasePresenter<PassengerLoginUiState> {
 
   void _initDevelopmentCredentials() {
     emailController.text = 'user@gmail.com';
-    passwordController.text = 'hello123';
+    passwordController.text = 'hello1234';
   }
 
   Future<void> _checkExistingLogin() async {
