@@ -4,7 +4,7 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/domain/usecases/passenger/cencel_ride_usecase.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_ride_share_screen.dart';
 import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -200,7 +200,7 @@ class FindingRidesPresenter extends BasePresenter<FindingRidesUiState> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder:
-            (context) => RideShareScreen(
+            (context) => PassengerRideShareScreen(
               rideId: rideId,
               rideResponse: rideResponse,
               chatId: currentUiState.chatId ?? '',

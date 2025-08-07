@@ -6,7 +6,7 @@ import 'package:cabwire/data/models/ride/ride_request_model.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_trip_start_otp_ui_state.dart';
-import 'package:cabwire/presentation/driver/home/ui/screens/rideshare_page.dart';
+import 'package:cabwire/presentation/driver/home/ui/screens/driver_rideshare_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -102,7 +102,7 @@ class DriverTripStartOtpPresenter
           userMessage: success.message,
         );
         Get.off(
-          () => RidesharePage(
+          () => DriverRidesharePage(
             rideRequest: rideRequest,
             rideProgress: true,
             chatId: chatId,
@@ -136,7 +136,7 @@ class DriverTripStartOtpPresenter
           context,
           MaterialPageRoute(
             builder:
-                (context) => RidesharePage(
+                (context) => DriverRidesharePage(
                   rideRequest: rideRequest,
                   rideProgress: true,
                   chatId: chatId,

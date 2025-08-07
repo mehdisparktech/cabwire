@@ -3,7 +3,7 @@ import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/presentation/passenger/car_booking/presenter/passenger_trip_start_otp_ui_state.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_ride_share_screen.dart';
 import 'package:flutter/material.dart';
 
 class PassengerTripStartOtpPresenter
@@ -108,7 +108,7 @@ class PassengerTripStartOtpPresenter
           context,
           MaterialPageRoute(
             builder:
-                (context) => RideShareScreen(
+                (context) => PassengerRideShareScreen(
                   rideId: rideId,
                   rideResponse: rideResponse,
                   chatId: chatId,

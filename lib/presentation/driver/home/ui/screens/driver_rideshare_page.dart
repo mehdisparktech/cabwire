@@ -8,12 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 
-class RidesharePage extends StatelessWidget {
+class DriverRidesharePage extends StatelessWidget {
   final RideRequestModel rideRequest;
   final bool rideProgress;
   final String chatId;
 
-  const RidesharePage({
+  const DriverRidesharePage({
     super.key,
     required this.rideRequest,
     this.rideProgress = false,

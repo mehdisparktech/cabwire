@@ -16,7 +16,7 @@ import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/domain/usecases/update_online_status_usecase.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_ui_state.dart';
 import 'package:cabwire/data/models/ride/ride_request_model.dart';
-import 'package:cabwire/presentation/driver/home/ui/screens/rideshare_page.dart';
+import 'package:cabwire/presentation/driver/home/ui/screens/driver_rideshare_page.dart';
 import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
 import 'package:cabwire/presentation/driver/notification/ui/screens/notification_page.dart';
 import 'package:flutter/material.dart';
@@ -381,7 +381,7 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
                 rideRequests: updatedRides,
               );
               Get.to(
-                () => RidesharePage(
+                () => DriverRidesharePage(
                   rideRequest: rideRequest!,
                   chatId: uiState.value.chatId ?? '',
                 ),

@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 
-class RideShareScreen extends StatelessWidget {
+class PassengerRideShareScreen extends StatelessWidget {
   final String rideId;
   final RideResponseModel rideResponse;
   final String chatId;
   final bool isRideProcessing;
 
-  const RideShareScreen({
+  const PassengerRideShareScreen({
     super.key,
     required this.rideId,
     required this.rideResponse,

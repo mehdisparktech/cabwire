@@ -7,7 +7,7 @@ import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/payment_method_card.dart';
-import 'package:cabwire/presentation/passenger/car_booking/ui/screens/ride_share_screen.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/passenger_ride_share_screen.dart';
 import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/presenter/package_payment_method_presenter.dart';
 import 'package:flutter/material.dart';
@@ -105,7 +105,7 @@ class PackagePaymentMethodScreen extends StatelessWidget {
                   builder:
                       (context) => PassengerSearchDestinationScreen(
                         serviceType: ServiceType.packageDelivery,
-                        nextScreen: RideShareScreen(
+                        nextScreen: PassengerRideShareScreen(
                           rideId: '1',
                           rideResponse: RideResponseModel(
                             data: RideDataModel(
