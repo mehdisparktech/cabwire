@@ -8,6 +8,7 @@ import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart'; // Import LocalStorage
 import 'package:cabwire/domain/usecases/passenger/delete_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/get_passenger_profile_usecase.dart';
+import 'package:cabwire/domain/usecases/passenger/passenger_profile_photo_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/update_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
@@ -30,6 +31,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
   final TermsAndConditionsUsecase _termsAndConditionsUsecase;
   final PrivacyAndPolicyUsecase _privacyAndPolicyUsecase;
   final UpdateProfileUsecase _updateProfileUsecase;
+  final PassengerProfilePhotoUsecase _passengerProfilePhotoUsecase;
   final GetPassengerProfileUsecase _getPassengerProfileUsecase;
   final PassengerDeleteProfileUsecase _deleteProfileUsecase;
   final Obs<PassengerProfileUiState> uiState = Obs<PassengerProfileUiState>(
@@ -72,6 +74,7 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     this._termsAndConditionsUsecase,
     this._privacyAndPolicyUsecase,
     this._updateProfileUsecase,
+    this._passengerProfilePhotoUsecase,
     this._getPassengerProfileUsecase,
     this._deleteProfileUsecase,
   ) {
@@ -197,15 +200,11 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
 
   // --- Actions ---
   Future<void> pickProfileImage() async {
-    // // Using image_picker package
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       selectedProfileImageFile = File(image.path);
-      // To show preview immediately, you might need a separate observable for the image file in UI state
-      // or trigger a rebuild of the EditProfileInfoScreen if it's designed to show the selected file.
-      // For simplicity, let's assume the presenter holds it and it's passed during save.
-      // Force a small state update to make PresentableWidgetBuilder rebuild if EditProfileInfoScreen uses it
+      addUserMessage("Image selected. Press Save to upload.");
       uiState.value = currentUiState.copyWith(
         userMessage: uiState.value.userMessage,
       );
@@ -220,6 +219,27 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
       toggleLoading(loading: false);
       return;
     }
+
+    if (selectedProfileImageFile != null) {
+      final result = await _passengerProfilePhotoUsecase.execute(
+        LocalStorage.myEmail,
+        selectedProfileImageFile!.path,
+      );
+      result.fold(
+        (error) {
+          toggleLoading(loading: false);
+          addUserMessage(error, isError: true);
+          return;
+        },
+        (success) {
+          toggleLoading(loading: false);
+          addUserMessage("Profile updated successfully!");
+          showMessage(message: 'Profile updated successfully!');
+          Get.back();
+        },
+      );
+    }
+
     final result = await _updateProfileUsecase.execute(
       editNameController.text,
       editPhoneNumberController.text,

@@ -266,7 +266,11 @@ class LocalStorage {
 
     // Log the saved profile for debugging
     appLog(
-      "Passenger profile saved: ${profile.name}, ${profile.email}",
+      "Passenger profile saved: ${profile.name}, ${profile.email}, ${profile.image}, ${profile.contact}",
+      source: "Local Storage",
+    );
+    appLog(
+      "Passenger Local Storage profile saved: ${LocalStorage.myName}, ${LocalStorage.myEmail}, ${LocalStorage.myImage}, ${LocalStorage.myContact}",
       source: "Local Storage",
     );
   }

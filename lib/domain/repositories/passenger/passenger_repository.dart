@@ -10,4 +10,6 @@ abstract class PassengerRepository {
     required String email,
     required String password,
   });
+
+  Future<Either<String, void>> updateProfilePhoto(String email, String photo);
 }

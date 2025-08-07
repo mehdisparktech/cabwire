@@ -1,9 +1,11 @@
+import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/ui_const.dart'; // For gapW25
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 // import 'package:cabwire/core/utility/utility.dart'; // For context.theme
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/common/components/common_text.dart'; // Assuming this is your custom text
@@ -71,31 +73,16 @@ class PassengerProfileScreen extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 60.px, // Adjusted size
-                        backgroundImage:
-                            (profile.avatarUrl.isNotEmpty &&
-                                    !profile.avatarUrl.startsWith('http'))
-                                ? AssetImage(profile.avatarUrl)
-                                : null,
-                        child:
-                            (profile.avatarUrl.isEmpty ||
-                                    profile.avatarUrl.startsWith('http'))
-                                ? ClipOval(
-                                  child: CommonImage(
-                                    fill: BoxFit.cover,
-                                    height: 120.px, // Adjusted size
-                                    width: 120.px, // Adjusted size
-                                    imageType:
-                                        profile.avatarUrl.startsWith('http')
-                                            ? ImageType.network
-                                            : ImageType.png,
-                                    imageSrc:
-                                        profile.avatarUrl.isNotEmpty
-                                            ? profile.avatarUrl
-                                            : AppAssets
-                                                .icProfileImage, // Fallback
-                                  ),
-                                )
-                                : null,
+                        child: ClipOval(
+                          child: CommonImage(
+                            fill: BoxFit.cover,
+                            height: 120.px, // Adjusted size
+                            width: 120.px, // Adjusted size
+                            imageType: ImageType.network,
+                            imageSrc:
+                                ApiEndPoint.imageUrl + LocalStorage.myImage,
+                          ),
+                        ),
                       ),
                       gapW25, // Your constant
                       Expanded(

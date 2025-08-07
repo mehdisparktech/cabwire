@@ -22,6 +22,7 @@ import 'package:cabwire/domain/usecases/notifications_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/cencel_ride_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/delete_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/get_passenger_profile_usecase.dart';
+import 'package:cabwire/domain/usecases/passenger/passenger_profile_photo_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/reset_password_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/update_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/passenger/verify_email_usecase.dart';
@@ -123,6 +124,9 @@ class UsecaseSetup implements SetupModule {
       )
       ..registerLazySingleton(
         () => UpdateProfilePhotoUsecase(locate(), locate()),
+      )
+      ..registerLazySingleton(
+        () => PassengerProfilePhotoUsecase(locate(), locate()),
       );
   }
 }

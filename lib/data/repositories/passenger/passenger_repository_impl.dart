@@ -31,4 +31,17 @@ class PassengerRepositoryImpl implements PassengerRepository {
       return Left(_errorMessageHandler.generateErrorMessage(e));
     }
   }
+
+  @override
+  Future<Either<String, void>> updateProfilePhoto(
+    String email,
+    String photo,
+  ) async {
+    try {
+      final result = await _remoteDataSource.updateProfilePhoto(email, photo);
+      return result;
+    } catch (e) {
+      return Left(_errorMessageHandler.generateErrorMessage(e));
+    }
+  }
 }
