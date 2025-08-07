@@ -99,6 +99,13 @@ class PassengerDropLocationUiState extends BaseUiState {
     );
   }
 
+  /// Dispose all text controllers to prevent memory leaks
+  void dispose() {
+    fromController.dispose();
+    destinationController.dispose();
+    searchController.dispose();
+  }
+
   @override
   List<Object?> get props => [
     isLoading,

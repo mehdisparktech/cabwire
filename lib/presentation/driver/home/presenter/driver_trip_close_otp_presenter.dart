@@ -1,8 +1,10 @@
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/flutter_toast/custom_toast.dart';
 import 'package:cabwire/data/models/ride/ride_request_model.dart';
 import 'package:cabwire/domain/usecases/complete_ride_usecase.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_trip_close_otp_ui_state.dart';
+import 'package:cabwire/presentation/driver/home/presenter/rideshare_presenter.dart';
 import 'package:cabwire/presentation/driver/home/ui/screens/car_booking_details_screen.dart';
 import 'package:get/get.dart';
 
@@ -56,6 +58,10 @@ class DriverTripCloseOtpPresenter
           message: success.message ?? '',
           duration: const Duration(seconds: 2),
         );
+        // Make sure to reset the RidesharePresenter state
+        final ridesharePresenter = locate<RidesharePresenter>();
+        ridesharePresenter.resetUIState();
+
         Get.offAll(
           () => CarBookingDetailsScreen(rideCompletedResponse: success),
         );

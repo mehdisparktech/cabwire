@@ -7,6 +7,7 @@ import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/entities/passenger/passenger_service_entity.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
+import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/common/components/custom_services_card.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
@@ -74,10 +75,17 @@ class PassengerHomeScreen extends StatelessWidget {
       leading: Padding(
         padding: EdgeInsets.all(4.px),
         child: CircleAvatar(
-          backgroundImage: NetworkImage(
-            ApiEndPoint.imageUrl + LocalStorage.myImage,
-          ),
           radius: 20.px,
+          backgroundColor: Colors.grey.shade200,
+          child: ClipOval(
+            child: CommonImage(
+              fill: BoxFit.cover,
+              height: 40.px,
+              width: 40.px,
+              imageType: ImageType.network,
+              imageSrc: ApiEndPoint.imageUrl + LocalStorage.myImage,
+            ),
+          ),
         ),
       ),
       title: Column(

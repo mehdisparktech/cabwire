@@ -129,10 +129,45 @@ class PassengerDropLocationPresenter
       );
     }
 
+    // Dispose controllers to prevent memory leaks
+    currentUiState.dispose();
+
     // Close HTTP client
     _httpClient.close();
 
     super.onClose();
+  }
+
+  /// Reset all data to initial state and clean controllers
+  void resetToInitialState() {
+    // Cancel any ongoing operations
+    _debounceTimer?.cancel();
+    _isSearching = false;
+
+    // Remove listeners temporarily
+    if (_fromListener != null) {
+      currentUiState.fromController.removeListener(_fromListener!);
+    }
+    if (_destinationListener != null) {
+      currentUiState.destinationController.removeListener(
+        _destinationListener!,
+      );
+    }
+
+    // Dispose old controllers to prevent memory leaks
+    currentUiState.dispose();
+
+    // Reset state to initial values with new controllers
+    uiState.value = PassengerDropLocationUiState.empty();
+
+    // Re-setup listeners with new controllers from the empty state
+    _setupFromListener();
+    _setupDestinationListener();
+
+    // Clear map controller reference
+    _mapController = null;
+
+    debugPrint('PassengerDropLocationPresenter: State reset to initial values');
   }
 
   void _setupFromListener() {
@@ -715,13 +750,159 @@ class PassengerDropLocationPresenter
       return;
     }
 
-    // Locations should already be validated in navigateToCarTypeSelection,
-    // but adding an extra check here for safety
-    if (currentUiState.serviceType == ServiceType.packageDelivery) {
-      navigateToPackageDelivery(context);
+    // Store current data before reset (needed for navigation)
+    final serviceType = currentUiState.serviceType;
+    final serviceId = currentUiState.serviceId;
+    final pickupLocation = currentUiState.selectedPickupLocation!;
+    final pickupAddress = currentUiState.pickupAddress!;
+    final dropoffLocation = currentUiState.destinationLocation!;
+    final dropoffAddress = currentUiState.destinationAddress!;
+    //final rideResponse = currentUiState.rideResponse;
+
+    // Reset state to initial values before navigation
+    resetToInitialState();
+
+    // Navigate based on service type
+    if (serviceType == ServiceType.packageDelivery) {
+      // For package delivery, we need to recreate the API call since we reset the state
+      _navigateToPackageDeliveryWithData(
+        context,
+        pickupLocation,
+        pickupAddress,
+        dropoffLocation,
+        dropoffAddress,
+      );
     } else {
-      navigateToCarTypeSelection(context, nextScreen);
+      _navigateToCarTypeSelectionWithData(
+        context,
+        serviceType,
+        serviceId!,
+        pickupLocation,
+        pickupAddress,
+        dropoffLocation,
+        dropoffAddress,
+        nextScreen,
+      );
     }
+  }
+
+  /// Navigate to car type selection with stored data after reset
+  void _navigateToCarTypeSelectionWithData(
+    BuildContext context,
+    ServiceType serviceType,
+    String serviceId,
+    LatLng pickupLocation,
+    String pickupAddress,
+    LatLng dropoffLocation,
+    String dropoffAddress,
+    Widget? nextScreen,
+  ) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (context) => switch (serviceType) {
+              ServiceType.cabwireShare => RideShareCarTypeScreen(),
+              ServiceType.carBooking => ChooseCarTypeScreen(
+                serviceId: serviceId,
+                pickupLocation: pickupLocation,
+                pickupAddress: pickupAddress,
+                dropoffLocation: dropoffLocation,
+                dropoffAddress: dropoffAddress,
+              ),
+              // ServiceType.rentalCar => throw UnimplementedError(),
+              // ServiceType.emergencyCar => throw UnimplementedError(),
+              ServiceType.none => ChooseCarTypeScreen(
+                serviceId: serviceId,
+                pickupLocation: pickupLocation,
+                pickupAddress: pickupAddress,
+                dropoffLocation: dropoffLocation,
+                dropoffAddress: dropoffAddress,
+              ),
+              _ => ChooseCarTypeScreen(
+                serviceId: serviceId,
+                pickupLocation: pickupLocation,
+                pickupAddress: pickupAddress,
+                dropoffLocation: dropoffLocation,
+                dropoffAddress: dropoffAddress,
+              ),
+            },
+      ),
+    );
+  }
+
+  /// Navigate to package delivery with stored data after reset
+  Future<void> _navigateToPackageDeliveryWithData(
+    BuildContext context,
+    LatLng pickupLocation,
+    String pickupAddress,
+    LatLng dropoffLocation,
+    String dropoffAddress,
+  ) async {
+    final apiService = locate<ApiService>();
+    final body = {
+      'pickupLocation': {
+        'lat': pickupLocation.latitude,
+        'lng': pickupLocation.longitude,
+        'address': pickupAddress,
+      },
+      'dropoffLocation': {
+        'lat': dropoffLocation.latitude,
+        'lng': dropoffLocation.longitude,
+        'address': dropoffAddress,
+      },
+      'paymentMethod': 'stripe',
+    };
+
+    final response = await apiService.post(
+      ApiEndPoint.createPackage,
+      header: {'Authorization': 'Bearer ${LocalStorage.token}'},
+      body: body,
+    );
+
+    response.fold(
+      (error) {
+        showMessage(message: error.message);
+      },
+      (data) {
+        try {
+          final packageData = data.data['data'];
+          final wrappedData = {
+            'success': true,
+            'message': 'Package created successfully',
+            'data': {
+              'userId': packageData['userId'],
+              'service': 'packageDelivery',
+              'category': 'package',
+              'pickupLocation': packageData['pickupLocation'],
+              'dropoffLocation': packageData['dropoffLocation'],
+              'distance': packageData['distance'],
+              'duration': 0,
+              'fare': packageData['fare'],
+              'rideStatus': packageData['packageStatus'] ?? 'requested',
+              'paymentMethod': packageData['paymentMethod'],
+              'paymentStatus': packageData['paymentStatus'],
+              'rideType': 'package',
+              '_id': packageData['_id'],
+              'createdAt': packageData['createdAt'],
+              'updatedAt': packageData['updatedAt'],
+            },
+          };
+
+          final rideResponse = RideResponseModel.fromJson(wrappedData);
+          showMessage(message: 'Package created successfully');
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) => FindingRidesScreen(rideResponse: rideResponse),
+            ),
+          );
+        } catch (e) {
+          appLog('Error parsing ride response: $e');
+          showMessage(message: 'Error processing ride data');
+        }
+      },
+    );
   }
 
   // Method to fit map bounds to show both markers

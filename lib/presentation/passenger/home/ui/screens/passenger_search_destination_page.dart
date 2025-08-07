@@ -33,6 +33,8 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
+        // Reset state to initial values before popping
+        presenter.resetToInitialState();
         // Clean up resources before popping
         presenter.onClose();
         // Properly remove the presenter instance from service locator
@@ -387,6 +389,9 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
       centerTitle: true,
       leading: IconButton(
         onPressed: () {
+          final presenter = locate<PassengerDropLocationPresenter>();
+          // Reset state before popping
+          presenter.resetToInitialState();
           Navigator.of(context).pop();
         },
         icon: Container(

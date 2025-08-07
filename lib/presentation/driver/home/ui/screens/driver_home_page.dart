@@ -48,14 +48,13 @@ class DriverHomePage extends StatelessWidget {
       leading: Padding(
         padding: EdgeInsets.all(4.px),
         child: CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.grey,
+          backgroundColor: Colors.white,
           child: ClipOval(
             child: CommonImage(
               imageSrc: ApiEndPoint.imageUrl + LocalStorage.myImage,
               imageType: ImageType.network,
-              width: 60,
-              height: 60,
+              width: 40,
+              height: 40,
               fill: BoxFit.cover,
             ),
           ),

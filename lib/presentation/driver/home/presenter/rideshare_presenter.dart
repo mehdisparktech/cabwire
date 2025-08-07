@@ -28,7 +28,7 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
   static const double _defaultRideSpeedKmh = 30.0;
   static const double _earthRadiusMeters = 6371000;
   static const Duration _reconnectInterval = Duration(seconds: 5);
-  static const Duration _timeUpdateInterval = Duration(seconds: 30);
+  static const Duration _timeUpdateInterval = Duration(seconds: 10);
   static const Duration _socketSetupDelay = Duration(milliseconds: 500);
 
   // Services
@@ -88,10 +88,18 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
     if (rideProgress) {
       uiState.value = currentUiState.copyWith(
         isRideProcessing: true,
-        isRideStart: true,
+        isRideStart: true, // Set to false to match passenger logic
       );
-      // Update estimated time for the destination when ride is in progress
-      _updateEstimatedTimeRemaining();
+
+      // Send current driver location immediately to ensure passenger has latest location
+      if (currentUiState.currentUserLocation != null) {
+        _sendDriverLocationUpdate(currentUiState.currentUserLocation!);
+      }
+
+      // Wait a moment for location to be sent, then calculate time
+      Future.delayed(Duration(milliseconds: 200), () {
+        _updateEstimatedTimeRemaining();
+      });
     }
   }
 
@@ -143,9 +151,49 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
       isRideStart: false,
     );
 
-    Get.off(
-      () => DriverTripCloseOtpPage(rideId: currentUiState.rideRequest!.rideId),
+    // Store rideId before navigating
+    final rideId = currentUiState.rideRequest!.rideId;
+
+    // Reset UI state to initial state
+    _resetUIState();
+
+    Get.off(() => DriverTripCloseOtpPage(rideId: rideId));
+  }
+
+  // Reset UI state to initial when closing a trip
+  void _resetUIState() {
+    // Cancel all timers and subscriptions
+    _cleanup();
+
+    // Reset to initial state but keep custom icons and current location
+    final currentLocation = currentUiState.currentUserLocation;
+    final sourceIcon = currentUiState.sourceIcon;
+    final destinationIcon = currentUiState.destinationIcon;
+    final driverIcon = currentUiState.driverIcon;
+    final userLocationIcon = currentUiState.userLocationIcon;
+
+    // Set UI state back to initial state
+    uiState.value = RideshareUiState.initial().copyWith(
+      sourceIcon: sourceIcon,
+      destinationIcon: destinationIcon,
+      driverIcon: driverIcon,
+      userLocationIcon: userLocationIcon,
+      currentUserLocation: currentLocation,
+      driverLocation: currentLocation,
+      isRideStart: false,
+      isRideProcessing: false,
+      isRideEnd: false,
     );
+
+    // Restart necessary components for next trip
+    _startLocationUpdates();
+    _startTimeUpdates();
+    _startReconnectMonitor();
+  }
+
+  /// Public method to reset UI state that can be called from outside
+  void resetUIState() {
+    _resetUIState();
   }
 
   void navigateToChat() {
@@ -326,27 +374,33 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
   }
 
   double _getSpeed(double defaultSpeedKmh) {
+    final minSpeedMps =
+        2.0; // Minimum 2 m/s (7.2 km/h) to avoid unrealistic calculations
+
     if (currentUiState.currentSpeed != null &&
-        currentUiState.currentSpeed! > 0) {
+        currentUiState.currentSpeed! > minSpeedMps) {
       appLog(
-        "Using real-time speed: ${currentUiState.currentSpeed!.toStringAsFixed(2)} m/s",
+        "[DRIVER] Using real-time speed: ${currentUiState.currentSpeed!.toStringAsFixed(2)} m/s",
       );
       return currentUiState.currentSpeed!;
     }
     final speedMps = defaultSpeedKmh / 3.6;
-    appLog("Using default speed: ${speedMps.toStringAsFixed(2)} m/s");
+    appLog(
+      "[DRIVER] Using default speed: ${speedMps.toStringAsFixed(2)} m/s ($defaultSpeedKmh km/h)",
+    );
     return speedMps;
   }
 
   Duration _calculateEstimatedTime(double distanceMeters, double speedMps) {
     final seconds = (distanceMeters / speedMps).round();
     appLog(
-      "Distance: ${distanceMeters.toStringAsFixed(0)}m, Time: ${(seconds / 60).ceil()} minutes",
+      "Distance: ============= ******* ${distanceMeters.toStringAsFixed(0)}m, Time: ${(seconds / 60).ceil()} minutes",
     );
     return Duration(seconds: seconds);
   }
 
   Duration _calculateInitialEstimatedTime(LatLng pickup, LatLng dropoff) {
+    appLog("Location*****++++++++  $pickup  and  =========*****  $dropoff");
     final distance = _calculateDistance(pickup, dropoff);
     const averageSpeedMps = 8.33; // 30 km/h
     return _calculateEstimatedTime(distance, averageSpeedMps);
@@ -405,6 +459,17 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
       ),
     };
 
+    // if (currentUiState.driverLocation != null) {
+    //   markers.add(
+    //     _createMarker(
+    //       id: 'driver',
+    //       position: currentUiState.driverLocation!,
+    //       icon: currentUiState.driverIcon,
+    //       title: 'Driver Location',
+    //     ),
+    //   );
+    // }
+
     if (currentUiState.driverLocation != null) {
       markers.add(
         Marker(
@@ -414,7 +479,7 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
           flat: true,
           anchor: const Offset(0.5, 0.5),
           rotation: currentUiState.userHeading,
-          infoWindow: const InfoWindow(title: 'Your Location'),
+          infoWindow: const InfoWindow(title: 'Driver Location'),
         ),
       );
     }
@@ -594,7 +659,8 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
       'lat': location.latitude,
       'lng': location.longitude,
       'rideId': currentUiState.rideRequest!.rideId,
-      'driverId': currentUiState.rideRequest!.userId,
+      'passengerId':
+          currentUiState.rideRequest!.userId, // This is the passenger ID
     };
 
     _socketService.emit('driverLocationUpdate', locationData);
