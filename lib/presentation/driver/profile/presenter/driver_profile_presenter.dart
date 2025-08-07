@@ -56,6 +56,8 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       TextEditingController(); // Date of Birth
   final TextEditingController editGenderController = TextEditingController();
   File? selectedProfileImageFile; // For new profile image
+  File? selectedLicenseImageFile; // For new license image
+  File? selectedVehicleImageFile; // For new vehicle image
 
   // Edit Password
   final TextEditingController oldPasswordController = TextEditingController();
@@ -288,6 +290,24 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       uiState.value = currentUiState.copyWith(
         userMessage: uiState.value.userMessage,
       );
+    }
+  }
+
+  Future<void> pickLicenseImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      selectedLicenseImageFile = File(image.path);
+      addUserMessage("Image selected. Press Save to upload.");
+    }
+  }
+
+  Future<void> pickVehicleImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      selectedVehicleImageFile = File(image.path);
+      addUserMessage("Image selected. Press Save to upload.");
     }
   }
 

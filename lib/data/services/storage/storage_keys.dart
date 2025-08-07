@@ -10,4 +10,6 @@ class LocalStorageKeys {
   static const String myContact = "myContact";
   static const String userType = "userType";
   static const String theme = "theme";
+  static const String licenseImage = "licenseImage";
+  static const String vehicleImage = "vehicleImage";
 }

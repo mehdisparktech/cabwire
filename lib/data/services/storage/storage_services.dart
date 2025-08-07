@@ -21,6 +21,8 @@ class LocalStorage {
   static String myContact = "";
   static String userType = "";
   static ThemeData theme = AppTheme.lightTheme;
+  static String licenseImage = "";
+  static String vehicleImage = "";
   // Create Local Storage Instance
   static SharedPreferences? preferences;
 
@@ -179,6 +181,8 @@ class LocalStorage {
     localStorage.setString(LocalStorageKeys.myContact, "");
     localStorage.setBool(LocalStorageKeys.isLogIn, false);
     localStorage.setString(LocalStorageKeys.theme, "light");
+    localStorage.setString(LocalStorageKeys.licenseImage, "");
+    localStorage.setString(LocalStorageKeys.vehicleImage, "");
   }
 
   // Save Data To SharedPreferences
@@ -225,13 +229,23 @@ class LocalStorage {
       await localStorage.setString(LocalStorageKeys.myContact, myContact);
     }
 
+    if (profile.driverLicense?.uploadDriversLicense != null) {
+      licenseImage = profile.driverLicense!.uploadDriversLicense!;
+      await localStorage.setString(LocalStorageKeys.licenseImage, licenseImage);
+    }
+
+    if (profile.driverVehicles?.vehiclesPicture != null) {
+      vehicleImage = profile.driverVehicles!.vehiclesPicture!;
+      await localStorage.setString(LocalStorageKeys.vehicleImage, vehicleImage);
+    }
+
     // Log the saved profile for debugging
     appLog(
-      "Driver profile saved: ${profile.name}, ${profile.email}, ${profile.contact},${profile.image}",
+      "Driver profile saved: ${profile.name}, ${profile.email}, ${profile.contact},${profile.image} ${profile.driverLicense?.uploadDriversLicense} ${profile.driverVehicles?.vehiclesPicture}",
       source: "Local Storage",
     );
     appLog(
-      "Driver Local Storage profile saved: ${LocalStorage.myName}, ${LocalStorage.myEmail}, ${LocalStorage.myContact},${LocalStorage.myImage}",
+      "Driver Local Storage profile saved: ${LocalStorage.myName}, ${LocalStorage.myEmail}, ${LocalStorage.myContact},${LocalStorage.myImage} ${LocalStorage.licenseImage} ${LocalStorage.vehicleImage}",
       source: "Local Storage",
     );
   }
