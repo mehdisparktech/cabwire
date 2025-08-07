@@ -162,6 +162,7 @@ class PassengerEditProfileInfoScreen extends StatelessWidget {
                     text: 'Save Changes',
                     onPressed: presenter.saveProfileInfo,
                     radius: 10,
+                    isLoading: uiState.isLoading,
                   ),
                 ),
               ],

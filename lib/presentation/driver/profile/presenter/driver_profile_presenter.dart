@@ -105,8 +105,11 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     this._updateProfileUsecase,
     this._updateProfilePhotoUsecase,
   ) {
-    loadDriverProfile();
-    _loadInitialData();
+    // Make sure we have the latest data from SharedPreferences
+    LocalStorage.getAllPrefData().then((_) {
+      loadDriverProfile();
+      _loadInitialData();
+    });
     getTermsAndConditions();
     getPrivacyPolicy();
   }
@@ -120,10 +123,20 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     try {
       final DriverProfileModel? profile = await LocalStorage.getDriverProfile();
       if (profile != null) {
+        // Log the email values for debugging
+        appLog(
+          "Profile email: ${profile.email}, LocalStorage email: ${LocalStorage.myEmail}",
+          source: "DriverProfilePresenter",
+        );
+
         uiState.value = currentUiState.copyWith(
           userProfile: UserProfileData(
             name: profile.name ?? '',
-            email: profile.email ?? '',
+            // Use LocalStorage.myEmail if profile.email is empty or null
+            email:
+                (profile.email != null && profile.email!.isNotEmpty)
+                    ? profile.email!
+                    : LocalStorage.myEmail,
             phoneNumber: profile.contact ?? '01823450011',
             avatarUrl:
                 profile.image != null
@@ -177,10 +190,18 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
 
   void _populateEditProfileControllers(UserProfileData profile) {
     editNameController.text = profile.name;
-    editEmailController.text = profile.email;
+    // Use LocalStorage.myEmail directly if profile.email is empty
+    editEmailController.text =
+        profile.email.isNotEmpty ? profile.email : LocalStorage.myEmail;
     editPhoneNumberController.text = profile.phoneNumber;
     editDobController.text = profile.dateOfBirth ?? '';
     editGenderController.text = profile.gender ?? '';
+
+    // Debug log to verify email value
+    appLog(
+      "Populating email controller with: ${editEmailController.text}",
+      source: "DriverProfilePresenter",
+    );
   }
 
   void _populateEditDrivingControllers(DrivingInfoData info) {
@@ -209,9 +230,20 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
 
   // --- Navigation Methods ---
   void navigateToEditProfile() {
-    _populateEditProfileControllers(
-      currentUiState.userProfile,
-    ); // Ensure controllers have latest data
+    // First ensure we have the latest data
+    appLog(
+      "Navigate to edit profile with email: ${currentUiState.userProfile.email}, LocalStorage email: ${LocalStorage.myEmail}",
+      source: "DriverProfilePresenter",
+    );
+
+    // Populate controllers
+    _populateEditProfileControllers(currentUiState.userProfile);
+
+    // Double check email is populated properly
+    if (editEmailController.text.isEmpty) {
+      editEmailController.text = LocalStorage.myEmail;
+    }
+
     selectedProfileImageFile = null; // Reset selected image
     Get.to(() => EditProfileInfoScreen());
   }
@@ -335,20 +367,21 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
         selectedProfileImageFile!.path,
       );
 
-      final imageUploadSuccess = imageResult.fold(
+      imageResult.fold(
         (error) {
           addUserMessage(error, isError: true);
           return false;
         },
-        (success) {
+        (success) async {
+          toggleLoading(loading: false);
+          // Reload driver profile to get updated data from server
+          await loadDriverProfile();
+
+          // Refresh LocalStorage static variables
+          await LocalStorage.getAllPrefData();
           return true;
         },
       );
-
-      if (!imageUploadSuccess) {
-        toggleLoading(loading: false);
-        return;
-      }
     }
 
     // Update profile information

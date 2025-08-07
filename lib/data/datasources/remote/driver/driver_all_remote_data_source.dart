@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cabwire/core/base/result.dart';
 import 'package:cabwire/core/config/api/api_end_point.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/data/models/update_status_request_model.dart';
 import 'package:cabwire/data/services/api/api_service_impl.dart';
@@ -62,12 +63,82 @@ class DriverAllRemoteDataSourceImpl implements DriverAllRemoteDataSource {
             ApiEndPoint.updateProfileByEmail + email,
             body: formData,
           );
+          appLog("++++++++++++++++++    $result    ++++++++++++++++++++");
           if (result.isRight()) {
-            LocalStorage.saveDriverProfile(
-              DriverProfileModel.fromJson(
-                result.fold((l) => {}, (r) => {'image': r.data['image']}),
-              ),
+            // Extract the data from successful API response - the actual profile is in the 'data' field
+            final apiResponse = result.fold((l) => {}, (r) => r.data);
+
+            appLog(
+              "Raw API response: $apiResponse",
+              source: "updateProfilePhoto",
             );
+
+            // In the API response, the actual profile data is in the 'data' field
+            final profileData =
+                apiResponse is Map<String, dynamic>
+                    ? apiResponse['data']
+                    : null;
+
+            if (profileData is Map<String, dynamic>) {
+              // Found the profile data, directly update the image in LocalStorage first for immediate effect
+              if (profileData.containsKey('image')) {
+                final imagePath = profileData['image'];
+                appLog(
+                  "📸 Image path from API: $imagePath",
+                  source: "updateProfilePhoto",
+                );
+
+                // CRITICAL STEP: Update both LocalStorage variables and SharedPreferences directly
+                LocalStorage.myImage = imagePath;
+                await LocalStorage.setString('myImage', imagePath);
+
+                // Verify immediate update
+                final verifyPath = await LocalStorage.preferences?.getString(
+                  'myImage',
+                );
+                appLog(
+                  "📸 Immediate verification - myImage: $verifyPath",
+                  source: "updateProfilePhoto",
+                );
+              } else {
+                appLog(
+                  "⚠️ No image field found in profileData!",
+                  source: "updateProfilePhoto",
+                );
+              }
+
+              // Create and save the complete profile model
+              final updatedProfile = DriverProfileModel.fromJson(profileData);
+              appLog(
+                "📸 Creating driver model with image: ${updatedProfile.image}",
+                source: "updateProfilePhoto",
+              );
+
+              // Force clear old profile data first
+              await LocalStorage.removeDriverProfile();
+
+              // Force update the local storage with complete profile
+              await LocalStorage.saveDriverProfile(updatedProfile);
+
+              // Triple-check that image was saved correctly
+              final finalCheck = LocalStorage.preferences?.getString('myImage');
+              appLog(
+                "📸 Final image verification - Static: ${LocalStorage.myImage}, Prefs: $finalCheck",
+                source: "updateProfilePhoto",
+              );
+
+              // Make one final direct set to be absolutely sure
+              if (profileData['image'] != null) {
+                LocalStorage.myImage = profileData['image'];
+                await LocalStorage.setString('myImage', profileData['image']);
+              }
+            } else {
+              // Couldn't find profile data in response, log the error
+              appLog(
+                "ERROR: Couldn't extract profile data from response",
+                source: "updateProfilePhoto",
+              );
+            }
             return right(null);
           }
 

@@ -88,7 +88,7 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
           name: name ?? currentProfile.name,
           role: currentProfile.role,
           email: currentProfile.email,
-          image: profileImage ?? currentProfile.image,
+          //image: profileImage ?? currentProfile.image,
           status: currentProfile.status,
           verified: currentProfile.verified,
           isOnline: currentProfile.isOnline,

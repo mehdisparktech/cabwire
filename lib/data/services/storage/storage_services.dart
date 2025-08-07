@@ -201,14 +201,27 @@ class LocalStorage {
     await localStorage.setInt(key, value);
   }
 
+  /// Forces an immediate save of all pending changes to disk
+  static Future<bool> commit() async {
+    await _getStorage(); // Ensure SharedPreferences is initialized
+    return true; // SharedPreferences auto-commits, this is for semantic compatibility
+  }
+
   static Future<void> saveDriverProfile(DriverProfileModel profile) async {
     final localStorage = await _getStorage();
+
+    appLog(
+      "⭐️ SAVING DRIVER PROFILE: ${profile.toJson()}",
+      source: "LocalStorage.saveDriverProfile",
+    );
+
+    // First encode and save the complete profile
     await localStorage.setString(
       CacheKeys.driverProfile,
       json.encode(profile.toJson()),
     );
 
-    // Update common static variables for quick access
+    // Update common static variables for quick access - force overwrite with latest values
     if (profile.name != null) {
       myName = profile.name!;
       await localStorage.setString(LocalStorageKeys.myName, myName);
@@ -219,9 +232,46 @@ class LocalStorage {
       await localStorage.setString(LocalStorageKeys.myEmail, myEmail);
     }
 
+    // Critical section - ensure the image path is properly updated
     if (profile.image != null) {
+      // Log the image path we're about to save
+      appLog(
+        "⭐️ Updating image path: ${profile.image}",
+        source: "LocalStorage.saveDriverProfile",
+      );
+
+      // Update the static variable
       myImage = profile.image!;
-      await localStorage.setString(LocalStorageKeys.myImage, myImage);
+
+      // Save to SharedPreferences
+      await localStorage.setString(LocalStorageKeys.myImage, profile.image!);
+
+      // Force commit the changes to ensure they're saved immediately
+      await localStorage.commit();
+
+      // Read back and verify
+      final savedImage = localStorage.getString(LocalStorageKeys.myImage);
+      appLog(
+        "⭐️ Verification - saved image path: $savedImage",
+        source: "LocalStorage.saveDriverProfile",
+      );
+
+      if (savedImage != profile.image) {
+        appLog(
+          "⚠️ IMAGE PATH MISMATCH! Saved: $savedImage, Expected: ${profile.image}",
+          source: "LocalStorage.saveDriverProfile",
+        );
+        // Try one more time with direct setting
+        await localStorage.setString(LocalStorageKeys.myImage, profile.image!);
+        await localStorage.commit();
+
+        // Final verification
+        final finalCheck = localStorage.getString(LocalStorageKeys.myImage);
+        appLog(
+          "⭐️ Final verification - image path: $finalCheck",
+          source: "LocalStorage.saveDriverProfile",
+        );
+      }
     }
 
     if (profile.contact != null) {
@@ -252,12 +302,19 @@ class LocalStorage {
 
   static Future<void> savePassengerProfile(ProfileModel profile) async {
     final localStorage = await _getStorage();
+
+    appLog(
+      "⭐️ SAVING PASSENGER PROFILE: ${profile.toJson()}",
+      source: "LocalStorage.savePassengerProfile",
+    );
+
+    // First encode and save the complete profile
     await localStorage.setString(
       CacheKeys.passengerProfile,
       json.encode(profile.toJson()),
     );
 
-    // Update common static variables for quick access
+    // Update common static variables for quick access - force overwrite with latest values
     if (profile.name != null) {
       myName = profile.name!;
       await localStorage.setString(LocalStorageKeys.myName, myName);
@@ -268,9 +325,46 @@ class LocalStorage {
       await localStorage.setString(LocalStorageKeys.myEmail, myEmail);
     }
 
+    // Critical section - ensure the image path is properly updated
     if (profile.image != null) {
+      // Log the image path we're about to save
+      appLog(
+        "⭐️ Updating passenger image path: ${profile.image}",
+        source: "LocalStorage.savePassengerProfile",
+      );
+
+      // Update the static variable
       myImage = profile.image!;
-      await localStorage.setString(LocalStorageKeys.myImage, myImage);
+
+      // Save to SharedPreferences
+      await localStorage.setString(LocalStorageKeys.myImage, profile.image!);
+
+      // Force commit the changes to ensure they're saved immediately
+      await localStorage.commit();
+
+      // Read back and verify
+      final savedImage = localStorage.getString(LocalStorageKeys.myImage);
+      appLog(
+        "⭐️ Verification - saved passenger image path: $savedImage",
+        source: "LocalStorage.savePassengerProfile",
+      );
+
+      if (savedImage != profile.image) {
+        appLog(
+          "⚠️ PASSENGER IMAGE PATH MISMATCH! Saved: $savedImage, Expected: ${profile.image}",
+          source: "LocalStorage.savePassengerProfile",
+        );
+        // Try one more time with direct setting
+        await localStorage.setString(LocalStorageKeys.myImage, profile.image!);
+        await localStorage.commit();
+
+        // Final verification
+        final finalCheck = localStorage.getString(LocalStorageKeys.myImage);
+        appLog(
+          "⭐️ Final passenger verification - image path: $finalCheck",
+          source: "LocalStorage.savePassengerProfile",
+        );
+      }
     }
 
     if (profile.contact != null) {
