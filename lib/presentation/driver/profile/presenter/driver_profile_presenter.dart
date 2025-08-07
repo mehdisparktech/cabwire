@@ -111,6 +111,11 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     getPrivacyPolicy();
   }
 
+  // Method to refresh profile data when screen is focused
+  Future<void> refreshProfileData() async {
+    await loadDriverProfile();
+  }
+
   Future<void> loadDriverProfile() async {
     try {
       final DriverProfileModel? profile = await LocalStorage.getDriverProfile();
@@ -120,7 +125,10 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
             name: profile.name ?? '',
             email: profile.email ?? '',
             phoneNumber: profile.contact ?? '01823450011',
-            avatarUrl: ApiEndPoint.imageUrl + LocalStorage.myImage,
+            avatarUrl:
+                profile.image != null
+                    ? ApiEndPoint.imageUrl + profile.image!
+                    : ApiEndPoint.imageUrl + LocalStorage.myImage,
             dateOfBirth: profile.dateOfBirth ?? '1994-11-15',
             gender: profile.gender ?? 'Male',
           ),
@@ -319,27 +327,31 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       toggleLoading(loading: false);
       return;
     }
+
+    // Handle image upload first if there's a selected image
     if (selectedProfileImageFile != null) {
-      final result = await _updateProfilePhotoUsecase.execute(
+      final imageResult = await _updateProfilePhotoUsecase.execute(
         LocalStorage.myEmail,
         selectedProfileImageFile!.path,
       );
-      result.fold(
+
+      final imageUploadSuccess = imageResult.fold(
         (error) {
-          toggleLoading(loading: false);
           addUserMessage(error, isError: true);
-          return;
+          return false;
         },
         (success) {
-          toggleLoading(loading: false);
-          addUserMessage("Profile updated successfully!");
-          showMessage(message: 'Profile updated successfully!');
-          Get.back();
+          return true;
         },
       );
+
+      if (!imageUploadSuccess) {
+        toggleLoading(loading: false);
+        return;
+      }
     }
 
-    // Simulate API call to update profile
+    // Update profile information
     final result = await _updateProfileUsecase.execute(
       editNameController.text,
       editPhoneNumberController.text,
@@ -351,27 +363,42 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
         addUserMessage(error, isError: true);
         return;
       },
-      (success) {
-        toggleLoading(loading: false);
-        addUserMessage(success);
+      (success) async {
+        // Add a small delay to ensure server has processed the image
+        if (selectedProfileImageFile != null) {
+          await Future.delayed(const Duration(seconds: 1));
+        }
+
+        // Reload driver profile to get updated data from server
+        await loadDriverProfile();
+
+        // Refresh LocalStorage static variables
+        await LocalStorage.getAllPrefData();
+
+        // Update UI state with new profile data
+        final updatedProfile = currentUiState.userProfile.copyWith(
+          name: editNameController.text,
+          email: editEmailController.text,
+          phoneNumber: editPhoneNumberController.text,
+          dateOfBirth: editDobController.text,
+          gender: editGenderController.text,
+          avatarUrl:
+              ApiEndPoint.imageUrl + LocalStorage.myImage, // Updated image URL
+        );
+
+        uiState.value = currentUiState.copyWith(
+          userProfile: updatedProfile,
+          isLoading: false,
+        );
+
+        // Reset selected image file
+        selectedProfileImageFile = null;
+
+        addUserMessage("Profile updated successfully!");
+        showMessage(message: 'Profile updated successfully!');
+        Get.back(); // Go back from edit screen
       },
     );
-    // On success, update the main userProfile state
-    final updatedProfile = currentUiState.userProfile.copyWith(
-      name: editNameController.text,
-      email: editEmailController.text,
-      phoneNumber: editPhoneNumberController.text,
-      dateOfBirth: editDobController.text,
-      gender: editGenderController.text,
-      // avatarUrl: newImageUrlFromServerIfUploaded, // Update if image was uploaded
-    );
-    uiState.value = currentUiState.copyWith(
-      userProfile: updatedProfile,
-      isLoading: false,
-    );
-    addUserMessage("Profile updated successfully!");
-    showMessage(message: 'Profile updated successfully!');
-    Get.back(); // Go back from edit screen
   }
 
   Future<void> savePassword() async {

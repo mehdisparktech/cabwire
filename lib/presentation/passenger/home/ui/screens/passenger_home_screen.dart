@@ -19,12 +19,39 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class PassengerHomeScreen extends StatelessWidget {
-  PassengerHomeScreen({super.key});
+class PassengerHomeScreen extends StatefulWidget {
+  const PassengerHomeScreen({super.key});
+
+  @override
+  State<PassengerHomeScreen> createState() => _PassengerHomeScreenState();
+}
+
+class _PassengerHomeScreenState extends State<PassengerHomeScreen>
+    with AutomaticKeepAliveClientMixin {
   final PassengerHomePresenter presenter = locate<PassengerHomePresenter>();
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Refresh profile data when screen is loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      presenter.refreshUserProfile();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh profile data when screen becomes visible
+    presenter.refreshUserProfile();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return PresentableWidgetBuilder(
       presenter: presenter,
       builder: () {
@@ -83,7 +110,11 @@ class PassengerHomeScreen extends StatelessWidget {
               height: 40.px,
               width: 40.px,
               imageType: ImageType.network,
-              imageSrc: ApiEndPoint.imageUrl + LocalStorage.myImage,
+              imageSrc:
+                  presenter.currentUiState.userProfile?.avatarUrl.isNotEmpty ==
+                          true
+                      ? presenter.currentUiState.userProfile!.avatarUrl
+                      : ApiEndPoint.imageUrl + LocalStorage.myImage,
             ),
           ),
         ),

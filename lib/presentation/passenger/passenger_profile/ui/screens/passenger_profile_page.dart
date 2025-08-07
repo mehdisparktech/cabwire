@@ -14,11 +14,32 @@ import 'package:cabwire/presentation/passenger/passenger_profile/presenter/passe
 import 'package:flutter/material.dart';
 // import 'package:get/get.dart'; // Navigation handled by presenter
 
-class PassengerProfileScreen extends StatelessWidget {
+class PassengerProfileScreen extends StatefulWidget {
+  const PassengerProfileScreen({super.key});
+
+  @override
+  State<PassengerProfileScreen> createState() => _PassengerProfileScreenState();
+}
+
+class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
   final PassengerProfilePresenter presenter =
       locate<PassengerProfilePresenter>();
 
-  PassengerProfileScreen({super.key});
+  @override
+  void initState() {
+    super.initState();
+    // Refresh profile data when screen is loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      presenter.refreshProfileData();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh profile data when screen becomes visible
+    presenter.refreshProfileData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +101,10 @@ class PassengerProfileScreen extends StatelessWidget {
                             width: 120.px, // Adjusted size
                             imageType: ImageType.network,
                             imageSrc:
-                                ApiEndPoint.imageUrl + LocalStorage.myImage,
+                                profile.avatarUrl.isNotEmpty
+                                    ? profile.avatarUrl
+                                    : ApiEndPoint.imageUrl +
+                                        LocalStorage.myImage,
                           ),
                         ),
                       ),

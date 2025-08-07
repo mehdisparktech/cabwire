@@ -64,8 +64,13 @@ class EditProfileInfoScreen extends StatelessWidget {
                                             presenter.selectedProfileImageFile!,
                                           )
                                           : NetworkImage(
-                                            ApiEndPoint.imageUrl +
-                                                LocalStorage.myImage,
+                                            uiState
+                                                    .userProfile
+                                                    .avatarUrl
+                                                    .isNotEmpty
+                                                ? uiState.userProfile.avatarUrl
+                                                : ApiEndPoint.imageUrl +
+                                                    LocalStorage.myImage,
                                           ),
                                 ),
                               ),
@@ -155,6 +160,7 @@ class EditProfileInfoScreen extends StatelessWidget {
                     text: 'Save Changes',
                     onPressed: presenter.saveProfileInfo,
                     radius: 10,
+                    isLoading: uiState.isLoading,
                   ),
                 ),
               ],

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cabwire/core/base/base_presenter.dart';
+import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/config/app_assets.dart'; // For default assets
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/utility.dart';
@@ -82,6 +83,11 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
     getTermsAndConditions();
     getPrivacyPolicy();
     getPassengerProfile();
+  }
+
+  // Method to refresh profile data when screen is focused
+  Future<void> refreshProfileData() async {
+    await getPassengerProfile();
   }
 
   Future<void> _loadInitialData() async {
@@ -220,31 +226,36 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
       return;
     }
 
+    // Handle image upload first if there's a selected image
     if (selectedProfileImageFile != null) {
-      final result = await _passengerProfilePhotoUsecase.execute(
+      final imageResult = await _passengerProfilePhotoUsecase.execute(
         LocalStorage.myEmail,
         selectedProfileImageFile!.path,
       );
-      result.fold(
+
+      final imageUploadSuccess = imageResult.fold(
         (error) {
-          toggleLoading(loading: false);
           addUserMessage(error, isError: true);
-          return;
+          return false;
         },
         (success) {
-          toggleLoading(loading: false);
-          addUserMessage("Profile updated successfully!");
-          showMessage(message: 'Profile updated successfully!');
-          Get.back();
+          return true;
         },
       );
+
+      if (!imageUploadSuccess) {
+        toggleLoading(loading: false);
+        return;
+      }
     }
 
+    // Update profile information
     final result = await _updateProfileUsecase.execute(
       editNameController.text,
       editPhoneNumberController.text,
       selectedProfileImageFile?.path,
     );
+
     result.fold(
       (error) {
         showMessage(message: error);
@@ -271,15 +282,43 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
             stripeAccountId: currentProfile.stripeAccountId,
             createdAt: currentProfile.createdAt,
             updatedAt: DateTime.now(),
+            contact: editPhoneNumberController.text,
           );
 
           // Save updated profile back to local storage
           await LocalStorage.savePassengerProfile(updatedProfile);
         }
 
+        // Add a small delay to ensure server has processed the image
+        if (selectedProfileImageFile != null) {
+          await Future.delayed(const Duration(seconds: 1));
+        }
+
+        // Refresh profile data to get latest image URL from server
+        await getPassengerProfile();
+
+        // Refresh LocalStorage static variables
+        await LocalStorage.getAllPrefData();
+
+        // Update UI state with new profile data
+        final updatedPassengerProfile = PassengerProfileData(
+          name: editNameController.text,
+          email: currentProfile?.email ?? '',
+          phoneNumber: editPhoneNumberController.text,
+          avatarUrl: ApiEndPoint.imageUrl + LocalStorage.myImage,
+          dateOfBirth: currentUiState.passengerProfile.dateOfBirth,
+          gender: currentUiState.passengerProfile.gender,
+        );
+
+        uiState.value = currentUiState.copyWith(
+          passengerProfile: updatedPassengerProfile,
+        );
+
+        // Reset selected image file
+        selectedProfileImageFile = null;
+
         showMessage(message: success);
         toggleLoading(loading: false);
-        getPassengerProfile();
         Get.back();
       },
     );
@@ -296,12 +335,20 @@ class PassengerProfilePresenter extends BasePresenter<PassengerProfileUiState> {
       },
       (success) {
         final profile = success.data;
+        // Update LocalStorage with latest profile data
+        if (profile != null) {
+          LocalStorage.savePassengerProfile(profile);
+        }
+
         uiState.value = currentUiState.copyWith(
           passengerProfile: PassengerProfileData(
             name: profile?.name ?? '',
             email: profile?.email ?? '',
             phoneNumber: profile?.contact ?? '',
-            avatarUrl: AppAssets.icProfileImage,
+            avatarUrl:
+                profile?.image != null
+                    ? ApiEndPoint.imageUrl + profile!.image!
+                    : ApiEndPoint.imageUrl + LocalStorage.myImage,
             dateOfBirth: '',
             gender: 'Male',
           ),

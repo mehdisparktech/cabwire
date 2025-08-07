@@ -65,8 +65,15 @@ class PassengerEditProfileInfoScreen extends StatelessWidget {
                                             presenter.selectedProfileImageFile!,
                                           )
                                           : NetworkImage(
-                                            ApiEndPoint.imageUrl +
-                                                LocalStorage.myImage,
+                                            uiState
+                                                    .passengerProfile
+                                                    .avatarUrl
+                                                    .isNotEmpty
+                                                ? uiState
+                                                    .passengerProfile
+                                                    .avatarUrl
+                                                : ApiEndPoint.imageUrl +
+                                                    LocalStorage.myImage,
                                           ),
                                 ),
                               ),

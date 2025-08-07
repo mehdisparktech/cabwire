@@ -13,10 +13,31 @@ import 'package:cabwire/presentation/driver/profile/ui/widgets/item.dart'; // Pr
 import 'package:flutter/material.dart';
 // import 'package:get/get.dart'; // Navigation handled by presenter
 
-class DriverProfileScreen extends StatelessWidget {
+class DriverProfileScreen extends StatefulWidget {
+  const DriverProfileScreen({super.key});
+
+  @override
+  State<DriverProfileScreen> createState() => _DriverProfileScreenState();
+}
+
+class _DriverProfileScreenState extends State<DriverProfileScreen> {
   final DriverProfilePresenter presenter = locate<DriverProfilePresenter>();
 
-  DriverProfileScreen({super.key});
+  @override
+  void initState() {
+    super.initState();
+    // Refresh profile data when screen is loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      presenter.refreshProfileData();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh profile data when screen becomes visible
+    presenter.refreshProfileData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +98,10 @@ class DriverProfileScreen extends StatelessWidget {
                             height: 120, // Adjusted size
                             width: 120, // Adjusted size
                             imageSrc:
-                                ApiEndPoint.imageUrl +
-                                LocalStorage.myImage, // Fallback
+                                profile.avatarUrl.isNotEmpty
+                                    ? profile.avatarUrl
+                                    : ApiEndPoint.imageUrl +
+                                        LocalStorage.myImage,
                             imageType: ImageType.network,
                           ),
                         ),

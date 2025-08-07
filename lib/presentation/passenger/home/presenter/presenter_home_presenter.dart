@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
-import 'package:cabwire/core/config/app_assets.dart';
+import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
@@ -47,8 +47,11 @@ class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
       userProfile: UserProfileData(
         name: profile?.name ?? '',
         email: profile?.email ?? '',
-        phoneNumber: '01625815151',
-        avatarUrl: AppAssets.icProfileImage,
+        phoneNumber: profile?.contact ?? '01625815151',
+        avatarUrl:
+            profile?.image != null
+                ? ApiEndPoint.imageUrl + profile!.image!
+                : ApiEndPoint.imageUrl + LocalStorage.myImage,
         dateOfBirth: '1990-01-01',
         gender: 'Male',
       ),

@@ -16,13 +16,35 @@ import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:intl/intl.dart';
 
-class DriverHomePage extends StatelessWidget {
+class DriverHomePage extends StatefulWidget {
+  const DriverHomePage({super.key});
+
+  @override
+  State<DriverHomePage> createState() => _DriverHomePageState();
+}
+
+class _DriverHomePageState extends State<DriverHomePage>
+    with AutomaticKeepAliveClientMixin {
   final DriverHomePresenter presenter = locate<DriverHomePresenter>();
 
-  DriverHomePage({super.key});
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Any initialization if needed
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh data when screen becomes visible
+  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return PresentableWidgetBuilder(
       presenter: presenter,
       builder: () {
