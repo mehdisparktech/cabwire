@@ -232,12 +232,22 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
   void _updateEstimatedTimeRemaining() {
     appLog("Current location: ${currentUiState.currentUserLocation}");
+    appLog("Driver location: ${currentUiState.driverLocation}");
 
     final targetInfo = _getTargetLocationInfo();
     if (targetInfo == null) return;
 
+    // Use driver location for time calculation, fallback to passenger location if driver location is not available
+    final calculationStartPoint =
+        currentUiState.driverLocation ?? currentUiState.currentUserLocation;
+    if (calculationStartPoint == null) return;
+
+    appLog("Calculation start point: $calculationStartPoint");
+    appLog("Target location: ${targetInfo.location}");
+    appLog("Ride processing: ${currentUiState.isRideProcessing}");
+
     final distanceInMeters = _calculateDistance(
-      currentUiState.currentUserLocation!,
+      calculationStartPoint,
       targetInfo.location,
     );
 
@@ -255,18 +265,19 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   }
 
   ({LatLng location, double averageSpeed})? _getTargetLocationInfo() {
-    if (currentUiState.isRideStart) {
-      return (
-        location: currentUiState.sourceMapCoordinates,
-        averageSpeed: _getSpeed(_defaultPickupSpeedKmh),
-      );
-    } else if (currentUiState.isRideProcessing) {
+    if (currentUiState.isRideProcessing) {
+      // When ride is in progress, target is the destination
       return (
         location: currentUiState.destinationMapCoordinates,
         averageSpeed: _getSpeed(_defaultRideSpeedKmh),
       );
+    } else {
+      // When going to pickup passenger or ride is ready to start
+      return (
+        location: currentUiState.sourceMapCoordinates,
+        averageSpeed: _getSpeed(_defaultPickupSpeedKmh),
+      );
     }
-    return null;
   }
 
   double _getSpeed(double defaultSpeedKmh) {

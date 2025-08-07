@@ -287,6 +287,10 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
     final targetInfo = _getTargetLocationInfo();
     if (targetInfo == null) return;
 
+    appLog("Driver location: ${currentUiState.currentUserLocation}");
+    appLog("Target location: ${targetInfo.location}");
+    appLog("Ride processing: ${currentUiState.isRideProcessing}");
+
     final distanceInMeters = _calculateDistance(
       currentUiState.currentUserLocation!,
       targetInfo.location,
@@ -312,14 +316,8 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
         location: currentUiState.destinationMapCoordinates,
         averageSpeed: _getSpeed(_defaultRideSpeedKmh),
       );
-    } else if (currentUiState.isRideStart && !currentUiState.isRideProcessing) {
-      // When ride is ready to start but not yet processing, target is pickup
-      return (
-        location: currentUiState.sourceMapCoordinates,
-        averageSpeed: _getSpeed(_defaultPickupSpeedKmh),
-      );
     } else {
-      // When going to pickup passenger
+      // When going to pickup passenger or ride is ready to start
       return (
         location: currentUiState.sourceMapCoordinates,
         averageSpeed: _getSpeed(_defaultPickupSpeedKmh),
