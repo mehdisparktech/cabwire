@@ -193,8 +193,7 @@ class SearchDestinationPresenter
         'https://maps.googleapis.com/maps/api/place/autocomplete/json'
         '?input=$query'
         '&key=$_googleApiKey'
-        '&language=en'
-        '&components=country:bd',
+        '&language=en',
       );
 
       final response = await _httpClient
