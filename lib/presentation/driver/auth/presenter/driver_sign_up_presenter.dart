@@ -32,10 +32,10 @@ import 'package:cabwire/core/static/app_strings.dart';
 
 // Import the separated files
 import 'controllers/driver_sign_up_controllers.dart';
-import 'utils/driver_sign_up_constants.dart';
 import 'utils/driver_sign_up_navigation.dart';
 import 'utils/driver_sign_up_validation.dart';
 import 'utils/driver_sign_up_ui_helpers.dart';
+import 'utils/driver_sign_up_constants.dart';
 
 class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
     implements DriverEmailVerificationPresenter {
@@ -473,6 +473,34 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         DriverSignUpConstants.vehicleCategories,
         vehicleCategoryController,
       );
+
+  // Vehicle make selection with a bottom sheet
+  void showVehicleMakeSelectionSheet(BuildContext context) =>
+      _uiHelpers.showSelectionSheet(
+        context,
+        DriverSignUpConstants.vehicleMakes,
+        vehiclesMakeController,
+      );
+
+  // Vehicle model selection depends on the selected make
+  void showVehicleModelSelectionSheet(BuildContext context) {
+    final String selectedMake = vehiclesMakeController.text.trim();
+    final List<String>? models =
+        DriverSignUpConstants.makeToModels[selectedMake];
+
+    final List<String> options =
+        (models == null || models.isEmpty) ? <String>[] : models;
+
+    if (options.isEmpty) {
+      showMessage(
+        message:
+            'No predefined models found for "$selectedMake". You can type your model manually.',
+      );
+      return;
+    }
+
+    _uiHelpers.showSelectionSheet(context, options, vehiclesModelController);
+  }
 
   // Image selection methods
   Future<void> uploadProfilePicture(BuildContext context) async {

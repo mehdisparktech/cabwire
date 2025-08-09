@@ -100,6 +100,7 @@ class DriverSignUpScreen extends StatelessWidget {
     return CustomButton(
       text: AppStrings.driverSignUp,
       onPressed: () => presenter.onSignUp(context),
+      isLoading: presenter.uiState.value.isLoading,
     );
   }
 

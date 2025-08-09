@@ -53,6 +53,7 @@ class DriverStripeAccoountConnectScreen extends StatelessWidget {
     return CustomButton(
       text: AppStrings.connectWithStripe,
       onPressed: () => presenter.onStripeAccountConnect(context, email),
+      isLoading: presenter.uiState.value.isLoading,
     );
   }
 }

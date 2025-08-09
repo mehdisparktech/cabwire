@@ -57,6 +57,10 @@ class VehiclesInformationScreen extends StatelessWidget {
         controller: presenter.vehiclesMakeController,
         hintText: AppStrings.driverVehiclesMakeEnter,
         keyboardType: TextInputType.text,
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.keyboard_arrow_down),
+          onPressed: () => presenter.showVehicleMakeSelectionSheet(context),
+        ),
         validator:
             (value) =>
                 value != null && value.isNotEmpty
@@ -68,6 +72,10 @@ class VehiclesInformationScreen extends StatelessWidget {
         controller: presenter.vehiclesModelController,
         hintText: AppStrings.driverVehiclesModelEnter,
         keyboardType: TextInputType.text,
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.keyboard_arrow_down),
+          onPressed: () => presenter.showVehicleModelSelectionSheet(context),
+        ),
         validator:
             (value) =>
                 value != null && value.isNotEmpty

@@ -437,20 +437,20 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
       }
 
       // Add license back image if provided
-      if (licenseBackImage != null) {
-        final fileName = licenseBackImage.split('/').last;
-        var mimeType = lookupMimeType(fileName);
-        formData.files.add(
-          MapEntry(
-            'image2',
-            await MultipartFile.fromFile(
-              licenseBackImage,
-              filename: fileName,
-              contentType: MediaType.parse(mimeType!),
-            ),
-          ),
-        );
-      }
+      // if (licenseBackImage != null) {
+      //   final fileName = licenseBackImage.split('/').last;
+      //   var mimeType = lookupMimeType(fileName);
+      //   formData.files.add(
+      //     MapEntry(
+      //       'image2',
+      //       await MultipartFile.fromFile(
+      //         licenseBackImage,
+      //         filename: fileName,
+      //         contentType: MediaType.parse(mimeType!),
+      //       ),
+      //     ),
+      //   );
+      // }
 
       final result = await apiService.patchFormData(
         ApiEndPoint.driverLicensInformation + email,

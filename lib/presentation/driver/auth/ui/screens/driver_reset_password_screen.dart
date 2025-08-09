@@ -57,6 +57,7 @@ class ResetPasswordScreen extends StatelessWidget {
         actionButton: CustomButton(
           text: AppStrings.driverResetPassword,
           onPressed: () => presenter.resetPassword(context),
+          isLoading: presenter.uiState.value.isLoading,
         ),
       ),
     );
