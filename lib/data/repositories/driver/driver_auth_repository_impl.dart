@@ -200,11 +200,13 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
     required String licenseExpiryDate,
     required String email,
     String? licenseImage,
+    String? licenseBackImage,
   }) async {
     final result = await _authDataSource.submitDriverLicenseInformation(
       licenseNumber: licenseNumber,
       licenseExpiryDate: licenseExpiryDate,
       licenseImage: licenseImage,
+      licenseBackImage: licenseBackImage,
       email: email,
     );
     return result.fold((l) => left(l), (r) => right(r));

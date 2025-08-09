@@ -27,6 +27,8 @@ import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_ui_sta
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_confirm_information_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_license_information.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_vehicles_information_screen.dart';
+import 'package:cabwire/presentation/common/components/camera/document_capture_screen.dart';
+import 'package:cabwire/core/static/app_strings.dart';
 
 // Import the separated files
 import 'controllers/driver_sign_up_controllers.dart';
@@ -134,6 +136,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
   TextEditingController get driverLicenseImageController =>
       _controllers.driverLicenseImageController;
   String? get licenseImagePath => _controllers.licenseImagePath;
+  TextEditingController get driverLicenseBackImageController =>
+      _controllers.driverLicenseBackImageController;
+  String? get licenseBackImagePath => _controllers.licenseBackImagePath;
 
   TextEditingController get vehiclesMakeController =>
       _controllers.vehiclesMakeController;
@@ -319,6 +324,16 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
   void confirmLicenseInformation(BuildContext context) async {
     toggleLoading(loading: true);
     if (!_validation.validateForm(licenseInfoFormKey)) return;
+    if (licenseImagePath == null) {
+      await showMessage(message: AppStrings.driverLicenseFrontError);
+      toggleLoading(loading: false);
+      return;
+    }
+    if (licenseBackImagePath == null) {
+      await showMessage(message: AppStrings.driverLicenseBackError);
+      toggleLoading(loading: false);
+      return;
+    }
     // _updateRegistrationStep3();
     // NavigationUtility.slideRight(context, const VehiclesInformationScreen());
     await executeTaskWithLoading(() async {
@@ -339,6 +354,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         ),
         email: emailController.text,
         licenseImage: licenseImagePath,
+        licenseBackImage: licenseBackImagePath,
       );
 
       await result.fold(
@@ -519,14 +535,91 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
 
     if (source != null) {
       try {
-        final pickedFile = await ImagePicker().pickImage(
-          source: source,
-          imageQuality: 70,
-        );
+        if (source == ImageSource.camera) {
+          final path = await Navigator.of(context).push<String>(
+            MaterialPageRoute(
+              builder:
+                  (_) => const DocumentCaptureScreen(
+                    title: 'Capture License Front',
+                    instruction: 'Align the license front within the frame',
+                  ),
+            ),
+          );
+          if (path != null) {
+            _controllers.setLicenseImage(path);
+            uiState.value = currentUiState.copyWith();
+          }
+        } else {
+          final pickedFile = await ImagePicker().pickImage(
+            source: source,
+            imageQuality: 70,
+          );
+          if (pickedFile != null) {
+            _controllers.setLicenseImage(pickedFile.path);
+            uiState.value = currentUiState.copyWith();
+          }
+        }
+      } catch (e) {
+        debugPrint('Error picking image: $e');
+        await showMessage(message: 'Failed to pick image: $e');
+      }
+    }
+  }
 
-        if (pickedFile != null) {
-          _controllers.setLicenseImage(pickedFile.path);
-          uiState.value = currentUiState.copyWith();
+  Future<void> selectLicenseBackImage(BuildContext context) async {
+    final ImageSource? source = await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: const Text('Gallery'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.gallery);
+                  },
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  child: const Text('Camera'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.camera);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (source != null) {
+      try {
+        if (source == ImageSource.camera) {
+          final path = await Navigator.of(context).push<String>(
+            MaterialPageRoute(
+              builder:
+                  (_) => const DocumentCaptureScreen(
+                    title: 'Capture License Back',
+                    instruction: 'Align the license back within the frame',
+                  ),
+            ),
+          );
+          if (path != null) {
+            _controllers.setLicenseBackImage(path);
+            uiState.value = currentUiState.copyWith();
+          }
+        } else {
+          final pickedFile = await ImagePicker().pickImage(
+            source: source,
+            imageQuality: 70,
+          );
+          if (pickedFile != null) {
+            _controllers.setLicenseBackImage(pickedFile.path);
+            uiState.value = currentUiState.copyWith();
+          }
         }
       } catch (e) {
         debugPrint('Error picking image: $e');

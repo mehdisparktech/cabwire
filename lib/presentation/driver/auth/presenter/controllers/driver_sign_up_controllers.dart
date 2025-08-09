@@ -67,6 +67,9 @@ class DriverSignUpControllers {
   TextEditingController get driverLicenseImageController =>
       _licenseControllers.licenseImage;
   String? get licenseImagePath => _licenseControllers.licenseImagePath;
+  TextEditingController get driverLicenseBackImageController =>
+      _licenseControllers.licenseBackImage;
+  String? get licenseBackImagePath => _licenseControllers.licenseBackImagePath;
 
   // Vehicle info getters
   TextEditingController get vehiclesMakeController => _vehicleControllers.make;
@@ -97,6 +100,8 @@ class DriverSignUpControllers {
       _personalInfoControllers.setProfileImage(path);
   void setLicenseImage(String path) =>
       _licenseControllers.setLicenseImage(path);
+  void setLicenseBackImage(String path) =>
+      _licenseControllers.setLicenseBackImage(path);
   void setVehicleImage(String path) =>
       _vehicleControllers.setVehicleImage(path);
 
@@ -184,12 +189,15 @@ class _LicenseControllers {
   late final TextEditingController licenseNumber;
   late final TextEditingController expiryDate;
   late final TextEditingController licenseImage;
+  late final TextEditingController licenseBackImage;
   String? licenseImagePath;
+  String? licenseBackImagePath;
 
   _LicenseControllers() {
     licenseNumber = TextEditingController();
     expiryDate = TextEditingController();
     licenseImage = TextEditingController();
+    licenseBackImage = TextEditingController();
   }
 
   void setLicenseImage(String path) {
@@ -197,10 +205,16 @@ class _LicenseControllers {
     licenseImage.text = 'License image selected';
   }
 
+  void setLicenseBackImage(String path) {
+    licenseBackImagePath = path;
+    licenseBackImage.text = 'License back image selected';
+  }
+
   void dispose() {
     licenseNumber.dispose();
     expiryDate.dispose();
     licenseImage.dispose();
+    licenseBackImage.dispose();
   }
 }
 

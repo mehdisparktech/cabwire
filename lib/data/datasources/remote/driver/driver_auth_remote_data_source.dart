@@ -59,6 +59,7 @@ abstract class DriverAuthRemoteDataSource {
     required String licenseExpiryDate,
     required String email,
     String? licenseImage,
+    String? licenseBackImage,
   });
 }
 
@@ -381,6 +382,7 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
     required String licenseExpiryDate,
     required String email,
     String? licenseImage,
+    String? licenseBackImage,
   }) async {
     try {
       final token = LocalStorage.token;
@@ -409,6 +411,22 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
             'image',
             await MultipartFile.fromFile(
               licenseImage,
+              filename: fileName,
+              contentType: MediaType.parse(mimeType!),
+            ),
+          ),
+        );
+      }
+
+      // Add license back image if provided
+      if (licenseBackImage != null) {
+        final fileName = licenseBackImage.split('/').last;
+        var mimeType = lookupMimeType(fileName);
+        formData.files.add(
+          MapEntry(
+            'image2',
+            await MultipartFile.fromFile(
+              licenseBackImage,
               filename: fileName,
               contentType: MediaType.parse(mimeType!),
             ),

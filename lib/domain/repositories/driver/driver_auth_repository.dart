@@ -47,5 +47,6 @@ abstract class DriverAuthRepository {
     required String licenseExpiryDate,
     required String email,
     String? licenseImage,
+    String? licenseBackImage,
   });
 }

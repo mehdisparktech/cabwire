@@ -85,6 +85,14 @@ class DriverLicenseInformationScreen extends StatelessWidget {
         onTap: () => presenter.selectLicenseImage(context),
       ),
       gapH20,
+      CustomTextFormField(
+        controller: presenter.driverLicenseBackImageController,
+        hintText: AppStrings.driverLicenseBack,
+        readOnly: true,
+        suffixIcon: Icon(Icons.add_a_photo_outlined, size: px20),
+        onTap: () => presenter.selectLicenseBackImage(context),
+      ),
+      gapH20,
       // License image preview
       if (presenter.licenseImagePath != null)
         Container(
@@ -99,6 +107,23 @@ class DriverLicenseInformationScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             child: Image.file(
               File(presenter.licenseImagePath!),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      if (presenter.licenseBackImagePath != null)
+        Container(
+          width: double.infinity,
+          height: 180,
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.file(
+              File(presenter.licenseBackImagePath!),
               fit: BoxFit.cover,
             ),
           ),

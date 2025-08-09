@@ -11,13 +11,14 @@ class DriverLicenseInformationUsecase extends BaseUseCase<String> {
     required String licenseNumber,
     required String licenseExpiryDate,
     required String email,
-    String? vehicleImage,
     String? licenseImage,
+    String? licenseBackImage,
   }) async {
     return repository.submitDriverLicenseInformation(
       licenseNumber: licenseNumber,
       licenseExpiryDate: licenseExpiryDate,
       licenseImage: licenseImage,
+      licenseBackImage: licenseBackImage,
       email: email,
     );
   }
