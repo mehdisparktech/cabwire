@@ -232,8 +232,7 @@ class SearchDestinationPresenter
         'https://maps.googleapis.com/maps/api/place/autocomplete/json'
         '?input=$query'
         '&key=$_googleApiKey'
-        '&language=en'
-        '&components=country:bd',
+        '&language=en',
       );
 
       final response = await _httpClient
@@ -271,6 +270,35 @@ class SearchDestinationPresenter
         currentUiState.destinationController.removeListener(
           _destinationListener!,
         );
+      }
+
+      // If editing a specific stop, update that stop instead of the main destination field
+      if (currentUiState.editingStopIndex != null) {
+        // Try to get coordinates for the selected location
+        final locations = await locationFromAddress(placeDescription);
+
+        LatLng? latLng;
+        if (locations.isNotEmpty) {
+          final location = locations.first;
+          latLng = LatLng(location.latitude, location.longitude);
+        }
+
+        updateMultipleLocation(
+          currentUiState.editingStopIndex!,
+          placeDescription,
+          latLng,
+        );
+
+        // Clear editing index
+        uiState.value = currentUiState.copyWith(resetEditingStopIndex: true);
+
+        // Re-add listener and return (skip main destination flow)
+        if (_destinationListener != null) {
+          currentUiState.destinationController.addListener(
+            _destinationListener!,
+          );
+        }
+        return;
       }
 
       // Update the destinationController with the selected suggestion
@@ -465,8 +493,34 @@ class SearchDestinationPresenter
     );
     updatedLocations.add(newLocation);
 
+    // Create controller for this stop and attach listener for suggestions
+    final updatedControllers = List<TextEditingController>.from(
+      currentUiState.stopControllers,
+    );
+    final controller = TextEditingController();
+
+    void listener() {
+      final query = controller.text;
+      if (query.isNotEmpty && query.length > 2) {
+        if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
+        _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          // Mark currently editing stop index
+          final index = updatedControllers.indexOf(controller);
+          if (index != -1) {
+            uiState.value = currentUiState.copyWith(editingStopIndex: index);
+          }
+          searchDestinationPlaces(query);
+        });
+      }
+    }
+
+    controller.addListener(listener);
+    updatedControllers.add(controller);
+
     uiState.value = currentUiState.copyWith(
       multipleLocations: updatedLocations,
+      stopControllers: updatedControllers,
+      editingStopIndex: updatedLocations.length - 1,
     );
   }
 
@@ -478,8 +532,18 @@ class SearchDestinationPresenter
       );
       updatedLocations.removeAt(index);
 
+      // Remove corresponding controller
+      final updatedControllers = List<TextEditingController>.from(
+        currentUiState.stopControllers,
+      );
+      if (index >= 0 && index < updatedControllers.length) {
+        final c = updatedControllers.removeAt(index);
+        c.dispose();
+      }
+
       uiState.value = currentUiState.copyWith(
         multipleLocations: updatedLocations,
+        stopControllers: updatedControllers,
       );
     }
   }
@@ -499,6 +563,11 @@ class SearchDestinationPresenter
       uiState.value = currentUiState.copyWith(
         multipleLocations: updatedLocations,
       );
+
+      // Update controller text if available
+      if (index >= 0 && index < currentUiState.stopControllers.length) {
+        currentUiState.stopControllers[index].text = address;
+      }
     }
   }
 
@@ -550,6 +619,7 @@ class SearchDestinationPresenter
       destinationLocation: null,
       destinationAddress: null,
       destinationSuggestions: [],
+      resetEditingStopIndex: true,
       routeDistance: null,
       routeDuration: null,
       routePolylines: null,
@@ -571,6 +641,9 @@ class SearchDestinationPresenter
     // Clear text controllers
     currentUiState.fromController.clear();
     currentUiState.destinationController.clear();
+    for (final c in currentUiState.stopControllers) {
+      c.dispose();
+    }
 
     // Re-add listeners
     if (_fromListener != null) {
@@ -593,6 +666,8 @@ class SearchDestinationPresenter
       routeDuration: null,
       routePolylines: null,
       multipleLocations: [],
+      stopControllers: [],
+      resetEditingStopIndex: true,
     );
   }
 
@@ -605,8 +680,7 @@ class SearchDestinationPresenter
         'https://maps.googleapis.com/maps/api/place/autocomplete/json'
         '?input=$query'
         '&key=$_googleApiKey'
-        '&language=en'
-        '&components=country:bd',
+        '&language=en',
       );
 
       final response = await _httpClient
@@ -770,6 +844,31 @@ class SearchDestinationPresenter
   }
 
   void selectHistoryItem(SearchHistoryItem item) {
+    // If editing a stop, update that stop from history selection
+    if (currentUiState.editingStopIndex != null) {
+      locationFromAddress(item.location)
+          .then((locations) {
+            if (locations.isNotEmpty) {
+              final location = locations.first;
+              final latLng = LatLng(location.latitude, location.longitude);
+
+              updateMultipleLocation(
+                currentUiState.editingStopIndex!,
+                item.location,
+                latLng,
+              );
+
+              uiState.value = currentUiState.copyWith(
+                resetEditingStopIndex: true,
+              );
+            }
+          })
+          .catchError((e) {
+            debugPrint('Error getting coordinates for history item: $e');
+          });
+      return;
+    }
+
     // Fill in the destination controller with the location from history
     if (_destinationListener != null) {
       currentUiState.destinationController.removeListener(
@@ -891,14 +990,26 @@ class SearchDestinationPresenter
       return;
     }
 
-    if (currentUiState.destinationLocation == null &&
+    final List<LatLng> destinationLocationsForValidation = [];
+    if (currentUiState.destinationLocation != null) {
+      destinationLocationsForValidation.add(
+        currentUiState.destinationLocation!,
+      );
+    }
+    for (final stop in currentUiState.multipleLocations) {
+      if (stop.coordinates != null) {
+        destinationLocationsForValidation.add(stop.coordinates!);
+      }
+    }
+    if (destinationLocationsForValidation.isEmpty &&
         currentUiState.destinationController.text.isEmpty) {
       addUserMessage('Please select a dropoff location');
       return;
     }
 
     // If we have text but no coordinates, try to get coordinates
-    if (currentUiState.destinationController.text.isNotEmpty &&
+    if (destinationLocationsForValidation.isEmpty &&
+        currentUiState.destinationController.text.isNotEmpty &&
         currentUiState.destinationLocation == null) {
       addUserMessage('Please wait while we process your destination location');
       return;
@@ -911,15 +1022,24 @@ class SearchDestinationPresenter
     }
 
     // Validate that pickup and dropoff locations are different
-    if (currentUiState.destinationLocation != null &&
-        currentUiState.selectedPickupLocation != null) {
+    if (currentUiState.selectedPickupLocation != null) {
       final pickupLocation = currentUiState.selectedPickupLocation!;
-      final destinationLocation = currentUiState.destinationLocation!;
-
-      if (pickupLocation.latitude == destinationLocation.latitude &&
-          pickupLocation.longitude == destinationLocation.longitude) {
-        addUserMessage('Pickup and dropoff locations cannot be the same');
-        return;
+      if (currentUiState.destinationLocation != null) {
+        final destinationLocation = currentUiState.destinationLocation!;
+        if (pickupLocation.latitude == destinationLocation.latitude &&
+            pickupLocation.longitude == destinationLocation.longitude) {
+          addUserMessage('Pickup and dropoff locations cannot be the same');
+          return;
+        }
+      }
+      for (final stop in currentUiState.multipleLocations) {
+        if (stop.coordinates != null) {
+          if (pickupLocation.latitude == stop.coordinates!.latitude &&
+              pickupLocation.longitude == stop.coordinates!.longitude) {
+            addUserMessage('Pickup and a stop cannot be the same');
+            return;
+          }
+        }
       }
     }
 
@@ -934,6 +1054,28 @@ class SearchDestinationPresenter
             ? currentUiState.routeDuration
             : 0.0;
 
+    // Prepare destination lists including multiple stops (if any)
+    final List<LatLng> destinationLocations = [];
+    final List<String> destinationAddresses = [];
+
+    if (currentUiState.destinationLocation != null &&
+        currentUiState.destinationAddress != null) {
+      destinationLocations.add(currentUiState.destinationLocation!);
+      destinationAddresses.add(currentUiState.destinationAddress!);
+    }
+
+    for (final stop in currentUiState.multipleLocations) {
+      if (stop.coordinates != null && stop.address.isNotEmpty) {
+        destinationLocations.add(stop.coordinates!);
+        destinationAddresses.add(stop.address);
+      }
+    }
+
+    if (destinationLocations.isEmpty) {
+      addUserMessage('Please select at least one destination');
+      return;
+    }
+
     // Navigate to next screen
     Navigator.push(
       context,
@@ -942,8 +1084,8 @@ class SearchDestinationPresenter
             (context) => SetRideInformationScreen(
               pickupLocation: currentUiState.selectedPickupLocation!,
               pickupAddress: currentUiState.pickupAddress!,
-              destinationLocations: [currentUiState.destinationLocation!],
-              destinationAddresses: [currentUiState.destinationAddress!],
+              destinationLocations: destinationLocations,
+              destinationAddresses: destinationAddresses,
               distance: distance,
               duration: duration,
             ),

@@ -21,6 +21,8 @@ class SearchDestinationUiState extends BaseUiState {
   final List<String> fromSuggestions;
   final List<SearchHistoryItem> searchHistory;
   final List<MultipleLocationItem> multipleLocations;
+  final List<TextEditingController> stopControllers;
+  final int? editingStopIndex;
   final dynamic routeDistance;
   final dynamic routeDuration;
   final String? routeDistanceText;
@@ -48,6 +50,8 @@ class SearchDestinationUiState extends BaseUiState {
     this.fromSuggestions = const [],
     this.searchHistory = const [],
     this.multipleLocations = const [],
+    this.stopControllers = const [],
+    this.editingStopIndex,
     this.routeDistance,
     this.routeDuration,
     this.routeDistanceText,
@@ -79,6 +83,8 @@ class SearchDestinationUiState extends BaseUiState {
       destinationSuggestions: [],
       fromSuggestions: [],
       multipleLocations: [],
+      stopControllers: const [],
+      editingStopIndex: null,
       searchHistory: [
         SearchHistoryItem(
           location: 'Block B, Banasree, Dhaka.',
@@ -126,6 +132,8 @@ class SearchDestinationUiState extends BaseUiState {
     fromSuggestions,
     searchHistory,
     multipleLocations,
+    stopControllers,
+    editingStopIndex,
     routeDistance,
     routeDuration,
     routeDistanceText,
@@ -155,6 +163,9 @@ class SearchDestinationUiState extends BaseUiState {
     List<String>? fromSuggestions,
     List<SearchHistoryItem>? searchHistory,
     List<MultipleLocationItem>? multipleLocations,
+    List<TextEditingController>? stopControllers,
+    int? editingStopIndex,
+    bool resetEditingStopIndex = false,
     dynamic routeDistance,
     dynamic routeDuration,
     String? routeDistanceText,
@@ -185,6 +196,11 @@ class SearchDestinationUiState extends BaseUiState {
       fromSuggestions: fromSuggestions ?? this.fromSuggestions,
       searchHistory: searchHistory ?? this.searchHistory,
       multipleLocations: multipleLocations ?? this.multipleLocations,
+      stopControllers: stopControllers ?? this.stopControllers,
+      editingStopIndex:
+          resetEditingStopIndex
+              ? null
+              : (editingStopIndex ?? this.editingStopIndex),
       routeDistance: routeDistance ?? this.routeDistance,
       routeDuration: routeDuration ?? this.routeDuration,
       routeDistanceText: routeDistanceText ?? this.routeDistanceText,

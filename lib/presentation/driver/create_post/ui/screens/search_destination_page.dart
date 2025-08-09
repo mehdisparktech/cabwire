@@ -142,23 +142,24 @@ class SearchDestinationScreen extends StatelessWidget {
       child: Column(
         children: [
           _buildSearchField(
-            controller: presenter.currentUiState.destinationController,
-            hintText: 'Block B, Banasree, Dhaka.',
+            controller: presenter.currentUiState.fromController,
+            hintText: 'From',
             icon: Icons.location_on,
             iconColor: context.color.primaryBtn,
-            showVoiceIcon: true,
+            showCloseIcon: true,
+            onClosePressed: () => presenter.clearFromField(),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.px),
             child: Divider(color: context.color.strokePrimary),
           ),
           _buildSearchField(
-            controller: presenter.currentUiState.fromController,
+            controller: presenter.currentUiState.destinationController,
             hintText: 'To',
             icon: Icons.location_on,
             iconColor: context.color.primaryBtn,
             showCloseIcon: true,
-            onClosePressed: () => presenter.clearFromField(),
+            onClosePressed: () => presenter.clearDestinationField(),
           ),
         ],
       ),
@@ -222,6 +223,10 @@ class SearchDestinationScreen extends StatelessWidget {
             ) {
               final index = entry.key;
               final location = entry.value;
+              final controller =
+                  index < presenter.currentUiState.stopControllers.length
+                      ? presenter.currentUiState.stopControllers[index]
+                      : null;
               return Container(
                 margin: EdgeInsets.only(bottom: 8.px),
                 padding: EdgeInsets.all(12.px),
@@ -239,18 +244,37 @@ class SearchDestinationScreen extends StatelessWidget {
                     ),
                     gapW12,
                     Expanded(
-                      child: Text(
-                        location.address.isEmpty
-                            ? 'Select location'
-                            : location.address,
-                        style: TextStyle(
-                          fontSize: 14.px,
-                          color:
-                              location.address.isEmpty
-                                  ? Colors.grey[600]
-                                  : Colors.black87,
-                        ),
-                      ),
+                      child:
+                          controller == null
+                              ? Text(
+                                location.address.isEmpty
+                                    ? 'Select location'
+                                    : location.address,
+                                style: TextStyle(
+                                  fontSize: 14.px,
+                                  color:
+                                      location.address.isEmpty
+                                          ? Colors.grey[600]
+                                          : Colors.black87,
+                                ),
+                              )
+                              : TextField(
+                                controller: controller,
+                                style: TextStyle(
+                                  fontSize: 14.px,
+                                  color: Colors.black87,
+                                ),
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  hintText: 'Add stop address',
+                                  border: InputBorder.none,
+                                ),
+                                onTap: () {
+                                  presenter.uiState.value = presenter
+                                      .currentUiState
+                                      .copyWith(editingStopIndex: index);
+                                },
+                              ),
                     ),
                     GestureDetector(
                       onTap: () => presenter.removeMultipleLocation(index),
