@@ -78,13 +78,23 @@ class EditDrivingInfoScreen extends StatelessWidget {
                         const CommonText(text: 'License Image'), gapH10,
                         GestureDetector(
                           onTap: () {
-                            presenter.pickLicenseImage();
+                            presenter.pickLicenseFrontImage(context);
                           },
                           child:
-                              presenter.selectedLicenseImageFile != null
+                              presenter
+                                          .uiState
+                                          .value
+                                          .userProfile
+                                          .selectedLicenseFrontImageFile !=
+                                      null
                                   ? Image.file(
                                     File(
-                                      presenter.selectedLicenseImageFile!.path,
+                                      presenter
+                                          .uiState
+                                          .value
+                                          .userProfile
+                                          .selectedLicenseFrontImageFile!
+                                          .path,
                                     ),
                                     width: double.infinity,
                                     height: 200.px,
@@ -100,6 +110,39 @@ class EditDrivingInfoScreen extends StatelessWidget {
                                   ),
                         ),
                         gapH20,
+                        GestureDetector(
+                          onTap: () {
+                            presenter.pickLicenseBackImage();
+                          },
+                          child:
+                              presenter
+                                          .uiState
+                                          .value
+                                          .userProfile
+                                          .selectedLicenseBackImageFile !=
+                                      null
+                                  ? Image.file(
+                                    File(
+                                      presenter
+                                          .uiState
+                                          .value
+                                          .userProfile
+                                          .selectedLicenseBackImageFile!
+                                          .path,
+                                    ),
+                                    width: double.infinity,
+                                    height: 200.px,
+                                    fit: BoxFit.cover,
+                                  )
+                                  : CommonImage(
+                                    imageSrc:
+                                        ApiEndPoint.imageUrl +
+                                        LocalStorage.licenseImage,
+                                    imageType: ImageType.network,
+                                    width: double.infinity,
+                                    height: 200.px,
+                                  ),
+                        ),
                       ],
                     ),
                   ),

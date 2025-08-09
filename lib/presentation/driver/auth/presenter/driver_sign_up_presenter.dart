@@ -127,7 +127,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
   TextEditingController get genderController => _controllers.genderController;
   TextEditingController get dateOfBirthController =>
       _controllers.dateOfBirthController;
-  String? get profileImagePath => _controllers.profileImagePath;
+  //String? get profileImagePath => _controllers.profileImagePath;
 
   TextEditingController get driverLicenseNumberController =>
       _controllers.driverLicenseNumberController;
@@ -301,7 +301,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         contact: phoneNumberController.text.trim(),
         gender: genderController.text.trim(),
         dateOfBirth: DateFormatHelper.formatDateForApi(dateOfBirthDateTime),
-        profileImage: profileImagePath,
+        profileImage: currentUiState.selectedProfileImageFile?.path,
         email: emailController.text,
       );
 
@@ -593,7 +593,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           );
           if (path != null) {
             _controllers.setLicenseImage(path);
-            uiState.value = currentUiState.copyWith();
+            uiState.value = currentUiState.copyWith(
+              selectedLicenseFrontImageFile: true,
+            );
           }
         } else {
           final pickedFile = await ImagePicker().pickImage(
@@ -602,7 +604,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           );
           if (pickedFile != null) {
             _controllers.setLicenseImage(pickedFile.path);
-            uiState.value = currentUiState.copyWith();
+            uiState.value = currentUiState.copyWith(
+              selectedLicenseFrontImageFile: true,
+            );
           }
         }
       } catch (e) {
@@ -655,7 +659,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           );
           if (path != null) {
             _controllers.setLicenseBackImage(path);
-            uiState.value = currentUiState.copyWith();
+            uiState.value = currentUiState.copyWith(
+              selectedLicenseBackImageFile: true,
+            );
           }
         } else {
           final pickedFile = await ImagePicker().pickImage(
@@ -664,7 +670,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           );
           if (pickedFile != null) {
             _controllers.setLicenseBackImage(pickedFile.path);
-            uiState.value = currentUiState.copyWith();
+            uiState.value = currentUiState.copyWith(
+              selectedLicenseBackImageFile: true,
+            );
           }
         }
       } catch (e) {
@@ -712,7 +720,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
 
         if (pickedFile != null) {
           _controllers.setVehicleImage(pickedFile.path);
-          uiState.value = currentUiState.copyWith();
+          uiState.value = currentUiState.copyWith(
+            selectedVehicleFrontImageFile: true,
+          );
         }
       } catch (e) {
         debugPrint('Error picking image: $e');
@@ -766,7 +776,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           );
           if (path != null) {
             _controllers.setVehicleFrontImage(path);
-            uiState.value = currentUiState.copyWith();
+            uiState.value = currentUiState.copyWith(
+              selectedVehicleFrontImageFile: true,
+            );
           }
         } else {
           final pickedFile = await ImagePicker().pickImage(
@@ -775,7 +787,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           );
           if (pickedFile != null) {
             _controllers.setVehicleFrontImage(pickedFile.path);
-            uiState.value = currentUiState.copyWith();
+            uiState.value = currentUiState.copyWith(
+              selectedVehicleFrontImageFile: true,
+            );
           }
         }
       } catch (e) {
@@ -830,7 +844,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           );
           if (path != null) {
             _controllers.setVehicleBackImage(path);
-            uiState.value = currentUiState.copyWith();
+            uiState.value = currentUiState.copyWith(
+              selectedVehicleBackImageFile: true,
+            );
           }
         } else {
           final pickedFile = await ImagePicker().pickImage(
@@ -839,7 +855,9 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           );
           if (pickedFile != null) {
             _controllers.setVehicleBackImage(pickedFile.path);
-            uiState.value = currentUiState.copyWith();
+            uiState.value = currentUiState.copyWith(
+              selectedVehicleBackImageFile: true,
+            );
           }
         }
       } catch (e) {
@@ -871,7 +889,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         contact: phoneNumberController.text.trim(),
         gender: genderController.text.trim(),
         dateOfBirth: DateFormatHelper.formatDateForApi(dateOfBirthDateTime),
-        image: profileImagePath,
+        image: currentUiState.selectedProfileImageFile?.path,
         driverLicense: profile_entity.DriverLicenseEntity(
           licenseNumber: int.parse(driverLicenseNumberController.text.trim()),
           licenseExpiryDate: DateFormatHelper.formatDateForApi(
@@ -896,7 +914,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
       final result = await _driverProfileUpdateUsecase.execute(
         nameController.text.trim(),
         phoneNumberController.text.trim(),
-        profileImagePath,
+        currentUiState.selectedProfileImageFile?.path,
       );
 
       await result.fold(
@@ -966,7 +984,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
       contact: phoneNumberController.text.trim(),
       gender: genderController.text.trim(),
       dateOfBirth: DateTime.parse(dateOfBirthController.text.trim()),
-      image: profileImagePath,
+      image: currentUiState.selectedProfileImageFile?.path,
     );
     currentUiState.copyWith(driver: updatedDriver, currentStep: 2);
   }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cabwire/core/base/base_ui_state.dart';
 // You might want a dedicated UserProfileModel
 // import 'package:cabwire/features/auth/models/user_profile_model.dart';
@@ -16,26 +18,38 @@ class UserProfileData {
   final String avatarUrl; // Asset path or network URL
   final String? dateOfBirth;
   final String? gender;
+  File? selectedProfileImageFile; // For new profile image
+  File? selectedLicenseFrontImageFile; // For new license image
+  File? selectedLicenseBackImageFile; // For new license image
+  File? selectedVehicleImageFile; // For new vehicle image
   // Add other general profile fields
 
-  const UserProfileData({
+  UserProfileData({
     required this.name,
     required this.email,
     required this.phoneNumber,
     required this.avatarUrl,
     this.dateOfBirth,
     this.gender,
+    this.selectedProfileImageFile,
+    this.selectedLicenseFrontImageFile,
+    this.selectedLicenseBackImageFile,
+    this.selectedVehicleImageFile,
   });
 
   // Factory for initial/empty state
   factory UserProfileData.empty() {
-    return const UserProfileData(
+    return UserProfileData(
       name: '',
       email: '',
       phoneNumber: '',
       avatarUrl: '', // Default or placeholder
       dateOfBirth: null,
       gender: null,
+      selectedProfileImageFile: null,
+      selectedLicenseFrontImageFile: null,
+      selectedLicenseBackImageFile: null,
+      selectedVehicleImageFile: null,
     );
   }
 
@@ -46,6 +60,10 @@ class UserProfileData {
     String? avatarUrl,
     String? dateOfBirth,
     String? gender,
+    File? selectedProfileImageFile,
+    File? selectedLicenseFrontImageFile,
+    File? selectedLicenseBackImageFile,
+    File? selectedVehicleImageFile,
   }) {
     return UserProfileData(
       name: name ?? this.name,
@@ -54,6 +72,14 @@ class UserProfileData {
       avatarUrl: avatarUrl ?? this.avatarUrl,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       gender: gender ?? this.gender,
+      selectedProfileImageFile:
+          selectedProfileImageFile ?? this.selectedProfileImageFile,
+      selectedLicenseFrontImageFile:
+          selectedLicenseFrontImageFile ?? this.selectedLicenseFrontImageFile,
+      selectedLicenseBackImageFile:
+          selectedLicenseBackImageFile ?? this.selectedLicenseBackImageFile,
+      selectedVehicleImageFile:
+          selectedVehicleImageFile ?? this.selectedVehicleImageFile,
     );
   }
 }

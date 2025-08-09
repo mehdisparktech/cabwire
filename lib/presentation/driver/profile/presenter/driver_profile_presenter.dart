@@ -12,6 +12,7 @@ import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dar
 import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
 import 'package:cabwire/domain/usecases/update_profile_photo_usecase.dart';
+import 'package:cabwire/presentation/common/components/camera/document_capture_screen.dart';
 import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart';
 import 'package:cabwire/presentation/driver/auth/ui/screens/driver_auth_navigator_screen.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_ui_state.dart';
@@ -55,9 +56,6 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   final TextEditingController editDobController =
       TextEditingController(); // Date of Birth
   final TextEditingController editGenderController = TextEditingController();
-  File? selectedProfileImageFile; // For new profile image
-  File? selectedLicenseImageFile; // For new license image
-  File? selectedVehicleImageFile; // For new vehicle image
 
   // Edit Password
   final TextEditingController oldPasswordController = TextEditingController();
@@ -244,7 +242,14 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       editEmailController.text = LocalStorage.myEmail;
     }
 
-    selectedProfileImageFile = null; // Reset selected image
+    uiState.value = currentUiState.copyWith(
+      userProfile: currentUiState.userProfile.copyWith(
+        selectedProfileImageFile: null,
+        selectedLicenseFrontImageFile: null,
+        selectedLicenseBackImageFile: null,
+        selectedVehicleImageFile: null,
+      ),
+    );
     Get.to(() => EditProfileInfoScreen());
   }
 
@@ -325,7 +330,11 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      selectedProfileImageFile = File(image.path);
+      uiState.value = currentUiState.copyWith(
+        userProfile: currentUiState.userProfile.copyWith(
+          selectedProfileImageFile: File(image.path),
+        ),
+      );
       addUserMessage("Image selected. Press Save to upload.");
       uiState.value = currentUiState.copyWith(
         userMessage: uiState.value.userMessage,
@@ -333,11 +342,85 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     }
   }
 
-  Future<void> pickLicenseImage() async {
+  Future<void> pickLicenseFrontImage(BuildContext context) async {
+    final ImageSource? source = await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: const Text('Gallery'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.gallery);
+                  },
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  child: const Text('Camera'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.camera);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (source != null) {
+      try {
+        if (source == ImageSource.camera) {
+          final path = await Navigator.of(context).push<String>(
+            MaterialPageRoute(
+              builder:
+                  (_) => const DocumentCaptureScreen(
+                    title: 'Capture License Front',
+                    instruction: 'Align the license front within the frame',
+                  ),
+            ),
+          );
+          if (path != null) {
+            uiState.value = currentUiState.copyWith(
+              userProfile: currentUiState.userProfile.copyWith(
+                selectedLicenseFrontImageFile: File(path),
+              ),
+            );
+            uiState.value = currentUiState.copyWith();
+          }
+        } else {
+          final pickedFile = await ImagePicker().pickImage(
+            source: source,
+            imageQuality: 70,
+          );
+          if (pickedFile != null) {
+            uiState.value = currentUiState.copyWith(
+              userProfile: currentUiState.userProfile.copyWith(
+                selectedLicenseFrontImageFile: File(pickedFile.path),
+              ),
+            );
+            uiState.value = currentUiState.copyWith();
+          }
+        }
+      } catch (e) {
+        debugPrint('Error picking image: $e');
+        await showMessage(message: 'Failed to pick image: $e');
+      }
+    }
+  }
+
+  Future<void> pickLicenseBackImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      selectedLicenseImageFile = File(image.path);
+      uiState.value = currentUiState.copyWith(
+        userProfile: currentUiState.userProfile.copyWith(
+          selectedLicenseBackImageFile: File(image.path),
+        ),
+      );
       addUserMessage("Image selected. Press Save to upload.");
     }
   }
@@ -346,7 +429,11 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      selectedVehicleImageFile = File(image.path);
+      uiState.value = currentUiState.copyWith(
+        userProfile: currentUiState.userProfile.copyWith(
+          selectedVehicleImageFile: File(image.path),
+        ),
+      );
       addUserMessage("Image selected. Press Save to upload.");
     }
   }
@@ -361,10 +448,10 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     }
 
     // Handle image upload first if there's a selected image
-    if (selectedProfileImageFile != null) {
+    if (currentUiState.userProfile.selectedProfileImageFile != null) {
       final imageResult = await _updateProfilePhotoUsecase.execute(
         LocalStorage.myEmail,
-        selectedProfileImageFile!.path,
+        currentUiState.userProfile.selectedProfileImageFile!.path,
       );
 
       imageResult.fold(
@@ -388,7 +475,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     final result = await _updateProfileUsecase.execute(
       editNameController.text,
       editPhoneNumberController.text,
-      selectedProfileImageFile?.path,
+      currentUiState.userProfile.selectedProfileImageFile?.path,
     );
     result.fold(
       (error) {
@@ -398,7 +485,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
       },
       (success) async {
         // Add a small delay to ensure server has processed the image
-        if (selectedProfileImageFile != null) {
+        if (currentUiState.userProfile.selectedProfileImageFile != null) {
           await Future.delayed(const Duration(seconds: 1));
         }
 
@@ -425,7 +512,11 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
         );
 
         // Reset selected image file
-        selectedProfileImageFile = null;
+        uiState.value = currentUiState.copyWith(
+          userProfile: currentUiState.userProfile.copyWith(
+            selectedProfileImageFile: null,
+          ),
+        );
 
         addUserMessage("Profile updated successfully!");
         showMessage(message: 'Profile updated successfully!');

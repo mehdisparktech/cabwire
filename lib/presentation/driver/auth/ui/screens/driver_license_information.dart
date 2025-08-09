@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
@@ -24,22 +25,27 @@ class DriverLicenseInformationScreen extends StatelessWidget {
     // Get presenter from service locator
     final presenter = locate<DriverSignUpPresenter>();
 
-    return AuthScreenWrapper(
-      title: AppStrings.driverLicenseInformation,
-      subtitle: AppStrings.driverLicenseInformationHint,
-      textColor: context.color.blackColor100,
-      child: AuthFormContainer(
-        showLogo: false,
-        logoAssetPath: AppAssets.icDriverLogo,
-        logoAssetPath2: AppAssets.icCabwireLogo,
-        formKey: presenter.licenseInfoFormKey,
-        formFields: _buildFormFields(context, presenter),
-        actionButton: CustomButton(
-          text: AppStrings.driverContinue,
-          onPressed: () => presenter.confirmLicenseInformation(context),
-          isLoading: presenter.uiState.value.isLoading,
-        ),
-      ),
+    return PresentableWidgetBuilder(
+      presenter: presenter,
+      builder: () {
+        return AuthScreenWrapper(
+          title: AppStrings.driverLicenseInformation,
+          subtitle: AppStrings.driverLicenseInformationHint,
+          textColor: context.color.blackColor100,
+          child: AuthFormContainer(
+            showLogo: false,
+            logoAssetPath: AppAssets.icDriverLogo,
+            logoAssetPath2: AppAssets.icCabwireLogo,
+            formKey: presenter.licenseInfoFormKey,
+            formFields: _buildFormFields(context, presenter),
+            actionButton: CustomButton(
+              text: AppStrings.driverContinue,
+              onPressed: () => presenter.confirmLicenseInformation(context),
+              isLoading: presenter.uiState.value.isLoading,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -94,7 +100,7 @@ class DriverLicenseInformationScreen extends StatelessWidget {
       ),
       gapH20,
       // License image preview
-      if (presenter.licenseImagePath != null)
+      if (presenter.uiState.value.selectedLicenseFrontImageFile)
         Container(
           width: double.infinity,
           height: 180,
@@ -111,7 +117,7 @@ class DriverLicenseInformationScreen extends StatelessWidget {
             ),
           ),
         ),
-      if (presenter.licenseBackImagePath != null)
+      if (presenter.uiState.value.selectedLicenseBackImageFile)
         Container(
           width: double.infinity,
           height: 180,

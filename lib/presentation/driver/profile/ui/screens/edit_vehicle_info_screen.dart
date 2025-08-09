@@ -100,10 +100,20 @@ class EditVehicleInfoScreen extends StatelessWidget {
                             presenter.pickVehicleImage();
                           },
                           child:
-                              presenter.selectedVehicleImageFile != null
+                              presenter
+                                          .uiState
+                                          .value
+                                          .userProfile
+                                          .selectedVehicleImageFile !=
+                                      null
                                   ? Image.file(
                                     File(
-                                      presenter.selectedVehicleImageFile!.path,
+                                      presenter
+                                          .uiState
+                                          .value
+                                          .userProfile
+                                          .selectedVehicleImageFile!
+                                          .path,
                                     ),
                                     width: double.infinity,
                                     height: 200.px,

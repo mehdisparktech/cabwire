@@ -3,6 +3,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
@@ -29,22 +30,27 @@ class VehiclesInformationScreen extends StatelessWidget {
     // Get presenter from service locator
     final presenter = locate<DriverSignUpPresenter>();
 
-    return AuthScreenWrapper(
-      title: AppStrings.driverVehiclesInformation,
-      subtitle: AppStrings.driverPleaseConfirmVehiclesInformation,
-      textColor: context.color.blackColor100,
-      child: AuthFormContainer(
-        showLogo: false,
-        logoAssetPath: AppAssets.icDriverLogo,
-        logoAssetPath2: AppAssets.icCabwireLogo,
-        formKey: presenter.vehicleInfoFormKey,
-        formFields: _buildFormFields(context, presenter),
-        actionButton: CustomButton(
-          text: AppStrings.driverCompleteRegistration,
-          onPressed: () => presenter.confirmVehicleInformation(context),
-          isLoading: presenter.uiState.value.isLoading,
-        ),
-      ),
+    return PresentableWidgetBuilder(
+      presenter: presenter,
+      builder: () {
+        return AuthScreenWrapper(
+          title: AppStrings.driverVehiclesInformation,
+          subtitle: AppStrings.driverPleaseConfirmVehiclesInformation,
+          textColor: context.color.blackColor100,
+          child: AuthFormContainer(
+            showLogo: false,
+            logoAssetPath: AppAssets.icDriverLogo,
+            logoAssetPath2: AppAssets.icCabwireLogo,
+            formKey: presenter.vehicleInfoFormKey,
+            formFields: _buildFormFields(context, presenter),
+            actionButton: CustomButton(
+              text: AppStrings.driverCompleteRegistration,
+              onPressed: () => presenter.confirmVehicleInformation(context),
+              isLoading: presenter.uiState.value.isLoading,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -133,7 +139,7 @@ class VehiclesInformationScreen extends StatelessWidget {
       ),
       gapH20,
       // Vehicle image previews
-      if (presenter.vehicleFrontImagePath != null)
+      if (presenter.uiState.value.selectedVehicleFrontImageFile)
         Container(
           width: double.infinity,
           height: px180,
@@ -150,7 +156,7 @@ class VehiclesInformationScreen extends StatelessWidget {
             ),
           ),
         ),
-      if (presenter.vehicleBackImagePath != null)
+      if (presenter.uiState.value.selectedVehicleBackImageFile)
         Container(
           width: double.infinity,
           height: px180,

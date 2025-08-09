@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/core/utility/utility.dart';
@@ -24,86 +25,99 @@ class ConfirmInformationScreen extends StatelessWidget {
     // Get presenter from service locator
     final presenter = locate<DriverSignUpPresenter>();
 
-    return AuthScreenWrapper(
-      title: AppStrings.driverConfirmInformation,
-      subtitle: AppStrings.driverConfirmInformationHint,
-      textColor: context.color.blackColor100,
-      child: Column(
-        children: [
-          // Profile Picture Upload
-          Center(
-            child: GestureDetector(
-              onTap: () => presenter.uploadProfilePicture(context),
-              child: Stack(
-                children: [
-                  Container(
-                    width: px120,
-                    height: px120,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      shape: BoxShape.circle,
-                    ),
-                    child:
-                        presenter.profileImagePath != null
-                            ? ClipOval(
-                              child: Image.file(
-                                File(presenter.profileImagePath!),
-                                width: px120,
-                                height: px120,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                            : Icon(
-                              Icons.person,
-                              size: px60,
-                              color: Colors.white,
-                            ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: EdgeInsets.all(px8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.grey.shade300),
+    return PresentableWidgetBuilder(
+      presenter: presenter,
+      builder: () {
+        return AuthScreenWrapper(
+          title: AppStrings.driverConfirmInformation,
+          subtitle: AppStrings.driverConfirmInformationHint,
+          textColor: context.color.blackColor100,
+          child: Column(
+            children: [
+              // Profile Picture Upload
+              Center(
+                child: GestureDetector(
+                  onTap: () => presenter.uploadProfilePicture(context),
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: px120,
+                        height: px120,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          shape: BoxShape.circle,
+                        ),
+                        child:
+                            presenter.uiState.value.selectedProfileImageFile !=
+                                    null
+                                ? ClipOval(
+                                  child: Image.file(
+                                    File(
+                                      presenter
+                                          .uiState
+                                          .value
+                                          .selectedProfileImageFile!
+                                          .path,
+                                    ),
+                                    width: px120,
+                                    height: px120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                                : Icon(
+                                  Icons.person,
+                                  size: px60,
+                                  color: Colors.white,
+                                ),
                       ),
-                      child: Icon(
-                        Icons.camera_alt,
-                        size: px20,
-                        color: Colors.grey,
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(px8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            size: px20,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
 
-          gapH16,
-          Text(
-            AppStrings.driverUploadProfilePicture,
-            style: TextStyle(fontSize: px16, fontWeight: FontWeight.w500),
-          ),
+              gapH16,
+              Text(
+                AppStrings.driverUploadProfilePicture,
+                style: TextStyle(fontSize: px16, fontWeight: FontWeight.w500),
+              ),
 
-          gapH24,
+              gapH24,
 
-          // Form fields in AuthFormContainer
-          AuthFormContainer(
-            showLogo: false,
-            logoAssetPath: AppAssets.icDriverLogo,
-            logoAssetPath2: AppAssets.icCabwireLogo,
-            formKey: presenter.confirmInfoFormKey,
-            formFields: _buildFormFields(context, presenter),
-            actionButton: CustomButton(
-              text: AppStrings.driverContinue,
-              onPressed: () => presenter.confirmPersonalInformation(context),
-              isLoading: presenter.uiState.value.isLoading,
-            ),
+              // Form fields in AuthFormContainer
+              AuthFormContainer(
+                showLogo: false,
+                logoAssetPath: AppAssets.icDriverLogo,
+                logoAssetPath2: AppAssets.icCabwireLogo,
+                formKey: presenter.confirmInfoFormKey,
+                formFields: _buildFormFields(context, presenter),
+                actionButton: CustomButton(
+                  text: AppStrings.driverContinue,
+                  onPressed:
+                      () => presenter.confirmPersonalInformation(context),
+                  isLoading: presenter.uiState.value.isLoading,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

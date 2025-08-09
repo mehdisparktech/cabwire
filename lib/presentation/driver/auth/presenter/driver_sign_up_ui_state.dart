@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cabwire/core/base/base_ui_state.dart';
 import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/domain/entities/driver/driver_entity.dart';
@@ -14,6 +16,11 @@ class DriverSignUpUiState extends BaseUiState {
   final bool isRegistered;
   final DriverProfileModel? profile;
   final String? resetToken;
+  final File? selectedProfileImageFile;
+  final bool selectedLicenseFrontImageFile;
+  final bool selectedLicenseBackImageFile;
+  final bool selectedVehicleFrontImageFile;
+  final bool selectedVehicleBackImageFile;
   const DriverSignUpUiState({
     required super.isLoading,
     required super.userMessage,
@@ -25,6 +32,11 @@ class DriverSignUpUiState extends BaseUiState {
     this.isRegistered = false,
     this.profile,
     this.resetToken,
+    this.selectedProfileImageFile,
+    this.selectedLicenseFrontImageFile = false,
+    this.selectedLicenseBackImageFile = false,
+    this.selectedVehicleFrontImageFile = false,
+    this.selectedVehicleBackImageFile = false,
   });
 
   factory DriverSignUpUiState.empty() {
@@ -39,6 +51,11 @@ class DriverSignUpUiState extends BaseUiState {
       isRegistered: false,
       profile: null,
       resetToken: null,
+      selectedProfileImageFile: null,
+      selectedLicenseFrontImageFile: false,
+      selectedLicenseBackImageFile: false,
+      selectedVehicleFrontImageFile: false,
+      selectedVehicleBackImageFile: false,
     );
   }
 
@@ -54,6 +71,11 @@ class DriverSignUpUiState extends BaseUiState {
     isRegistered,
     profile,
     resetToken,
+    selectedProfileImageFile,
+    selectedLicenseFrontImageFile,
+    selectedLicenseBackImageFile,
+    selectedVehicleFrontImageFile,
+    selectedVehicleBackImageFile,
   ];
 
   DriverSignUpUiState copyWith({
@@ -67,6 +89,11 @@ class DriverSignUpUiState extends BaseUiState {
     bool? isRegistered,
     DriverProfileModel? profile,
     String? resetToken,
+    File? selectedProfileImageFile,
+    bool? selectedLicenseFrontImageFile,
+    bool? selectedLicenseBackImageFile,
+    bool? selectedVehicleFrontImageFile,
+    bool? selectedVehicleBackImageFile,
   }) {
     return DriverSignUpUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -80,6 +107,16 @@ class DriverSignUpUiState extends BaseUiState {
       isRegistered: isRegistered ?? this.isRegistered,
       profile: profile ?? this.profile,
       resetToken: resetToken ?? this.resetToken,
+      selectedProfileImageFile:
+          selectedProfileImageFile ?? this.selectedProfileImageFile,
+      selectedLicenseFrontImageFile:
+          selectedLicenseFrontImageFile ?? this.selectedLicenseFrontImageFile,
+      selectedLicenseBackImageFile:
+          selectedLicenseBackImageFile ?? this.selectedLicenseBackImageFile,
+      selectedVehicleFrontImageFile:
+          selectedVehicleFrontImageFile ?? this.selectedVehicleFrontImageFile,
+      selectedVehicleBackImageFile:
+          selectedVehicleBackImageFile ?? this.selectedVehicleBackImageFile,
     );
   }
 }

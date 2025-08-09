@@ -59,9 +59,18 @@ class EditProfileInfoScreen extends StatelessWidget {
                                   radius: 80,
                                   backgroundColor: Colors.grey.shade300,
                                   backgroundImage:
-                                      presenter.selectedProfileImageFile != null
+                                      presenter
+                                                  .uiState
+                                                  .value
+                                                  .userProfile
+                                                  .selectedProfileImageFile !=
+                                              null
                                           ? FileImage(
-                                            presenter.selectedProfileImageFile!,
+                                            presenter
+                                                .uiState
+                                                .value
+                                                .userProfile
+                                                .selectedProfileImageFile!,
                                           )
                                           : NetworkImage(
                                             uiState
