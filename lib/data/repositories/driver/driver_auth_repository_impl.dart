@@ -179,7 +179,8 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
     required String vehiclesInsuranceNumber,
     required String vehiclesCategory,
     required String email,
-    String? vehicleImage,
+    String? vehicleFrontImage,
+    String? vehicleBackImage,
   }) async {
     final result = await _authDataSource.submitDriverVehicleInformation(
       vehiclesMake: vehiclesMake,
@@ -188,7 +189,8 @@ class DriverAuthRepositoryImpl implements DriverAuthRepository {
       vehiclesRegistrationNumber: vehiclesRegistrationNumber,
       vehiclesInsuranceNumber: vehiclesInsuranceNumber,
       vehiclesCategory: vehiclesCategory,
-      vehicleImage: vehicleImage,
+      vehicleFrontImage: vehicleFrontImage,
+      vehicleBackImage: vehicleBackImage,
       email: email,
     );
     return result.fold((l) => left(l), (r) => right(r));

@@ -109,15 +109,23 @@ class VehiclesInformationScreen extends StatelessWidget {
       ),
       gapH20,
       CustomTextFormField(
-        controller: presenter.vehiclesPictureController,
-        hintText: 'Upload Your Vehicles Picture',
+        controller: presenter.vehiclesFrontPictureController,
+        hintText: 'Upload Vehicle Front Photo (plate visible)',
         readOnly: true,
         suffixIcon: const Icon(Icons.add_a_photo_outlined),
-        onTap: () => presenter.selectVehicleImage(context),
+        onTap: () => presenter.selectVehicleFrontImage(context),
+      ),
+      gapH12,
+      CustomTextFormField(
+        controller: presenter.vehiclesBackPictureController,
+        hintText: 'Upload Vehicle Back Photo (plate visible)',
+        readOnly: true,
+        suffixIcon: const Icon(Icons.add_a_photo_outlined),
+        onTap: () => presenter.selectVehicleBackImage(context),
       ),
       gapH20,
-      // Vehicle image preview
-      if (presenter.vehicleImagePath != null)
+      // Vehicle image previews
+      if (presenter.vehicleFrontImagePath != null)
         Container(
           width: double.infinity,
           height: px180,
@@ -129,7 +137,24 @@ class VehiclesInformationScreen extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(px8),
             child: Image.file(
-              File(presenter.vehicleImagePath!),
+              File(presenter.vehicleFrontImagePath!),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      if (presenter.vehicleBackImagePath != null)
+        Container(
+          width: double.infinity,
+          height: px180,
+          margin: EdgeInsets.symmetric(vertical: px10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(px8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(px8),
+            child: Image.file(
+              File(presenter.vehicleBackImagePath!),
               fit: BoxFit.cover,
             ),
           ),

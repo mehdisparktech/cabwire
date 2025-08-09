@@ -39,7 +39,8 @@ abstract class DriverAuthRepository {
     required String vehiclesInsuranceNumber,
     required String vehiclesCategory,
     required String email,
-    String? vehicleImage,
+    String? vehicleFrontImage,
+    String? vehicleBackImage,
   });
 
   Future<Result<String>> submitDriverLicenseInformation({

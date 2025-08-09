@@ -51,7 +51,8 @@ abstract class DriverAuthRemoteDataSource {
     required String vehiclesInsuranceNumber,
     required String vehiclesCategory,
     required String email,
-    String? vehicleImage,
+    String? vehicleFrontImage,
+    String? vehicleBackImage,
   });
 
   Future<Result<String>> submitDriverLicenseInformation({
@@ -315,7 +316,8 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
     required String vehiclesInsuranceNumber,
     required String vehiclesCategory,
     required String email,
-    String? vehicleImage,
+    String? vehicleFrontImage,
+    String? vehicleBackImage,
   }) async {
     try {
       final token = LocalStorage.token;
@@ -340,17 +342,33 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
       // Create FormData
       final formData = FormData.fromMap({'data': jsonEncode(jsonData)});
 
-      appLog(vehicleImage != null);
+      appLog(vehicleFrontImage != null || vehicleBackImage != null);
 
-      // Add vehicle image if provided
-      if (vehicleImage != null) {
-        final fileName = vehicleImage.split('/').last;
+      // Add vehicle front image if provided
+      if (vehicleFrontImage != null) {
+        final fileName = vehicleFrontImage.split('/').last;
         var mimeType = lookupMimeType(fileName);
         formData.files.add(
           MapEntry(
             'image',
             await MultipartFile.fromFile(
-              vehicleImage,
+              vehicleFrontImage,
+              filename: fileName,
+              contentType: MediaType.parse(mimeType!),
+            ),
+          ),
+        );
+      }
+
+      // Add vehicle back image if provided
+      if (vehicleBackImage != null) {
+        final fileName = vehicleBackImage.split('/').last;
+        var mimeType = lookupMimeType(fileName);
+        formData.files.add(
+          MapEntry(
+            'image2',
+            await MultipartFile.fromFile(
+              vehicleBackImage,
               filename: fileName,
               contentType: MediaType.parse(mimeType!),
             ),

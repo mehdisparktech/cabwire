@@ -15,7 +15,8 @@ class DriverVehicleInformationUsecase extends BaseUseCase<String> {
     required String vehiclesInsuranceNumber,
     required String vehiclesCategory,
     required String email,
-    String? vehicleImage,
+    String? vehicleFrontImage,
+    String? vehicleBackImage,
   }) async {
     return repository.submitDriverVehicleInformation(
       vehiclesMake: vehiclesMake,
@@ -24,7 +25,8 @@ class DriverVehicleInformationUsecase extends BaseUseCase<String> {
       vehiclesRegistrationNumber: vehiclesRegistrationNumber,
       vehiclesInsuranceNumber: vehiclesInsuranceNumber,
       vehiclesCategory: vehiclesCategory,
-      vehicleImage: vehicleImage,
+      vehicleFrontImage: vehicleFrontImage,
+      vehicleBackImage: vehicleBackImage,
       email: email,
     );
   }

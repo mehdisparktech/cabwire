@@ -85,6 +85,13 @@ class DriverSignUpControllers {
   TextEditingController get vehiclesPictureController =>
       _vehicleControllers.picture;
   String? get vehicleImagePath => _vehicleControllers.vehicleImagePath;
+  TextEditingController get vehiclesFrontPictureController =>
+      _vehicleControllers.pictureFront;
+  TextEditingController get vehiclesBackPictureController =>
+      _vehicleControllers.pictureBack;
+  String? get vehicleFrontImagePath =>
+      _vehicleControllers.vehicleFrontImagePath;
+  String? get vehicleBackImagePath => _vehicleControllers.vehicleBackImagePath;
 
   // Reset password getters
   TextEditingController get resetPasswordController =>
@@ -104,6 +111,10 @@ class DriverSignUpControllers {
       _licenseControllers.setLicenseBackImage(path);
   void setVehicleImage(String path) =>
       _vehicleControllers.setVehicleImage(path);
+  void setVehicleFrontImage(String path) =>
+      _vehicleControllers.setVehicleFrontImage(path);
+  void setVehicleBackImage(String path) =>
+      _vehicleControllers.setVehicleBackImage(path);
 
   // Reset password visibility methods
   void toggleResetPasswordVisibility() =>
@@ -227,6 +238,10 @@ class _VehicleControllers {
   late final TextEditingController category;
   late final TextEditingController picture;
   String? vehicleImagePath;
+  late final TextEditingController pictureFront;
+  late final TextEditingController pictureBack;
+  String? vehicleFrontImagePath;
+  String? vehicleBackImagePath;
 
   _VehicleControllers() {
     make = TextEditingController();
@@ -236,11 +251,23 @@ class _VehicleControllers {
     insuranceNumber = TextEditingController();
     category = TextEditingController();
     picture = TextEditingController();
+    pictureFront = TextEditingController();
+    pictureBack = TextEditingController();
   }
 
   void setVehicleImage(String path) {
     vehicleImagePath = path;
     picture.text = 'Vehicle image selected';
+  }
+
+  void setVehicleFrontImage(String path) {
+    vehicleFrontImagePath = path;
+    pictureFront.text = 'Vehicle front image selected';
+  }
+
+  void setVehicleBackImage(String path) {
+    vehicleBackImagePath = path;
+    pictureBack.text = 'Vehicle back image selected';
   }
 
   void dispose() {
@@ -251,6 +278,8 @@ class _VehicleControllers {
     insuranceNumber.dispose();
     category.dispose();
     picture.dispose();
+    pictureFront.dispose();
+    pictureBack.dispose();
   }
 }
 

@@ -155,6 +155,12 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
   TextEditingController get vehiclesPictureController =>
       _controllers.vehiclesPictureController;
   String? get vehicleImagePath => _controllers.vehicleImagePath;
+  TextEditingController get vehiclesFrontPictureController =>
+      _controllers.vehiclesFrontPictureController;
+  TextEditingController get vehiclesBackPictureController =>
+      _controllers.vehiclesBackPictureController;
+  String? get vehicleFrontImagePath => _controllers.vehicleFrontImagePath;
+  String? get vehicleBackImagePath => _controllers.vehicleBackImagePath;
 
   TextEditingController get resetPasswordController =>
       _controllers.resetPasswordController;
@@ -389,6 +395,17 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
       // Parse the license expiry date to DateTime object
       final maill = emailController.text;
 
+      if (vehicleFrontImagePath == null) {
+        await showMessage(message: 'Please capture the vehicle front photo');
+        toggleLoading(loading: false);
+        return;
+      }
+      if (vehicleBackImagePath == null) {
+        await showMessage(message: 'Please capture the vehicle back photo');
+        toggleLoading(loading: false);
+        return;
+      }
+
       final result = await _driverVehicleInformationUsecase.execute(
         vehiclesMake: vehiclesMakeController.text.trim(),
         vehiclesModel: vehiclesModelController.text.trim(),
@@ -398,7 +415,8 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         vehiclesInsuranceNumber: vehiclesInsuranceNumberController.text.trim(),
         vehiclesCategory: vehicleCategoryController.text.trim(),
         email: emailController.text,
-        vehicleImage: vehicleImagePath,
+        vehicleFrontImage: vehicleFrontImagePath,
+        vehicleBackImage: vehicleBackImagePath,
       );
 
       await result.fold(
@@ -667,6 +685,134 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         if (pickedFile != null) {
           _controllers.setVehicleImage(pickedFile.path);
           uiState.value = currentUiState.copyWith();
+        }
+      } catch (e) {
+        debugPrint('Error picking image: $e');
+        await showMessage(message: 'Failed to pick image: $e');
+      }
+    }
+  }
+
+  Future<void> selectVehicleFrontImage(BuildContext context) async {
+    final ImageSource? source = await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: const Text('Gallery'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.gallery);
+                  },
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  child: const Text('Camera'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.camera);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (source != null) {
+      try {
+        if (source == ImageSource.camera) {
+          final path = await Navigator.of(context).push<String>(
+            MaterialPageRoute(
+              builder:
+                  (_) => const DocumentCaptureScreen(
+                    title: 'Capture Vehicle Front',
+                    instruction:
+                        'Align the vehicle front and ensure the plate is visible',
+                    overlayAspectRatio: 16 / 9,
+                  ),
+            ),
+          );
+          if (path != null) {
+            _controllers.setVehicleFrontImage(path);
+            uiState.value = currentUiState.copyWith();
+          }
+        } else {
+          final pickedFile = await ImagePicker().pickImage(
+            source: source,
+            imageQuality: 70,
+          );
+          if (pickedFile != null) {
+            _controllers.setVehicleFrontImage(pickedFile.path);
+            uiState.value = currentUiState.copyWith();
+          }
+        }
+      } catch (e) {
+        debugPrint('Error picking image: $e');
+        await showMessage(message: 'Failed to pick image: $e');
+      }
+    }
+  }
+
+  Future<void> selectVehicleBackImage(BuildContext context) async {
+    final ImageSource? source = await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: const Text('Gallery'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.gallery);
+                  },
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  child: const Text('Camera'),
+                  onTap: () {
+                    Navigator.of(context).pop(ImageSource.camera);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (source != null) {
+      try {
+        if (source == ImageSource.camera) {
+          final path = await Navigator.of(context).push<String>(
+            MaterialPageRoute(
+              builder:
+                  (_) => const DocumentCaptureScreen(
+                    title: 'Capture Vehicle Back',
+                    instruction:
+                        'Align the vehicle back and ensure the plate is visible',
+                    overlayAspectRatio: 16 / 9,
+                  ),
+            ),
+          );
+          if (path != null) {
+            _controllers.setVehicleBackImage(path);
+            uiState.value = currentUiState.copyWith();
+          }
+        } else {
+          final pickedFile = await ImagePicker().pickImage(
+            source: source,
+            imageQuality: 70,
+          );
+          if (pickedFile != null) {
+            _controllers.setVehicleBackImage(pickedFile.path);
+            uiState.value = currentUiState.copyWith();
+          }
         }
       } catch (e) {
         debugPrint('Error picking image: $e');
