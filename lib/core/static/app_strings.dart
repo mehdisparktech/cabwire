@@ -156,11 +156,11 @@ class AppStrings {
   static const String driverVehiclesRegistrationNumberEnter =
       "Enter Vehicles Registration Number";
   static const String driverVehiclesInsuranceNumberEnter =
-      "Enter Vehicles Insurance Number";
+      "Enter Vehicles Insurance Policy Number";
   static const String driverVehiclesInsuranceNumberError =
-      "Please enter your vehicles insurance number";
+      "Please enter your vehicles Insurance Policy Number";
   static const String driverVehiclesInsuranceNumberHint =
-      "Enter Your Vehicles Insurance Number";
+      "Enter Your Vehicles Insurance Policy Number";
   //==============================================//
   //============== Passenger Strings ===============//
   //==============================================//

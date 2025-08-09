@@ -57,7 +57,7 @@ class EditVehicleInfoScreen extends StatelessWidget {
                               presenter.vehiclesRegistrationNumberController,
                         ),
                         gapH20,
-                        CommonText(text: 'Vehicle Insurance Number'),
+                        CommonText(text: 'Vehicle Insurance Policy Number'),
                         gapH10,
                         CustomTextFormField(
                           hintText: 'Enter Vehicle Insurance No.',
