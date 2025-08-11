@@ -21,7 +21,8 @@ class UserProfileData {
   File? selectedProfileImageFile; // For new profile image
   File? selectedLicenseFrontImageFile; // For new license image
   File? selectedLicenseBackImageFile; // For new license image
-  File? selectedVehicleImageFile; // For new vehicle image
+  File? selectedVehicleBackImageFile; // For new vehicle image
+  File? selectedVehicleFrontImageFile; // For new vehicle image
   // Add other general profile fields
 
   UserProfileData({
@@ -34,7 +35,8 @@ class UserProfileData {
     this.selectedProfileImageFile,
     this.selectedLicenseFrontImageFile,
     this.selectedLicenseBackImageFile,
-    this.selectedVehicleImageFile,
+    this.selectedVehicleBackImageFile,
+    this.selectedVehicleFrontImageFile,
   });
 
   // Factory for initial/empty state
@@ -49,7 +51,8 @@ class UserProfileData {
       selectedProfileImageFile: null,
       selectedLicenseFrontImageFile: null,
       selectedLicenseBackImageFile: null,
-      selectedVehicleImageFile: null,
+      selectedVehicleBackImageFile: null,
+      selectedVehicleFrontImageFile: null,
     );
   }
 
@@ -63,7 +66,8 @@ class UserProfileData {
     File? selectedProfileImageFile,
     File? selectedLicenseFrontImageFile,
     File? selectedLicenseBackImageFile,
-    File? selectedVehicleImageFile,
+    File? selectedVehicleBackImageFile,
+    File? selectedVehicleFrontImageFile,
   }) {
     return UserProfileData(
       name: name ?? this.name,
@@ -78,8 +82,10 @@ class UserProfileData {
           selectedLicenseFrontImageFile ?? this.selectedLicenseFrontImageFile,
       selectedLicenseBackImageFile:
           selectedLicenseBackImageFile ?? this.selectedLicenseBackImageFile,
-      selectedVehicleImageFile:
-          selectedVehicleImageFile ?? this.selectedVehicleImageFile,
+      selectedVehicleBackImageFile:
+          selectedVehicleBackImageFile ?? this.selectedVehicleBackImageFile,
+      selectedVehicleFrontImageFile:
+          selectedVehicleFrontImageFile ?? this.selectedVehicleFrontImageFile,
     );
   }
 }

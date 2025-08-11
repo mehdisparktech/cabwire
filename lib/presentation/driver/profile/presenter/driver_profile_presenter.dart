@@ -247,7 +247,8 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
         selectedProfileImageFile: null,
         selectedLicenseFrontImageFile: null,
         selectedLicenseBackImageFile: null,
-        selectedVehicleImageFile: null,
+        selectedVehicleBackImageFile: null,
+        selectedVehicleFrontImageFile: null,
       ),
     );
     Get.to(() => EditProfileInfoScreen());
@@ -425,13 +426,26 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     }
   }
 
-  Future<void> pickVehicleImage() async {
+  Future<void> pickVehicleFrontImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       uiState.value = currentUiState.copyWith(
         userProfile: currentUiState.userProfile.copyWith(
-          selectedVehicleImageFile: File(image.path),
+          selectedVehicleFrontImageFile: File(image.path),
+        ),
+      );
+      addUserMessage("Image selected. Press Save to upload.");
+    }
+  }
+
+  Future<void> pickVehicleBackImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      uiState.value = currentUiState.copyWith(
+        userProfile: currentUiState.userProfile.copyWith(
+          selectedVehicleFrontImageFile: File(image.path),
         ),
       );
       addUserMessage("Image selected. Press Save to upload.");

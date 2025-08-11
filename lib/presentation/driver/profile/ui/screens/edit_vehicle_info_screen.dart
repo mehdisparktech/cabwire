@@ -97,14 +97,14 @@ class EditVehicleInfoScreen extends StatelessWidget {
                         gapH10,
                         GestureDetector(
                           onTap: () {
-                            presenter.pickVehicleImage();
+                            presenter.pickVehicleFrontImage();
                           },
                           child:
                               presenter
                                           .uiState
                                           .value
                                           .userProfile
-                                          .selectedVehicleImageFile !=
+                                          .selectedVehicleFrontImageFile !=
                                       null
                                   ? Image.file(
                                     File(
@@ -112,7 +112,41 @@ class EditVehicleInfoScreen extends StatelessWidget {
                                           .uiState
                                           .value
                                           .userProfile
-                                          .selectedVehicleImageFile!
+                                          .selectedVehicleFrontImageFile!
+                                          .path,
+                                    ),
+                                    width: double.infinity,
+                                    height: 200.px,
+                                    fit: BoxFit.cover,
+                                  )
+                                  : CommonImage(
+                                    imageSrc:
+                                        ApiEndPoint.imageUrl +
+                                        LocalStorage.vehicleImage,
+                                    imageType: ImageType.network,
+                                    width: double.infinity,
+                                    height: 200.px,
+                                  ),
+                        ),
+                        gapH20,
+                        GestureDetector(
+                          onTap: () {
+                            presenter.pickVehicleBackImage();
+                          },
+                          child:
+                              presenter
+                                          .uiState
+                                          .value
+                                          .userProfile
+                                          .selectedVehicleBackImageFile !=
+                                      null
+                                  ? Image.file(
+                                    File(
+                                      presenter
+                                          .uiState
+                                          .value
+                                          .userProfile
+                                          .selectedVehicleBackImageFile!
                                           .path,
                                     ),
                                     width: double.infinity,
