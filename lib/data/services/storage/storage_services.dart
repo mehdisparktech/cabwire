@@ -21,8 +21,10 @@ class LocalStorage {
   static String myContact = "";
   static String userType = "";
   static ThemeData theme = AppTheme.lightTheme;
-  static String licenseImage = "";
-  static String vehicleImage = "";
+  static String licenseFrontImage = "";
+  static String licenseBackImage = "";
+  static String vehicleFrontImage = "";
+  static String vehicleBackImage = "";
   // Create Local Storage Instance
   static SharedPreferences? preferences;
 
@@ -181,8 +183,10 @@ class LocalStorage {
     localStorage.setString(LocalStorageKeys.myContact, "");
     localStorage.setBool(LocalStorageKeys.isLogIn, false);
     localStorage.setString(LocalStorageKeys.theme, "light");
-    localStorage.setString(LocalStorageKeys.licenseImage, "");
-    localStorage.setString(LocalStorageKeys.vehicleImage, "");
+    localStorage.setString(LocalStorageKeys.licenseFrontImage, "");
+    localStorage.setString(LocalStorageKeys.licenseBackImage, "");
+    localStorage.setString(LocalStorageKeys.vehicleFrontImage, "");
+    localStorage.setString(LocalStorageKeys.vehicleBackImage, "");
   }
 
   // Save Data To SharedPreferences
@@ -282,15 +286,31 @@ class LocalStorage {
     if (profile.driverLicense?.uploadDriversLicense != null &&
         profile.driverLicense!.uploadDriversLicense!.isNotEmpty) {
       // Save the first image for quick access; keep all in the cached JSON
-      licenseImage = profile.driverLicense!.uploadDriversLicense!.first;
-      await localStorage.setString(LocalStorageKeys.licenseImage, licenseImage);
+      licenseFrontImage = profile.driverLicense!.uploadDriversLicense!.first;
+      licenseBackImage = profile.driverLicense!.uploadDriversLicense!.last;
+      await localStorage.setString(
+        LocalStorageKeys.licenseFrontImage,
+        licenseFrontImage,
+      );
+      await localStorage.setString(
+        LocalStorageKeys.licenseBackImage,
+        licenseBackImage,
+      );
     }
 
     if (profile.driverVehicles?.vehiclesPicture != null &&
         profile.driverVehicles!.vehiclesPicture!.isNotEmpty) {
       // Save the first image for quick access; keep all in the cached JSON
-      vehicleImage = profile.driverVehicles!.vehiclesPicture!.first;
-      await localStorage.setString(LocalStorageKeys.vehicleImage, vehicleImage);
+      vehicleFrontImage = profile.driverVehicles!.vehiclesPicture!.first;
+      vehicleBackImage = profile.driverVehicles!.vehiclesPicture!.last;
+      await localStorage.setString(
+        LocalStorageKeys.vehicleFrontImage,
+        vehicleFrontImage,
+      );
+      await localStorage.setString(
+        LocalStorageKeys.vehicleBackImage,
+        vehicleBackImage,
+      );
     }
 
     // Log the saved profile for debugging
@@ -299,7 +319,7 @@ class LocalStorage {
       source: "Local Storage",
     );
     appLog(
-      "Driver Local Storage profile saved: ${LocalStorage.myName}, ${LocalStorage.myEmail}, ${LocalStorage.myContact},${LocalStorage.myImage} ${LocalStorage.licenseImage} ${LocalStorage.vehicleImage}",
+      "Driver Local Storage profile saved: ${LocalStorage.myName}, ${LocalStorage.myEmail}, ${LocalStorage.myContact},${LocalStorage.myImage} ${LocalStorage.licenseFrontImage} ${LocalStorage.licenseBackImage} ${LocalStorage.vehicleFrontImage} ${LocalStorage.vehicleBackImage}",
       source: "Local Storage",
     );
   }

@@ -122,7 +122,7 @@ class EditVehicleInfoScreen extends StatelessWidget {
                                   : CommonImage(
                                     imageSrc:
                                         ApiEndPoint.imageUrl +
-                                        LocalStorage.vehicleImage,
+                                        LocalStorage.vehicleFrontImage,
                                     imageType: ImageType.network,
                                     width: double.infinity,
                                     height: 200.px,
@@ -156,7 +156,7 @@ class EditVehicleInfoScreen extends StatelessWidget {
                                   : CommonImage(
                                     imageSrc:
                                         ApiEndPoint.imageUrl +
-                                        LocalStorage.vehicleImage,
+                                        LocalStorage.vehicleBackImage,
                                     imageType: ImageType.network,
                                     width: double.infinity,
                                     height: 200.px,

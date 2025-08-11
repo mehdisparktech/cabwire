@@ -103,7 +103,7 @@ class EditDrivingInfoScreen extends StatelessWidget {
                                   : CommonImage(
                                     imageSrc:
                                         ApiEndPoint.imageUrl +
-                                        LocalStorage.licenseImage,
+                                        LocalStorage.licenseFrontImage,
                                     imageType: ImageType.network,
                                     width: double.infinity,
                                     height: 200.px,
@@ -137,7 +137,7 @@ class EditDrivingInfoScreen extends StatelessWidget {
                                   : CommonImage(
                                     imageSrc:
                                         ApiEndPoint.imageUrl +
-                                        LocalStorage.licenseImage,
+                                        LocalStorage.licenseBackImage,
                                     imageType: ImageType.network,
                                     width: double.infinity,
                                     height: 200.px,
