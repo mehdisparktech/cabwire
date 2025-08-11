@@ -31,6 +31,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter/widgets.dart' as widgets;
 // import 'package:image_picker/image_picker.dart'; // If you implement image picking
 
 class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
@@ -635,17 +637,28 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     contactMessageController.clear();
   }
 
-  void _logoutUser() {
+  Future<void> _logoutUser() async {
     toggleLoading(loading: true);
-    // Perform actual logout (clear tokens, user data)
     appLog("Logging out user...");
-    LocalStorage.removeAllPrefData();
-    Future.delayed(const Duration(seconds: 1), () {
-      toggleLoading(loading: false);
-      // GetNavigation.Get.offAll(() => LoginScreen()); // Navigate to login
-      Get.offAll(() => DriverAuthNavigatorScreen());
-      addUserMessage("Logged out successfully");
-    });
+
+    // Clear all app preferences and cached profiles
+    await LocalStorage.removeAllPrefData();
+    await LocalStorage.removeDriverProfile();
+    await LocalStorage.removePassengerProfile();
+
+    // Clear image caches (memory + disk) so old avatars don't reappear
+    try {
+      await DefaultCacheManager().emptyCache();
+    } catch (_) {}
+    try {
+      widgets.imageCache.clear();
+      widgets.imageCache.clearLiveImages();
+    } catch (_) {}
+
+    await Future.delayed(const Duration(milliseconds: 300));
+    toggleLoading(loading: false);
+    Get.offAll(() => DriverAuthNavigatorScreen());
+    addUserMessage("Logged out successfully");
   }
 
   Future<void> deleteAccount(String password) async {
