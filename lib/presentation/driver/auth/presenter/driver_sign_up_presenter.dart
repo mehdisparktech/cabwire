@@ -269,11 +269,13 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
 
   // Sign-up flow methods
   Future<void> onSignUp(BuildContext context) async {
+    toggleLoading(loading: true);
     if (!_validation.validateForm(signUpFormKey)) return;
 
     if (!validatePasswords()) {
       await addUserMessage('Passwords do not match');
       await showMessage(message: 'Passwords do not match');
+      toggleLoading(loading: false);
       return;
     }
 
@@ -891,7 +893,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         dateOfBirth: DateFormatHelper.formatDateForApi(dateOfBirthDateTime),
         image: currentUiState.selectedProfileImageFile?.path,
         driverLicense: profile_entity.DriverLicenseEntity(
-          licenseNumber: int.parse(driverLicenseNumberController.text.trim()),
+          licenseNumber: driverLicenseNumberController.text.trim(),
           licenseExpiryDate: DateFormatHelper.formatDateForApi(
             licenseExpiryDateTime,
           ),
@@ -901,12 +903,10 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           vehiclesMake: vehiclesMakeController.text.trim(),
           vehiclesModel: vehiclesModelController.text.trim(),
           vehiclesYear: vehiclesYearController.text.trim(),
-          vehiclesRegistrationNumber: int.parse(
-            vehiclesRegistrationNumberController.text.trim(),
-          ),
-          vehiclesInsuranceNumber: int.parse(
-            vehiclesInsuranceNumberController.text.trim(),
-          ),
+          vehiclesRegistrationNumber:
+              vehiclesRegistrationNumberController.text.trim(),
+          vehiclesInsuranceNumber:
+              vehiclesInsuranceNumberController.text.trim(),
           vehiclesCategory: vehicleCategoryController.text.trim(),
           vehiclesPicture: vehicleImagePath,
         ),
@@ -961,11 +961,13 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
         await addUserMessage(errorMessage);
         uiState.value = currentUiState.copyWith(currentStep: 0);
         await showMessage(message: errorMessage);
+        toggleLoading(loading: false);
       },
       (user) async {
         logError(user);
         uiState.value = currentUiState.copyWith(user: user, currentStep: 1);
         await showMessage(message: 'send otp to ${user.data?.email}');
+        toggleLoading(loading: false);
       },
     );
     if (result.isRight()) {
@@ -975,6 +977,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           context,
           const DriverEmailVerificationScreen(isSignUp: true),
         );
+        toggleLoading(loading: false);
       }
     }
   }

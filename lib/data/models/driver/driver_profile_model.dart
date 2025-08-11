@@ -59,7 +59,8 @@ class DriverProfileModel extends DriverProfileEntity {
       driverLicense:
           json['driverLicense'] != null
               ? DriverLicenseEntity(
-                licenseNumber: json['driverLicense']['licenseNumber'],
+                licenseNumber:
+                    json['driverLicense']['licenseNumber']?.toString(),
                 licenseExpiryDate: json['driverLicense']['licenseExpiryDate'],
                 uploadDriversLicense:
                     json['driverLicense']['uploadDriversLicense'],
@@ -72,9 +73,11 @@ class DriverProfileModel extends DriverProfileEntity {
                 vehiclesModel: json['driverVehicles']['vehiclesModel'],
                 vehiclesYear: json['driverVehicles']['vehiclesYear'],
                 vehiclesRegistrationNumber:
-                    json['driverVehicles']['vehiclesRegistrationNumber'],
+                    json['driverVehicles']['vehiclesRegistrationNumber']
+                        ?.toString(),
                 vehiclesInsuranceNumber:
-                    json['driverVehicles']['vehiclesInsuranceNumber'],
+                    json['driverVehicles']['vehiclesInsuranceNumber']
+                        ?.toString(),
                 vehiclesPicture: json['driverVehicles']['vehiclesPicture'],
                 vehiclesCategory: json['driverVehicles']['vehiclesCategory'],
               )
@@ -83,7 +86,13 @@ class DriverProfileModel extends DriverProfileEntity {
           json['driverTotalEarn'] != null
               ? (json['driverTotalEarn'] as num).toDouble()
               : null,
-      totalTrip: json['totalTrip'],
+      totalTrip:
+          (() {
+            final value = json['totalTrip'];
+            if (value is int) return value;
+            if (value is String) return int.tryParse(value);
+            return null;
+          })(),
       action: json['action'],
       adminRevenue:
           json['adminRevenue'] != null

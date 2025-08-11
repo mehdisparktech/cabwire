@@ -91,7 +91,7 @@ class GeoLocationEntity extends Equatable {
 }
 
 class DriverLicenseEntity extends Equatable {
-  final int? licenseNumber;
+  final String? licenseNumber;
   final String? licenseExpiryDate;
   final String? uploadDriversLicense;
 
@@ -113,8 +113,8 @@ class DriverVehicleEntity extends Equatable {
   final String? vehiclesMake;
   final String? vehiclesModel;
   final String? vehiclesYear;
-  final int? vehiclesRegistrationNumber;
-  final int? vehiclesInsuranceNumber;
+  final String? vehiclesRegistrationNumber;
+  final String? vehiclesInsuranceNumber;
   final String? vehiclesPicture;
   final String? vehiclesCategory;
 
