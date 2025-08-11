@@ -6,6 +6,7 @@ import 'package:cabwire/data/models/signin_response_model.dart';
 import 'package:cabwire/data/models/signup_response_model.dart';
 import 'package:cabwire/data/models/user_model.dart';
 import 'package:cabwire/data/services/api/api_service_impl.dart';
+import 'package:cabwire/data/services/storage/storage_keys.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
@@ -382,6 +383,24 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
         header: {'Authorization': 'Bearer $token'},
       );
 
+      result.fold((_) => null, (r) {
+        try {
+          final List<dynamic>? uploads =
+              r.data['data']?['driverVehicles']?['vehiclesPicture']
+                  as List<dynamic>?;
+          if (uploads != null && uploads.isNotEmpty) {
+            final String front = uploads.elementAt(0)?.toString() ?? '';
+            LocalStorage.setString(LocalStorageKeys.vehicleFrontImage, front);
+            LocalStorage.vehicleFrontImage = front;
+            if (uploads.length > 1) {
+              final String back = uploads.elementAt(1)?.toString() ?? '';
+              LocalStorage.setString(LocalStorageKeys.vehicleBackImage, back);
+              LocalStorage.vehicleBackImage = back;
+            }
+          }
+        } catch (_) {}
+      });
+
       return result.fold(
         (l) => left(l.message),
         (r) => right(
@@ -457,6 +476,25 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
         formData: formData,
         header: {'Authorization': 'Bearer $token'},
       );
+
+      // Save returned license image paths locally only on success
+      result.fold((_) => null, (r) {
+        try {
+          final List<dynamic>? uploads =
+              r.data['data']?['driverLicense']?['uploadDriversLicense']
+                  as List<dynamic>?;
+          if (uploads != null && uploads.isNotEmpty) {
+            final String front = uploads.elementAt(0)?.toString() ?? '';
+            LocalStorage.setString(LocalStorageKeys.licenseFrontImage, front);
+            LocalStorage.licenseFrontImage = front;
+            if (uploads.length > 1) {
+              final String back = uploads.elementAt(1)?.toString() ?? '';
+              LocalStorage.setString(LocalStorageKeys.licenseBackImage, back);
+              LocalStorage.licenseBackImage = back;
+            }
+          }
+        } catch (_) {}
+      });
 
       return result.fold(
         (l) => left(l.message),

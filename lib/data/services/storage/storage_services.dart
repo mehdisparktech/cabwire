@@ -49,6 +49,16 @@ class LocalStorage {
     myContact = localStorage.getString(LocalStorageKeys.myContact) ?? "";
     userType = localStorage.getString(LocalStorageKeys.userType) ?? "driver";
 
+    // Load cached document/vehicle images
+    licenseFrontImage =
+        localStorage.getString(LocalStorageKeys.licenseFrontImage) ?? "";
+    licenseBackImage =
+        localStorage.getString(LocalStorageKeys.licenseBackImage) ?? "";
+    vehicleFrontImage =
+        localStorage.getString(LocalStorageKeys.vehicleFrontImage) ?? "";
+    vehicleBackImage =
+        localStorage.getString(LocalStorageKeys.vehicleBackImage) ?? "";
+
     // Get stored theme type
     final themeType = userType == "driver" ? "driver" : "passenger";
     theme =

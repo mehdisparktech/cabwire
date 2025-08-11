@@ -93,7 +93,7 @@ class DriverAllRemoteDataSourceImpl implements DriverAllRemoteDataSource {
                 await LocalStorage.setString('myImage', imagePath);
 
                 // Verify immediate update
-                final verifyPath = await LocalStorage.preferences?.getString(
+                final verifyPath = LocalStorage.preferences?.getString(
                   'myImage',
                 );
                 appLog(

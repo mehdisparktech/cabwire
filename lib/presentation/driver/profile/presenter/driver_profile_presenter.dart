@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/api/api_end_point.dart';
+import 'package:cabwire/core/utility/helpers/date_format_helper.dart';
 import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/logger_utility.dart';
 import 'package:cabwire/core/utility/utility.dart';
@@ -9,6 +10,8 @@ import 'package:cabwire/data/models/driver/driver_profile_model.dart';
 import 'package:cabwire/domain/usecases/driver/driver_contact_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/delete_profile_usecase.dart';
 import 'package:cabwire/domain/usecases/driver/driver_profile_update_usecase.dart';
+import 'package:cabwire/domain/usecases/driver/driver_vehicle_information_usecase.dart';
+import 'package:cabwire/domain/usecases/driver_license_information_usecase.dart';
 import 'package:cabwire/domain/usecases/privacy_and_policy_usecase.dart';
 import 'package:cabwire/domain/usecases/terms_and_conditions_usecase.dart';
 import 'package:cabwire/domain/usecases/update_profile_photo_usecase.dart';
@@ -31,6 +34,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/widgets.dart' as widgets;
 // import 'package:image_picker/image_picker.dart'; // If you implement image picking
@@ -41,6 +45,8 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   final DriverDeleteProfileUsecase _deleteProfileUsecase;
   final DriverProfileUpdateUsecase _updateProfileUsecase;
   final UpdateProfilePhotoUsecase _updateProfilePhotoUsecase;
+  final DriverLicenseInformationUsecase _driverLicenseInfoUsecase;
+  final DriverVehicleInformationUsecase _driverVehicleInformationUsecase;
   final Obs<DriverProfileUiState> uiState = Obs<DriverProfileUiState>(
     DriverProfileUiState.initial(),
   );
@@ -104,6 +110,8 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     this._deleteProfileUsecase,
     this._updateProfileUsecase,
     this._updateProfilePhotoUsecase,
+    this._driverLicenseInfoUsecase,
+    this._driverVehicleInformationUsecase,
   ) {
     // Make sure we have the latest data from SharedPreferences
     LocalStorage.getAllPrefData().then((_) {
@@ -447,7 +455,7 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     if (image != null) {
       uiState.value = currentUiState.copyWith(
         userProfile: currentUiState.userProfile.copyWith(
-          selectedVehicleFrontImageFile: File(image.path),
+          selectedVehicleBackImageFile: File(image.path),
         ),
       );
       addUserMessage("Image selected. Press Save to upload.");
@@ -569,19 +577,88 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
     toggleLoading(loading: true);
     // Simulate API call
     appLog("Saving driving info: ${drivingLicenseNumberController.text}");
-    await Future.delayed(const Duration(seconds: 2));
-    final updatedDrivingInfo = currentUiState.drivingInfo.copyWith(
-      licenseNumber: drivingLicenseNumberController.text,
-      licenseExpiryDate: drivingLicenseExpiryDateController.text,
-      licenseIssueDate: drivingLicenseIssuingDateController.text,
+
+    final result = await _driverLicenseInfoUsecase.execute(
+      licenseNumber: drivingLicenseNumberController.text.trim(),
+      licenseExpiryDate: DateFormatHelper.formatDateForApi(
+        DateTime.parse(drivingLicenseExpiryDateController.text),
+      ),
+      email: LocalStorage.myEmail,
+      licenseImage:
+          currentUiState.userProfile.selectedLicenseFrontImageFile?.path,
+      licenseBackImage:
+          currentUiState.userProfile.selectedLicenseBackImageFile?.path,
     );
-    uiState.value = currentUiState.copyWith(
-      drivingInfo: updatedDrivingInfo,
-      isLoading: false,
+
+    await result.fold(
+      (errorMessage) async {
+        await addUserMessage(errorMessage);
+        await showMessage(message: errorMessage);
+        toggleLoading(loading: false);
+      },
+      (successMessage) async {
+        await addUserMessage(successMessage);
+        await showMessage(message: 'License Information updated successfully!');
+        await loadDriverProfile();
+        await LocalStorage.getAllPrefData();
+        Get.back();
+        await Future.delayed(const Duration(seconds: 1));
+        toggleLoading(loading: false);
+      },
     );
-    addUserMessage("Driving information updated successfully!");
-    showMessage(message: 'Driving information updated successfully!');
-    Get.back();
+  }
+
+  Future<void> saveVehicleInfo() async {
+    toggleLoading(loading: true);
+
+    await executeTaskWithLoading(() async {
+      // Parse the license expiry date to DateTime object
+
+      if (currentUiState.userProfile.selectedVehicleFrontImageFile == null) {
+        await showMessage(message: 'Please capture the vehicle front photo');
+        toggleLoading(loading: false);
+        return;
+      }
+      if (currentUiState.userProfile.selectedVehicleBackImageFile == null) {
+        await showMessage(message: 'Please capture the vehicle back photo');
+        toggleLoading(loading: false);
+        return;
+      }
+
+      final result = await _driverVehicleInformationUsecase.execute(
+        vehiclesMake: vehiclesMakeController.text.trim(),
+        vehiclesModel: vehiclesModelController.text.trim(),
+        vehiclesYear: "2028",
+        vehiclesRegistrationNumber:
+            vehiclesRegistrationNumberController.text.trim(),
+        vehiclesInsuranceNumber: vehiclesInsuranceNumberController.text.trim(),
+        vehiclesCategory: vehiclesCategoryController.text.trim(),
+        email: LocalStorage.myEmail,
+        vehicleFrontImage:
+            currentUiState.userProfile.selectedVehicleFrontImageFile?.path,
+        vehicleBackImage:
+            currentUiState.userProfile.selectedVehicleBackImageFile?.path,
+      );
+
+      await result.fold(
+        (errorMessage) async {
+          await addUserMessage(errorMessage);
+          await showMessage(message: errorMessage);
+          toggleLoading(loading: false);
+        },
+        (successMessage) async {
+          await addUserMessage(successMessage);
+          await showMessage(
+            message: 'Vehicle Information updated successfully!',
+          );
+          await loadDriverProfile();
+          await LocalStorage.getAllPrefData();
+          Get.back();
+          await Future.delayed(const Duration(seconds: 1));
+          toggleLoading(loading: false);
+        },
+      );
+    });
   }
 
   Future<void> submitContactUsForm() async {

@@ -173,7 +173,7 @@ class EditVehicleInfoScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 20.0),
                   child: CustomButton(
                     text: 'Save Information',
-                    onPressed: presenter.saveDrivingInfo,
+                    onPressed: presenter.saveVehicleInfo,
                     radius: 10,
                   ),
                 ),
