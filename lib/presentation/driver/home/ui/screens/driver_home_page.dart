@@ -89,7 +89,7 @@ class _DriverHomePageState extends State<DriverHomePage>
             children: [
               Expanded(
                 child: CustomText(
-                  'Hello ${uiState.userName}',
+                  'Hello ${LocalStorage.myName}',
                   fontWeight: FontWeight.bold,
                 ),
               ),

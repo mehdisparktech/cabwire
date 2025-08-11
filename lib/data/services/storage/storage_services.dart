@@ -279,13 +279,17 @@ class LocalStorage {
       await localStorage.setString(LocalStorageKeys.myContact, myContact);
     }
 
-    if (profile.driverLicense?.uploadDriversLicense != null) {
-      licenseImage = profile.driverLicense!.uploadDriversLicense!;
+    if (profile.driverLicense?.uploadDriversLicense != null &&
+        profile.driverLicense!.uploadDriversLicense!.isNotEmpty) {
+      // Save the first image for quick access; keep all in the cached JSON
+      licenseImage = profile.driverLicense!.uploadDriversLicense!.first;
       await localStorage.setString(LocalStorageKeys.licenseImage, licenseImage);
     }
 
-    if (profile.driverVehicles?.vehiclesPicture != null) {
-      vehicleImage = profile.driverVehicles!.vehiclesPicture!;
+    if (profile.driverVehicles?.vehiclesPicture != null &&
+        profile.driverVehicles!.vehiclesPicture!.isNotEmpty) {
+      // Save the first image for quick access; keep all in the cached JSON
+      vehicleImage = profile.driverVehicles!.vehiclesPicture!.first;
       await localStorage.setString(LocalStorageKeys.vehicleImage, vehicleImage);
     }
 

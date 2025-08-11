@@ -78,7 +78,7 @@ class DriverLocationEntity {
 class DriverLicenseEntity {
   final int? licenseNumber;
   final String? licenseExpiryDate;
-  final String? uploadDriversLicense;
+  final List<String>? uploadDriversLicense;
 
   const DriverLicenseEntity({
     this.licenseNumber,
@@ -93,7 +93,7 @@ class DriverVehicleEntity {
   final String? vehiclesYear;
   final int? vehiclesRegistrationNumber;
   final int? vehiclesInsuranceNumber;
-  final dynamic vehiclesPicture;
+  final List<String>? vehiclesPicture;
   final int? vehiclesCategory;
 
   const DriverVehicleEntity({

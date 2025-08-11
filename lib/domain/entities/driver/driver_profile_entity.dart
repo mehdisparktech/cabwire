@@ -93,7 +93,7 @@ class GeoLocationEntity extends Equatable {
 class DriverLicenseEntity extends Equatable {
   final String? licenseNumber;
   final String? licenseExpiryDate;
-  final String? uploadDriversLicense;
+  final List<String>? uploadDriversLicense;
 
   const DriverLicenseEntity({
     this.licenseNumber,
@@ -115,7 +115,7 @@ class DriverVehicleEntity extends Equatable {
   final String? vehiclesYear;
   final String? vehiclesRegistrationNumber;
   final String? vehiclesInsuranceNumber;
-  final String? vehiclesPicture;
+  final List<String>? vehiclesPicture;
   final String? vehiclesCategory;
 
   const DriverVehicleEntity({

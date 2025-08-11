@@ -63,7 +63,16 @@ class DriverProfileModel extends DriverProfileEntity {
                     json['driverLicense']['licenseNumber']?.toString(),
                 licenseExpiryDate: json['driverLicense']['licenseExpiryDate'],
                 uploadDriversLicense:
-                    json['driverLicense']['uploadDriversLicense'],
+                    (() {
+                      final uploads =
+                          json['driverLicense']['uploadDriversLicense'];
+                      if (uploads is List) {
+                        return uploads.map((e) => e.toString()).toList();
+                      } else if (uploads is String) {
+                        return <String>[uploads];
+                      }
+                      return null;
+                    })(),
               )
               : null,
       driverVehicles:
@@ -78,7 +87,16 @@ class DriverProfileModel extends DriverProfileEntity {
                 vehiclesInsuranceNumber:
                     json['driverVehicles']['vehiclesInsuranceNumber']
                         ?.toString(),
-                vehiclesPicture: json['driverVehicles']['vehiclesPicture'],
+                vehiclesPicture:
+                    (() {
+                      final pics = json['driverVehicles']['vehiclesPicture'];
+                      if (pics is List) {
+                        return pics.map((e) => e.toString()).toList();
+                      } else if (pics is String) {
+                        return <String>[pics];
+                      }
+                      return null;
+                    })(),
                 vehiclesCategory: json['driverVehicles']['vehiclesCategory'],
               )
               : null,

@@ -897,7 +897,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           licenseExpiryDate: DateFormatHelper.formatDateForApi(
             licenseExpiryDateTime,
           ),
-          uploadDriversLicense: licenseImagePath ?? '',
+          uploadDriversLicense: [licenseImagePath ?? ''],
         ),
         driverVehicles: profile_entity.DriverVehicleEntity(
           vehiclesMake: vehiclesMakeController.text.trim(),
@@ -908,7 +908,7 @@ class DriverSignUpPresenter extends BasePresenter<DriverSignUpUiState>
           vehiclesInsuranceNumber:
               vehiclesInsuranceNumberController.text.trim(),
           vehiclesCategory: vehicleCategoryController.text.trim(),
-          vehiclesPicture: vehicleImagePath,
+          vehiclesPicture: [vehicleImagePath ?? ''],
         ),
       );
       final result = await _driverProfileUpdateUsecase.execute(
