@@ -366,7 +366,7 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
         var mimeType = lookupMimeType(fileName);
         formData.files.add(
           MapEntry(
-            'image2',
+            'image',
             await MultipartFile.fromFile(
               vehicleBackImage,
               filename: fileName,
@@ -442,7 +442,7 @@ class DriverAuthRemoteDataSourceImpl extends DriverAuthRemoteDataSource {
         var mimeType = lookupMimeType(fileName);
         formData.files.add(
           MapEntry(
-            'image2',
+            'image',
             await MultipartFile.fromFile(
               licenseBackImage,
               filename: fileName,
