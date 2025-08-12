@@ -4,6 +4,9 @@ import 'package:cabwire/core/config/app_assets.dart';
 class PassengerChatMessage {
   final String id;
   final String text;
+  final String? senderId;
+  final String? senderName;
+  final String? senderImage;
   final DateTime timestamp;
   final bool isSender;
   final bool showAvatar;
@@ -11,6 +14,9 @@ class PassengerChatMessage {
   PassengerChatMessage({
     required this.id,
     required this.text,
+    this.senderId,
+    this.senderName,
+    this.senderImage,
     required this.timestamp,
     required this.isSender,
     this.showAvatar = false,

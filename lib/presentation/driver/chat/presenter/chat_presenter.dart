@@ -173,7 +173,10 @@ class ChatPresenter extends BasePresenter<ChatUiState> {
                   id: e.id,
                   text: e.text,
                   timestamp: e.createdAt,
-                  isSender: e.sender == userId,
+                  isSender: e.senderId == userId,
+                  senderId: e.senderId,
+                  senderName: e.senderId == userId ? null : e.senderName,
+                  senderImage: e.senderId == userId ? null : e.senderImage,
                 ),
               )
               .toList()
@@ -181,7 +184,23 @@ class ChatPresenter extends BasePresenter<ChatUiState> {
               (a, b) => a.timestamp.compareTo(b.timestamp),
             ); // Sort by timestamp ascending
 
-      uiState.value = currentUiState.copyWith(messages: sortedMessages);
+      // pick first partner message (not from current user)
+      String partnerName = currentUiState.chatPartnerName;
+      String partnerImage = currentUiState.chatPartnerAvatarUrl;
+      for (final m in sortedMessages) {
+        if (!m.isSender) {
+          if ((m.senderName ?? '').isNotEmpty) partnerName = m.senderName!;
+          if ((m.senderImage ?? '').isNotEmpty) partnerImage = m.senderImage!;
+          break;
+        }
+      }
+
+      uiState.value = currentUiState.copyWith(
+        messages: sortedMessages,
+        chatPartnerName: partnerName,
+        chatPartnerAvatarUrl: partnerImage,
+        isLoading: false,
+      );
     });
   }
 

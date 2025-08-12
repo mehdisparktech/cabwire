@@ -6,7 +6,9 @@ class ChatMessageMapper {
     return ChatMessageEntity(
       id: model.id,
       chatId: model.chatId,
-      sender: model.sender,
+      senderId: model.senderId,
+      senderName: model.senderName,
+      senderImage: model.senderImage,
       text: model.text,
       image: model.image,
       createdAt: model.createdAt,
@@ -18,7 +20,9 @@ class ChatMessageMapper {
     return ChatMessageModel(
       id: entity.id,
       chatId: entity.chatId,
-      sender: entity.sender,
+      senderId: entity.senderId,
+      senderName: entity.senderName,
+      senderImage: entity.senderImage,
       text: entity.text,
       image: entity.image,
       createdAt: entity.createdAt,
