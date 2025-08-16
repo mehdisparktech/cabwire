@@ -1,3 +1,5 @@
+import 'package:cabwire/core/enum/service_type.dart';
+import 'package:cabwire/presentation/passenger/car_booking/ui/screens/add_stoppage_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // For context.theme
 
@@ -36,13 +38,31 @@ class TripStoppageInfoWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  // Use passed data if dynamic
                   child: Text(
                     stoppageLocation,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black87,
                       fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () {
+                    Get.to(
+                      () => AddStoppageScreen(
+                        serviceType: ServiceType.none,
+                        serviceId: null,
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "Add Stoppage",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.theme.colorScheme.primary,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
