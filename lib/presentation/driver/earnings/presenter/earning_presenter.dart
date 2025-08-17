@@ -7,7 +7,7 @@ import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/data/services/api/api_failure.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
-import 'package:cabwire/domain/entities/driver/payment_list_entity.dart';
+import 'package:cabwire/domain/entities/driver/driver_earnings_entity.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/domain/usecases/driver/get_driver_earnings_usecase.dart';
 import 'package:cabwire/presentation/driver/earnings/presenter/earning_ui_state.dart';
@@ -19,7 +19,7 @@ class EarningsPresenter extends BasePresenter<EarningsUiState> {
     EarningsUiState.initial(),
   );
   final GetDriverEarningsUseCase _getDriverEarningsUseCase;
-  PaymentListEntity? _fullEarningsData;
+  DriverEarningsEntity? _earnings;
 
   EarningsUiState get currentUiState => uiState.value;
 
@@ -41,7 +41,7 @@ class EarningsPresenter extends BasePresenter<EarningsUiState> {
     toggleLoading(loading: true);
 
     try {
-      // Fetch all earnings data once
+      // Fetch new earnings data (total + daily)
       final result = await _getDriverEarningsUseCase.execute();
 
       result.fold(
@@ -50,8 +50,7 @@ class EarningsPresenter extends BasePresenter<EarningsUiState> {
           toggleLoading(loading: false);
         },
         (success) {
-          _fullEarningsData = success.data;
-          // Apply filtering in the presenter
+          _earnings = success.data;
           _applyFilter(filter);
           toggleLoading(loading: false);
         },
@@ -67,98 +66,98 @@ class EarningsPresenter extends BasePresenter<EarningsUiState> {
   }
 
   void _applyFilter(EarningsFilter filter) {
-    final paymentData = _fullEarningsData?.data;
+    final earnings = _earnings;
 
-    if (paymentData != null && paymentData.payments != null) {
-      List<PaymentEntity> filteredPayments = [];
+    if (earnings != null) {
       final now = DateTime.now();
 
-      // Apply filter based on selected time range
+      // Filter daily items by range
+      List<DailyEarningEntity> filteredDaily;
       switch (filter) {
         case EarningsFilter.today:
-          filteredPayments =
-              paymentData.payments!
-                  .where(
-                    (payment) =>
-                        payment.createdAt != null &&
-                        _isSameDay(payment.createdAt!, now),
-                  )
-                  .toList();
+          filteredDaily =
+              earnings.daily.where((d) => _isSameDay(d.date, now)).toList();
           break;
         case EarningsFilter.week:
-          filteredPayments =
-              paymentData.payments!
-                  .where(
-                    (payment) =>
-                        payment.createdAt != null &&
-                        _isWithinLastDays(payment.createdAt!, now, 7),
-                  )
+          filteredDaily =
+              earnings.daily
+                  .where((d) => _isWithinLastDays(d.date, now, 7))
                   .toList();
           break;
         case EarningsFilter.month:
-          filteredPayments =
-              paymentData.payments!
-                  .where(
-                    (payment) =>
-                        payment.createdAt != null &&
-                        _isWithinLastDays(payment.createdAt!, now, 30),
-                  )
+          filteredDaily =
+              earnings.daily
+                  .where((d) => _isWithinLastDays(d.date, now, 30))
                   .toList();
           break;
       }
 
-      // Calculate overall earnings data
-      final todayEarning = _calculateTotalEarnings(filteredPayments);
-      final cashPayment = _calculateCashPayments(filteredPayments);
-      final onlinePayment = _calculateOnlinePayments(filteredPayments);
-
-      // Group payments by date for daily breakdowns when week or month filter is selected
-      List<DailyEarningItem> dailyEarnings = [];
-
-      if (filter == EarningsFilter.week || filter == EarningsFilter.month) {
-        // Group payments by date
-        Map<String, List<PaymentEntity>> paymentsByDate = {};
-
-        for (var payment in filteredPayments) {
-          if (payment.createdAt != null) {
-            final dateKey =
-                "${payment.createdAt!.year}-${payment.createdAt!.month}-${payment.createdAt!.day}";
-            if (!paymentsByDate.containsKey(dateKey)) {
-              paymentsByDate[dateKey] = [];
-            }
-            paymentsByDate[dateKey]!.add(payment);
-          }
-        }
-
-        // Create a DailyEarningItem for each day
-        for (var entry in paymentsByDate.entries) {
-          final payments = entry.value;
-          if (payments.isNotEmpty && payments.first.createdAt != null) {
-            dailyEarnings.add(
-              DailyEarningItem(
-                date: payments.first.createdAt!,
-                todayEarning: _calculateTotalEarnings(payments),
-                cashPayment: _calculateCashPayments(payments),
-                onlinePayment: _calculateOnlinePayments(payments),
-                walletAmount: 0, // Set wallet amount based on business logic
-              ),
-            );
-          }
-        }
-
-        // Sort daily earnings by date (newest first)
-        dailyEarnings.sort((a, b) => b.date.compareTo(a.date));
+      // Aggregate by date (API may return multiple rows per day)
+      final Map<String, DailyAgg> aggByDate = {};
+      for (final d in filteredDaily) {
+        final key = "${d.date.year}-${d.date.month}-${d.date.day}";
+        aggByDate.putIfAbsent(
+          key,
+          () => DailyAgg(date: DateTime(d.date.year, d.date.month, d.date.day)),
+        );
+        final a = aggByDate[key]!;
+        a.todayEarning += d.todayTotalEarning;
+        a.cashPayment += d.cashPaymentReceived;
+        a.onlinePayment += d.onlinePaymentReceived;
+        a.walletAmount += d.walletAmount;
+        a.available += d.todayAvailableEarning;
       }
 
-      // Create the earnings data
+      // Compute summary values for current filter
+      double todayEarning;
+      double cashPayment;
+      double onlinePayment;
+      double walletAmount;
+      double available;
+      DateTime currentDate = now;
+
+      if (filter == EarningsFilter.today) {
+        final todayKey = "${now.year}-${now.month}-${now.day}";
+        final a = aggByDate[todayKey];
+        todayEarning = a?.todayEarning ?? 0;
+        cashPayment = a?.cashPayment ?? 0;
+        onlinePayment = a?.onlinePayment ?? 0;
+        walletAmount = a?.walletAmount ?? 0;
+        available = a?.available ?? 0;
+      } else {
+        todayEarning = aggByDate.values.fold(0, (p, e) => p + e.todayEarning);
+        cashPayment = aggByDate.values.fold(0, (p, e) => p + e.cashPayment);
+        onlinePayment = aggByDate.values.fold(0, (p, e) => p + e.onlinePayment);
+        walletAmount = aggByDate.values.fold(0, (p, e) => p + e.walletAmount);
+        available = aggByDate.values.fold(0, (p, e) => p + e.available);
+      }
+
+      // Build daily list for week/month
+      List<DailyEarningItem> dailyEarnings = [];
+      if (filter == EarningsFilter.week || filter == EarningsFilter.month) {
+        dailyEarnings =
+            aggByDate.values
+                .map(
+                  (a) => DailyEarningItem(
+                    date: a.date,
+                    todayEarning: a.todayEarning,
+                    cashPayment: a.cashPayment,
+                    onlinePayment: a.onlinePayment,
+                    walletAmount: a.walletAmount,
+                  ),
+                )
+                .toList()
+              ..sort((a, b) => b.date.compareTo(a.date));
+      }
+
       final earningsData = EarningsData(
-        totalEarnings: paymentData.totalDriverAmount ?? 0,
-        availableEarnings: _calculateAvailableAmount(filteredPayments),
-        currentDate: DateTime.now(),
+        totalEarnings: earnings.total.totalLifetimeEarning,
+        availableEarnings: available,
+        currentDate: currentDate,
         todayEarning: todayEarning,
         cashPayment: cashPayment,
         onlinePayment: onlinePayment,
-        walletAmount: 0, // Set wallet amount based on business logic
+        walletAmount: walletAmount,
         dailyEarnings: dailyEarnings,
       );
 
@@ -181,48 +180,6 @@ class EarningsPresenter extends BasePresenter<EarningsUiState> {
         date1.day == date2.day;
   }
 
-  double _calculateAvailableAmount(List<PaymentEntity> payments) {
-    // Calculate available amount based on business logic
-    double amount = 0;
-    for (final payment in payments) {
-      if (payment.status == 'completed' || payment.status == 'settled') {
-        amount += payment.driverAmount ?? 0;
-      }
-    }
-    return amount;
-  }
-
-  double _calculateTotalEarnings(List<PaymentEntity> payments) {
-    // Calculate total earnings from the payments
-    double amount = 0;
-    for (final payment in payments) {
-      amount += payment.driverAmount ?? 0;
-    }
-    return amount;
-  }
-
-  double _calculateCashPayments(List<PaymentEntity> payments) {
-    // Calculate cash payments
-    double amount = 0;
-    for (final payment in payments) {
-      if (payment.method?.toLowerCase() == 'cash') {
-        amount += payment.amount ?? 0;
-      }
-    }
-    return amount;
-  }
-
-  double _calculateOnlinePayments(List<PaymentEntity> payments) {
-    // Calculate online payments
-    double amount = 0;
-    for (final payment in payments) {
-      if (payment.method?.toLowerCase() != 'cash') {
-        amount += payment.amount ?? 0;
-      }
-    }
-    return amount;
-  }
-
   void onFilterSelected(String? value) {
     if (value == null) return;
 
@@ -241,7 +198,7 @@ class EarningsPresenter extends BasePresenter<EarningsUiState> {
         return;
     }
     if (selected != currentUiState.selectedFilter) {
-      if (_fullEarningsData != null) {
+      if (_earnings != null) {
         // We already have the data, just apply the new filter
         _applyFilter(selected);
       } else {
@@ -267,4 +224,15 @@ class EarningsPresenter extends BasePresenter<EarningsUiState> {
   void goBack() {
     Get.back();
   }
+}
+
+// Aggregation helper for daily earnings
+class DailyAgg {
+  final DateTime date;
+  double todayEarning = 0;
+  double cashPayment = 0;
+  double onlinePayment = 0;
+  double walletAmount = 0;
+  double available = 0;
+  DailyAgg({required this.date});
 }

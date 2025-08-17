@@ -63,6 +63,10 @@ class ApiEndPoint {
   static const updatePassengerProfile =
       "$baseUrl/user/update-profile-by-email/";
 
+  // Earnings (new endpoints)
+  static const myDailyEarnings = "$baseUrl/earning/my-earnings";
+  static const myTotalEarnings = "$baseUrl/earning/my-total-earnings";
+
   // Driver registration separate endpoints
   static const driverConfirmInformation =
       "$baseUrl/user/update-profile-by-email/";
