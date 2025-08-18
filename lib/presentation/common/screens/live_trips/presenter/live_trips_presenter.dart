@@ -28,38 +28,40 @@ class LiveTripsPresenter extends BasePresenter<LiveTripsUiState> {
   @override
   void onInit() {
     super.onInit();
-    if (uiState.value.rideId != null) {
-      _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-        getLiveTrips(rideId: uiState.value.rideId!);
-      });
-    }
+    // Timer will be started in init() after rideId is set
   }
 
   Future<void> init({required String rideId}) async {
     uiState.value = uiState.value.copyWith(rideId: rideId);
     await getLiveTrips(rideId: rideId);
+    // Start 10s polling after first successful fetch
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      getLiveTrips(rideId: rideId);
+    });
   }
 
   Future<void> getLiveTrips({required String rideId}) async {
     toggleLoading(loading: true);
 
     final result = await apiService.get(ApiEndPoint.liveTrips + rideId);
-    result.fold(
-      (error) => addUserMessage(error.message),
-      (data) =>
-          uiState.value = uiState.value.copyWith(
-            trips:
-                RidePathHistoryModel.fromJson(data.data).data?.pathHistory ??
-                [],
-          ),
-    );
+    result.fold((error) => addUserMessage(error.message), (data) {
+      final history =
+          RidePathHistoryModel.fromJson(data.data).data?.pathHistory ?? [];
+
+      uiState.value = uiState.value.copyWith(trips: history);
+
+      // Update map overlays based on history
+      _updateMapFromTrips();
+    });
     toggleLoading(loading: false);
   }
 
   Future<void> onMapCreated(GoogleMapController controller) async {
     uiState.value = currentUiState.copyWith(mapController: controller);
-    setCustomIcons();
-    setPolyline();
+    // Ensure icons are ready and map reflects latest data
+    await setCustomIcons();
+    _updateMapFromTrips();
   }
 
   Future<void> setCustomIcons() async {
@@ -158,6 +160,38 @@ class LiveTripsPresenter extends BasePresenter<LiveTripsUiState> {
       uiState.value = currentUiState.copyWith(
         userMessage: 'Unable to load route. Please try again later.',
       );
+    }
+  }
+
+  void _updateMapFromTrips() {
+    try {
+      final trips = currentUiState.trips;
+      if (trips == null || trips.isEmpty) return;
+
+      // Build polyline from raw history points
+      final polyline = trips
+          .map((e) => LatLng(e.latitude, e.longitude))
+          .toList(growable: false);
+
+      final first = trips.first;
+      final last = trips.last;
+
+      uiState.value = currentUiState.copyWith(
+        polylineCoordinates: polyline,
+        sourceMapCoordinates: PointLatLng(first.latitude, first.longitude),
+        destinationMapCoordinates: PointLatLng(last.latitude, last.longitude),
+        currentLocation: PointLatLng(last.latitude, last.longitude),
+      );
+
+      // Move camera to follow the latest point
+      final controller = currentUiState.mapController;
+      if (controller != null) {
+        controller.animateCamera(
+          CameraUpdate.newLatLng(LatLng(last.latitude, last.longitude)),
+        );
+      }
+    } catch (e) {
+      logError('Error updating map from trips: $e');
     }
   }
 
