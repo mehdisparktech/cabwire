@@ -69,6 +69,14 @@
           <string>cabwire</string>
         </array>
       </dict>
+      <dict>
+        <key>CFBundleURLName</key>
+        <string>cabwire.http.deeplink</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>http</string>
+        </array>
+      </dict>
     </array>
   </dict>
 </plist>

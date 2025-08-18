@@ -34,12 +34,22 @@
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
-      <!-- Deep Link Intent Filter -->
+      <!-- Deep Link Intent Filter for custom scheme -->
       <intent-filter android:autoVerify="true">
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
         <data android:scheme="cabwire" />
+      </intent-filter>
+      
+      <!-- Deep Link Intent Filter for HTTP domain -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="http" 
+              android:host="31.97.98.240"
+              android:port="4173" />
       </intent-filter>
     </activity>
     <!-- Required by image_cropper (uCrop) -->

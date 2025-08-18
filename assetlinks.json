@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.example.cabwire",
+            "sha256_cert_fingerprints": [
+                "EF:75:77:AC:DE:2A:B8:D9:E2:CF:EC:27:AA:F1:A2:AE:73:60:81:B7:0D:DC:4D:91:B7:BB:1B:05:80:FF:0A:19"
+            ]
+        }
+    }
+]
