@@ -10,9 +10,13 @@ import 'package:cabwire/data/services/backend_as_a_service.dart';
 import 'package:cabwire/data/services/error_message_handler_impl.dart';
 import 'package:cabwire/data/services/local_cache_service.dart';
 import 'package:cabwire/data/services/notification/notification_service_impl.dart';
+import 'package:cabwire/data/services/share/share_service_impl.dart';
+import 'package:cabwire/data/services/deep_link/deep_link_service_impl.dart';
 import 'package:cabwire/domain/services/api_service.dart';
+import 'package:cabwire/domain/services/deep_link_service.dart';
 import 'package:cabwire/domain/services/error_message_handler.dart';
 import 'package:cabwire/domain/services/notification_service.dart';
+import 'package:cabwire/domain/services/share_service.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:cabwire/domain/services/time_service.dart';
 import 'package:cabwire/data/services/location/location_service.dart';
@@ -34,7 +38,9 @@ class ServiceSetup implements SetupModule {
       ..registerLazySingleton<TimeService>(TimeService.new)
       ..registerLazySingleton<LocalCacheService>(LocalCacheService.new)
       ..registerLazySingleton<LocationService>(() => LocationService())
-      ..registerLazySingleton<SocketService>(() => SocketServiceImpl.instance);
+      ..registerLazySingleton<SocketService>(() => SocketServiceImpl.instance)
+      ..registerLazySingleton<ShareService>(() => ShareServiceImpl())
+      ..registerLazySingleton<DeepLinkService>(() => DeepLinkServiceImpl());
 
     // await GetServerKey().getServerKeyToken();
     await LocalCacheService.setUp();

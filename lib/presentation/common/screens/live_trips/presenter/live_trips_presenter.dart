@@ -21,7 +21,7 @@ class LiveTripsPresenter extends BasePresenter<LiveTripsUiState> {
 
   LiveTripsUiState get currentUiState => uiState.value;
 
-  LiveTripsPresenter({required this.apiService});
+  LiveTripsPresenter(this.apiService);
 
   Timer? _timer;
 

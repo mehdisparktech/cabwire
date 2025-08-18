@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cabwire/core/utility/deep_link_handler.dart';
 import 'package:cabwire/domain/services/notification_service.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ Future<void> _initializeApp() async {
   socketService.connectToSocket();
   final notificationService = locate<NotificationService>();
   await notificationService.initLocalNotification();
+  await DeepLinkHandler.initialize();
 }
 
 Future<void> loadEnv() async {

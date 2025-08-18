@@ -1,17 +1,42 @@
 import 'package:cabwire/core/enum/service_type.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/add_stoppage_screen.dart';
+import 'package:cabwire/presentation/common/components/share_trip_dropdown.dart';
+import 'package:cabwire/presentation/common/components/share_trip_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // For context.theme
 
 class TripStoppageInfoWidget extends StatelessWidget {
   final String stoppageLocation;
   final String? stoppageLocation2;
+  final String? rideId;
 
   const TripStoppageInfoWidget({
     super.key,
     required this.stoppageLocation,
     this.stoppageLocation2,
+    this.rideId,
   });
+
+  void _shareTrip(String type) {
+    if (rideId == null) return;
+
+    final sharePresenter = ShareTripPresenter();
+
+    switch (type) {
+      case 'whatsapp':
+        sharePresenter.shareToWhatsApp(rideId!);
+        break;
+      case 'messenger':
+        sharePresenter.shareToMessenger(rideId!);
+        break;
+      case 'email':
+        sharePresenter.shareViaEmail(rideId!);
+        break;
+      case 'general':
+        sharePresenter.shareGeneral(rideId!);
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +54,14 @@ class TripStoppageInfoWidget extends StatelessWidget {
                   'Trip Stoppage',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
                 ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    'Share Trip',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: context.theme.colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                if (rideId != null)
+                  ShareTripDropdown(
+                    rideId: rideId!,
+                    onWhatsAppShare: () => _shareTrip('whatsapp'),
+                    onMessengerShare: () => _shareTrip('messenger'),
+                    onEmailShare: () => _shareTrip('email'),
+                    onGeneralShare: () => _shareTrip('general'),
                   ),
-                ),
               ],
             ),
           ),

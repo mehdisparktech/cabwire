@@ -1,3 +1,4 @@
+import 'package:cabwire/presentation/common/screens/live_trips/presenter/live_trips_presenter.dart';
 import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_presenter.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_login_presenter.dart';
 import 'package:cabwire/presentation/driver/auth/presenter/driver_sign_up_presenter.dart';
@@ -215,6 +216,9 @@ class PresenterSetup implements SetupModule {
       )
       ..registerLazySingleton(
         () => loadPresenter(AddNewDropLocationPresenter()),
+      )
+      ..registerLazySingleton(
+        () => loadPresenter(LiveTripsPresenter(locate())),
       );
     _setupPassengerPresenters();
   }
