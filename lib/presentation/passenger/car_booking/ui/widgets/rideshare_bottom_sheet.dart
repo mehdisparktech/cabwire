@@ -20,11 +20,13 @@ import 'payment_info_widget.dart';
 class RideshareBottomSheet extends StatelessWidget {
   final RideSharePresenter presenter;
   final String chatId;
+  final String rideId;
 
   const RideshareBottomSheet({
     super.key,
     required this.presenter,
     required this.chatId,
+    required this.rideId,
   });
 
   @override
@@ -136,7 +138,7 @@ class RideshareBottomSheet extends StatelessWidget {
             TripStoppageInfoWidget(
               stoppageLocation:
                   uiState.rideResponse?.data.dropoffLocation.address ?? '',
-              rideId: uiState.rideId,
+              rideId: rideId,
             ),
             const SizedBox(height: 16),
             PaymentInfoWidget(

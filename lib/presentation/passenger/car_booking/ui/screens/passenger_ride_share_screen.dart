@@ -81,7 +81,11 @@ class PassengerRideShareScreen extends StatelessWidget {
       builder: (context, scrollController) {
         return SingleChildScrollView(
           controller: scrollController,
-          child: RideshareBottomSheet(presenter: presenter, chatId: chatId),
+          child: RideshareBottomSheet(
+            presenter: presenter,
+            chatId: chatId,
+            rideId: rideId,
+          ),
         );
       },
     );
