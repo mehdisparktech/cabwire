@@ -17,7 +17,9 @@ class LiveTripsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final LiveTripsPresenter presenter = locate<LiveTripsPresenter>();
-    presenter.init(rideId: rideId);
+    if (presenter.currentUiState.rideId != rideId) {
+      presenter.init(rideId: rideId);
+    }
     return PresentableWidgetBuilder(
       presenter: presenter,
       builder: () {
@@ -68,50 +70,58 @@ class LiveTripsScreen extends StatelessWidget {
   }
 
   Widget _buildMap(LiveTripsPresenter presenter, LiveTripsUiState uiState) {
+    final LatLng initialTarget =
+        uiState.currentLocation != null
+            ? LatLng(
+              uiState.currentLocation!.latitude,
+              uiState.currentLocation!.longitude,
+            )
+            : const LatLng(23.8103, 90.4125);
+
     return GoogleMap(
       onMapCreated: presenter.onMapCreated,
-      initialCameraPosition: CameraPosition(
-        target: LatLng(
-          uiState.currentLocation!.latitude,
-          uiState.currentLocation!.longitude,
-        ),
-        zoom: 18.0,
-      ),
+      initialCameraPosition: CameraPosition(target: initialTarget, zoom: 10.0),
       myLocationEnabled: true,
       myLocationButtonEnabled: true,
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
       mapType: MapType.normal,
       markers: {
-        Marker(
-          markerId: MarkerId('source'),
-          position: LatLng(
-            uiState.sourceMapCoordinates!.latitude,
-            uiState.sourceMapCoordinates!.longitude,
+        if (uiState.sourceMapCoordinates != null)
+          Marker(
+            markerId: const MarkerId('source'),
+            position: LatLng(
+              uiState.sourceMapCoordinates!.latitude,
+              uiState.sourceMapCoordinates!.longitude,
+            ),
+            icon: uiState.sourceIcon ?? BitmapDescriptor.defaultMarker,
+            zIndex: 0.0,
           ),
-          icon: uiState.sourceIcon!,
-        ),
-        Marker(
-          markerId: MarkerId('destination'),
-          position: LatLng(
-            uiState.destinationMapCoordinates!.latitude,
-            uiState.destinationMapCoordinates!.longitude,
+        if (uiState.destinationMapCoordinates != null)
+          Marker(
+            markerId: const MarkerId('destination'),
+            position: LatLng(
+              uiState.destinationMapCoordinates!.latitude,
+              uiState.destinationMapCoordinates!.longitude,
+            ),
+            icon: uiState.destinationIcon ?? BitmapDescriptor.defaultMarker,
+            zIndex: 1.0,
           ),
-          icon: uiState.destinationIcon!,
-        ),
         if (uiState.currentLocation != null)
           Marker(
-            markerId: MarkerId('currentLocation'),
+            markerId: const MarkerId('currentLocation'),
             position: LatLng(
               uiState.currentLocation!.latitude,
               uiState.currentLocation!.longitude,
             ),
-            icon: uiState.currentLocationIcon!,
+            icon: uiState.currentLocationIcon ?? BitmapDescriptor.defaultMarker,
+            anchor: const Offset(0.5, 0.5),
+            zIndex: 2.0,
           ),
       },
       polylines: {
         Polyline(
-          polylineId: PolylineId('polyline'),
+          polylineId: const PolylineId('polyline'),
           points: uiState.polylineCoordinates ?? [],
           color: Colors.black,
           width: 3,

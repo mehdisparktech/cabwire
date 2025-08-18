@@ -25,15 +25,9 @@ class LiveTripsPresenter extends BasePresenter<LiveTripsUiState> {
 
   Timer? _timer;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Timer will be started in init() after rideId is set
-  }
-
   Future<void> init({required String rideId}) async {
     uiState.value = uiState.value.copyWith(rideId: rideId);
-    await getLiveTrips(rideId: rideId);
+    await getLiveTrips(rideId: rideId, showLoading: true);
     // Start 10s polling after first successful fetch
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
@@ -41,23 +35,38 @@ class LiveTripsPresenter extends BasePresenter<LiveTripsUiState> {
     });
   }
 
-  Future<void> getLiveTrips({required String rideId}) async {
-    toggleLoading(loading: true);
+  Future<void> getLiveTrips({
+    required String rideId,
+    bool showLoading = false,
+  }) async {
+    if (showLoading) toggleLoading(loading: true);
 
     final result = await apiService.get(ApiEndPoint.liveTrips + rideId);
     result.fold((error) => addUserMessage(error.message), (data) {
       final history =
           RidePathHistoryModel.fromJson(data.data).data?.pathHistory ?? [];
 
-      uiState.value = uiState.value.copyWith(trips: history);
+      debugPrint('[LiveTrips] fetched points: ${history.length}');
+      if (history.isNotEmpty) {
+        final last = history.last;
+        debugPrint(
+          '[LiveTrips] last point => (${last.latitude}, ${last.longitude}) at ${last.timestamp}',
+        );
+      }
+
+      uiState.value = uiState.value.copyWith(
+        trips: history,
+        isOnline: history.isNotEmpty,
+      );
 
       // Update map overlays based on history
       _updateMapFromTrips();
     });
-    toggleLoading(loading: false);
+    if (showLoading) toggleLoading(loading: false);
   }
 
   Future<void> onMapCreated(GoogleMapController controller) async {
+    debugPrint('[LiveTrips] onMapCreated');
     uiState.value = currentUiState.copyWith(mapController: controller);
     // Ensure icons are ready and map reflects latest data
     await setCustomIcons();
@@ -66,6 +75,7 @@ class LiveTripsPresenter extends BasePresenter<LiveTripsUiState> {
 
   Future<void> setCustomIcons() async {
     try {
+      debugPrint('[LiveTrips] loading custom icons');
       await BitmapDescriptor.asset(
         ImageConfiguration(size: Size(50, 50)),
         AppAssets.icLocationActive,
@@ -84,6 +94,7 @@ class LiveTripsPresenter extends BasePresenter<LiveTripsUiState> {
       ).then((value) {
         uiState.value = currentUiState.copyWith(currentLocationIcon: value);
       });
+      debugPrint('[LiveTrips] custom icons loaded');
     } catch (e) {
       logError(e);
     }
@@ -186,6 +197,9 @@ class LiveTripsPresenter extends BasePresenter<LiveTripsUiState> {
       // Move camera to follow the latest point
       final controller = currentUiState.mapController;
       if (controller != null) {
+        debugPrint(
+          '[LiveTrips] animating camera to (${last.latitude}, ${last.longitude})',
+        );
         controller.animateCamera(
           CameraUpdate.newLatLng(LatLng(last.latitude, last.longitude)),
         );

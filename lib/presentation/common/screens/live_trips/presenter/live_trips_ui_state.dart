@@ -37,16 +37,32 @@ class LiveTripsUiState extends BaseUiState {
   });
 
   @override
-  List<Object?> get props => [trips, isLoading, userMessage];
+  List<Object?> get props => [
+    trips,
+    sourceMapCoordinates,
+    destinationMapCoordinates,
+    currentLocation,
+    polylineCoordinates,
+    sourceIcon,
+    destinationIcon,
+    currentLocationIcon,
+    isOnline,
+    isLoading,
+    userMessage,
+    polylinePoints,
+    mapController,
+    centerMapCoordinates,
+    rideId,
+  ];
 
   factory LiveTripsUiState.initial() {
     return LiveTripsUiState(
       isLoading: false,
       userMessage: '',
       trips: null,
-      sourceMapCoordinates: PointLatLng(0, 0),
-      destinationMapCoordinates: PointLatLng(0, 0),
-      currentLocation: PointLatLng(0, 0),
+      sourceMapCoordinates: null,
+      destinationMapCoordinates: null,
+      currentLocation: null,
       sourceIcon: BitmapDescriptor.defaultMarker,
       destinationIcon: BitmapDescriptor.defaultMarker,
       currentLocationIcon: BitmapDescriptor.defaultMarker,
