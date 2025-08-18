@@ -29,14 +29,17 @@ class DeepLinkHandler {
   }
 
   static void handleDeepLink(String link) {
-    debugPrint('Handling deep link: $link');
+    debugPrint('🔗 Handling deep link: $link');
 
     final rideId = DeepLinkServiceImpl.extractRideIdFromLink(link);
+    debugPrint('🆔 Extracted ride ID: $rideId');
+
     if (rideId != null) {
+      debugPrint('📱 Navigating to LiveTripsScreen with rideId: $rideId');
       // Navigate to live trips screen with the ride ID
       Get.to(() => LiveTripsScreen(rideId: rideId));
     } else {
-      debugPrint('Could not extract ride ID from link: $link');
+      debugPrint('❌ Could not extract ride ID from link: $link');
     }
   }
 

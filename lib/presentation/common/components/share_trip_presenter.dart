@@ -8,7 +8,12 @@ class ShareTripPresenter {
 
   Future<void> shareToWhatsApp(String rideId) async {
     final shareLink = _shareService.generateTripShareLink(rideId);
-    final message = 'Track my live trip on Cabwire: $shareLink';
+    final message = '''🚗 Track my live trip on Cabwire!
+
+Click this link to see my real-time location:
+$shareLink
+
+You can follow my journey until I reach my destination safely.''';
 
     final result = await _shareService.shareToWhatsApp(message);
     result.fold(
@@ -19,7 +24,12 @@ class ShareTripPresenter {
 
   Future<void> shareToMessenger(String rideId) async {
     final shareLink = _shareService.generateTripShareLink(rideId);
-    final message = 'Track my live trip on Cabwire: $shareLink';
+    final message = '''🚗 Track my live trip on Cabwire!
+
+Click this link to see my real-time location:
+$shareLink
+
+You can follow my journey until I reach my destination safely.''';
 
     final result = await _shareService.shareToMessenger(message);
     result.fold(
@@ -52,7 +62,12 @@ Thanks!
 
   Future<void> shareGeneral(String rideId) async {
     final shareLink = _shareService.generateTripShareLink(rideId);
-    final message = 'Track my live trip on Cabwire: $shareLink';
+    final message = '''🚗 Track my live trip on Cabwire!
+
+Click this link to see my real-time location:
+$shareLink
+
+You can follow my journey until I reach my destination safely.''';
 
     final result = await _shareService.shareText(message);
     result.fold(
