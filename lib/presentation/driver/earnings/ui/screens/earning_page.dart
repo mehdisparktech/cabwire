@@ -57,7 +57,8 @@ class EarningsPage extends StatelessWidget {
                   gapH20,
                   CustomButton(
                     text: 'Withdraw Amount',
-                    onPressed: presenter.withdrawAmount,
+                    onPressed:
+                        () => presenter.withdrawAmount(data.availableEarnings),
                     radius: 10,
                   ),
                 ],

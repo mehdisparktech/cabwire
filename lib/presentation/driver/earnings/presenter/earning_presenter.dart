@@ -208,15 +208,22 @@ class EarningsPresenter extends BasePresenter<EarningsUiState> {
     }
   }
 
-  Future<void> withdrawAmount() async {
+  Future<void> withdrawAmount(double availableEarnings) async {
+    toggleLoading(loading: true);
     final userId = LocalStorage.userId;
-    final result = await apiService.post(ApiEndPoint.withdrawAmount + userId);
+    final result = await apiService.post(
+      ApiEndPoint.withdrawAmount,
+      body: {"driverId": userId, "amount": availableEarnings},
+    );
     result.fold(
       (error) {
         addUserMessage(error.message);
+        toggleLoading(loading: false);
       },
       (success) {
+        loadEarningsData(EarningsFilter.today);
         addUserMessage(success.message ?? 'Withdrawal successful');
+        toggleLoading(loading: false);
       },
     );
   }
