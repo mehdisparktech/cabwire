@@ -1,7 +1,9 @@
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/enum/user_type.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/core/utility/deep_link_handler.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
+import 'package:cabwire/presentation/common/screens/live_trips/ui/live_trips_screen.dart';
 import 'package:cabwire/presentation/common/screens/splash/presenter/welcome_presenter.dart';
 import 'package:cabwire/presentation/common/screens/splash/ui/welcome_screen.dart';
 import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
@@ -56,6 +58,8 @@ class InitialApp extends StatelessWidget {
               onReady: () {
                 AppScreen.setUp(context);
                 LocalStorage.getAllPrefData();
+                // Initialize deep links after GetX is ready
+                DeepLinkHandler.initialize();
               },
               debugShowCheckedModeBanner: false,
               theme: presenter.uiState.value.theme,
@@ -70,7 +74,20 @@ class InitialApp extends StatelessWidget {
                     );
                   }
 
-                  // Check if user is logged in and token is valid
+                  // Check if app was opened via deep link
+                  if (DeepLinkHandler.hasInitialDeepLink) {
+                    final rideId = DeepLinkHandler.initialRideId;
+                    if (rideId != null) {
+                      debugPrint(
+                        '🚀 App opened via deep link, showing LiveTripsScreen',
+                      );
+                      // Clear the pending ride ID since we're handling it
+                      DeepLinkHandler.clearPendingRideId();
+                      return LiveTripsScreen(rideId: rideId);
+                    }
+                  }
+
+                  // Normal app flow: Check if user is logged in and token is valid
                   if (LocalStorage.isLogIn && !LocalStorage.isTokenExpired()) {
                     if (LocalStorage.userType == UserType.driver.name) {
                       return DriverMainPage();

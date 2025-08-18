@@ -51,13 +51,12 @@ class LiveTripsScreen extends StatelessWidget {
         ),
       ),
       title: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: CustomText(
-              'Hello ${LocalStorage.myName}',
-              fontWeight: FontWeight.bold,
-            ),
+          CustomText(
+            'Hello ${LocalStorage.myName}',
+            fontWeight: FontWeight.bold,
           ),
           CustomText(
             uiState.isOnline ? 'Ride is Live' : 'Ride is not Live',
