@@ -1,21 +1,19 @@
 # Deep Link Setup for Cabwire
 
-আপনার Cabwire অ্যাপে এখন `http://31.97.98.240:4173/` domain দিয়ে deep link support add করা হয়েছে।
+আপনার Cabwire অ্যাপে এখন `https://www.cabwire.com` domain দিয়ে deep link support add করা হয়েছে।
 
 ## Supported Link Formats
 
 আপনার অ্যাপ এখন এই ধরনের deep link handle করতে পারে:
 
-1. **HTTP Domain**: `http://31.97.98.240:4173/live-trip/RIDE_ID`
+1. **Website**: `https://www.cabwire.com/live-trip/RIDE_ID`
 2. **Custom Scheme**: `cabwire://live-trip/RIDE_ID`
-3. **HTTPS Domain**: `https://cabwire.app/live-trip/RIDE_ID` (future support)
 
 ## Example Links
 
 ```
-http://31.97.98.240:4173/live-trip/abc123
+https://www.cabwire.com/live-trip/abc123
 cabwire://live-trip/abc123
-https://cabwire.app/live-trip/abc123
 ```
 
 ## How to Use
@@ -25,9 +23,9 @@ https://cabwire.app/live-trip/abc123
 ```dart
 import 'package:cabwire/core/utility/deep_link_helper.dart';
 
-// Generate link with your domain
+// Generate link with your website
 String link = DeepLinkHelper.generateRideLink('ride123');
-// Returns: http://31.97.98.240:4173/live-trip/ride123
+// Returns: https://www.cabwire.com/live-trip/ride123
 
 // Get all available formats
 Map<String, String> allFormats = DeepLinkHelper.getAllLinkFormats('ride123');
@@ -49,23 +47,27 @@ await DeepLinkHelper.copyRideLinkToClipboard('ride123');
 import 'package:cabwire/data/services/deep_link/deep_link_service_impl.dart';
 
 // Extract ride ID from any link format
-String? rideId = DeepLinkHelper.extractRideId('http://31.97.98.240:4173/live-trip/abc123');
+String? rideId = DeepLinkHelper.extractRideId('https://www.cabwire.com/live-trip/abc123');
 // Returns: 'abc123'
 
 // Validate if link is supported
-bool isValid = DeepLinkHelper.isValidLink('http://31.97.98.240:4173/live-trip/abc123');
+bool isValid = DeepLinkHelper.isValidLink('https://www.cabwire.com/live-trip/abc123');
 // Returns: true
 ```
 
 ## Configuration Files Updated
 
 ### Android (`android/app/src/main/AndroidManifest.xml`)
-- Added HTTP intent filter for `31.97.98.240:4173`
+- Added HTTPS intent filter for `www.cabwire.com`
 - Existing custom scheme `cabwire://` still works
 
 ### iOS (`ios/Runner/Info.plist`)
-- Added HTTP URL scheme support
+- Added HTTPS URL scheme support
 - Existing custom scheme `cabwire://` still works
+
+### Domain Verification (`assetlinks.json`)
+- Place this file at `https://www.cabwire.com/.well-known/assetlinks.json`
+- Required for Android App Links verification
 
 ## Testing
 
@@ -110,14 +112,30 @@ result.fold(
 
 ## Next Steps
 
-1. **Test on Device**: Build and install the app, then test with actual links
-2. **Backend Integration**: Make sure your backend generates links using the new domain
-3. **Share Feature**: Use `DeepLinkHelper.shareRideLink()` in your share functionality
-4. **Analytics**: Track deep link usage for analytics
+1. **Domain Setup**: Upload `assetlinks.json` to `https://www.cabwire.com/.well-known/assetlinks.json`
+2. **Test on Device**: Build and install the app, then test with actual links
+3. **Backend Integration**: Make sure your backend generates links using `https://www.cabwire.com`
+4. **Share Feature**: Use `DeepLinkHelper.shareRideLink()` in your share functionality
+5. **Analytics**: Track deep link usage for analytics
+
+## Domain Verification Setup
+
+For Android App Links to work properly, you need to:
+
+1. **Upload assetlinks.json**: Place the `assetlinks.json` file at:
+   ```
+   https://www.cabwire.com/.well-known/assetlinks.json
+   ```
+
+2. **Verify Domain**: Test the verification at:
+   ```
+   https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://www.cabwire.com
+   ```
 
 ## Troubleshooting
 
-- Make sure the domain `31.97.98.240:4173` is accessible
-- Test both custom scheme and HTTP links
+- Make sure `https://www.cabwire.com` is accessible and has SSL certificate
+- Verify `assetlinks.json` is properly uploaded and accessible
+- Test both custom scheme and HTTPS links
 - Check device logs for deep link debugging messages
-- Verify intent filters are properly configured in AndroidManifest.xml
+- Use `adb shell am start -W -a android.intent.action.VIEW -d "https://www.cabwire.com/live-trip/test123" com.example.cabwire` to test on Android

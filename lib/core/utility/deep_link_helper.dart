@@ -5,7 +5,7 @@ import 'package:share_plus/share_plus.dart';
 class DeepLinkHelper {
   /// Generate a shareable deep link for a ride
   static String generateRideLink(String rideId) {
-    return DeepLinkServiceImpl.generateDeepLink(rideId, useCustomDomain: true);
+    return DeepLinkServiceImpl.generateDeepLink(rideId, useWebsite: true);
   }
 
   /// Share a ride link via system share dialog
@@ -36,10 +36,8 @@ class DeepLinkHelper {
   /// Get different link formats for a ride
   static Map<String, String> getAllLinkFormats(String rideId) {
     return {
-      'http_domain': 'http://31.97.98.240:4173/live-trip/$rideId',
+      'website': 'https://www.cabwire.com/live-trip/$rideId',
       'custom_scheme': 'cabwire://live-trip/$rideId',
-      'https_domain':
-          'https://cabwire.app/live-trip/$rideId', // if you have HTTPS later
     };
   }
 }

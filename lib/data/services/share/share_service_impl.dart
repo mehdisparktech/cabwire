@@ -74,6 +74,6 @@ class ShareServiceImpl implements ShareService {
   String generateTripShareLink(String rideId) {
     // Generate deep link for the trip using custom scheme
     // This will directly open the app instead of browser
-    return 'cabwire://live-trip/$rideId';
+    return 'https://www.cabwire.com/live-trip/$rideId';
   }
 }

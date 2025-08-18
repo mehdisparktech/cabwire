@@ -69,8 +69,7 @@ class DeepLinkServiceImpl implements DeepLinkService {
     debugPrint('🔍 URI pathSegments: ${uri.pathSegments}');
 
     // Handle different link formats
-    // https://cabwire.app/live-trip/RIDE_ID
-    // http://31.97.98.240:4173/live-trip/RIDE_ID
+    // https://www.cabwire.com/live-trip/RIDE_ID
     // cabwire://live-trip/RIDE_ID
 
     // For custom scheme like cabwire://live-trip/RIDE_ID
@@ -87,17 +86,12 @@ class DeepLinkServiceImpl implements DeepLinkService {
       }
     }
 
-    // For HTTP/HTTPS URLs like http://31.97.98.240:4173/live-trip/RIDE_ID
-    if ((uri.scheme == 'http' || uri.scheme == 'https')) {
-      // Check if it's our specific domain
-      if ((uri.host == '31.97.98.240' && uri.port == 4173) ||
-          uri.host == 'cabwire.app') {
-        if (uri.pathSegments.length >= 2 &&
-            uri.pathSegments[0] == 'live-trip') {
-          final rideId = uri.pathSegments[1];
-          debugPrint('✅ Extracted ride ID from HTTP/HTTPS: $rideId');
-          return rideId;
-        }
+    // For HTTPS URLs like https://www.cabwire.com/live-trip/RIDE_ID
+    if (uri.scheme == 'https' && uri.host == 'www.cabwire.com') {
+      if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 'live-trip') {
+        final rideId = uri.pathSegments[1];
+        debugPrint('✅ Extracted ride ID from HTTPS: $rideId');
+        return rideId;
       }
     }
 
@@ -106,9 +100,9 @@ class DeepLinkServiceImpl implements DeepLinkService {
   }
 
   // Helper method to generate deep link for sharing
-  static String generateDeepLink(String rideId, {bool useCustomDomain = true}) {
-    if (useCustomDomain) {
-      return 'http://31.97.98.240:4173/live-trip/$rideId';
+  static String generateDeepLink(String rideId, {bool useWebsite = true}) {
+    if (useWebsite) {
+      return 'https://www.cabwire.com/live-trip/$rideId';
     } else {
       return 'cabwire://live-trip/$rideId';
     }
@@ -124,13 +118,9 @@ class DeepLinkServiceImpl implements DeepLinkService {
       return true;
     }
 
-    // Check HTTP domain
-    if ((uri.scheme == 'http' || uri.scheme == 'https')) {
-      if ((uri.host == '31.97.98.240' && uri.port == 4173) ||
-          uri.host == 'cabwire.app') {
-        return uri.pathSegments.isNotEmpty &&
-            uri.pathSegments[0] == 'live-trip';
-      }
+    // Check HTTPS domain
+    if (uri.scheme == 'https' && uri.host == 'www.cabwire.com') {
+      return uri.pathSegments.isNotEmpty && uri.pathSegments[0] == 'live-trip';
     }
 
     return false;

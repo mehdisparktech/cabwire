@@ -1,7 +1,6 @@
 import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
-import 'package:cabwire/core/static/ui_const.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
@@ -54,40 +53,18 @@ class LiveTripsScreen extends StatelessWidget {
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: CustomText(
-                  'Hello ${LocalStorage.myName}',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              gapW5,
-              Icon(
-                Icons.circle,
-                size: 10,
-                color: uiState.isOnline ? Colors.green : Colors.grey,
-              ),
-            ],
+          Expanded(
+            child: CustomText(
+              'Hello ${LocalStorage.myName}',
+              fontWeight: FontWeight.bold,
+            ),
           ),
           CustomText(
-            uiState.isOnline ? 'Ride is Live' : 'Ride is Offline',
+            uiState.isOnline ? 'Ride is Live' : 'Ride is not Live',
             fontSize: 12.px,
           ),
         ],
       ),
-      actions: [
-        Transform.scale(
-          scale: 0.75,
-          child: Switch(
-            padding: EdgeInsets.zero,
-            value: uiState.isOnline,
-            onChanged: (value) {
-              presenter.toggleOnlineStatus(value);
-            },
-          ),
-        ),
-      ],
     );
   }
 

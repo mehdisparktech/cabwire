@@ -71,10 +71,10 @@
       </dict>
       <dict>
         <key>CFBundleURLName</key>
-        <string>cabwire.http.deeplink</string>
+        <string>cabwire.https.deeplink</string>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>http</string>
+          <string>https</string>
         </array>
       </dict>
     </array>

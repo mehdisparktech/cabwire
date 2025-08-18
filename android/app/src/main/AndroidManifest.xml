@@ -42,14 +42,13 @@
         <data android:scheme="cabwire" />
       </intent-filter>
       
-      <!-- Deep Link Intent Filter for HTTP domain -->
+      <!-- Deep Link Intent Filter for HTTPS domain -->
       <intent-filter android:autoVerify="true">
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="http" 
-              android:host="31.97.98.240"
-              android:port="4173" />
+        <data android:scheme="https" 
+              android:host="www.cabwire.com" />
       </intent-filter>
     </activity>
     <!-- Required by image_cropper (uCrop) -->
