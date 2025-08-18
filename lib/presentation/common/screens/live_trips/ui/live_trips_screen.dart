@@ -80,7 +80,7 @@ class LiveTripsScreen extends StatelessWidget {
 
     return GoogleMap(
       onMapCreated: presenter.onMapCreated,
-      initialCameraPosition: CameraPosition(target: initialTarget, zoom: 10.0),
+      initialCameraPosition: CameraPosition(target: initialTarget, zoom: 18.0),
       myLocationEnabled: true,
       myLocationButtonEnabled: true,
       zoomControlsEnabled: false,

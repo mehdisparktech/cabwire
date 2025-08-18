@@ -138,7 +138,7 @@ class RideshareBottomSheet extends StatelessWidget {
             TripStoppageInfoWidget(
               stoppageLocation:
                   uiState.rideResponse?.data.dropoffLocation.address ?? '',
-              rideId: rideId,
+              rideId: uiState.rideResponse?.data.id,
             ),
             const SizedBox(height: 16),
             PaymentInfoWidget(

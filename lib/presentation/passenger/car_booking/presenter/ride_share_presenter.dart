@@ -231,8 +231,15 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   }
 
   void _updateEstimatedTimeRemaining() {
-    appLog("Current location: ${currentUiState.currentUserLocation}");
+    appLog(
+      "Current location:)))))-----))))))) ${currentUiState.currentUserLocation}",
+    );
     appLog("Driver location: ${currentUiState.driverLocation}");
+
+    // Only patch coordinates if current location is available
+    if (currentUiState.currentUserLocation != null) {
+      _patchRidePathCoordinates(currentUiState.currentUserLocation!);
+    }
 
     final targetInfo = _getTargetLocationInfo();
     if (targetInfo == null) return;
@@ -647,6 +654,24 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     currentUiState.mapController?.animateCamera(
       CameraUpdate.newLatLng(driverLocation),
     );
+
+    // Send latest driver coordinates to backend to track ride path
+    _patchRidePathCoordinates(driverLocation);
+  }
+
+  Future<void> _patchRidePathCoordinates(LatLng driverLocation) async {
+    if (currentUiState.rideId.isEmpty) return;
+    try {
+      final result = await _apiService.patch(
+        ApiEndPoint.trackRidePath + currentUiState.rideResponse!.data.id,
+        body: {
+          "coordinates": [driverLocation.longitude, driverLocation.latitude],
+        },
+      );
+      appLog("Ride path coordinates patched successfully: $result");
+    } catch (e) {
+      appLog("Error patching ride path: $e");
+    }
   }
 
   void _updateTimeToPickup() {
