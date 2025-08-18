@@ -20,11 +20,27 @@ class TripStoppageInfoWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              'Trip Stoppage',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Trip Stoppage',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                ),
+                GestureDetector(
+                  onTap: () {},
+                  child: Text(
+                    'Share Trip',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.theme.colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
