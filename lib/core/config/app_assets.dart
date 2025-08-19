@@ -73,4 +73,6 @@ class AppAssets {
   static const String icVintageCar = 'assets/images/svg/vintage_car.svg';
   static const String icThankYou = 'assets/images/svg/thank_you.svg';
   static const String isStripimg = 'assets/images/svg/stripimg.svg';
+  static const String stripePayments = 'assets/images/svg/stripe_payments.svg';
+  static const String cardPayments = 'assets/images/svg/card_payments.svg';
 }

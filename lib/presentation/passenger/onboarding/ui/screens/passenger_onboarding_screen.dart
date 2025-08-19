@@ -18,7 +18,7 @@ class PassengerOnboardingScreen extends StatelessWidget {
   // Onboarding page data
   final List<Map<String, dynamic>> _onboardingPages = [
     {
-      'image': AppAssets.icSplash1,
+      'image': AppAssets.cardPayments,
       'title': 'Choose Your Ride',
       'subtitle':
           'On-time, budget-friendly and dependable ride-sharing, all within reach.',

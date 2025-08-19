@@ -26,7 +26,7 @@ class DriverOnboardingUiState extends BaseUiState {
       pageController: PageController(),
       onboardingPages: [
         {
-          'image': AppAssets.icCabwireDriver,
+          'image': AppAssets.stripePayments,
           'title': 'Choose Your First Ride',
           'subtitle':
               'Your first customer awaits. Select and begin your journey with us!',
