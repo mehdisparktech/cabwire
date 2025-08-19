@@ -71,6 +71,7 @@ class AddStoppageScreen extends StatelessWidget {
                 borderRadius: 8.0,
                 isPrimary: true,
                 text: 'Confirm Stoppage',
+                isLoading: state.isLoading,
                 onPressed:
                     () => presenter.confirmStoppage(
                       context: context,

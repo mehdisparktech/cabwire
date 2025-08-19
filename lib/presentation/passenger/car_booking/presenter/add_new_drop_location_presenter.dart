@@ -114,7 +114,76 @@ class AddNewDropLocationPresenter
     uiState.value = currentUiState.copyWith(
       selectedPickupLocation: pickupLocation,
     );
-    fromController.text = pickupLocation?.latitude.toString() ?? '';
+    // Prefer showing human-readable address in the "From" field
+    if ((currentUiState.pickupAddress ?? '').isNotEmpty) {
+      if (_fromListener != null) {
+        try {
+          fromController.removeListener(_fromListener!);
+        } catch (_) {}
+      }
+      try {
+        fromController.text = currentUiState.pickupAddress!;
+      } catch (_) {}
+      if (_fromListener != null) {
+        try {
+          fromController.addListener(_fromListener!);
+        } catch (_) {}
+      }
+    } else if (pickupLocation != null) {
+      // Fallback to reverse geocoding if address is not provided
+      _getAddressFromLatLng(pickupLocation)
+          .then((address) {
+            if (_isDisposed) return;
+            if (address != null && address.isNotEmpty) {
+              if (_fromListener != null) {
+                try {
+                  fromController.removeListener(_fromListener!);
+                } catch (_) {}
+              }
+              try {
+                fromController.text = address;
+              } catch (_) {}
+              if (_fromListener != null) {
+                try {
+                  fromController.addListener(_fromListener!);
+                } catch (_) {}
+              }
+              // Also keep the address in state
+              uiState.value = currentUiState.copyWith(pickupAddress: address);
+            }
+          })
+          .catchError((_) {
+            // If reverse geocoding fails, keep field empty instead of lat/lng
+            if (_isDisposed) return;
+            if (_fromListener != null) {
+              try {
+                fromController.removeListener(_fromListener!);
+              } catch (_) {}
+            }
+            try {
+              fromController.clear();
+            } catch (_) {}
+            if (_fromListener != null) {
+              try {
+                fromController.addListener(_fromListener!);
+              } catch (_) {}
+            }
+          });
+    } else {
+      if (_fromListener != null) {
+        try {
+          fromController.removeListener(_fromListener!);
+        } catch (_) {}
+      }
+      try {
+        fromController.clear();
+      } catch (_) {}
+      if (_fromListener != null) {
+        try {
+          fromController.addListener(_fromListener!);
+        } catch (_) {}
+      }
+    }
   }
 
   // Helper method to get address from coordinates
