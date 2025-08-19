@@ -623,6 +623,47 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
       if (_isPassengerLocationUpdate(data)) {
         _handlePassengerLocationUpdate(data);
       }
+      if (data['dropoffLocation'] != null &&
+          currentUiState.rideRequest != null) {
+        final drop = data['dropoffLocation'] as Map<String, dynamic>;
+        final fare = data['fare'] as num?;
+        final distance = data['distance'] as num?;
+        final previous = currentUiState.rideRequest!;
+        final previousDrop = previous.dropoffLocation;
+
+        final updatedAddress =
+            (drop['address'] as String?) ?? previous.dropoffAddress;
+        final updatedLat =
+            ((drop['lat'] as num?)?.toDouble()) ?? previousDrop.latitude;
+        final updatedLng =
+            ((drop['lng'] as num?)?.toDouble()) ?? previousDrop.longitude;
+        final updatedFare = (fare ?? previous.fare).toDouble();
+        final updatedDistance = (distance ?? previous.distance).toDouble();
+
+        final hasChanged =
+            updatedAddress != previous.dropoffAddress ||
+            updatedLat != previousDrop.latitude ||
+            updatedLng != previousDrop.longitude;
+
+        if (hasChanged) {
+          final updatedModel = RideRequestModel(
+            id: previous.id,
+            userId: previous.userId,
+            rideId: previous.rideId,
+            service: previous.service,
+            pickupLocation: previous.pickupLocation,
+            pickupAddress: previous.pickupAddress,
+            dropoffLocation: LatLng(updatedLat, updatedLng),
+            dropoffAddress: updatedAddress,
+            fare: updatedFare,
+            distance: updatedDistance,
+            duration: previous.duration,
+            createdAt: previous.createdAt,
+          );
+
+          applyRideUpdate(updatedModel);
+        }
+      }
 
       // Handle messages
       _handleMessageIfPresent(data);
@@ -665,6 +706,26 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
 
     _socketService.emit('driverLocationUpdate', locationData);
     appLog("Driver location sent: $locationData");
+  }
+
+  // ===== Apply Ride Update =====
+
+  void applyRideUpdate(RideRequestModel updated) {
+    try {
+      final newDestination = updated.dropoffLocation;
+
+      uiState.value = currentUiState.copyWith(
+        rideRequest: updated,
+        destinationMapCoordinates: newDestination,
+      );
+
+      _setMapMarkers();
+      _generatePolyline();
+      _updateEstimatedTimeRemaining();
+      _fitMapToBounds();
+    } catch (e) {
+      appLog("Error applying ride update: $e");
+    }
   }
 
   // ===== Utility Methods =====

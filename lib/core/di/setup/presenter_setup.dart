@@ -214,9 +214,7 @@ class PresenterSetup implements SetupModule {
       ..registerLazySingleton(
         () => loadPresenter(DriverTripStartOtpPresenter(locate(), locate())),
       )
-      ..registerLazySingleton(
-        () => loadPresenter(AddNewDropLocationPresenter()),
-      )
+      ..registerFactory(() => loadPresenter(AddNewDropLocationPresenter()))
       ..registerLazySingleton(
         () => loadPresenter(LiveTripsPresenter(locate())),
       );

@@ -11,7 +11,6 @@ import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/presentation/passenger/car_booking/presenter/add_new_drop_location_ui_state.dart';
-import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_presenter.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/choose_car_type_screen.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/finding_rides_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/ride_share/ride_share_car_type_screen.dart';
@@ -848,8 +847,6 @@ class AddNewDropLocationPresenter
 
       response.fold((error) => showMessage(message: error.message), (success) {
         try {
-          final updated = RideResponseModel.fromJson(success.data);
-          uiState.value = currentUiState.copyWith(rideResponse: updated);
           showMessage(message: success.message ?? 'Ride updated successfully');
           // Close overlays and then pop this page on the next frame
           try {
@@ -864,17 +861,6 @@ class AddNewDropLocationPresenter
               }
             }
           });
-
-          // Update active ride UI if presenter exists
-          try {
-            final ridePresenter = locate<RideSharePresenter>();
-            ridePresenter.applyRideUpdate(updated);
-          } catch (e) {
-            appLog('Error updating ride: $e');
-          }
-
-          // Navigate back to previous screen
-          // already scheduled above
         } catch (e) {
           showMessage(message: 'Failed to parse ride update');
         }
