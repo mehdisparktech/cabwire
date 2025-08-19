@@ -77,4 +77,5 @@ class ApiEndPoint {
   static const stripeConnected = "$baseUrl/stripe/create-connected-account/";
   static const liveTrips = "$baseUrl/ride/ride-path-history/";
   static const trackRidePath = "$baseUrl/ride/track-ride-path/";
+  static const addStoppage = "$baseUrl/ride/add-stoppege/";
 }

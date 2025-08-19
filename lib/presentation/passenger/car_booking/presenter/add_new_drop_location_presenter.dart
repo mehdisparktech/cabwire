@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/api/api_end_point.dart';
@@ -10,12 +11,14 @@ import 'package:cabwire/data/models/ride/ride_response_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/services/api_service.dart';
 import 'package:cabwire/presentation/passenger/car_booking/presenter/add_new_drop_location_ui_state.dart';
+import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_presenter.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/choose_car_type_screen.dart';
 import 'package:cabwire/presentation/passenger/car_booking/ui/screens/finding_rides_screen.dart';
 import 'package:cabwire/presentation/passenger/passenger_services/ui/screens/ride_share/ride_share_car_type_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -785,6 +788,120 @@ class AddNewDropLocationPresenter
       routePolylines: null,
     );
   }
+
+  Future<void> confirmStoppage({
+    required BuildContext context,
+    required String? rideId,
+  }) async {
+    if (rideId == null || rideId.isEmpty) {
+      showMessage(message: 'Ride not found');
+      return;
+    }
+
+    if (currentUiState.destinationLocation == null ||
+        currentUiState.destinationAddress == null) {
+      showMessage(message: 'Please select a dropoff location');
+      return;
+    }
+
+    try {
+      toggleLoading(loading: true);
+
+      // Estimate numeric distance in km from routeDistance text like "12.3 km"
+      double? totalDistanceKm;
+      final distanceText = currentUiState.routeDistance; // e.g., "12.3 km"
+      if (distanceText != null) {
+        final match = RegExp(r"[0-9]+(\.[0-9]+)?").firstMatch(distanceText);
+        final numeric = match?.group(0);
+        if (numeric != null) {
+          totalDistanceKm = double.tryParse(numeric);
+        }
+      }
+
+      // Fallback: compute haversine distance between pickup and new drop
+      if (totalDistanceKm == null &&
+          currentUiState.selectedPickupLocation != null &&
+          currentUiState.destinationLocation != null) {
+        totalDistanceKm = _computeDistanceKm(
+          currentUiState.selectedPickupLocation!,
+          currentUiState.destinationLocation!,
+        );
+      }
+
+      final body = {
+        'dropoffLocation': {
+          'lat': currentUiState.destinationLocation!.latitude,
+          'lng': currentUiState.destinationLocation!.longitude,
+          'address': currentUiState.destinationAddress,
+        },
+        if (totalDistanceKm != null) 'distance': totalDistanceKm,
+      };
+
+      final apiService = locate<ApiService>();
+      final response = await apiService.patch(
+        ApiEndPoint.addStoppage + rideId,
+        body: body,
+        header: {'Authorization': 'Bearer ${LocalStorage.token}'},
+      );
+
+      toggleLoading(loading: false);
+
+      response.fold((error) => showMessage(message: error.message), (success) {
+        try {
+          final updated = RideResponseModel.fromJson(success.data);
+          uiState.value = currentUiState.copyWith(rideResponse: updated);
+          showMessage(message: success.message ?? 'Ride updated successfully');
+          // Close overlays and then pop this page on the next frame
+          try {
+            if (Get.isSnackbarOpen) Get.closeAllSnackbars();
+          } catch (_) {}
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            try {
+              Get.back(closeOverlays: true);
+            } catch (_) {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              }
+            }
+          });
+
+          // Update active ride UI if presenter exists
+          try {
+            final ridePresenter = locate<RideSharePresenter>();
+            ridePresenter.applyRideUpdate(updated);
+          } catch (e) {
+            appLog('Error updating ride: $e');
+          }
+
+          // Navigate back to previous screen
+          // already scheduled above
+        } catch (e) {
+          showMessage(message: 'Failed to parse ride update');
+        }
+      });
+    } catch (e) {
+      toggleLoading(loading: false);
+      showMessage(message: e.toString());
+    }
+  }
+
+  double _computeDistanceKm(LatLng a, LatLng b) {
+    const double earthRadiusKm = 6371.0;
+    final double dLat = _degToRad(b.latitude - a.latitude);
+    final double dLng = _degToRad(b.longitude - a.longitude);
+    final double lat1 = _degToRad(a.latitude);
+    final double lat2 = _degToRad(b.latitude);
+
+    final double sinDLat = math.sin(dLat / 2);
+    final double sinDLng = math.sin(dLng / 2);
+    final double aHarv =
+        sinDLat * sinDLat + math.cos(lat1) * math.cos(lat2) * sinDLng * sinDLng;
+    final double c = 2 * math.atan2(math.sqrt(aHarv), math.sqrt(1 - aHarv));
+    final double distance = earthRadiusKm * c;
+    return double.parse(distance.toStringAsFixed(2));
+  }
+
+  double _degToRad(double deg) => deg * (math.pi / 180.0);
 
   void selectHistoryItem(AddNewDropLocationSearchHistoryItem item) {
     if (_isDisposed) return;

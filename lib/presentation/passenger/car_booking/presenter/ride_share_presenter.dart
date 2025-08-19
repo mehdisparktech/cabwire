@@ -27,6 +27,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'ride_share_ui_state.dart';
+import 'package:cabwire/data/models/ride/ride_response_model.dart';
 
 class RideSharePresenter extends BasePresenter<RideShareUiState> {
   // Constants
@@ -124,6 +125,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     Future.delayed(_socketSetupDelay, _setupSocketListeners);
   }
 
+  // ===== Private Cleanup Methods =====
+
   void _cleanup() {
     _locationSubscription?.cancel();
     _reconnectTimer?.cancel();
@@ -154,6 +157,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     });
   }
 
+  // ===== Location Updates =====
+
   void _startLocationUpdates() {
     _locationSubscription?.cancel();
     _locationSubscription = _getLocationUpdatesUsecase.execute().listen((
@@ -165,6 +170,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       );
     }, onError: (e) => appLog("Error in location subscription: $e"));
   }
+
+  // ===== Location Update Handler =====
 
   void _handleLocationUpdate(location) {
     final newLocation = LatLng(location.latitude, location.longitude);
@@ -190,6 +197,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     _updateEstimatedTimeRemaining();
     _setMapMarkers();
   }
+
+  // ===== Location Initialization =====
 
   void _initializeLocations() {
     if (currentUiState.rideResponse == null) return;
@@ -229,6 +238,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       (_) => _updateEstimatedTimeRemaining(),
     );
   }
+
+  // ===== Estimated Time Remaining =====
 
   void _updateEstimatedTimeRemaining() {
     appLog(
@@ -271,6 +282,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
   }
 
+  // ===== Target Location Info =====
+
   ({LatLng location, double averageSpeed})? _getTargetLocationInfo() {
     if (currentUiState.isRideProcessing) {
       // When ride is in progress, target is the destination
@@ -286,6 +299,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       );
     }
   }
+
+  // ===== Speed Calculation =====
 
   double _getSpeed(double defaultSpeedKmh) {
     final minSpeedMps =
@@ -304,6 +319,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     );
     return speedMps;
   }
+
+  // ===== Estimated Time Calculation =====
 
   Duration _calculateEstimatedTime(double distanceMeters, double speedMps) {
     final seconds = (distanceMeters / speedMps).round();
@@ -352,6 +369,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     return await BitmapDescriptor.asset(ImageConfiguration(size: size), asset);
   }
 
+  // ===== Map Markers =====
+
   void _setMapMarkers() {
     final markers = <Marker>{
       _createMarker(
@@ -398,6 +417,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
     uiState.value = currentUiState.copyWith(markers: markers);
   }
+
+  // ===== Polyline Generation =====
 
   Marker _createMarker({
     required String id,
@@ -450,10 +471,14 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
   }
 
+  // ===== Map Created =====
+
   void onMapCreated(GoogleMapController controller) {
     uiState.value = currentUiState.copyWith(mapController: controller);
     _fitMapToBounds();
   }
+
+  // ===== Map Bounds =====
 
   void _fitMapToBounds() {
     if (currentUiState.mapController == null) return;
@@ -470,6 +495,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       appLog("Error fitting map to bounds: $e");
     }
   }
+
+  // ===== Calculate Bounds =====
 
   LatLngBounds _calculateBounds(LatLng point1, LatLng point2) {
     return LatLngBounds(
@@ -494,6 +521,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
   }
 
+  // ===== Reconnect Monitor =====
+
   void _startReconnectMonitor() {
     appLog("Starting reconnect monitor...");
     _reconnectTimer?.cancel();
@@ -505,6 +534,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       }
     });
   }
+
+  // ===== Socket Listeners =====
 
   void _setupSocketListeners() {
     if (currentUiState.rideId.isEmpty) return;
@@ -525,6 +556,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     appLog("Socket listeners setup complete");
   }
 
+  // ===== Socket Notification =====
+
   void _handleSocketNotification(dynamic data) {
     appLog("Notification received: $data");
 
@@ -534,6 +567,58 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       // Handle ride acceptance with chat
       if (_isRideAcceptance(data)) {
         _extractChatId(data);
+      }
+      // Update only the changed dropoff location from notification payload
+      // The notification is a flattened object, not a full RideResponseModel
+      if (data['dropoffLocation'] != null &&
+          currentUiState.rideResponse != null) {
+        final drop = data['dropoffLocation'] as Map<String, dynamic>;
+        final fare = data['fare'] as num?;
+        final previous = currentUiState.rideResponse!;
+        final previousDrop = previous.data.dropoffLocation;
+
+        final updatedAddress =
+            (drop['address'] as String?) ?? previousDrop.address;
+        final updatedLat =
+            ((drop['lat'] as num?)?.toDouble()) ?? previousDrop.lat;
+        final updatedLng =
+            ((drop['lng'] as num?)?.toDouble()) ?? previousDrop.lng;
+        final updatedFare = fare ?? previous.data.fare;
+
+        final hasChanged =
+            updatedAddress != previousDrop.address ||
+            updatedLat != previousDrop.lat ||
+            updatedLng != previousDrop.lng;
+
+        if (hasChanged) {
+          final updatedModel = RideResponseModel(
+            success: previous.success,
+            message: previous.message,
+            data: RideDataModel(
+              userId: previous.data.userId,
+              service: previous.data.service,
+              category: previous.data.category,
+              pickupLocation: previous.data.pickupLocation,
+              dropoffLocation: LocationModel(
+                lat: updatedLat,
+                lng: updatedLng,
+                address: updatedAddress,
+              ),
+              distance: previous.data.distance,
+              duration: previous.data.duration,
+              fare: updatedFare.toDouble(),
+              rideStatus: previous.data.rideStatus,
+              paymentMethod: previous.data.paymentMethod,
+              paymentStatus: previous.data.paymentStatus,
+              rideType: previous.data.rideType,
+              id: previous.data.id,
+              createdAt: previous.data.createdAt,
+              updatedAt: previous.data.updatedAt,
+            ),
+          );
+
+          applyRideUpdate(updatedModel);
+        }
       }
 
       // Handle ride events
@@ -559,13 +644,19 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
   }
 
+  // ===== Ride Acceptance =====
+
   bool _isRideAcceptance(Map<String, dynamic> data) {
     return data['rideAccept'] == true && data.containsKey('chat');
   }
 
+  // ===== Driver Location Update =====
+
   bool _isDriverLocationUpdate(Map<String, dynamic> data) {
     return data.containsKey('lat') && data.containsKey('lng');
   }
+
+  // ===== Extract Chat ID =====
 
   void _extractChatId(Map<String, dynamic> data) {
     if (data['chat'] is Map<String, dynamic> && data['chat']['_id'] != null) {
@@ -575,12 +666,16 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
   }
 
+  // ===== Handle Message =====
+
   void _handleMessageIfPresent(Map<String, dynamic> data) {
     final message = data['text'] ?? data['message'];
     if (message != null) {
       showMessage(message: message.toString());
     }
   }
+
+  // ===== Ride Start OTP =====
 
   void _handleRideStartOtp(Map<String, dynamic> data, String otp) {
     appLog("Ride start otp event received");
@@ -601,6 +696,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     );
   }
 
+  // ===== Ride Start =====
+
   void _handleRideStart(Map<String, dynamic> data) {
     appLog("Ride start event received");
     uiState.value = currentUiState.copyWith(isRideStart: true);
@@ -613,6 +710,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       message: data['text'] ?? data['message'] ?? 'Your ride has started!',
     );
   }
+
+  // ===== Ride Processing =====
 
   void _handleRideProcessing(Map<String, dynamic> data) {
     appLog("Ride processing event received");
@@ -630,6 +729,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     );
   }
 
+  // ===== Ride End =====
+
   void _handleRideEnd(Map<String, dynamic> data) {
     appLog("Ride end event received");
     uiState.value = currentUiState.copyWith(
@@ -644,6 +745,28 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
   }
 
+  // ===== Apply Ride Update =====
+
+  void applyRideUpdate(RideResponseModel updated) {
+    try {
+      final newDrop = updated.data.dropoffLocation;
+      final newDestination = LatLng(newDrop.lat, newDrop.lng);
+
+      uiState.value = currentUiState.copyWith(
+        rideResponse: updated,
+        destinationMapCoordinates: newDestination,
+      );
+
+      _setMapMarkers();
+      _generatePolyline();
+      _updateEstimatedTimeRemaining();
+    } catch (e) {
+      appLog("Error applying ride update: $e");
+    }
+  }
+
+  // ===== Driver Location Update =====
+
   void _handleDriverLocationUpdate(Map<String, dynamic> data) {
     final driverLocation = LatLng(data['lat'] as double, data['lng'] as double);
 
@@ -656,8 +779,10 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     );
 
     // Send latest driver coordinates to backend to track ride path
-    _patchRidePathCoordinates(driverLocation);
+    //_patchRidePathCoordinates(driverLocation);
   }
+
+  // ===== Ride Path Coordinates =====
 
   Future<void> _patchRidePathCoordinates(LatLng driverLocation) async {
     if (currentUiState.rideId.isEmpty) return;
@@ -673,6 +798,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
       appLog("Error patching ride path: $e");
     }
   }
+
+  // ===== Update Time to Pickup =====
 
   void _updateTimeToPickup() {
     final distance = _calculateDistance(
@@ -698,6 +825,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     );
   }
 
+  // ===== On Forward Pressed =====
+
   Future<void> onForwardPressed(BuildContext context) async {
     if (currentUiState.isRideEnd) {
       Navigator.push(
@@ -714,6 +843,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
   }
 
+  // ===== Setup Navigation Listener =====
+
   void _setupNavigationListener() {
     _socketService.on(currentUiState.socketEventName, (data) {
       if (data is Map<String, dynamic> && data['rideComplete'] == true) {
@@ -723,6 +854,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
   }
 
   // ===== API Methods =====
+
+  // ===== Request Close Ride =====
 
   Future<void> requestCloseRide() async {
     toggleLoading(loading: true);
@@ -742,12 +875,16 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     });
   }
 
+  // ===== Trip Closure =====
+
   void handleTripClosureButtonPress() {
     requestCloseRide();
     if (!currentUiState.isRideEnd) {
       uiState.value = currentUiState.copyWith(isRideProcessing: true);
     }
   }
+
+  // ===== Reset UI State =====
 
   void _resetUIState() {
     // Cancel all timers and subscriptions
@@ -779,6 +916,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     _startReconnectMonitor();
   }
 
+  // ===== Feedback =====
+
   Future<void> submitFeedback() async {
     toggleLoading(loading: true);
 
@@ -809,6 +948,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
   }
 
+  // ===== Payment =====
+
   Future<void> payNow(String rideId, BuildContext context) async {
     toggleLoading(loading: true);
 
@@ -830,6 +971,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
     }
   }
 
+  // ===== Payment Initialization =====
+
   void _initializePayment(String paymentUrl, BuildContext context) {
     if (paymentUrl.isEmpty) return;
 
@@ -849,6 +992,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
           )
           ..loadRequest(Uri.parse(paymentUrl));
   }
+
+  // ===== Handle Payment Result =====
 
   void _handlePaymentResult(String url) {
     if (url.contains("success")) {
@@ -873,6 +1018,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
   // ===== Utility Methods =====
 
+  // ===== Calculate Distance =====
+
   double _calculateDistance(LatLng point1, LatLng point2) {
     final lat1 = point1.latitude * math.pi / 180;
     final lng1 = point1.longitude * math.pi / 180;
@@ -893,6 +1040,8 @@ class RideSharePresenter extends BasePresenter<RideShareUiState> {
 
     return _earthRadiusMeters * c;
   }
+
+  // ===== Calculate Bearing =====
 
   double _calculateBearing(LatLng start, LatLng end) {
     final startLat = start.latitude * (math.pi / 180.0);

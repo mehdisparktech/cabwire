@@ -12,6 +12,7 @@ class TripStoppageInfoWidget extends StatelessWidget {
   final String? rideId;
   final LatLng pickupLocation;
   final String pickupAddress;
+  final String? dropoffAddress;
 
   const TripStoppageInfoWidget({
     super.key,
@@ -20,6 +21,7 @@ class TripStoppageInfoWidget extends StatelessWidget {
     this.rideId,
     required this.pickupLocation,
     required this.pickupAddress,
+    this.dropoffAddress,
   });
 
   void _shareTrip(String type) {
@@ -99,6 +101,8 @@ class TripStoppageInfoWidget extends StatelessWidget {
                         serviceId: null,
                         pickupAddress: pickupAddress,
                         pickupLocation: pickupLocation,
+                        rideId: rideId,
+                        currentDropAddress: dropoffAddress,
                       ),
                     );
                   },

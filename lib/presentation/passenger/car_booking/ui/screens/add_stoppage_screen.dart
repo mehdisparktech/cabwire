@@ -17,6 +17,8 @@ class AddStoppageScreen extends StatelessWidget {
   final String? serviceId;
   final String pickupAddress;
   final LatLng pickupLocation;
+  final String? rideId;
+  final String? currentDropAddress;
 
   const AddStoppageScreen({
     super.key,
@@ -25,6 +27,8 @@ class AddStoppageScreen extends StatelessWidget {
     this.serviceId,
     required this.pickupAddress,
     required this.pickupLocation,
+    this.rideId,
+    this.currentDropAddress,
   });
 
   @override
@@ -68,7 +72,10 @@ class AddStoppageScreen extends StatelessWidget {
                 isPrimary: true,
                 text: 'Confirm Stoppage',
                 onPressed:
-                    () => presenter.handleContinuePress(context, nextScreen),
+                    () => presenter.confirmStoppage(
+                      context: context,
+                      rideId: rideId,
+                    ),
               ),
             ),
           ),
