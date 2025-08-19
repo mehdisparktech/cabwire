@@ -104,6 +104,17 @@ class AddNewDropLocationPresenter
     }
   }
 
+  void setPickupAddress(String? pickupAddress) {
+    uiState.value = currentUiState.copyWith(pickupAddress: pickupAddress);
+  }
+
+  void setPickupLocation(LatLng? pickupLocation) {
+    uiState.value = currentUiState.copyWith(
+      selectedPickupLocation: pickupLocation,
+    );
+    fromController.text = pickupLocation?.latitude.toString() ?? '';
+  }
+
   // Helper method to get address from coordinates
   Future<String?> _getAddressFromLatLng(LatLng latLng) async {
     try {
@@ -142,6 +153,8 @@ class AddNewDropLocationPresenter
         destinationController.removeListener(_destinationListener!);
         _destinationListener = null;
       }
+      _mapController?.dispose();
+      _mapController = null;
     } catch (e) {
       // Controllers may have already been disposed, ignore the error
       debugPrint('Error removing listeners: $e');

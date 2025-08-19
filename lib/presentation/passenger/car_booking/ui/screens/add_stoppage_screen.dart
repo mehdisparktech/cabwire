@@ -15,12 +15,16 @@ class AddStoppageScreen extends StatelessWidget {
   final Widget? nextScreen;
   final ServiceType serviceType;
   final String? serviceId;
+  final String pickupAddress;
+  final LatLng pickupLocation;
 
   const AddStoppageScreen({
     super.key,
     this.nextScreen,
     this.serviceType = ServiceType.none,
     this.serviceId,
+    required this.pickupAddress,
+    required this.pickupLocation,
   });
 
   @override
@@ -30,6 +34,8 @@ class AddStoppageScreen extends StatelessWidget {
 
     presenter.setServiceType(serviceType);
     presenter.setServiceId(serviceId);
+    presenter.setPickupAddress(pickupAddress);
+    presenter.setPickupLocation(pickupLocation);
     // ignore: deprecated_member_use
     return PresentableWidgetBuilder(
       presenter: presenter,
@@ -60,7 +66,7 @@ class AddStoppageScreen extends StatelessWidget {
               child: ActionButton(
                 borderRadius: 8.0,
                 isPrimary: true,
-                text: 'Continue',
+                text: 'Confirm Stoppage',
                 onPressed:
                     () => presenter.handleContinuePress(context, nextScreen),
               ),
@@ -374,7 +380,7 @@ class AddStoppageScreen extends StatelessWidget {
   Widget _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.transparent,
-      title: Text('Search Destination'),
+      title: Text('Add Stoppage'),
       centerTitle: true,
       leading: IconButton(
         onPressed: () {

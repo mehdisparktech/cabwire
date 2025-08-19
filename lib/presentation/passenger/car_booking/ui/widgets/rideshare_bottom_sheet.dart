@@ -9,6 +9,7 @@ import 'package:cabwire/presentation/passenger/passenger_chat/ui/screens/passeng
 import 'package:cabwire/presentation/passenger/car_booking/presenter/ride_share_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // --- Import widget files ---
 import 'pickup_info_widget.dart';
@@ -139,6 +140,12 @@ class RideshareBottomSheet extends StatelessWidget {
               stoppageLocation:
                   uiState.rideResponse?.data.dropoffLocation.address ?? '',
               rideId: uiState.rideResponse?.data.id,
+              pickupLocation: LatLng(
+                uiState.rideResponse?.data.pickupLocation.lat ?? 0,
+                uiState.rideResponse?.data.pickupLocation.lng ?? 0,
+              ),
+              pickupAddress:
+                  uiState.rideResponse?.data.pickupLocation.address ?? '',
             ),
             const SizedBox(height: 16),
             PaymentInfoWidget(

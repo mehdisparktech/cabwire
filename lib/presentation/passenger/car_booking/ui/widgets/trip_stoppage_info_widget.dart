@@ -3,18 +3,23 @@ import 'package:cabwire/presentation/passenger/car_booking/ui/screens/add_stoppa
 import 'package:cabwire/presentation/common/components/share_trip_dropdown.dart';
 import 'package:cabwire/presentation/common/components/share_trip_presenter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart'; // For context.theme
+import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart'; // For context.theme
 
 class TripStoppageInfoWidget extends StatelessWidget {
   final String stoppageLocation;
   final String? stoppageLocation2;
   final String? rideId;
+  final LatLng pickupLocation;
+  final String pickupAddress;
 
   const TripStoppageInfoWidget({
     super.key,
     required this.stoppageLocation,
     this.stoppageLocation2,
     this.rideId,
+    required this.pickupLocation,
+    required this.pickupAddress,
   });
 
   void _shareTrip(String type) {
@@ -92,6 +97,8 @@ class TripStoppageInfoWidget extends StatelessWidget {
                       () => AddStoppageScreen(
                         serviceType: ServiceType.none,
                         serviceId: null,
+                        pickupAddress: pickupAddress,
+                        pickupLocation: pickupLocation,
                       ),
                     );
                   },
