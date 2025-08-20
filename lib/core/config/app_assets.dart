@@ -24,6 +24,7 @@ class AppAssets {
   static const String icRentalCar = 'assets/images/png/rental_car.png';
   static const String icMyCar = 'assets/images/png/my_car.png';
   static const String icLocationActive = 'assets/images/png/location_pin.png';
+  static const String icComingSoon = 'assets/images/png/Roket.png';
 
   ///svg file
   static const String icHomeOutline = 'assets/images/svg/ic_home_outline.svg';

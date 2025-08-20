@@ -1,7 +1,9 @@
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:cabwire/core/enum/service_type.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/domain/entities/passenger/passenger_service_entity.dart';
+import 'package:cabwire/presentation/common/components/comming_soon_screen.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_services_card.dart';
 import 'package:cabwire/presentation/common/components/loading_indicator.dart';
@@ -142,7 +144,20 @@ class PassengerServicesPage extends StatelessWidget {
           ),
         );
         break;
+      case 'Cabwire Meal':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CommingSoonScreen()),
+        );
+        break;
+      case 'EV':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CommingSoonScreen()),
+        );
+        break;
       default:
+        appLog('Unknown service: ${service.serviceName}');
         Navigator.push(
           context,
           MaterialPageRoute(
