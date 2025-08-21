@@ -82,16 +82,6 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
       chatId: chatId,
     );
     _initializeLocations();
-
-    // Ensure runtime services are active for the new ride after any prior reset
-    _setCustomIcons();
-    _getCurrentUserLocation();
-    _startRideTimer();
-    _ensureSocketConnection();
-    _startLocationUpdates();
-    _startTimeUpdates();
-    _startReconnectMonitor();
-    Future.delayed(_socketSetupDelay, _setupSocketListeners);
   }
 
   void setRideProgress(bool rideProgress) {
@@ -175,9 +165,30 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
     // Cancel all timers and subscriptions
     _cleanup();
 
-    // Fully reset to defaults; do not auto-restart timers/sockets here.
-    // Next ride will explicitly reinitialize via setRideRequest.
-    uiState.value = RideshareUiState.initial();
+    // Reset to initial state but keep custom icons and current location
+    final currentLocation = currentUiState.currentUserLocation;
+    final sourceIcon = currentUiState.sourceIcon;
+    final destinationIcon = currentUiState.destinationIcon;
+    final driverIcon = currentUiState.driverIcon;
+    final userLocationIcon = currentUiState.userLocationIcon;
+
+    // Set UI state back to initial state
+    uiState.value = RideshareUiState.initial().copyWith(
+      sourceIcon: sourceIcon,
+      destinationIcon: destinationIcon,
+      driverIcon: driverIcon,
+      userLocationIcon: userLocationIcon,
+      currentUserLocation: currentLocation,
+      driverLocation: currentLocation,
+      isRideStart: false,
+      isRideProcessing: false,
+      isRideEnd: false,
+    );
+
+    // Restart necessary components for next trip
+    _startLocationUpdates();
+    _startTimeUpdates();
+    _startReconnectMonitor();
   }
 
   /// Public method to reset UI state that can be called from outside
