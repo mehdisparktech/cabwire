@@ -30,6 +30,7 @@ class ChatUiState extends BaseUiState {
   final List<ChatMessage> messages;
   final bool isTyping;
   final String currentMessageText;
+  final String partnerImage;
 
   const ChatUiState({
     required super.isLoading,
@@ -40,6 +41,7 @@ class ChatUiState extends BaseUiState {
     required this.messages,
     required this.isTyping,
     required this.currentMessageText,
+    required this.partnerImage,
   });
 
   factory ChatUiState.initial() {
@@ -52,6 +54,7 @@ class ChatUiState extends BaseUiState {
       messages: [],
       isTyping: false,
       currentMessageText: '',
+      partnerImage: AppAssets.icProfileImage,
     );
   }
 
@@ -65,6 +68,7 @@ class ChatUiState extends BaseUiState {
     messages,
     isTyping,
     currentMessageText,
+    partnerImage,
   ];
 
   ChatUiState copyWith({
@@ -76,6 +80,7 @@ class ChatUiState extends BaseUiState {
     List<ChatMessage>? messages,
     bool? isTyping,
     String? currentMessageText,
+    String? partnerImage,
   }) {
     return ChatUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -86,6 +91,7 @@ class ChatUiState extends BaseUiState {
       messages: messages ?? this.messages,
       isTyping: isTyping ?? this.isTyping,
       currentMessageText: currentMessageText ?? this.currentMessageText,
+      partnerImage: partnerImage ?? this.partnerImage,
     );
   }
 }
