@@ -141,6 +141,7 @@ class ChatPresenter extends BasePresenter<ChatUiState> {
           text: messageText,
           timestamp: DateTime.now(),
           isSender: false,
+          senderImage: currentUiState.chatPartnerName,
         );
 
         // Update UI state

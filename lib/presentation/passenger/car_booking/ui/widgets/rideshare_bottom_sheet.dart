@@ -63,9 +63,7 @@ class RideshareBottomSheet extends StatelessWidget {
                       ? 'Driver is on the way to pickup.'
                       : uiState.isRideProcessing && uiState.timerLeft > 0
                       ? 'Your Trip Will Complete In Approximately'
-                      : uiState.isRideEnd
-                      ? 'Your Trip Is Completed'
-                      : 'Driver is on the way to pickup',
+                      : 'Your Trip Is Completed',
               isRideStart: uiState.isRideStart,
               isRideProcessing:
                   uiState.isRideProcessing ||
