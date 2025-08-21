@@ -21,6 +21,7 @@ class RideMapper {
         address: entity.dropoffLocation!.address!,
       ),
       duration: entity.duration!,
+      distance: entity.distance!,
       paymentMethod: entity.paymentMethod!,
     );
   }

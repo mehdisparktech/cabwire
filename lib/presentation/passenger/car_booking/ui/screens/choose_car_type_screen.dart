@@ -18,6 +18,8 @@ class ChooseCarTypeScreen extends StatelessWidget {
   final String pickupAddress;
   final LatLng dropoffLocation;
   final String dropoffAddress;
+  final String distance;
+  final String duration;
   const ChooseCarTypeScreen({
     super.key,
     required this.serviceId,
@@ -25,6 +27,8 @@ class ChooseCarTypeScreen extends StatelessWidget {
     required this.pickupAddress,
     required this.dropoffLocation,
     required this.dropoffAddress,
+    required this.distance,
+    required this.duration,
   });
 
   @override
@@ -39,6 +43,8 @@ class ChooseCarTypeScreen extends StatelessWidget {
       pickupAddress: pickupAddress,
       dropoffLocation: dropoffLocation,
       dropoffAddress: dropoffAddress,
+      distance: distance,
+      duration: duration,
     );
 
     return Scaffold(

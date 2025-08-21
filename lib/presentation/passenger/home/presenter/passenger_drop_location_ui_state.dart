@@ -20,6 +20,8 @@ class PassengerDropLocationUiState extends BaseUiState {
   final List<SearchHistoryItem> searchHistory;
   final String? routeDistance;
   final String? routeDuration;
+  final String? distance;
+  final String? duration;
   final String? error;
   final LatLng? selectedPickupLocation;
   final String? pickupAddress;
@@ -43,6 +45,8 @@ class PassengerDropLocationUiState extends BaseUiState {
     this.searchHistory = const [],
     this.routeDistance,
     this.routeDuration,
+    this.distance,
+    this.duration,
     this.error,
     this.selectedPickupLocation,
     this.pickupAddress,
@@ -86,6 +90,8 @@ class PassengerDropLocationUiState extends BaseUiState {
       ],
       routeDistance: null,
       routeDuration: null,
+      distance: null,
+      duration: null,
       error: null,
       selectedPickupLocation: null,
       pickupAddress: null,
@@ -120,6 +126,8 @@ class PassengerDropLocationUiState extends BaseUiState {
     searchHistory,
     routeDistance,
     routeDuration,
+    distance,
+    duration,
     error,
     selectedPickupLocation,
     pickupAddress,
@@ -145,6 +153,8 @@ class PassengerDropLocationUiState extends BaseUiState {
     List<SearchHistoryItem>? searchHistory,
     String? routeDistance,
     String? routeDuration,
+    String? distance,
+    String? duration,
     String? error,
     LatLng? selectedPickupLocation,
     String? pickupAddress,
@@ -171,6 +181,8 @@ class PassengerDropLocationUiState extends BaseUiState {
       searchHistory: searchHistory ?? this.searchHistory,
       routeDistance: routeDistance ?? this.routeDistance,
       routeDuration: routeDuration ?? this.routeDuration,
+      distance: distance ?? this.distance,
+      duration: duration ?? this.duration,
       error: error ?? this.error,
       selectedPickupLocation:
           selectedPickupLocation ?? this.selectedPickupLocation,

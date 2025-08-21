@@ -29,6 +29,8 @@ class PassengerCategoryListPresenter
     required String pickupAddress,
     required LatLng dropoffLocation,
     required String dropoffAddress,
+    required String distance,
+    required String duration,
   }) {
     uiState.value = currentUiState.copyWith(
       selectedService: serviceId,
@@ -38,6 +40,8 @@ class PassengerCategoryListPresenter
       dropoffLat: dropoffLocation.latitude,
       dropoffLng: dropoffLocation.longitude,
       dropoffAddress: dropoffAddress,
+      distance: distance,
+      duration: duration,
       paymentMethod: 'offline', // Default payment method
     );
     loadPassengerCategories();
@@ -112,7 +116,8 @@ class PassengerCategoryListPresenter
           'lng': currentUiState.dropoffLng!,
           'address': currentUiState.dropoffAddress!,
         },
-        duration: 30, // Default duration in minutes
+        duration: int.parse(currentUiState.duration),
+        distance: double.parse(currentUiState.distance),
         paymentMethod: currentUiState.paymentMethod!,
       );
 

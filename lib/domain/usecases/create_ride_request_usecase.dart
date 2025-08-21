@@ -12,6 +12,7 @@ class CreateRideRequestParams {
   final Map<String, dynamic> pickupLocation;
   final Map<String, dynamic> dropoffLocation;
   final int duration;
+  final double distance;
   final String paymentMethod;
 
   CreateRideRequestParams({
@@ -20,6 +21,7 @@ class CreateRideRequestParams {
     required this.pickupLocation,
     required this.dropoffLocation,
     required this.duration,
+    required this.distance,
     required this.paymentMethod,
   });
 }
@@ -63,6 +65,7 @@ class CreateRideRequestUseCase extends BaseUseCase<RideResponseModel> {
           address: params.dropoffLocation['address'],
         ),
         duration: params.duration,
+        distance: params.distance,
         paymentMethod: params.paymentMethod,
       );
 

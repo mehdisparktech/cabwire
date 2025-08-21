@@ -344,6 +344,8 @@ class PassengerDropLocationPresenter
               uiState.value = currentUiState.copyWith(
                 routeDistance: distance,
                 routeDuration: duration,
+                distance: distance,
+                duration: duration,
               );
 
               // Add this route to search history if not already present
@@ -508,6 +510,8 @@ class PassengerDropLocationPresenter
                   pickupAddress: currentUiState.pickupAddress!,
                   dropoffLocation: currentUiState.destinationLocation!,
                   dropoffAddress: currentUiState.destinationAddress!,
+                  distance: currentUiState.distance!,
+                  duration: currentUiState.duration!,
                 ),
                 ServiceType.packageDelivery => FindingRidesScreen(
                   rideResponse: currentUiState.rideResponse!,
@@ -520,6 +524,8 @@ class PassengerDropLocationPresenter
                   pickupAddress: currentUiState.pickupAddress!,
                   dropoffLocation: currentUiState.destinationLocation!,
                   dropoffAddress: currentUiState.destinationAddress!,
+                  distance: currentUiState.distance!,
+                  duration: currentUiState.duration!,
                 ),
               },
         ),
@@ -808,6 +814,8 @@ class PassengerDropLocationPresenter
                 pickupAddress: pickupAddress,
                 dropoffLocation: dropoffLocation,
                 dropoffAddress: dropoffAddress,
+                distance: currentUiState.distance!,
+                duration: currentUiState.duration!,
               ),
               // ServiceType.rentalCar => throw UnimplementedError(),
               // ServiceType.emergencyCar => throw UnimplementedError(),
@@ -817,6 +825,8 @@ class PassengerDropLocationPresenter
                 pickupAddress: pickupAddress,
                 dropoffLocation: dropoffLocation,
                 dropoffAddress: dropoffAddress,
+                distance: currentUiState.distance!,
+                duration: currentUiState.duration!,
               ),
               _ => ChooseCarTypeScreen(
                 serviceId: serviceId,
@@ -824,6 +834,8 @@ class PassengerDropLocationPresenter
                 pickupAddress: pickupAddress,
                 dropoffLocation: dropoffLocation,
                 dropoffAddress: dropoffAddress,
+                distance: currentUiState.distance!,
+                duration: currentUiState.duration!,
               ),
             },
       ),
