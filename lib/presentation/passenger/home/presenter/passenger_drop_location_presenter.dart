@@ -45,6 +45,22 @@ class PassengerDropLocationPresenter
 
   PassengerDropLocationPresenter();
 
+  /// Extract numeric value from duration string (e.g., "34 min" -> "34")
+  String _extractDurationNumber(String duration) {
+    // Use regex to extract only numbers from the duration string
+    final RegExp regex = RegExp(r'\d+');
+    final match = regex.firstMatch(duration);
+    return match?.group(0) ?? duration;
+  }
+
+  /// Extract numeric value from distance string (e.g., "3 km" -> "3")
+  String _extractDistanceNumber(String distance) {
+    // Use regex to extract only numbers (including decimals) from the distance string
+    final RegExp regex = RegExp(r'\d+\.?\d*');
+    final match = regex.firstMatch(distance);
+    return match?.group(0) ?? distance;
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -340,12 +356,14 @@ class PassengerDropLocationPresenter
               final element = elements[0];
               final distance = element['distance']['text'];
               final duration = element['duration']['text'];
+              final durationNumber = _extractDurationNumber(duration);
+              final distanceNumber = _extractDistanceNumber(distance);
 
               uiState.value = currentUiState.copyWith(
                 routeDistance: distance,
                 routeDuration: duration,
-                distance: distance,
-                duration: duration,
+                distance: distanceNumber, // Store only the numeric value
+                duration: durationNumber, // Store only the numeric value
               );
 
               // Add this route to search history if not already present
@@ -499,6 +517,10 @@ class PassengerDropLocationPresenter
         return;
       }
 
+      // Ensure distance and duration are not null
+      final distance = currentUiState.distance ?? 'N/A';
+      final duration = currentUiState.duration ?? 'N/A';
+
       Navigator.of(context).push(
         MaterialPageRoute(
           builder:
@@ -510,8 +532,8 @@ class PassengerDropLocationPresenter
                   pickupAddress: currentUiState.pickupAddress!,
                   dropoffLocation: currentUiState.destinationLocation!,
                   dropoffAddress: currentUiState.destinationAddress!,
-                  distance: currentUiState.distance!,
-                  duration: currentUiState.duration!,
+                  distance: distance,
+                  duration: duration,
                 ),
                 ServiceType.packageDelivery => FindingRidesScreen(
                   rideResponse: currentUiState.rideResponse!,
@@ -524,8 +546,8 @@ class PassengerDropLocationPresenter
                   pickupAddress: currentUiState.pickupAddress!,
                   dropoffLocation: currentUiState.destinationLocation!,
                   dropoffAddress: currentUiState.destinationAddress!,
-                  distance: currentUiState.distance!,
-                  duration: currentUiState.duration!,
+                  distance: distance,
+                  duration: duration,
                 ),
               },
         ),
@@ -763,6 +785,8 @@ class PassengerDropLocationPresenter
     final pickupAddress = currentUiState.pickupAddress!;
     final dropoffLocation = currentUiState.destinationLocation!;
     final dropoffAddress = currentUiState.destinationAddress!;
+    final distance = currentUiState.distance ?? 'N/A';
+    final duration = currentUiState.duration ?? 'N/A';
     //final rideResponse = currentUiState.rideResponse;
 
     // Reset state to initial values before navigation
@@ -788,6 +812,8 @@ class PassengerDropLocationPresenter
         dropoffLocation,
         dropoffAddress,
         nextScreen,
+        distance,
+        duration,
       );
     }
   }
@@ -802,6 +828,8 @@ class PassengerDropLocationPresenter
     LatLng dropoffLocation,
     String dropoffAddress,
     Widget? nextScreen,
+    String distance,
+    String duration,
   ) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -814,8 +842,8 @@ class PassengerDropLocationPresenter
                 pickupAddress: pickupAddress,
                 dropoffLocation: dropoffLocation,
                 dropoffAddress: dropoffAddress,
-                distance: currentUiState.distance!,
-                duration: currentUiState.duration!,
+                distance: distance,
+                duration: duration,
               ),
               // ServiceType.rentalCar => throw UnimplementedError(),
               // ServiceType.emergencyCar => throw UnimplementedError(),
@@ -825,8 +853,8 @@ class PassengerDropLocationPresenter
                 pickupAddress: pickupAddress,
                 dropoffLocation: dropoffLocation,
                 dropoffAddress: dropoffAddress,
-                distance: currentUiState.distance!,
-                duration: currentUiState.duration!,
+                distance: distance,
+                duration: duration,
               ),
               _ => ChooseCarTypeScreen(
                 serviceId: serviceId,
@@ -834,8 +862,8 @@ class PassengerDropLocationPresenter
                 pickupAddress: pickupAddress,
                 dropoffLocation: dropoffLocation,
                 dropoffAddress: dropoffAddress,
-                distance: currentUiState.distance!,
-                duration: currentUiState.duration!,
+                distance: distance,
+                duration: duration,
               ),
             },
       ),
