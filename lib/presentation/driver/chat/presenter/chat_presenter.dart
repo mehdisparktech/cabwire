@@ -128,7 +128,13 @@ class ChatPresenter extends BasePresenter<ChatUiState> {
       final textValue = data['text'];
       final String messageText = textValue?.toString() ?? '';
 
+      // Extract sender info
+      final senderName = data['senderName']?.toString() ?? '';
+      final senderImage = data['senderImage']?.toString() ?? '';
+
       appLog("MESSAGE_PROCESSING: Extracted text: '$messageText'");
+      appLog("MESSAGE_PROCESSING: Sender name: '$senderName'");
+      appLog("MESSAGE_PROCESSING: Sender image: '$senderImage'");
 
       if (messageText.isNotEmpty) {
         appLog(
@@ -141,12 +147,23 @@ class ChatPresenter extends BasePresenter<ChatUiState> {
           text: messageText,
           timestamp: DateTime.now(),
           isSender: false,
-          senderImage: currentUiState.chatPartnerName,
+          senderName: senderName.isNotEmpty ? senderName : null,
+          senderImage: senderImage.isNotEmpty ? senderImage : null,
         );
 
-        // Update UI state
+        // Update UI state and partner info if available
         final updatedMessages = [...currentUiState.messages, newMessage];
-        uiState.value = currentUiState.copyWith(messages: updatedMessages);
+        String partnerName = currentUiState.chatPartnerName;
+        String partnerImage = currentUiState.chatPartnerAvatarUrl;
+
+        if (senderName.isNotEmpty) partnerName = senderName;
+        if (senderImage.isNotEmpty) partnerImage = senderImage;
+
+        uiState.value = currentUiState.copyWith(
+          messages: updatedMessages,
+          chatPartnerName: partnerName,
+          chatPartnerAvatarUrl: partnerImage,
+        );
 
         appLog("MESSAGE_PROCESSING: Message added successfully to UI state");
         _scrollToBottom();
@@ -200,6 +217,7 @@ class ChatPresenter extends BasePresenter<ChatUiState> {
         messages: sortedMessages,
         chatPartnerName: partnerName,
         chatPartnerAvatarUrl: partnerImage,
+        chatPartnerStatus: 'Online',
         isLoading: false,
       );
     });

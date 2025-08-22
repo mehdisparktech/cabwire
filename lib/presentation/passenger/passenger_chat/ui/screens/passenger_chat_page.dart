@@ -4,6 +4,7 @@ import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/utility/utility.dart';
 import 'package:cabwire/presentation/common/components/circular_icon_button.dart';
+import 'package:cabwire/presentation/common/components/chat_appbar_shimmer.dart';
 import 'package:cabwire/presentation/passenger/passenger_chat/presenter/passenger_chat_presenter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -40,35 +41,43 @@ class PassengerChatPage extends StatelessWidget {
         onPressed: presenter.goBack,
         icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black),
       ),
-      title: Row(
-        children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundImage:
-                (uiState.chatPartnerAvatarUrl.isNotEmpty)
-                    ? CachedNetworkImageProvider(
-                      ApiEndPoint.imageUrl + uiState.chatPartnerAvatarUrl,
-                      errorListener:
-                          (error) => AssetImage(AppAssets.icProfileImage),
-                    )
-                    : AssetImage(AppAssets.icProfileImage) as ImageProvider,
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                uiState.chatPartnerName,
-                style: Theme.of(context).textTheme.bodyLarge,
+      title:
+          uiState.isLoading
+              ? const ChatAppBarShimmer()
+              : Row(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundImage:
+                        (uiState.chatPartnerAvatarUrl.isNotEmpty &&
+                                uiState.chatPartnerAvatarUrl !=
+                                    AppAssets.icProfileImage)
+                            ? CachedNetworkImageProvider(
+                              ApiEndPoint.imageUrl +
+                                  uiState.chatPartnerAvatarUrl,
+                              errorListener:
+                                  (error) =>
+                                      AssetImage(AppAssets.icProfileImage),
+                            )
+                            : AssetImage(AppAssets.icProfileImage)
+                                as ImageProvider,
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        uiState.chatPartnerName,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      Text(
+                        uiState.chatPartnerStatus,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              Text(
-                uiState.chatPartnerStatus,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ],
-      ),
       actions: [
         CircularIconButton(icon: Icons.phone, onTap: presenter.startAudioCall),
       ],
@@ -162,27 +171,14 @@ class PassengerChatPage extends StatelessWidget {
               child: Text(message, style: const TextStyle(color: Colors.white)),
             ),
           ),
-          if (showAvatar) ...[
-            const SizedBox(width: 8),
-            CircleAvatar(
-              radius: 12,
-              backgroundImage:
-                  (avatarUrl != null && avatarUrl.isNotEmpty)
-                      ? CachedNetworkImageProvider(
-                        ApiEndPoint.imageUrl + avatarUrl,
-                        errorListener:
-                            (error) => AssetImage(AppAssets.icProfileImage),
-                      )
-                      : AssetImage(AppAssets.icProfileImage) as ImageProvider,
-            ),
-          ] else
-            const SizedBox(width: 24 + 8),
+          const SizedBox(width: 8),
         ],
       ),
     );
   }
 
   Widget _buildSenderMessage(String message, String? avatarUrl) {
+    final uiState = presenter.currentUiState;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -192,9 +188,11 @@ class PassengerChatPage extends StatelessWidget {
           CircleAvatar(
             radius: 12,
             backgroundImage:
-                (avatarUrl != null && avatarUrl.isNotEmpty)
+                (uiState.chatPartnerAvatarUrl.isNotEmpty &&
+                        uiState.chatPartnerAvatarUrl !=
+                            AppAssets.icProfileImage)
                     ? CachedNetworkImageProvider(
-                      ApiEndPoint.imageUrl + avatarUrl,
+                      ApiEndPoint.imageUrl + uiState.chatPartnerAvatarUrl,
                       errorListener:
                           (error) => AssetImage(AppAssets.icProfileImage),
                     )
@@ -221,6 +219,7 @@ class PassengerChatPage extends StatelessWidget {
   }
 
   Widget _buildTypingIndicator(String avatarAsset) {
+    final uiState = presenter.currentUiState;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -229,7 +228,16 @@ class PassengerChatPage extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 12,
-            backgroundImage: AssetImage(AppAssets.icProfileImage),
+            backgroundImage:
+                (uiState.chatPartnerAvatarUrl.isNotEmpty &&
+                        uiState.chatPartnerAvatarUrl !=
+                            AppAssets.icProfileImage)
+                    ? CachedNetworkImageProvider(
+                      ApiEndPoint.imageUrl + uiState.chatPartnerAvatarUrl,
+                      errorListener:
+                          (error) => AssetImage(AppAssets.icProfileImage),
+                    )
+                    : AssetImage(AppAssets.icProfileImage) as ImageProvider,
           ),
           const SizedBox(width: 8),
           Container(

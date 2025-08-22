@@ -44,10 +44,10 @@ class PassengerChatUiState extends BaseUiState {
 
   factory PassengerChatUiState.initial() {
     return PassengerChatUiState(
-      isLoading: false,
+      isLoading: true,
       userMessage: '',
-      chatPartnerName: 'Mandy',
-      chatPartnerStatus: 'Online',
+      chatPartnerName: 'Loading...',
+      chatPartnerStatus: 'Connecting...',
       chatPartnerAvatarUrl: AppAssets.icProfileImage,
       messages: [],
       isTyping: false,
