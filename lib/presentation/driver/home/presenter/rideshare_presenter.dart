@@ -28,7 +28,7 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
   static const double _defaultRideSpeedKmh = 30.0;
   static const double _earthRadiusMeters = 6371000;
   static const Duration _reconnectInterval = Duration(seconds: 5);
-  static const Duration _timeUpdateInterval = Duration(seconds: 10);
+  static const Duration _timeUpdateInterval = Duration(seconds: 5);
   static const Duration _socketSetupDelay = Duration(milliseconds: 500);
 
   // Services
@@ -86,20 +86,25 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
 
   void setRideProgress(bool rideProgress) {
     if (rideProgress) {
+      appLog("Setting ride progress to: $rideProgress");
       uiState.value = currentUiState.copyWith(
         isRideProcessing: true,
-        isRideStart: true, // Set to false to match passenger logic
+        isRideStart: true,
       );
+
+      // Update markers immediately to ensure car icon shows at current location
+      _setMapMarkers();
 
       // Send current driver location immediately to ensure passenger has latest location
       if (currentUiState.currentUserLocation != null) {
         _sendDriverLocationUpdate(currentUiState.currentUserLocation!);
       }
 
-      // Wait a moment for location to be sent, then calculate time
-      Future.delayed(Duration(milliseconds: 200), () {
-        _updateEstimatedTimeRemaining();
-      });
+      // Force immediate time calculation when ride starts
+      _forceTimeUpdate();
+
+      // Restart time updates to ensure continuous calculation
+      _startTimeUpdates();
     }
   }
 
@@ -133,6 +138,11 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
           userMessage: success.message,
           isRideStart: true,
         );
+
+        // Force time calculation update when ride officially starts
+        _forceTimeUpdate();
+        _setMapMarkers(); // Ensure markers are updated
+
         Get.off(
           () => DriverTripStartOtpPage(
             rideRequest: currentUiState.rideRequest!,
@@ -244,11 +254,18 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
       location,
     ) {
       final currentLatLng = LatLng(location.latitude, location.longitude);
+      appLog("Initial driver location set: $currentLatLng");
       uiState.value = currentUiState.copyWith(
         currentUserLocation: currentLatLng,
-        driverLocation: currentLatLng, // Driver's current location
+        driverLocation:
+            currentLatLng, // Driver's current location - this is key
       );
       _setMapMarkers();
+
+      // If ride is already in progress, update time immediately
+      if (currentUiState.isRideProcessing) {
+        _updateEstimatedTimeRemaining();
+      }
     });
   }
 
@@ -275,21 +292,27 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
       );
     }
 
+    // Update both current user location and driver location
     uiState.value = currentUiState.copyWith(
       currentUserLocation: newLocation,
-      driverLocation: newLocation, // Update driver location
+      driverLocation:
+          newLocation, // This is crucial - driver location should always be updated
       userHeading: heading,
       currentSpeed: location.speed,
     );
 
+    appLog("Driver location updated: $newLocation");
     appLog(
       "Current speed: ${location.speed?.toStringAsFixed(2) ?? 'unavailable'} m/s",
     );
 
-    _updateEstimatedTimeRemaining();
+    // Update markers first to ensure car icon moves
     _setMapMarkers();
 
-    // Send driver location update via socket
+    // Then update estimated time
+    _updateEstimatedTimeRemaining();
+
+    // Send driver location update via socket for passenger
     _sendDriverLocationUpdate(newLocation);
   }
 
@@ -330,17 +353,20 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
   }
 
   void _updateEstimatedTimeRemaining() {
-    if (currentUiState.currentUserLocation == null) return;
-
     final targetInfo = _getTargetLocationInfo();
     if (targetInfo == null) return;
 
-    appLog("Driver location: ${currentUiState.currentUserLocation}");
+    // Use driver location for time calculation (driver's current position is the calculation start point)
+    final calculationStartPoint =
+        currentUiState.driverLocation ?? currentUiState.currentUserLocation;
+    if (calculationStartPoint == null) return;
+
+    appLog("Calculation start point (driver location): $calculationStartPoint");
     appLog("Target location: ${targetInfo.location}");
     appLog("Ride processing: ${currentUiState.isRideProcessing}");
 
     final distanceInMeters = _calculateDistance(
-      currentUiState.currentUserLocation!,
+      calculationStartPoint,
       targetInfo.location,
     );
 
@@ -374,7 +400,7 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
   }
 
   double _getSpeed(double defaultSpeedKmh) {
-    final minSpeedMps =
+    const minSpeedMps =
         2.0; // Minimum 2 m/s (7.2 km/h) to avoid unrealistic calculations
 
     if (currentUiState.currentSpeed != null &&
@@ -407,8 +433,38 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
   }
 
   bool _hasTimeChanged(Duration newTime) {
-    return newTime.inMinutes != currentUiState.timerLeft ||
-        newTime.inSeconds != currentUiState.estimatedTimeInSeconds;
+    // Consider time changed if minute difference is significant (at least 1 minute difference)
+    // or if seconds difference is more than 30 seconds to avoid too frequent updates
+    final minutesDiff = (newTime.inMinutes - currentUiState.timerLeft).abs();
+    final secondsDiff =
+        (newTime.inSeconds - currentUiState.estimatedTimeInSeconds).abs();
+
+    return minutesDiff >= 1 || secondsDiff >= 30;
+  }
+
+  // Method to force time update regardless of change threshold
+  void _forceTimeUpdate() {
+    final targetInfo = _getTargetLocationInfo();
+    if (targetInfo == null) return;
+
+    final calculationStartPoint =
+        currentUiState.driverLocation ?? currentUiState.currentUserLocation;
+    if (calculationStartPoint == null) return;
+
+    final distanceInMeters = _calculateDistance(
+      calculationStartPoint,
+      targetInfo.location,
+    );
+
+    final estimatedTime = _calculateEstimatedTime(
+      distanceInMeters,
+      targetInfo.averageSpeed,
+    );
+
+    uiState.value = currentUiState.copyWith(
+      timerLeft: estimatedTime.inMinutes,
+      estimatedTimeInSeconds: estimatedTime.inSeconds,
+    );
   }
 
   // ===== Map & UI Methods =====
@@ -459,17 +515,7 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
       ),
     };
 
-    // if (currentUiState.driverLocation != null) {
-    //   markers.add(
-    //     _createMarker(
-    //       id: 'driver',
-    //       position: currentUiState.driverLocation!,
-    //       icon: currentUiState.driverIcon,
-    //       title: 'Driver Location',
-    //     ),
-    //   );
-    // }
-
+    // Add driver location marker with proper rotation and positioning
     if (currentUiState.driverLocation != null) {
       markers.add(
         Marker(
@@ -479,7 +525,7 @@ class RidesharePresenter extends BasePresenter<RideshareUiState> {
           flat: true,
           anchor: const Offset(0.5, 0.5),
           rotation: currentUiState.userHeading,
-          infoWindow: const InfoWindow(title: 'Driver Location'),
+          infoWindow: const InfoWindow(title: 'My Car'),
         ),
       );
     }
