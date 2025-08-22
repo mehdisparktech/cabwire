@@ -5,6 +5,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/data/models/ride/ride_response_model.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
@@ -34,8 +35,8 @@ class CarBookingDetailsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               PassengerProfileWidget(
-                name: 'John Doe',
-                address: '123 Main St, Anytown, USA',
+                name: LocalStorage.myName,
+                address: rideResponse.data.pickupLocation.address,
               ),
               const SizedBox(height: 24),
               Row(
@@ -141,7 +142,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Cash Payment Received',
+                          rideResponse.data.paymentMethod,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -203,6 +204,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
               //   ),
               if (rideResponse.data.paymentMethod == 'stripe')
                 ActionButton(
+                  isLoading: presenter.currentUiState.isLoading,
                   isPrimary: true,
                   text: 'Pay Now',
                   onPressed: () {
@@ -211,6 +213,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                 ),
               if (rideResponse.data.paymentMethod == 'offline')
                 ActionButton(
+                  isLoading: presenter.currentUiState.isLoading,
                   isPrimary: true,
                   text: 'Submit Feedback',
                   onPressed: () {

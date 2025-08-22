@@ -1,6 +1,7 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/data/models/ride_completed_response_model.dart';
+import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/presentation/common/components/action_button.dart';
 import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/common/components/custom_app_bar.dart';
@@ -34,8 +35,9 @@ class CarBookingDetailsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               DriverProfileWidget(
-                name: 'John Doe',
-                address: '123 Main St, Anytown, USA',
+                name: LocalStorage.myName ,
+                address: rideCompletedResponse.data?.pickupLocation?.address ??
+                    '',
               ),
               const SizedBox(height: 24),
               Row(
@@ -145,7 +147,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Cash Payment Received',
+                          rideCompletedResponse.data?.paymentMethod ?? '',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -154,7 +156,7 @@ class CarBookingDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          '\$ ${rideCompletedResponse.data?.fare.toString() ?? ''}',
+                          '\$ ${rideCompletedResponse.data?.fare?.toStringAsFixed(2) ?? ''}',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
