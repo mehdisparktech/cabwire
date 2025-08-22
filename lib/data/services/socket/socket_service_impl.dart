@@ -31,28 +31,59 @@ class SocketServiceImpl implements SocketService {
       return;
     }
 
+    // Dispose existing socket if it exists but is not connected
+    if (_socket != null) {
+      _socket!.dispose();
+      _socket = null;
+    }
+
+    appLog("Creating new socket connection to: ${ApiEndPoint.socketUrl}");
+
     _socket = io.io(
       ApiEndPoint.socketUrl,
       io.OptionBuilder()
           .setTransports(['websocket'])
           .enableAutoConnect()
+          .enableReconnection()
+          .setReconnectionAttempts(5)
+          .setReconnectionDelay(1000)
+          .setTimeout(10000)
           .build(),
     );
 
     _socket!.onConnect((data) {
-      appLog("=============> Socket Connected: $data");
+      appLog("=============> Socket Connected Successfully: $data");
       _setupNotificationListener();
     });
 
     _socket!.onConnectError((data) {
       appLog("========> Socket Connection Error: $data");
+      // Attempt to reconnect after a delay
+      Future.delayed(const Duration(seconds: 2), () {
+        if (_socket != null && !_socket!.connected) {
+          appLog("Attempting to reconnect after connection error...");
+          _socket!.connect();
+        }
+      });
     });
 
     _socket!.onDisconnect((data) {
       appLog("========> Socket Disconnected: $data");
     });
 
+    _socket!.onReconnect((data) {
+      appLog("========> Socket Reconnected: $data");
+      _setupNotificationListener();
+    });
+
+    _socket!.onReconnectError((data) {
+      appLog("========> Socket Reconnection Error: $data");
+    });
+
     _socket!.connect();
+
+    // Log connection attempt
+    appLog("Socket connection initiated...");
   }
 
   @override
@@ -97,8 +128,21 @@ class SocketServiceImpl implements SocketService {
   // Private helper methods
   void _ensureConnected() {
     if (_socket == null || !_socket!.connected) {
+      appLog("Socket not connected, attempting to connect...");
       connectToSocket();
     }
+  }
+
+  // Force reconnection method
+  @override
+  void forceReconnect() {
+    appLog("Force reconnecting socket...");
+    if (_socket != null) {
+      _socket!.disconnect();
+      _socket!.dispose();
+      _socket = null;
+    }
+    connectToSocket();
   }
 
   void _setupNotificationListener() {

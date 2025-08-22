@@ -12,4 +12,5 @@ abstract class SocketService {
     Function(dynamic data) handler,
   );
   void off(String event);
+  void forceReconnect();
 }

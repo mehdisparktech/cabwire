@@ -31,6 +31,7 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   final ApiService apiService;
 
   LocationEntity? location;
+  Timer? _connectionMonitorTimer;
 
   final Obs<DriverHomeUiState> uiState = Obs<DriverHomeUiState>(
     DriverHomeUiState.initial(),
@@ -58,6 +59,12 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
     }
     // Initialize socket connection
     _initializeSocketConnection();
+
+    // If driver is already online (from arguments), ensure socket is properly connected
+    if (currentUiState.isOnline) {
+      debugPrint('Driver is already online, ensuring socket connection...');
+      _ensureSocketConnectionForOnlineStatus();
+    }
   }
 
   void _initializeSocketConnection() {
@@ -66,6 +73,10 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
       socketService.connectToSocket();
     }
 
+    _setupSocketListener();
+  }
+
+  void _setupSocketListener() {
     final String driverId = LocalStorage.userId;
     if (driverId.isEmpty) {
       debugPrint('Driver ID is empty, cannot listen to notifications');
@@ -92,6 +103,106 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
     });
 
     debugPrint('Socket listener setup complete for: $notificationEvent');
+  }
+
+  void _ensureSocketConnectionForOnlineStatus() {
+    debugPrint('Driver going online - ensuring socket connection...');
+
+    if (!socketService.isConnected) {
+      debugPrint('Socket not connected. Connecting immediately...');
+      socketService.connectToSocket();
+
+      // Wait a moment for connection to establish, then setup listener
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        if (socketService.isConnected) {
+          debugPrint('Socket connected successfully after going online');
+          _setupSocketListener();
+        } else {
+          debugPrint('Socket still not connected after delay. Retrying...');
+          socketService.connectToSocket();
+
+          // One more attempt after another delay
+          Future.delayed(const Duration(milliseconds: 1500), () {
+            if (socketService.isConnected) {
+              debugPrint('Socket connected on retry');
+              _setupSocketListener();
+            } else {
+              debugPrint('Socket connection failed after retries');
+              addUserMessage(
+                'Warning: Connection issue detected. You may miss some ride requests.',
+              );
+            }
+          });
+        }
+      });
+    } else {
+      debugPrint('Socket already connected when going online');
+      _setupSocketListener(); // Ensure listener is active
+    }
+  }
+
+  void _verifySocketConnectionAfterOnline() {
+    // Verify socket connection after successfully going online
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      if (!socketService.isConnected) {
+        debugPrint('Warning: Socket disconnected after going online');
+        addUserMessage('Connection issue detected. Reconnecting...');
+        socketService.connectToSocket();
+
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          if (socketService.isConnected) {
+            _setupSocketListener();
+            addUserMessage('Connection restored successfully');
+          }
+        });
+      } else {
+        debugPrint('Socket connection verified after going online');
+      }
+    });
+
+    // Start connection monitoring when going online
+    _startConnectionMonitor();
+  }
+
+  void _startConnectionMonitor() {
+    _stopConnectionMonitor(); // Stop any existing monitor
+
+    if (currentUiState.isOnline) {
+      debugPrint('Starting connection monitor for online driver');
+      _connectionMonitorTimer = Timer.periodic(const Duration(seconds: 10), (
+        timer,
+      ) {
+        if (currentUiState.isOnline) {
+          if (!socketService.isConnected) {
+            debugPrint(
+              'Connection monitor: Socket disconnected while online. Reconnecting...',
+            );
+            socketService.forceReconnect();
+
+            // Setup listener after reconnection
+            Future.delayed(const Duration(milliseconds: 1500), () {
+              if (socketService.isConnected) {
+                _setupSocketListener();
+                debugPrint(
+                  'Connection monitor: Socket reconnected successfully',
+                );
+              }
+            });
+          } else {
+            debugPrint('Connection monitor: Socket is healthy');
+          }
+        } else {
+          debugPrint('Connection monitor: Driver is offline, stopping monitor');
+          _stopConnectionMonitor();
+        }
+      });
+    }
+  }
+
+  void _stopConnectionMonitor() {
+    _connectionMonitorTimer?.cancel();
+    _connectionMonitorTimer = null;
+    debugPrint('Connection monitor stopped');
   }
 
   void _processRideRequestData(Map<String, dynamic> data) {
@@ -303,6 +414,11 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
     // Update the UI first for immediate feedback
     uiState.value = currentUiState.copyWith(isOnline: value);
 
+    // If going online, ensure socket connection is established immediately
+    if (value) {
+      _ensureSocketConnectionForOnlineStatus();
+    }
+
     // Then update the backend
     if (currentUiState.driverEmail?.isNotEmpty == true) {
       toggleLoading(loading: true);
@@ -324,6 +440,14 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
         (_) {
           // Success case
           addUserMessage(value ? 'You are now online' : 'You are now offline');
+
+          // If successfully went online, double-check socket connection and start monitoring
+          if (value) {
+            _verifySocketConnectionAfterOnline();
+          } else {
+            // If going offline, stop connection monitoring
+            _stopConnectionMonitor();
+          }
         },
       );
 
@@ -335,6 +459,31 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
 
   void goOnline() async {
     await toggleOnlineStatus(true);
+  }
+
+  // Test method to manually check socket connection (for debugging)
+  void testSocketConnection() {
+    debugPrint('=== Socket Connection Test ===');
+    debugPrint('Socket connected: ${socketService.isConnected}');
+    debugPrint('Driver ID: ${LocalStorage.userId}');
+    debugPrint('Driver online: ${currentUiState.isOnline}');
+
+    if (!socketService.isConnected) {
+      debugPrint('Attempting to connect socket...');
+      socketService.connectToSocket();
+
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        debugPrint('Socket connected after test: ${socketService.isConnected}');
+        if (socketService.isConnected) {
+          _setupSocketListener();
+          addUserMessage('Socket connection test successful');
+        } else {
+          addUserMessage('Socket connection test failed');
+        }
+      });
+    } else {
+      addUserMessage('Socket is already connected');
+    }
   }
 
   void goToNotifications() {
@@ -439,6 +588,8 @@ class DriverHomePresenter extends BasePresenter<DriverHomeUiState> {
   @override
   void dispose() {
     _mapController?.dispose();
+    _stopConnectionMonitor(); // Stop connection monitoring
+
     // Remove socket listener when presenter is disposed
     final String driverId = LocalStorage.userId;
     if (driverId.isNotEmpty) {
