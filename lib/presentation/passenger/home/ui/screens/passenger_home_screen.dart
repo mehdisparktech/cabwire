@@ -50,20 +50,55 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   Future<void> _checkAndShowTutorialWithContext(
     BuildContext showcaseContext,
   ) async {
-    final shouldShow = await PassengerHomeShowcase.shouldShowTutorial();
-    if (shouldShow && mounted && showcaseContext.mounted) {
+    try {
+      final shouldShow = await PassengerHomeShowcase.shouldShowTutorial();
+      if (!shouldShow || !mounted || !showcaseContext.mounted) {
+        return;
+      }
+
       // Wait for ShowCaseWidget to be ready
       await _waitForShowCaseReady(showcaseContext);
-      if (mounted && showcaseContext.mounted) {
-        try {
-          PassengerHomeShowcase.startShowcase(showcaseContext);
-          await PassengerHomeShowcase.markTutorialCompleted();
-        } catch (e) {
-          if (kDebugMode) {
-            print('Failed to start tutorial: $e');
-          }
-        }
+
+      // Double check context is still valid
+      if (!mounted || !showcaseContext.mounted) {
+        return;
       }
+
+      // Wait for user profile to load before starting showcase
+      await _waitForUserProfile();
+
+      if (mounted && showcaseContext.mounted) {
+        PassengerHomeShowcase.startShowcase(showcaseContext);
+        await PassengerHomeShowcase.markTutorialCompleted();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Failed to start tutorial: $e');
+      }
+    }
+  }
+
+  /// Wait for user profile to be loaded
+  Future<void> _waitForUserProfile() async {
+    const maxAttempts = 15;
+    const delay = Duration(milliseconds: 200);
+
+    for (int i = 0; i < maxAttempts; i++) {
+      if (!mounted) return;
+
+      if (presenter.currentUiState.userProfile != null) {
+        if (kDebugMode) {
+          print('User profile loaded after ${i + 1} attempts');
+        }
+        return;
+      }
+      await Future.delayed(delay);
+    }
+
+    if (kDebugMode) {
+      print(
+        'User profile not loaded after $maxAttempts attempts, proceeding anyway',
+      );
     }
   }
 
@@ -101,11 +136,28 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     }
   }
 
+  /// Get profile image URL with null safety
+  String _getProfileImageUrl() {
+    final userProfile = presenter.currentUiState.userProfile;
+    if (userProfile?.avatarUrl != null &&
+        userProfile?.avatarUrl.isNotEmpty == true) {
+      return userProfile!.avatarUrl;
+    }
+    return ApiEndPoint.imageUrl + LocalStorage.myImage;
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Refresh profile data when screen becomes visible
     presenter.refreshUserProfile();
+  }
+
+  @override
+  void dispose() {
+    // Reset showcase keys to prevent conflicts
+    PassengerHomeShowcase.resetKeys();
+    super.dispose();
   }
 
   @override
@@ -117,9 +169,11 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
         _showcaseContext = showcaseContext;
         // Schedule tutorial check after the ShowCaseWidget is built
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          // Wait for the next frame to ensure everything is rendered
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _checkAndShowTutorialWithContext(showcaseContext);
+          // Wait for multiple frames to ensure everything is rendered
+          Future.delayed(const Duration(milliseconds: 1500), () {
+            if (mounted && showcaseContext.mounted) {
+              _checkAndShowTutorialWithContext(showcaseContext);
+            }
           });
         });
 
@@ -188,15 +242,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 height: 40.px,
                 width: 40.px,
                 imageType: ImageType.network,
-                imageSrc:
-                    presenter
-                                .currentUiState
-                                .userProfile
-                                ?.avatarUrl
-                                .isNotEmpty ==
-                            true
-                        ? presenter.currentUiState.userProfile!.avatarUrl
-                        : ApiEndPoint.imageUrl + LocalStorage.myImage,
+                imageSrc: _getProfileImageUrl(),
               ),
             ),
           ),
@@ -207,14 +253,15 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hello ${presenter.currentUiState.userProfile?.name},',
+              'Hello ${presenter.currentUiState.userProfile?.name ?? 'User'}!',
               style: TextStyle(fontSize: 16.px, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 4.px),
             Text(
-              presenter.currentUiState.currentAddress ?? 'Loading...',
+              presenter.currentUiState.currentAddress ?? 'Loading location...',
               style: TextStyle(fontSize: 12.px),
               maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

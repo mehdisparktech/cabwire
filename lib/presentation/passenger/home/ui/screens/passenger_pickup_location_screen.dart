@@ -9,7 +9,7 @@ import 'package:cabwire/presentation/passenger/home/presenter/passenger_pickup_l
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_pickup_location_ui_state.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/passenger_drop_location_presenter.dart';
 import 'package:cabwire/presentation/passenger/home/presenter/presenter_home_presenter.dart';
-import 'package:cabwire/presentation/passenger/main/ui/screens/passenger_main_screen.dart';
+import 'package:cabwire/presentation/passenger/home/ui/screens/passenger_search_destination_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -273,7 +273,7 @@ class PassengerPickupLocationScreen extends StatelessWidget {
                   // Navigate to destination search screen
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => PassengerMainPage(),
+                      builder: (context) => PassengerSearchDestinationScreen(),
                     ),
                   );
                 },

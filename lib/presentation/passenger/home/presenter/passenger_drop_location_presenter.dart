@@ -137,12 +137,14 @@ class PassengerDropLocationPresenter
     // Remove all listeners from controllers
     if (_fromListener != null) {
       currentUiState.fromController.removeListener(_fromListener!);
+      _fromListener = null;
     }
 
     if (_destinationListener != null) {
       currentUiState.destinationController.removeListener(
         _destinationListener!,
       );
+      _destinationListener = null;
     }
 
     // Dispose controllers to prevent memory leaks
@@ -160,14 +162,20 @@ class PassengerDropLocationPresenter
     _debounceTimer?.cancel();
     _isSearching = false;
 
+    // Store pickup location data before reset if it exists
+    final existingPickupLocation = currentUiState.selectedPickupLocation;
+    final existingPickupAddress = currentUiState.pickupAddress;
+
     // Remove listeners temporarily
     if (_fromListener != null) {
       currentUiState.fromController.removeListener(_fromListener!);
+      _fromListener = null;
     }
     if (_destinationListener != null) {
       currentUiState.destinationController.removeListener(
         _destinationListener!,
       );
+      _destinationListener = null;
     }
 
     // Dispose old controllers to prevent memory leaks
@@ -176,9 +184,29 @@ class PassengerDropLocationPresenter
     // Reset state to initial values with new controllers
     uiState.value = PassengerDropLocationUiState.empty();
 
+    // Restore pickup location data if it existed
+    if (existingPickupLocation != null && existingPickupAddress != null) {
+      uiState.value = currentUiState.copyWith(
+        selectedPickupLocation: existingPickupLocation,
+        pickupAddress: existingPickupAddress,
+        currentLocation: existingPickupLocation,
+      );
+    }
+
     // Re-setup listeners with new controllers from the empty state
     _setupFromListener();
     _setupDestinationListener();
+
+    // Update from controller with pickup address if available
+    if (existingPickupAddress != null) {
+      if (_fromListener != null) {
+        currentUiState.fromController.removeListener(_fromListener!);
+      }
+      currentUiState.fromController.text = existingPickupAddress;
+      if (_fromListener != null) {
+        currentUiState.fromController.addListener(_fromListener!);
+      }
+    }
 
     // Clear map controller reference
     _mapController = null;
