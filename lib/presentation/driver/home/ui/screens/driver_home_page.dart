@@ -9,11 +9,14 @@ import 'package:cabwire/presentation/common/components/common_image.dart';
 import 'package:cabwire/presentation/common/components/custom_text.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_presenter.dart';
 import 'package:cabwire/presentation/driver/home/presenter/driver_home_ui_state.dart';
+import 'package:cabwire/presentation/driver/home/ui/widgets/driver_home_showcase.dart';
 import 'package:cabwire/data/models/ride/ride_request_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cabwire/core/di/service_locator.dart';
 import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:intl/intl.dart';
 
 class DriverHomePage extends StatefulWidget {
@@ -26,15 +29,10 @@ class DriverHomePage extends StatefulWidget {
 class _DriverHomePageState extends State<DriverHomePage>
     with AutomaticKeepAliveClientMixin {
   final DriverHomePresenter presenter = locate<DriverHomePresenter>();
+  BuildContext? _showcaseContext;
 
   @override
   bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-    // Any initialization if needed
-  }
 
   @override
   void didChangeDependencies() {
@@ -42,21 +40,92 @@ class _DriverHomePageState extends State<DriverHomePage>
     // Refresh data when screen becomes visible
   }
 
+  /// Check if tutorial should be shown and start it with proper ShowCase context
+  Future<void> _checkAndShowTutorialWithContext(
+    BuildContext showcaseContext,
+  ) async {
+    final shouldShow = await DriverHomeShowcase.shouldShowTutorial();
+    if (shouldShow && mounted && showcaseContext.mounted) {
+      // Wait for ShowCaseWidget to be ready
+      await _waitForShowCaseReady(showcaseContext);
+      if (mounted && showcaseContext.mounted) {
+        try {
+          DriverHomeShowcase.startShowcase(showcaseContext);
+          await DriverHomeShowcase.markTutorialCompleted();
+        } catch (e) {
+          if (kDebugMode) {
+            print('Failed to start tutorial: $e');
+          }
+        }
+      }
+    }
+  }
+
+  /// Wait for ShowCaseWidget to be ready with timeout
+  Future<void> _waitForShowCaseReady(BuildContext showcaseContext) async {
+    const maxAttempts = 10;
+    const delay = Duration(milliseconds: 200);
+
+    for (int i = 0; i < maxAttempts; i++) {
+      // Check if context is still valid before using it
+      if (!mounted || !showcaseContext.mounted) {
+        if (kDebugMode) {
+          print('Context no longer mounted, stopping wait');
+        }
+        return;
+      }
+
+      if (DriverHomeShowcase.isShowCaseReady(showcaseContext)) {
+        if (kDebugMode) {
+          print('ShowCaseWidget ready after ${i + 1} attempts');
+        }
+        return;
+      }
+      await Future.delayed(delay);
+    }
+    if (kDebugMode) {
+      print('ShowCaseWidget not ready after $maxAttempts attempts');
+    }
+  }
+
+  /// Manually start the tutorial (for testing or user request)
+  void startTutorial() {
+    if (_showcaseContext != null && _showcaseContext!.mounted) {
+      DriverHomeShowcase.startShowcase(_showcaseContext!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return PresentableWidgetBuilder(
-      presenter: presenter,
-      builder: () {
-        final uiState = presenter.currentUiState;
-        return Scaffold(
-          appBar: _buildAppBar(context, presenter),
-          body: Stack(
-            children: [
-              _buildMap(presenter, uiState),
-              _buildStackedCards(context, presenter, uiState),
-            ],
-          ),
+    return ShowCaseWidget(
+      builder: (showcaseContext) {
+        // Store the showcase context for later use
+        _showcaseContext = showcaseContext;
+        // Schedule tutorial check after the ShowCaseWidget is built
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // Wait for the next frame to ensure everything is rendered
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _checkAndShowTutorialWithContext(showcaseContext);
+          });
+        });
+
+        return PresentableWidgetBuilder(
+          presenter: presenter,
+          builder: () {
+            final uiState = presenter.currentUiState;
+            return Scaffold(
+              appBar: _buildAppBar(showcaseContext, presenter),
+              body: Stack(
+                children: [
+                  DriverHomeShowcase.buildMapShowcase(
+                    child: _buildMap(presenter, uiState),
+                  ),
+                  _buildStackedCards(showcaseContext, presenter, uiState),
+                ],
+              ),
+            );
+          },
         );
       },
     );
@@ -69,15 +138,17 @@ class _DriverHomePageState extends State<DriverHomePage>
       toolbarHeight: 80.px,
       leading: Padding(
         padding: EdgeInsets.all(4.px),
-        child: CircleAvatar(
-          backgroundColor: Colors.white,
-          child: ClipOval(
-            child: CommonImage(
-              imageSrc: ApiEndPoint.imageUrl + LocalStorage.myImage,
-              imageType: ImageType.network,
-              width: 40,
-              height: 40,
-              fill: BoxFit.cover,
+        child: DriverHomeShowcase.buildProfileShowcase(
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            child: ClipOval(
+              child: CommonImage(
+                imageSrc: ApiEndPoint.imageUrl + LocalStorage.myImage,
+                imageType: ImageType.network,
+                width: 40,
+                height: 40,
+                fill: BoxFit.cover,
+              ),
             ),
           ),
         ),
@@ -108,21 +179,25 @@ class _DriverHomePageState extends State<DriverHomePage>
         ],
       ),
       actions: [
-        Transform.scale(
-          scale: 0.75,
-          child: Switch(
-            padding: EdgeInsets.zero,
-            value: uiState.isOnline,
-            onChanged: (value) {
-              presenter.toggleOnlineStatus(value);
-            },
+        DriverHomeShowcase.buildOnlineStatusShowcase(
+          child: Transform.scale(
+            scale: 0.75,
+            child: Switch(
+              padding: EdgeInsets.zero,
+              value: uiState.isOnline,
+              onChanged: (value) {
+                presenter.toggleOnlineStatus(value);
+              },
+            ),
           ),
         ),
         gapW10,
-        CircularIconButton(
-          hMargin: 10.0,
-          imageSrc: AppAssets.icNotifcationActive,
-          onTap: presenter.goToNotifications,
+        DriverHomeShowcase.buildNotificationShowcase(
+          child: CircularIconButton(
+            hMargin: 10.0,
+            imageSrc: AppAssets.icNotifcationActive,
+            onTap: presenter.goToNotifications,
+          ),
         ),
       ],
     );
@@ -186,12 +261,22 @@ class _DriverHomePageState extends State<DriverHomePage>
                 for (int i = 0; i < uiState.rideRequests.length; i++) ...[
                   Positioned(
                     bottom: (40 - i * 20).px,
-                    child: _rideCard(
-                      context: context,
-                      presenter: presenter,
-                      rideRequest: uiState.rideRequests[i],
-                      index: i,
-                    ),
+                    child:
+                        i == 0
+                            ? DriverHomeShowcase.buildRideRequestShowcase(
+                              child: _rideCard(
+                                context: context,
+                                presenter: presenter,
+                                rideRequest: uiState.rideRequests[i],
+                                index: i,
+                              ),
+                            )
+                            : _rideCard(
+                              context: context,
+                              presenter: presenter,
+                              rideRequest: uiState.rideRequests[i],
+                              index: i,
+                            ),
                   ),
                 ],
                 if (uiState.rideRequests.isEmpty) _noRideRequestsCard(context),
@@ -340,29 +425,31 @@ class _DriverHomePageState extends State<DriverHomePage>
           ),
           gapH8,
           Divider(color: Colors.grey.shade300),
-          Row(
-            children: [
-              Expanded(
-                child: ActionButton(
-                  text: 'Decline',
-                  isLoading: presenter.currentUiState.isLoading,
-                  onPressed: () {
-                    presenter.declineRide(rideRequest.id);
-                  },
+          DriverHomeShowcase.buildActionButtonsShowcase(
+            child: Row(
+              children: [
+                Expanded(
+                  child: ActionButton(
+                    text: 'Decline',
+                    isLoading: presenter.currentUiState.isLoading,
+                    onPressed: () {
+                      presenter.declineRide(rideRequest.id);
+                    },
+                  ),
                 ),
-              ),
-              gapW12,
-              Expanded(
-                child: ActionButton(
-                  text: 'Accept',
-                  isPrimary: true,
-                  isLoading: presenter.currentUiState.isLoading,
-                  onPressed: () {
-                    presenter.acceptRide(rideRequest.rideId);
-                  },
+                gapW12,
+                Expanded(
+                  child: ActionButton(
+                    text: 'Accept',
+                    isPrimary: true,
+                    isLoading: presenter.currentUiState.isLoading,
+                    onPressed: () {
+                      presenter.acceptRide(rideRequest.rideId);
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
