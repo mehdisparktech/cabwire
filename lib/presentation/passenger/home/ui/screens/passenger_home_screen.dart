@@ -207,7 +207,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hello ${presenter.currentUiState.userProfile?.name},',
+              'Hello ${presenter.currentUiState.userProfile?.name ?? 'User'}',
               style: TextStyle(fontSize: 16.px, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 4.px),

@@ -34,7 +34,8 @@ class PaymentMethodScreen extends StatelessWidget {
                         ],
                       ),
                     )
-                    : Column(
+                    : presenter.webViewController != null
+                    ? Column(
                       children: [
                         SizedBox(
                           height: Get.height - 100,
@@ -44,6 +45,12 @@ class PaymentMethodScreen extends StatelessWidget {
                           ),
                         ),
                       ],
+                    )
+                    : const Center(
+                      child: Text(
+                        'Payment method not available',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
           );
         },

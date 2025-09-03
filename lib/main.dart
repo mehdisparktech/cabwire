@@ -2,7 +2,10 @@ import 'dart:async';
 import 'package:cabwire/domain/services/notification_service.dart';
 import 'package:cabwire/domain/services/socket_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/utility/error_handler.dart';
+import 'package:cabwire/core/utility/performance_utils.dart';
 import 'package:cabwire/domain/usecases/determine_first_run_use_case.dart';
 import 'package:cabwire/domain/usecases/register_device_usecase.dart';
 import 'package:cabwire/domain/usecases/location/check_location_permission_usecase.dart';
@@ -11,13 +14,37 @@ import 'package:cabwire/presentation/initial_app.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
-  runZonedGuarded<Future<void>>(() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await _initializeApp();
-    await _checkLocationPermission();
-    runApp(InitialApp(isFirstRun: await _checkFirstRun()));
-    // _registerDevice();
-  }, (error, stackTrace) => (error, stackTrace, fatal: true));
+  runZonedGuarded<Future<void>>(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+
+      // Set up global error handling
+      FlutterError.onError = (FlutterErrorDetails details) {
+        ErrorHandler.handleError(
+          details.exception,
+          stackTrace: details.stack,
+          context: 'Flutter Framework Error',
+        );
+      };
+
+      // Start performance monitoring in debug mode
+      if (kDebugMode) {
+        PerformanceUtils.startFrameMonitoring();
+      }
+
+      await _initializeApp();
+      await _checkLocationPermission();
+      runApp(InitialApp(isFirstRun: await _checkFirstRun()));
+      // _registerDevice();
+    },
+    (error, stackTrace) {
+      ErrorHandler.handleError(
+        error,
+        stackTrace: stackTrace,
+        context: 'Unhandled Zone Error',
+      );
+    },
+  );
 }
 
 /// Initialize the app

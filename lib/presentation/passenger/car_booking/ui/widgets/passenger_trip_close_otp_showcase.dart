@@ -4,26 +4,17 @@ import 'package:showcaseview/showcaseview.dart';
 import 'package:cabwire/core/config/app_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PassengerHomeShowcase {
-  // Global keys for showcase targets - using unique identifiers
-  static final GlobalKey profileKey = GlobalKey(
-    debugLabel: 'passenger_profile_showcase',
-  );
-  static final GlobalKey locationKey = GlobalKey(
-    debugLabel: 'passenger_location_showcase',
-  );
-  static final GlobalKey notificationKey = GlobalKey(
-    debugLabel: 'passenger_notification_showcase',
-  );
-  static final GlobalKey rideBookingKey = GlobalKey(
-    debugLabel: 'passenger_ride_booking_showcase',
-  );
-  static final GlobalKey servicesKey = GlobalKey(
-    debugLabel: 'passenger_services_showcase',
-  );
+class PassengerTripCloseOtpShowcase {
+  // Global keys for showcase targets
+  static final GlobalKey appBarKey = GlobalKey();
+  static final GlobalKey titleKey = GlobalKey();
+  static final GlobalKey otpFieldsKey = GlobalKey();
+  static final GlobalKey warningTextKey = GlobalKey();
+  static final GlobalKey logoKey = GlobalKey();
 
   // SharedPreferences key to track if tutorial has been shown
-  static const String _tutorialShownKey = 'passenger_home_tutorial_shown';
+  static const String _tutorialShownKey =
+      'passenger_trip_close_otp_tutorial_shown';
 
   /// Check if tutorial should be shown (first time user)
   static Future<bool> shouldShowTutorial() async {
@@ -55,11 +46,11 @@ class PassengerHomeShowcase {
     try {
       final showcaseWidget = ShowCaseWidget.of(context);
       showcaseWidget.startShowCase([
-        profileKey,
-        locationKey,
-        notificationKey,
-        rideBookingKey,
-        servicesKey,
+        appBarKey,
+        titleKey,
+        otpFieldsKey,
+        warningTextKey,
+        logoKey,
       ]);
       if (kDebugMode) {
         print('Showcase started successfully on attempt ${attempt + 1}');
@@ -78,28 +69,27 @@ class PassengerHomeShowcase {
     }
   }
 
-  /// Build showcase wrapper for profile section
-  static Widget buildProfileShowcase({required Widget child}) {
+  /// Build showcase wrapper for app bar
+  static Widget buildAppBarShowcase({required Widget child}) {
     return Showcase(
-      key: profileKey,
-      title: 'Your Profile',
+      key: appBarKey,
+      title: 'Trip Closure OTP',
       description:
-          'Tap here to view and edit your profile information. Your profile picture and name are displayed here.',
-      targetShapeBorder: const CircleBorder(),
+          'This screen shows your trip closure OTP. You\'ll share this code with your driver when your trip is complete.',
       tooltipBackgroundColor: Colors.blue.shade700,
       textColor: Colors.white,
-      targetBorderRadius: BorderRadius.circular(50.px),
+      targetBorderRadius: BorderRadius.circular(8.px),
       child: child,
     );
   }
 
-  /// Build showcase wrapper for location section
-  static Widget buildLocationShowcase({required Widget child}) {
+  /// Build showcase wrapper for title
+  static Widget buildTitleShowcase({required Widget child}) {
     return Showcase(
-      key: locationKey,
-      title: 'Current Location',
+      key: titleKey,
+      title: 'Share OTP Instructions',
       description:
-          'This shows your current location. Make sure location services are enabled for accurate pickup.',
+          'This title reminds you to share the OTP with your driver. Only share it when you\'ve safely reached your destination.',
       tooltipBackgroundColor: Colors.green.shade700,
       textColor: Colors.white,
       targetBorderRadius: BorderRadius.circular(8.px),
@@ -107,45 +97,44 @@ class PassengerHomeShowcase {
     );
   }
 
-  /// Build showcase wrapper for notification button
-  static Widget buildNotificationShowcase({required Widget child}) {
+  /// Build showcase wrapper for OTP fields
+  static Widget buildOtpFieldsShowcase({required Widget child}) {
     return Showcase(
-      key: notificationKey,
-      title: 'Notifications',
+      key: otpFieldsKey,
+      title: 'Your Trip Closure OTP',
       description:
-          'Stay updated with ride notifications, driver messages, and important updates.',
-      targetShapeBorder: const CircleBorder(),
-      tooltipBackgroundColor: Colors.orange.shade700,
-      textColor: Colors.white,
-      targetBorderRadius: BorderRadius.circular(25.px),
-      child: child,
-    );
-  }
-
-  /// Build showcase wrapper for ride booking widget
-  static Widget buildRideBookingShowcase({required Widget child}) {
-    return Showcase(
-      key: rideBookingKey,
-      title: 'Book a Ride',
-      description:
-          'Tap here to start booking your ride. Enter your destination and choose your preferred service.',
+          'This is your unique 4-digit OTP for trip completion. Share this code with your driver only when you reach your destination.',
       tooltipBackgroundColor: Colors.purple.shade700,
       textColor: Colors.white,
-      targetBorderRadius: BorderRadius.circular(12.px),
+      targetBorderRadius: BorderRadius.circular(8.px),
       child: child,
     );
   }
 
-  /// Build showcase wrapper for services section
-  static Widget buildServicesShowcase({required Widget child}) {
+  /// Build showcase wrapper for warning text
+  static Widget buildWarningTextShowcase({required Widget child}) {
     return Showcase(
-      key: servicesKey,
-      title: 'Available Services',
+      key: warningTextKey,
+      title: 'Important Security Notice',
       description:
-          'Choose from various services like regular car booking, emergency rides, rental cars, and package delivery.',
+          'This warning protects you from fraud. Never share your OTP until you\'ve safely arrived at your destination.',
+      tooltipBackgroundColor: Colors.orange.shade700,
+      textColor: Colors.white,
+      targetBorderRadius: BorderRadius.circular(8.px),
+      child: child,
+    );
+  }
+
+  /// Build showcase wrapper for logo
+  static Widget buildLogoShowcase({required Widget child}) {
+    return Showcase(
+      key: logoKey,
+      title: 'Secure Trip Completion',
+      description:
+          'The Cabwire logo ensures this is an official, secure trip completion process. Your safety and security are our priority.',
       tooltipBackgroundColor: Colors.teal.shade700,
       textColor: Colors.white,
-      targetBorderRadius: BorderRadius.circular(16.px),
+      targetBorderRadius: BorderRadius.circular(8.px),
       child: child,
     );
   }

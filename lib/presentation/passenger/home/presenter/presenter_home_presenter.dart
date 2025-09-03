@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cabwire/core/base/base_presenter.dart';
 import 'package:cabwire/core/config/api/api_end_point.dart';
 import 'package:cabwire/core/utility/utility.dart';
+import 'package:cabwire/core/utility/performance_utils.dart';
 import 'package:cabwire/data/models/profile_model.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/usecases/location/get_current_location_usecase.dart';
@@ -31,9 +32,14 @@ class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
   @override
   void onInit() {
     super.onInit();
-    getCurrentLocation();
-    loadPassengerServices();
-    loadUserProfile();
+    // Use performance utils to batch initialization
+    PerformanceUtils.executeAfterFrame(() {
+      PerformanceUtils.batchOperations([
+        () => getCurrentLocation(),
+        () => loadPassengerServices(),
+        () => loadUserProfile(),
+      ]);
+    });
   }
 
   // Method to refresh profile data when screen is focused
@@ -42,20 +48,41 @@ class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
   }
 
   Future<void> loadUserProfile() async {
-    final ProfileModel? profile = await LocalStorage.getPassengerProfile();
-    uiState.value = currentUiState.copyWith(
-      userProfile: UserProfileData(
-        name: profile?.name ?? '',
-        email: profile?.email ?? '',
-        phoneNumber: profile?.contact ?? '01625815151',
-        avatarUrl:
-            profile?.image != null
-                ? ApiEndPoint.imageUrl + profile!.image!
-                : ApiEndPoint.imageUrl + LocalStorage.myImage,
-        dateOfBirth: '1990-01-01',
-        gender: 'Male',
-      ),
-    );
+    try {
+      final ProfileModel? profile = await LocalStorage.getPassengerProfile();
+
+      // Validate image URL before using
+      String avatarUrl = '';
+      if (profile?.image != null && profile!.image!.isNotEmpty) {
+        avatarUrl = ApiEndPoint.imageUrl + profile.image!;
+      } else if (LocalStorage.myImage.isNotEmpty) {
+        avatarUrl = ApiEndPoint.imageUrl + LocalStorage.myImage;
+      }
+
+      uiState.value = currentUiState.copyWith(
+        userProfile: UserProfileData(
+          name: profile?.name ?? 'User',
+          email: profile?.email ?? '',
+          phoneNumber: profile?.contact ?? '01625815151',
+          avatarUrl: avatarUrl,
+          dateOfBirth: '1990-01-01',
+          gender: 'Male',
+        ),
+      );
+    } catch (e) {
+      debugPrint('Error loading user profile: $e');
+      // Set default profile data on error
+      uiState.value = currentUiState.copyWith(
+        userProfile: UserProfileData(
+          name: 'User',
+          email: '',
+          phoneNumber: '01625815151',
+          avatarUrl: '',
+          dateOfBirth: '1990-01-01',
+          gender: 'Male',
+        ),
+      );
+    }
   }
 
   void _addCurrentLocationMarker() {
