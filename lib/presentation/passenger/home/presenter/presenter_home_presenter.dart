@@ -42,20 +42,55 @@ class PassengerHomePresenter extends BasePresenter<PassengerHomeUiState> {
   }
 
   Future<void> loadUserProfile() async {
-    final ProfileModel? profile = await LocalStorage.getPassengerProfile();
-    uiState.value = currentUiState.copyWith(
-      userProfile: UserProfileData(
-        name: profile?.name ?? '',
-        email: profile?.email ?? '',
-        phoneNumber: profile?.contact ?? '01625815151',
-        avatarUrl:
-            profile?.image != null
+    try {
+      final ProfileModel? profile = await LocalStorage.getPassengerProfile();
+
+      // Provide default values to prevent null issues
+      final name = profile?.name?.isNotEmpty == true ? profile!.name! : 'User';
+      final email =
+          profile?.email?.isNotEmpty == true
+              ? profile!.email!
+              : 'user@example.com';
+      final contact =
+          profile?.contact?.isNotEmpty == true
+              ? profile!.contact!
+              : '01625815151';
+
+      String avatarUrl;
+      try {
+        avatarUrl =
+            profile?.image?.isNotEmpty == true
                 ? ApiEndPoint.imageUrl + profile!.image!
-                : ApiEndPoint.imageUrl + LocalStorage.myImage,
-        dateOfBirth: '1990-01-01',
-        gender: 'Male',
-      ),
-    );
+                : ApiEndPoint.imageUrl + LocalStorage.myImage;
+      } catch (e) {
+        // Fallback if image URL construction fails
+        avatarUrl = ApiEndPoint.imageUrl + LocalStorage.myImage;
+      }
+
+      uiState.value = currentUiState.copyWith(
+        userProfile: UserProfileData(
+          name: name,
+          email: email,
+          phoneNumber: contact,
+          avatarUrl: avatarUrl,
+          dateOfBirth: '1990-01-01',
+          gender: 'Male',
+        ),
+      );
+    } catch (e) {
+      // If profile loading fails, create a default profile
+      debugPrint('Error loading user profile: $e');
+      uiState.value = currentUiState.copyWith(
+        userProfile: UserProfileData(
+          name: 'User',
+          email: 'user@example.com',
+          phoneNumber: '01625815151',
+          avatarUrl: ApiEndPoint.imageUrl + LocalStorage.myImage,
+          dateOfBirth: '1990-01-01',
+          gender: 'Male',
+        ),
+      );
+    }
   }
 
   void _addCurrentLocationMarker() {

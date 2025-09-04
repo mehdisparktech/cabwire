@@ -28,6 +28,9 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
     final PassengerDropLocationPresenter presenter =
         locate<PassengerDropLocationPresenter>();
 
+    // Always reset to ensure clean state, but pickup location will be preserved
+    presenter.resetToInitialState();
+
     presenter.setServiceType(serviceType);
     presenter.setServiceId(serviceId);
     // ignore: deprecated_member_use
@@ -35,10 +38,6 @@ class PassengerSearchDestinationScreen extends StatelessWidget {
       onWillPop: () async {
         // Reset state to initial values before popping
         presenter.resetToInitialState();
-        // Clean up resources before popping
-        presenter.onClose();
-        // Properly remove the presenter instance from service locator
-        dislocate<PassengerDropLocationPresenter>();
         return true;
       },
       child: PresentableWidgetBuilder(

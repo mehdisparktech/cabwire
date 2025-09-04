@@ -60,7 +60,7 @@ class WelcomeScreen extends StatelessWidget {
               gapH100,
               _buildOptionButton(
                 context,
-                'Passenger',
+                'Rider',
                 AppAssets.icPassenger,
                 () => presenter.onPassengerButtonPressed(context),
                 AppColor.passengerButtonPrimaryStart,

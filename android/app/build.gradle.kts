@@ -73,7 +73,7 @@ dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     
     // Test dependencies
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.24")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:2.1.0")
     testImplementation("org.mockito:mockito-core:5.8.0")
     testImplementation("io.mockk:mockk:1.13.16")
 }

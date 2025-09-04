@@ -157,12 +157,17 @@ class PassengerPickupLocationPresenter
   }
 
   void moveCamera(LatLng position) {
-    if (currentUiState.mapController != null) {
-      currentUiState.mapController!.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(target: position, zoom: 16.0),
-        ),
-      );
+    final mapController = currentUiState.mapController;
+    if (mapController != null) {
+      try {
+        mapController.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(target: position, zoom: 16.0),
+          ),
+        );
+      } catch (e) {
+        print('Error animating camera: $e');
+      }
     }
   }
 
@@ -201,23 +206,35 @@ class PassengerPickupLocationPresenter
 
   void onCameraIdle() {
     uiState.value = currentUiState.copyWith(isCameraMoving: false);
-    if (currentUiState.mapController != null) {
+    final mapController = currentUiState.mapController;
+    if (mapController != null) {
       // Limit how frequently we update location on camera idle
       if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
       _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-        currentUiState.mapController!.getVisibleRegion().then((bounds) {
-          // Get the center of the visible region
-          final center = LatLng(
-            (bounds.northeast.latitude + bounds.southwest.latitude) / 2,
-            (bounds.northeast.longitude + bounds.southwest.longitude) / 2,
-          );
+        try {
+          mapController
+              .getVisibleRegion()
+              .then((bounds) {
+                // Get the center of the visible region
+                final center = LatLng(
+                  (bounds.northeast.latitude + bounds.southwest.latitude) / 2,
+                  (bounds.northeast.longitude + bounds.southwest.longitude) / 2,
+                );
 
-          uiState.value = currentUiState.copyWith(
-            selectedPickupLocation: center,
-          );
-          _updatePickupLocationMarker(center);
-          getAddressFromLatLng(center);
-        });
+                uiState.value = currentUiState.copyWith(
+                  selectedPickupLocation: center,
+                );
+                _updatePickupLocationMarker(center);
+                getAddressFromLatLng(center);
+              })
+              .catchError((error) {
+                // Handle map controller errors gracefully
+                print('Error getting visible region: $error');
+              });
+        } catch (e) {
+          // Handle any synchronous errors
+          print('Error accessing map controller: $e');
+        }
       });
     }
   }

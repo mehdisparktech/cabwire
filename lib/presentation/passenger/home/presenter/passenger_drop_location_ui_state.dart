@@ -101,15 +101,29 @@ class PassengerDropLocationUiState extends BaseUiState {
       routePolylines: null,
       serviceType: ServiceType.none,
       rideResponse: null,
-      serviceId: null,
+      serviceId: "686e008a153fae6071f36f28",
     );
   }
 
   /// Dispose all text controllers to prevent memory leaks
   void dispose() {
-    fromController.dispose();
-    destinationController.dispose();
-    searchController.dispose();
+    try {
+      fromController.dispose();
+    } catch (e) {
+      // Controller already disposed, ignore
+    }
+
+    try {
+      destinationController.dispose();
+    } catch (e) {
+      // Controller already disposed, ignore
+    }
+
+    try {
+      searchController.dispose();
+    } catch (e) {
+      // Controller already disposed, ignore
+    }
   }
 
   @override
