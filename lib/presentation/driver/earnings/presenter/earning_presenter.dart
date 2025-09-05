@@ -105,7 +105,8 @@ class EarningsPresenter extends BasePresenter<EarningsUiState> {
         a.cashPayment += d.cashPaymentReceived;
         a.onlinePayment += d.onlinePaymentReceived;
         a.walletAmount += d.walletAmount;
-        a.available += d.todayAvailableEarning;
+        // Calculate available as total earning if not transferred, 0 if transferred
+        a.available += d.isTransferredToDriver ? 0.0 : d.todayTotalEarning;
       }
 
       // Compute summary values for current filter
