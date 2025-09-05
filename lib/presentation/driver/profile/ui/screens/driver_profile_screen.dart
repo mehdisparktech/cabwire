@@ -204,6 +204,12 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         title: 'Edit Vehicle Information',
                         onTap: presenter.navigateToEditVehicleInfo,
                       ),
+                       Item(
+                        vertical: 16,
+                        image: AppAssets.icOnlinePayment,
+                        title: 'Stripe Account',
+                        onTap: presenter.navigateToStripeAccount,
+                      ),
                       Item(
                         vertical: 16,
                         image: AppAssets.icHistory,

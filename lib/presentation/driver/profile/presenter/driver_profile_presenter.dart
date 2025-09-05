@@ -25,6 +25,7 @@ import 'package:cabwire/presentation/driver/profile/ui/screens/edit_password_scr
 import 'package:cabwire/presentation/driver/profile/ui/screens/edit_profile_info_screen.dart';
 import 'package:cabwire/presentation/driver/profile/ui/screens/edit_vehicle_info_screen.dart';
 import 'package:cabwire/presentation/driver/profile/ui/screens/privacy_policy_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/screens/stripe_account_connect_screen.dart';
 import 'package:cabwire/presentation/driver/profile/ui/screens/terms_and_conditions_screen.dart';
 import 'package:cabwire/presentation/driver/profile/ui/widgets/delete_account_dialog.dart';
 import 'package:cabwire/presentation/driver/profile/ui/widgets/logout_dialog.dart';
@@ -281,6 +282,13 @@ class DriverProfilePresenter extends BasePresenter<DriverProfileUiState> {
   void navigateToEditVehicleInfo() {
     _populateEditDrivingControllers(currentUiState.drivingInfo);
     Get.to(() => EditVehicleInfoScreen());
+  }
+
+  void navigateToStripeAccount() {
+    oldPasswordController.clear();
+    newPasswordController.clear();
+    confirmNewPasswordController.clear();
+    Get.to(() => StripeAccountConnectScreen());
   }
 
   void navigateToHistory() {
