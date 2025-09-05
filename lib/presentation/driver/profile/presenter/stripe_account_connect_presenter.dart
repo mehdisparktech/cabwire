@@ -5,17 +5,19 @@ import 'package:cabwire/core/utility/log/app_log.dart';
 import 'package:cabwire/core/utility/navigation_utility.dart';
 import 'package:cabwire/data/services/storage/storage_services.dart';
 import 'package:cabwire/domain/services/api_service.dart';
+import 'package:cabwire/presentation/driver/main/ui/screens/driver_main_page.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/stripe_account_connect_ui_state.dart';
-import 'package:cabwire/presentation/driver/profile/ui/screens/driver_profile_screen.dart';
-import 'package:cabwire/presentation/driver/profile/ui/screens/stripe_account_connect_screen.dart';
+import 'package:cabwire/presentation/driver/profile/ui/screens/stripe_account_webview_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class StripeAccountConnectPresenter extends BasePresenter<StripeAccountConnectUiState> {
+class StripeAccountConnectPresenter
+    extends BasePresenter<StripeAccountConnectUiState> {
   final ApiService _apiService;
-    WebViewController? webViewController;
-  final Obs<StripeAccountConnectUiState> uiState = Obs<StripeAccountConnectUiState>(StripeAccountConnectUiState.empty());
+  WebViewController? webViewController;
+  final Obs<StripeAccountConnectUiState> uiState =
+      Obs<StripeAccountConnectUiState>(StripeAccountConnectUiState.empty());
   StripeAccountConnectUiState get currentUiState => uiState.value;
 
   StripeAccountConnectPresenter(this._apiService);
@@ -58,7 +60,12 @@ class StripeAccountConnectPresenter extends BasePresenter<StripeAccountConnectUi
     required BuildContext context,
   }) {
     if (paymentUrl.isNotEmpty) {
-      Get.to(() => StripeAccountConnectScreen());
+      Get.to(() => StripeAccountWebScreen());
+
+      // Since the server doesn't support HTTPS, use HTTP with network security config
+      String secureUrl = paymentUrl;
+      appLog("🔍 Original URL: $paymentUrl");
+      appLog("✅ Using HTTP with network security config: $secureUrl");
 
       webViewController =
           WebViewController()
@@ -67,6 +74,19 @@ class StripeAccountConnectPresenter extends BasePresenter<StripeAccountConnectUi
               NavigationDelegate(
                 onNavigationRequest: (NavigationRequest request) {
                   appLog("🔁 onNavigationRequest: ${request.url}");
+
+                  // Since the server doesn't support HTTPS, allow HTTP for this specific domain
+                  // The network security config will handle the security
+                  appLog("✅ Allowing HTTP request to proceed: ${request.url}");
+
+                  // Allow navigation to success/failed URLs but handle them specially
+                  if (request.url.contains("success-account") ||
+                      request.url.contains("failed") ||
+                      request.url.contains("cancel")) {
+                    // Allow the navigation to happen first
+                    return NavigationDecision.navigate;
+                  }
+
                   return NavigationDecision.navigate;
                 },
                 onPageStarted: (url) {
@@ -77,16 +97,25 @@ class StripeAccountConnectPresenter extends BasePresenter<StripeAccountConnectUi
                   appLog("✅ onPageFinished: $url");
                   toggleLoading(loading: false);
 
+                  // Wait a bit to ensure the page is fully loaded and any API calls are completed
                   if (url.contains("success-account")) {
-                    NavigationUtility.fadePush(
-                      context,
-                      const DriverProfileScreen(),
-                    );
+                    Future.delayed(const Duration(seconds: 2), () {
+                      if (context.mounted) {
+                        NavigationUtility.fadeReplacement(
+                          context,
+                          DriverMainPage(),
+                        );
+                      }
+                    });
                   } else if (url.contains("failed") || url.contains("cancel")) {
-                    NavigationUtility.fadePush(
-                      context,
-                      const DriverProfileScreen(),
-                    );
+                    Future.delayed(const Duration(seconds: 1), () {
+                      if (context.mounted) {
+                        NavigationUtility.fadeReplacement(
+                          context,
+                          DriverMainPage(),
+                        );
+                      }
+                    });
                   }
                 },
                 onWebResourceError: (error) {
@@ -94,7 +123,7 @@ class StripeAccountConnectPresenter extends BasePresenter<StripeAccountConnectUi
                 },
               ),
             )
-            ..loadRequest(Uri.parse(paymentUrl));
+            ..loadRequest(Uri.parse(secureUrl));
 
       toggleLoading(loading: false);
     }

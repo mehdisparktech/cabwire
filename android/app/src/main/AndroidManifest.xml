@@ -8,6 +8,8 @@
         android:label="Cabwire"
         android:name=".Application"
         android:enableOnBackInvokedCallback="true"
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:icon="@mipmap/ic_launcher">
     <!-- Add Google Maps API key -->
     <meta-data

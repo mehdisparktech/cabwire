@@ -1,5 +1,6 @@
 import 'package:cabwire/core/config/app_assets.dart';
 import 'package:cabwire/core/di/service_locator.dart';
+import 'package:cabwire/core/external_libs/presentable_widget_builder.dart';
 import 'package:cabwire/core/static/app_colors.dart';
 import 'package:cabwire/core/static/app_strings.dart';
 import 'package:cabwire/core/static/ui_const.dart';
@@ -26,19 +27,27 @@ class StripeAccountConnectScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
       ),
-      body: SafeArea(
-        child: Center(
-          child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CommonImage(imageSrc: AppAssets.isStripimg, height: 250, width: 250),
-            gapH40,
-            _buildLoginButton(context, presenter),
-            gapH60,
-          ],
-          ),
-        ),
+      body: PresentableWidgetBuilder(
+        presenter: presenter,
+        builder: () {
+          return SafeArea(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(40.0),
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CommonImage(imageSrc: AppAssets.isStripimg, height: 250, width: 250),
+                  gapH40,
+                  _buildLoginButton(context, presenter),
+                  gapH60,
+                ],
+                ),
+              ),
+            ),
+          );
+        }
       ),
     );
   }
