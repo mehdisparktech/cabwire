@@ -45,17 +45,17 @@ class DailyEarningItemModel {
   factory DailyEarningItemModel.fromJson(Map<String, dynamic> json) {
     return DailyEarningItemModel(
       id: json['_id'] ?? '',
-      isTransferdToDriver: json['isTransferdToDriver'] == true,
-      date: DateTime.tryParse(json['date'] ?? '') ?? DateTime.now(),
+      isTransferdToDriver: json['isTransferred'] == true,
+      date: DateTime.tryParse(json['_id'] ?? '') ?? DateTime.now(),
       adminDueAmount: (json['adminDueAmount'] as num?)?.toDouble() ?? 0,
       cashPaymentReceived:
-          (json['cashPaymentReceived'] as num?)?.toDouble() ?? 0,
+          (json['totalCashPayment'] as num?)?.toDouble() ?? 0,
       onlinePaymentReceived:
-          (json['onlinePaymentReceived'] as num?)?.toDouble() ?? 0,
+          (json['totalOnlinePayment'] as num?)?.toDouble() ?? 0,
       todayAvailableEarning:
           (json['todayAvailableEarning'] as num?)?.toDouble() ?? 0,
-      todayTotalEarning: (json['todayTotalEarning'] as num?)?.toDouble() ?? 0,
-      walletAmount: (json['walletAmount'] as num?)?.toDouble() ?? 0,
+      todayTotalEarning: (json['totalEarning'] as num?)?.toDouble() ?? 0,
+      walletAmount: (json['totalWalletAmount'] as num?)?.toDouble() ?? 0,
     );
   }
 }

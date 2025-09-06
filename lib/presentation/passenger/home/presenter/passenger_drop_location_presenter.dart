@@ -223,12 +223,16 @@ class PassengerDropLocationPresenter
     // Create and store the "from" listener
     _fromListener = () {
       final query = currentUiState.fromController.text;
+      debugPrint('From field text changed: "$query"');
       if (query.isNotEmpty && query.length > 2) {
+        debugPrint('From field: Query long enough, setting up debounce timer');
         if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
         _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          debugPrint('From field: Debounce timer fired, calling searchDestinationPlaces');
           searchDestinationPlaces(query);
         });
       } else if (query.isEmpty) {
+        debugPrint('From field: Query empty, clearing suggestions');
         // Clear suggestions when field is empty
         uiState.value = currentUiState.copyWith(destinationSuggestions: []);
       }
@@ -236,6 +240,7 @@ class PassengerDropLocationPresenter
 
     // Add the listeners
     currentUiState.fromController.addListener(_fromListener!);
+    debugPrint('From listener set up');
   }
 
   void _setupDestinationListener() {
@@ -249,12 +254,16 @@ class PassengerDropLocationPresenter
     // Create and store the destination listener
     _destinationListener = () {
       final query = currentUiState.destinationController.text;
+      debugPrint('To field text changed: "$query"');
       if (query.isNotEmpty && query.length > 2) {
+        debugPrint('To field: Query long enough, setting up debounce timer');
         if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
         _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          debugPrint('To field: Debounce timer fired, calling searchOriginPlaces');
           searchOriginPlaces(query);
         });
       } else if (query.isEmpty) {
+        debugPrint('To field: Query empty, clearing suggestions');
         // Clear suggestions when field is empty
         uiState.value = currentUiState.copyWith(originSuggestions: []);
       }
@@ -262,6 +271,7 @@ class PassengerDropLocationPresenter
 
     // Add the listener
     currentUiState.destinationController.addListener(_destinationListener!);
+    debugPrint('Destination listener set up');
   }
 
   void setCurrentLocation(LatLng location) {
@@ -271,6 +281,7 @@ class PassengerDropLocationPresenter
   Future<void> searchDestinationPlaces(String query) async {
     if (query.isEmpty || _isSearching) return;
 
+    debugPrint('=== SearchDestinationPlaces called with query: $query ===');
     _isSearching = true;
     try {
       final url = Uri.parse(
@@ -280,6 +291,9 @@ class PassengerDropLocationPresenter
         '&language=en',
       );
 
+      debugPrint('API URL: $url');
+      debugPrint('Google API Key exists: ${_googleApiKey.isNotEmpty}');
+
       final response = await _httpClient
           .get(url)
           .timeout(
@@ -287,18 +301,30 @@ class PassengerDropLocationPresenter
             onTimeout: () => throw TimeoutException('API request timed out'),
           );
 
+      debugPrint('Response status code: ${response.statusCode}');
+      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        debugPrint('API Response status: ${data['status']}');
+        debugPrint('Full API Response: $data');
 
         if (data['status'] == 'OK') {
           final predictions = data['predictions'] as List;
           final suggestions =
               predictions.map((p) => p['description'].toString()).toList();
 
+          debugPrint('Found ${suggestions.length} suggestions: $suggestions');
+
           uiState.value = currentUiState.copyWith(
             destinationSuggestions: suggestions,
           );
+          
+          debugPrint('Updated destinationSuggestions to: ${currentUiState.destinationSuggestions}');
+        } else {
+          debugPrint('API Error: ${data['error_message'] ?? 'Unknown error'}');
         }
+      } else {
+        debugPrint('HTTP Error: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       debugPrint('Error searching destination places: $e');
@@ -436,6 +462,7 @@ class PassengerDropLocationPresenter
   Future<void> searchOriginPlaces(String query) async {
     if (query.isEmpty || _isSearching) return;
 
+    debugPrint('=== SearchOriginPlaces called with query: $query ===');
     _isSearching = true;
     try {
       final url = Uri.parse(
@@ -445,6 +472,9 @@ class PassengerDropLocationPresenter
         '&language=en',
       );
 
+      debugPrint('API URL: $url');
+      debugPrint('Google API Key exists: ${_googleApiKey.isNotEmpty}');
+
       final response = await _httpClient
           .get(url)
           .timeout(
@@ -452,18 +482,30 @@ class PassengerDropLocationPresenter
             onTimeout: () => throw TimeoutException('API request timed out'),
           );
 
+      debugPrint('Response status code: ${response.statusCode}');
+      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        debugPrint('API Response status: ${data['status']}');
+        debugPrint('Full API Response: $data');
 
         if (data['status'] == 'OK') {
           final predictions = data['predictions'] as List;
           final suggestions =
               predictions.map((p) => p['description'].toString()).toList();
 
+          debugPrint('Found ${suggestions.length} suggestions: $suggestions');
+
           uiState.value = currentUiState.copyWith(
             originSuggestions: suggestions,
           );
+          
+          debugPrint('Updated originSuggestions to: ${currentUiState.originSuggestions}');
+        } else {
+          debugPrint('API Error: ${data['error_message'] ?? 'Unknown error'}');
         }
+      } else {
+        debugPrint('HTTP Error: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       debugPrint('Error searching origin places: $e');
