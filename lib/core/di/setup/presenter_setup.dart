@@ -15,6 +15,7 @@ import 'package:cabwire/presentation/driver/home/presenter/rideshare_presenter.d
 import 'package:cabwire/presentation/driver/notification/presenter/notification_presenter.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_edit_password_presenter.dart';
 import 'package:cabwire/presentation/driver/profile/presenter/driver_profile_presenter.dart';
+import 'package:cabwire/presentation/driver/profile/presenter/stripe_account_connect_presenter.dart';
 import 'package:cabwire/presentation/driver/ride_history/presenter/ride_history_presenter.dart';
 import 'package:cabwire/presentation/passenger/auth/presenter/passenger_confirm_information_presenter.dart';
 import 'package:cabwire/presentation/passenger/auth/presenter/passenger_email_verify_presenter.dart';
@@ -217,6 +218,9 @@ class PresenterSetup implements SetupModule {
       ..registerFactory(() => loadPresenter(AddNewDropLocationPresenter()))
       ..registerLazySingleton(
         () => loadPresenter(LiveTripsPresenter(locate())),
+      )
+      ..registerLazySingleton(
+        () => loadPresenter(StripeAccountConnectPresenter(locate())),
       );
     _setupPassengerPresenters();
   }
